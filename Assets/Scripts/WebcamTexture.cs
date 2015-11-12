@@ -1,48 +1,54 @@
-﻿using UnityEngine;
+﻿using Assets;
+using UnityEngine;
 
+using System.Reflection;
+using System;
 /**
- *  Taken from https://github.com/marcteys/oculus-webcams-unity/
- */
+*  Taken from https://github.com/marcteys/oculus-webcams-unity/
+*/
 public class WebcamTexture : MonoBehaviour
 {
-
-    WebCamTexture webcamTexture;
-    public int webcamNumber;
-    float cameraAspect;
-
-    // fit camera plane to screen
-    private float margin = 0f;
-    public float scaleFactor = 1f;
-    public bool rotatePlane = false;
+    private Texture2D liveTexture;
+    private int currentTextureGeneration;
 
     void Start()
     {
+        CameraImageProvider.Init();
+        var renderer = GetComponent<Renderer>();
 
-        WebCamDevice[] devices = WebCamTexture.devices;
-        webcamTexture = new WebCamTexture();
+        liveTexture = new Texture2D(640, 480);
 
-        if (devices.Length > 0)
-        {
-            webcamTexture.deviceName = devices[webcamNumber].name;
-            webcamTexture.Play();
-            GetComponent<Renderer>().material.mainTexture = webcamTexture;
-        }
+        Color[] c = new Color[640*480];
+        for (var i = 0; i < 640 * 480; i++)
+            c[i] = new Color(0, 1, 0);
 
-        if (rotatePlane) transform.Rotate(Vector3.forward, 180);
-        FitScreen();
+        liveTexture.SetPixels(c);
+        liveTexture.Apply();
+
+        renderer.material.mainTexture = liveTexture;
     }
 
-    void FitScreen()
+    //void FitScreen()
+    //{
+    //    Camera cam = transform.parent.GetComponent<Camera>();
+
+    //    float height = cam.orthographicSize * 2.0f;
+    //    float width = height * Screen.width / Screen.height;
+    //    float fix = 0;
+
+    //    if (width > height) fix = width + margin;
+    //    if (width < height) fix = height + margin;
+    //    transform.localScale = new Vector3((fix / scaleFactor) * 4 / 3, fix / scaleFactor, 0.1f);
+    //}
+
+    void Update()
     {
-        Camera cam = transform.parent.GetComponent<Camera>();
+        if (CameraImageProvider.GetImageGeneration() > currentTextureGeneration)
+        {
+            liveTexture.LoadRawTextureData(CameraImageProvider.getCurrentImage());
+            currentTextureGeneration++;
+        }
 
-        float height = cam.orthographicSize * 2.0f;
-        float width = height * Screen.width / Screen.height;
-        float fix = 0;
-
-        if (width > height) fix = width + margin;
-        if (width < height) fix = height + margin;
-        transform.localScale = new Vector3((fix / scaleFactor) * 4 / 3, fix / scaleFactor, 0.1f);
     }
 
 }
