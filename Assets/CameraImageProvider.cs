@@ -22,26 +22,29 @@ namespace Assets
         public static void Stop()
         {
             keepRunning = false;
+            isRunning = false;
         }
 
         private static void Run()
         {
-            var capture = new Capture(0);
-            var i = 0;
-
-            while (keepRunning)
+            using (var capture = new Capture(0))
             {
-                if (i > 3000)
-                    keepRunning = false;
+                var i = 0;
 
-                var frame = capture.QueryFrame();
-                currentImage = frame.Bytes;
-                imageGeneration++;
+                while (keepRunning)
+                {
+                    if (i++ > 3000)
+                        keepRunning = false;
+
+                    var frame = capture.QueryFrame();
+                    currentImage = frame.Bytes;
+                    imageGeneration++;
+                }
             }
         }
 
 
-        private static byte[] currentImage = null;
+        private static byte[] currentImage;
 
         public static byte[] getCurrentImage()
         {
