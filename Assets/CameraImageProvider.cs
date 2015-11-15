@@ -32,7 +32,7 @@ namespace Assets
                 while (keepRunning)
                 {
                     var frame = capture.QueryFrame();
-                    currentImage = frame.Bytes;
+                    currentImage = frame.GetData();
                     imageGeneration++;
                 }
             }
