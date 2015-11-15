@@ -1,4 +1,6 @@
 ﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using System.Drawing;
 using System.Threading;
 
 namespace Assets
@@ -32,7 +34,8 @@ namespace Assets
                 while (keepRunning)
                 {
                     var frame = capture.QueryFrame();
-                    currentImage = frame.GetData();
+                    var image = frame.ToImage<Rgb, byte>();
+                    currentImage = image.Bytes;
                     imageGeneration++;
                 }
             }
