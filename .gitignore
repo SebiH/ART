@@ -68,3 +68,9 @@ sysinfo.txt
 *.exp
 *.ilk
 *.pdb
+
+# Files for debugging unmanaged .dll in unity
+*.exp.meta
+*.ilk.meta
+*.pdb.meta
+*.lib.meta
