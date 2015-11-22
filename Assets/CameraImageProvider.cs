@@ -41,8 +41,21 @@ namespace Assets
         }
 
 
+        private static unsafe void Test()
+        {
+            byte[] buffer = { 1, 2, 3 };
+
+            fixed (byte* p = buffer)
+            {
+                IntPtr ptr = (IntPtr)p;
+                var result = DetectMarker(ptr, 10, 10);
+            }
+        }
+
         private static void Run()
         {
+            Test();
+
             using (var capture = new Capture(0))
             {
                 while (keepRunning)
