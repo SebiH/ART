@@ -1,5 +1,4 @@
 ﻿using Assets;
-using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,16 +8,11 @@ public class WebcamTexture : MonoBehaviour
     private Texture2D liveTexture;
     private int currentTextureGeneration;
 
-    [DllImport("ImageProcessing")]
-    private static extern float FooPluginFunction();
-
 
     void Start()
     {
         CameraImageProvider.Init();
         var renderer = GetComponent<Renderer>();
-
-        var x = FooPluginFunction();
 
         var width = 640;
         var height = 480;
