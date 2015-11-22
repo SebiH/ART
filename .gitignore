@@ -55,3 +55,7 @@ sysinfo.txt
 *.exe
 *.out
 *.app
+
+# VisualStudio binaries
+*.opensdf
+*.sdf
