@@ -63,3 +63,8 @@ sysinfo.txt
 # VisualStudio binaries
 *.opensdf
 *.sdf
+
+# other
+*.exp
+*.ilk
+*.pdb
