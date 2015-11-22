@@ -2,12 +2,11 @@
 
 #pragma once
 
-using namespace System;
-
 namespace ImageProcessing {
 
-	public ref class Class1
+	public ref class Bla
 	{
-		// TODO: Add your methods for this class here.
+	public:
+		System::String^ GetString();
 	};
 }

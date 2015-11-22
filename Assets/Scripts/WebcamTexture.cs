@@ -12,10 +12,13 @@ public class WebcamTexture : MonoBehaviour
         CameraImageProvider.Init();
         var renderer = GetComponent<Renderer>();
 
-        liveTexture = new Texture2D(640, 480, TextureFormat.RGB24, false);
+        var width = 640;
+        var height = 480;
 
-        Color[] c = new Color[640*480];
-        for (var i = 0; i < 640 * 480; i++)
+        liveTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
+
+        Color[] c = new Color[width*height];
+        for (var i = 0; i < width * height; i++)
             c[i] = new Color(0, 1, 0);
 
         liveTexture.SetPixels(c);
@@ -36,11 +39,13 @@ public class WebcamTexture : MonoBehaviour
 
     void Update()
     {
-        if (CameraImageProvider.GetImageGeneration() > currentTextureGeneration)
+        var currentImageGeneration = CameraImageProvider.GetImageGeneration();
+
+        if (currentImageGeneration > currentTextureGeneration)
         {
             liveTexture.LoadRawTextureData(CameraImageProvider.getCurrentImage());
             liveTexture.Apply();
-            currentTextureGeneration++;
+            currentTextureGeneration = currentImageGeneration;
         }
 
     }

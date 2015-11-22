@@ -36,6 +36,7 @@ sysinfo.txt
 # Precompiled Headers
 *.gch
 *.pch
+*.ipch
 
 # Compiled Dynamic libraries
 *.so

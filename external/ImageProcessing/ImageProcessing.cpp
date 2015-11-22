@@ -4,3 +4,10 @@
 
 #include "ImageProcessing.h"
 
+using namespace System;
+using namespace ImageProcessing;
+
+String^ Bla::GetString()
+{
+	return "Hello, clr!";
+}
