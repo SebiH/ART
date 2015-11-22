@@ -18,10 +18,11 @@ static bool readCameraParameters(std::string filename, Mat &camMatrix, Mat &dist
 }
 
 
-extern "C" DllExport int* DetectMarker(int *data, int width, int height)
+extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width, int height)
 {
 	Mat test = Mat(width, height, CV_8UC3, data);
 
+	data[0] = 15;
 	return data;
 
 	VideoCapture cap(0); //capture the video from web cam
