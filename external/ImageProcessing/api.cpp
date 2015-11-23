@@ -26,7 +26,7 @@ static void drawError(Mat& img, const String error)
 }
 
 
-extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width, int height)
+extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width, int height, double *pose)
 {
 	Mat image = Mat(height, width, CV_8UC3, data);
 
@@ -85,6 +85,14 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 	if (markersOfBoardDetected > 0)
 	{
 		aruco::drawAxis(image, camMatrix, distCoeffs, rvec, tvec, axisLength);
+
+		pose[0] = tvec[0];
+		pose[1] = tvec[1];
+		pose[2] = tvec[2];
+
+		pose[3] = tvec[0];
+		pose[4] = tvec[1];
+		pose[5] = tvec[2];
 	}
 
 	// TODO return ... something?

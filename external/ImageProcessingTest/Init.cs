@@ -10,15 +10,16 @@ namespace ImageProcessingTest
     class Init
     {
         [DllImport("ImageProcessing")]
-        private static extern IntPtr DetectMarker(IntPtr data, int width, int height);
+        private static extern IntPtr DetectMarker(IntPtr data, int width, int height, IntPtr pose);
 
-        private static unsafe void TrackMarker(byte[] img, int width, int height)
+        private static unsafe void TrackMarker(byte[] img, int width, int height, double[] pose)
         {
-            fixed (byte* p = img)
+            fixed (double* posePtr = pose)
+            fixed (byte* imgPtr = img)
             {
-                IntPtr ptr = (IntPtr)p;
-                // modifies the byte array that was passed in
-                var result = DetectMarker(ptr, width, height);
+                IntPtr rawImgPtr = (IntPtr)imgPtr;
+                IntPtr rawPosePtr = (IntPtr)posePtr;
+                var result = DetectMarker(rawImgPtr, width, height, rawPosePtr);
             }
         }
 
@@ -33,9 +34,11 @@ namespace ImageProcessingTest
                     var tempImg = new Image<Bgr, byte>(new Size(frame.Width, frame.Height));
 
                     var bytes = frame.GetData();
-                    TrackMarker(bytes, frame.Width, frame.Height);
+                    double[] pose = new double[6];
+                    TrackMarker(bytes, frame.Width, frame.Height, pose);
 
                     tempImg.Bytes = bytes;
+                    Console.Out.WriteLine(String.Format("{0}, {1}, {2}", pose[0], pose[1], pose[2]));
 
                     // out
                     // unity uses RGB byte arrays, and c# methods don't switch channels in byte array!
