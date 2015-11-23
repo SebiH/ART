@@ -35,11 +35,15 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 	bool useBlurring = false;
 
 	aruco::Dictionary dictionary =
-		aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(aruco::DICT_5X5_50));
+		aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(aruco::DICT_5X5_250));
 
 	//Mat marker;
 	//aruco::drawMarker(dictionary, 1, 640, marker, 1);
 	//imshow("x", marker);
+
+	auto board = aruco::GridBoard::create(5, 3, 300, 75, dictionary);
+	//float axisLength = 0.5f * ((float)min(markersX, markersY) * (markerLength + markerSeparation) + markerSeparation);
+	float axisLength = 0.5f * ((float)min(5, 3) * (300 + 75) + 75);
 
 	bool showRejected = false;
 	bool estimatePose = true;
@@ -97,13 +101,15 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 
 		std::vector< int > ids;
 		std::vector< std::vector< Point2f > > corners, rejected;
-		std::vector< Vec3d > rvecs, tvecs;
+		Vec3d rvec, tvec;
 
 		// detect markers and estimate pose
+		int markersOfBoardDetected = 0;
 		aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
+
 		if (estimatePose && ids.size() > 0)
 		{
-			aruco::estimatePoseSingleMarkers(corners, markerLength, camMatrix, distCoeffs, rvecs, tvecs);
+			markersOfBoardDetected = aruco::estimatePoseBoard(corners, ids, board, camMatrix, distCoeffs, rvec, tvec);
 		}
 
 		double currentTime = ((double)getTickCount() - tick) / getTickFrequency();
@@ -118,21 +124,15 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 		// draw results
 		Mat imageCopy;
 		image.copyTo(imageCopy);
-		if (ids.size() > 0)
-		{
+		if (ids.size() > 0) {
 			aruco::drawDetectedMarkers(imageCopy, corners, ids);
-
-			if (estimatePose)
-			{
-				for (unsigned int i = 0; i < ids.size(); i++)
-				{
-					aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvecs[i], tvecs[i], markerLength * 0.5f);
-				}
-			}
 		}
 
 		if (showRejected && rejected.size() > 0)
 			aruco::drawDetectedMarkers(imageCopy, rejected, noArray(), Scalar(100, 0, 255));
+
+		if (markersOfBoardDetected > 0)
+			aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvec, tvec, axisLength);
 
 		//imshow("out", imageCopy);
 		//char key = (char)waitKey(waitTime);
