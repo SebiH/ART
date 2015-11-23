@@ -30,8 +30,6 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 {
 	Mat image = Mat(height, width, CV_8UC3, data);
 
-	drawError(image, "Test test 123");
-
 	aruco::Dictionary dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(aruco::DICT_5X5_250));
 
 	// parameters from printed board
