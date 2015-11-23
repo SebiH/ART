@@ -1,13 +1,8 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
-using Emgu.CV.Util;
-using Emgu.CV.XFeatures2D;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -41,51 +36,35 @@ namespace Assets
         }
 
 
-        private static unsafe void Test()
+        private static unsafe void TrackMarker(byte[] img, int width, int height)
         {
-            byte[] buffer = { 1, 2, 3 };
-
-            fixed (byte* p = buffer)
+            fixed (byte* p = img)
             {
                 IntPtr ptr = (IntPtr)p;
-                var result = DetectMarker(ptr, 10, 10);
+                // modifies the byte array that was passed in
+                var result = DetectMarker(ptr, width, height);
             }
         }
 
         private static void Run()
         {
-            Test();
-
             using (var capture = new Capture(0))
             {
                 while (keepRunning)
                 {
                     // in
                     var frame = capture.QueryFrame();
-                    var resultImg = new Image<Bgr, byte>(new Size(640, 480));
+                    var tempImg = new Image<Bgr, byte>(new Size(frame.Width, frame.Height));
 
-                    // marshalling
-                    byte[] bytes = resultImg.Bytes;
-                    IntPtr inPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(byte)) * bytes.Length);
-                    Marshal.Copy(bytes, 0, inPtr, bytes.Length);
+                    var bytes = frame.GetData();
+                    TrackMarker(bytes, frame.Width, frame.Height);
 
-                    var resultPtr = DetectMarker(inPtr, frame.Width, frame.Height);
-
-                    byte[] resultBytes = new byte[bytes.Length];
-                    Marshal.Copy(resultPtr, resultBytes, 0, resultBytes.Length);
-
-                    MemoryStream ms = new MemoryStream(resultBytes);
-                    Bitmap tempBmp = new Bitmap(ms);
-                    var x = new Image<Bgr, byte>(tempBmp);
-
-
-                    // free
-                    Marshal.FreeHGlobal(inPtr);
-                    //Marshal.FreeHGlobal(resultPtr);
+                    tempImg.Bytes = bytes;
 
                     // out
                     // unity uses RGB byte arrays, and c# methods don't switch channels in byte array!
-                    CvInvoke.CvtColor(x, resultImg, ColorConversion.Bgr2Rgb);
+                    var resultImg = new Image<Rgb, byte>(new Size(frame.Width, frame.Height));
+                    CvInvoke.CvtColor(tempImg, resultImg, ColorConversion.Bgr2Rgb);
 
                     currentImage = resultImg.Bytes;
                     imageGeneration++;

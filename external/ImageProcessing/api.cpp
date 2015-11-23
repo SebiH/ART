@@ -20,20 +20,17 @@ static bool readCameraParameters(std::string filename, Mat &camMatrix, Mat &dist
 
 extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width, int height)
 {
-	Mat test = Mat(width, height, CV_8UC3, data);
+	Mat image = Mat(height, width, CV_8UC3, data);
 
-	data[0] = 15;
-	return data;
-
-	VideoCapture cap(0); //capture the video from web cam
+	//VideoCapture cap(0); //capture the video from web cam
 	bool consoleActive = false;
 	std::ostringstream consoleCommand;
 
-	if (!cap.isOpened())  // if not success, exit program
-	{
-		std::cout << "Cannot open the web cam" << std::endl;
-		return NULL;
-	}
+	//if (!cap.isOpened())  // if not success, exit program
+	//{
+	//	std::cout << "Cannot open the web cam" << std::endl;
+	//	return NULL;
+	//}
 
 	bool useBlurring = false;
 
@@ -51,10 +48,20 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 	detectorParams.doCornerRefinement = true; // do corner refinement in markers
 
 	Mat camMatrix, distCoeffs;
-	bool readOk = readCameraParameters("webcam.yml", camMatrix, distCoeffs);
+	auto cameraParamFilename = "Assets/CV/webcam.yml";
+	bool readOk = readCameraParameters(cameraParamFilename, camMatrix, distCoeffs);
 	if (!readOk) {
-		std::cerr << "Invalid camera file" << std::endl;
-		return 0;
+		std::cerr << "Invalid camera file " << cameraParamFilename << std::endl;
+
+		for (int i = 0; i < width * height; i++)
+		{
+			if (i % 3 == 2)
+				data[i] = 255;
+			else
+				data[i] = 0;
+		}
+
+		return NULL;
 	}
 	estimatePose = true;
 
@@ -64,19 +71,17 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 	int totalIterations = 0;
 	int waitTime = 30;
 
-	while (true)
-	{
-		Mat image, imageCopy;
+		//Mat image, imageCopy;
 
 		// read a new frame from video
-		bool bSuccess = cap.read(image);
+		//bool bSuccess = cap.read(image);
 
 		// break on error
-		if (!bSuccess)
-		{
-			std::cout << "Cannot read a frame from video stream" << std::endl;
-			break;
-		}
+		//if (!bSuccess)
+		//{
+		//	std::cout << "Cannot read a frame from video stream" << std::endl;
+		//	break;
+		//}
 
 		if (useBlurring)
 		{
@@ -111,6 +116,7 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 		}
 
 		// draw results
+		Mat imageCopy;
 		image.copyTo(imageCopy);
 		if (ids.size() > 0)
 		{
@@ -128,14 +134,16 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 		if (showRejected && rejected.size() > 0)
 			aruco::drawDetectedMarkers(imageCopy, rejected, noArray(), Scalar(100, 0, 255));
 
-		imshow("out", imageCopy);
-		char key = (char)waitKey(waitTime);
-		if (key == 27) break;
-		if (key == 'a') useBlurring = !useBlurring;
+		//imshow("out", imageCopy);
+		//char key = (char)waitKey(waitTime);
+		//if (key == 27) break;
+		//if (key == 'a') useBlurring = !useBlurring;
 
+		for (int i = 0; i < width * height * 3; i++)
+		{
+			data[i] = imageCopy.data[i];
+		}
 
-	}
-
-	// TODO return image ... byte array?
+	// TODO return ... something?
 	return NULL;
 }
