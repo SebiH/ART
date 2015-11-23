@@ -11,7 +11,7 @@ namespace Assets
     class CameraImageProvider
     {
         [DllImport("ImageProcessing")]
-        private static extern IntPtr DetectMarker(IntPtr data, int width, int height);
+        private static extern IntPtr DetectMarker(IntPtr data, int width, int height, IntPtr pose);
 
 
 
@@ -36,13 +36,15 @@ namespace Assets
         }
 
 
-        private static unsafe void TrackMarker(byte[] img, int width, int height)
+
+        private static unsafe void TrackMarker(byte[] img, int width, int height, double[] pose)
         {
-            fixed (byte* p = img)
+            fixed (double* posePtr = pose)
+            fixed (byte* imgPtr = img)
             {
-                IntPtr ptr = (IntPtr)p;
-                // modifies the byte array that was passed in
-                var result = DetectMarker(ptr, width, height);
+                IntPtr rawImgPtr = (IntPtr)imgPtr;
+                IntPtr rawPosePtr = (IntPtr)posePtr;
+                var result = DetectMarker(rawImgPtr, width, height, rawPosePtr);
             }
         }
 
@@ -57,7 +59,7 @@ namespace Assets
                     var tempImg = new Image<Bgr, byte>(new Size(frame.Width, frame.Height));
 
                     var bytes = frame.GetData();
-                    TrackMarker(bytes, frame.Width, frame.Height);
+                    TrackMarker(bytes, frame.Width, frame.Height, pose);
 
                     tempImg.Bytes = bytes;
 
@@ -84,6 +86,13 @@ namespace Assets
         public static int GetImageGeneration()
         {
             return imageGeneration;
+        }
+
+
+        private static double[] pose = new double[6];
+        public static double[] GetCurrentPose()
+        {
+            return pose;
         }
     }
 }
