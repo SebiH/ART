@@ -1,4 +1,4 @@
-﻿using Emgu.CV;
+using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System;
@@ -52,6 +52,9 @@ namespace Assets
         {
             using (var capture = new Capture(0))
             {
+                capture.SetCaptureProperty(CapProp.FrameWidth, 1280);
+                capture.SetCaptureProperty(CapProp.FrameHeight, 720);
+
                 while (keepRunning)
                 {
                     // in

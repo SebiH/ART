@@ -1,4 +1,4 @@
-﻿using Assets;
+using Assets;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,8 +14,8 @@ public class WebcamTexture : MonoBehaviour
         CameraImageProvider.Init();
         var renderer = GetComponent<Renderer>();
 
-        var width = 640;
-        var height = 480;
+        var width = 1280;
+        var height = 720;
 
         liveTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
 
