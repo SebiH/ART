@@ -122,27 +122,15 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 		}
 
 		// draw results
-		Mat imageCopy;
-		image.copyTo(imageCopy);
 		if (ids.size() > 0) {
-			aruco::drawDetectedMarkers(imageCopy, corners, ids);
+			aruco::drawDetectedMarkers(image, corners, ids);
 		}
 
 		if (showRejected && rejected.size() > 0)
-			aruco::drawDetectedMarkers(imageCopy, rejected, noArray(), Scalar(100, 0, 255));
+			aruco::drawDetectedMarkers(image, rejected, noArray(), Scalar(100, 0, 255));
 
 		if (markersOfBoardDetected > 0)
-			aruco::drawAxis(imageCopy, camMatrix, distCoeffs, rvec, tvec, axisLength);
-
-		//imshow("out", imageCopy);
-		//char key = (char)waitKey(waitTime);
-		//if (key == 27) break;
-		//if (key == 'a') useBlurring = !useBlurring;
-
-		for (int i = 0; i < width * height * 3; i++)
-		{
-			data[i] = imageCopy.data[i];
-		}
+			aruco::drawAxis(image, camMatrix, distCoeffs, rvec, tvec, axisLength);
 
 	// TODO return ... something?
 	return NULL;
