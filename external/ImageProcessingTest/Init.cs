@@ -27,6 +27,9 @@ namespace ImageProcessingTest
         {
             using (var capture = new Capture(0))
             {
+                capture.SetCaptureProperty(CapProp.FrameWidth, 1280);
+                capture.SetCaptureProperty(CapProp.FrameHeight, 720);
+
                 while (true)
                 {
                     // in
