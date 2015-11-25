@@ -2,6 +2,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -34,6 +35,7 @@ namespace ImageProcessingTest
                 {
                     // in
                     var frame = capture.QueryFrame();
+                    var watch = Stopwatch.StartNew();
                     var resultImg = new Image<Bgr, byte>(new Size(frame.Width, frame.Height));
 
                     var bytes = frame.GetData();
@@ -41,7 +43,9 @@ namespace ImageProcessingTest
                     TrackMarker(bytes, frame.Width, frame.Height, pose);
 
                     resultImg.Bytes = bytes;
-                    Console.Out.WriteLine(String.Format("{0,5:0.0}, {1,5:0.0}, {2,5:0.0}, {3,5:0.0}, {4,5:0.0}, {5,5:0.0}", pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]));
+
+                    watch.Stop();
+                    Console.Out.WriteLine(String.Format("{0,5:0.0}, {1,5:0.0}, {2,5:0.0}, {3,5:0.0}, {4,5:0.0}, {5,5:0.0}, took {6} ms", pose[0], pose[1], pose[2], pose[3], pose[4], pose[5], watch.ElapsedMilliseconds));
 
                     CvInvoke.Imshow("bla", resultImg);
                     CvInvoke.WaitKey(30);
