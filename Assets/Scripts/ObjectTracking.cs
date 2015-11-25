@@ -7,6 +7,7 @@ public class ObjectTracking : MonoBehaviour {
     private int currentTransformId;
 
     public Transform prefab;
+    public float scaling = 200;
 
 	void Start ()
     {
@@ -43,7 +44,7 @@ public class ObjectTracking : MonoBehaviour {
 
             if (Math.Abs(pose[0]) > 0.001)
             {
-                transform.localPosition = new Vector3((float)pose[0] / 100, -(float)pose[2] / 100, (float)pose[1] / 100);
+                transform.localPosition = new Vector3((float)pose[0] / scaling, -(float)pose[2] / scaling, (float)pose[1] / scaling);
                 //transform.localRotation = Quaternion.Euler((float)pose[3], (float)pose[4], (float)pose[5]);
             }
 
