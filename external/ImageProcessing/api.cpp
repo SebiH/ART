@@ -88,9 +88,9 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 		pose[1] = tvec[1];
 		pose[2] = tvec[2];
 
-		pose[3] = tvec[0];
-		pose[4] = tvec[1];
-		pose[5] = tvec[2];
+		pose[3] = rvec[0];
+		pose[4] = rvec[1];
+		pose[5] = rvec[2];
 	}
 
 	// TODO return ... something?
