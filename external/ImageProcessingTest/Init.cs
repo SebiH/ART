@@ -1,4 +1,4 @@
-﻿using Emgu.CV;
+using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System;
@@ -31,19 +31,14 @@ namespace ImageProcessingTest
                 {
                     // in
                     var frame = capture.QueryFrame();
-                    var tempImg = new Image<Bgr, byte>(new Size(frame.Width, frame.Height));
+                    var resultImg = new Image<Bgr, byte>(new Size(frame.Width, frame.Height));
 
                     var bytes = frame.GetData();
                     double[] pose = new double[6];
                     TrackMarker(bytes, frame.Width, frame.Height, pose);
 
-                    tempImg.Bytes = bytes;
-                    Console.Out.WriteLine(String.Format("{0}, {1}, {2}", pose[0], pose[1], pose[2]));
-
-                    // out
-                    // unity uses RGB byte arrays, and c# methods don't switch channels in byte array!
-                    var resultImg = new Image<Rgb, byte>(new Size(frame.Width, frame.Height));
-                    CvInvoke.CvtColor(tempImg, resultImg, ColorConversion.Bgr2Rgb);
+                    resultImg.Bytes = bytes;
+                    Console.Out.WriteLine(String.Format("{0,5:0.0}, {1,5:0.0}, {2,5:0.0}, {3,5:0.0}, {4,5:0.0}, {5,5:0.0}", pose[0], pose[1], pose[2], pose[3], pose[4], pose[5]));
 
                     CvInvoke.Imshow("bla", resultImg);
                     CvInvoke.WaitKey(30);
