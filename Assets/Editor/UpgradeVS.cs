@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEditor;
 using System.IO;
@@ -8,22 +8,25 @@ class UpgradeVSProject : AssetPostprocessor
 {
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
-        // TODO !
+        Debug.Log("Adjusting visual studio files");
 
+        string currentDir = Directory.GetCurrentDirectory();
+        string[] slnFiles = Directory.GetFiles(currentDir, "*.sln");
+        string[] csprojFiles = Directory.GetFiles(currentDir, "*.csproj");
 
-        //Debug.Log("Reimported Asset");
-
-        //string currentDir = Directory.GetCurrentDirectory();
-        //string[] slnFile = Directory.GetFiles(currentDir, "*.sln");
-        //string[] csprojFile = Directory.GetFiles(currentDir, "*.csproj");
-
-        //if (slnFile.Length > 0 && csprojFile.Length > 0)
+        //foreach (var slnFile in slnFiles)
         //{
-        //    ReplaceInFile(slnFile[0], "Format Version 10.00", "Format Version 11.00");
-        //    ReplaceInFile(csprojFile[0], "ToolsVersion=\"3.5\"", "ToolsVersion=\"4.0\"");
-        //    ReplaceInFile(csprojFile[0], "<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>", "<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>");
-        //    Debug.Log("Upgraded to Visual Studio 2010 Solution");
+        //    //ReplaceInFile(slnFile, "# Visual Studio 2015", "# Visual Studio 14\r\nVisualStudioVersion = 14.0.23107.0\r\nMinimumVisualStudioVersion = 10.0.40219.1");
+
+        //    // Set to build for x64
+        //    ReplaceInFile(slnFile, @"(.*?876C14A4.*?)Any CPU\r\n", @"$1x64\r\n");
         //}
+
+        if (csprojFiles.Length > 0)
+        {
+            // enable unsafe code blocks - it's enabled in unity via 'gmcs' file, but we also need it in visual studio
+            ReplaceInFile(csprojFiles[0], "<AllowUnsafeBlocks>false</AllowUnsafeBlocks>", "<AllowUnsafeBlocks>true</AllowUnsafeBlocks>");
+        }
     }
 
     static private void ReplaceInFile(string filePath, string searchText, string replaceText)
