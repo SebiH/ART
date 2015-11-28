@@ -4,6 +4,7 @@
 
 #include <opencv2/aruco.hpp>
 #include <opencv2/opencv.hpp>
+#include <math.h>
 
 
 using namespace cv;
@@ -88,9 +89,14 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 		pose[1] = tvec[1];
 		pose[2] = tvec[2];
 
-		pose[3] = rvec[0];
-		pose[4] = rvec[1];
-		pose[5] = rvec[2];
+		// to 3d rotation matrix
+		Mat rot;
+		Rodrigues(rvec, rot);
+
+		// see: http://nghiaho.com/?page_id=846
+		pose[3] = atan2(rot.at<double>(2, 1), rot.at<double>(2, 2));
+		pose[4] = atan2(-(rot.at<double>(2, 0)), sqrt(pow(rot.at<double>(2, 1), 2) + pow(rot.at<double>(2, 2), 2)));
+		pose[5] = atan2(rot.at<double>(1, 0), rot.at<double>(0, 0));
 	}
 
 	// TODO return ... something?

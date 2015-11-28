@@ -13,8 +13,7 @@ public class ObjectTracking : MonoBehaviour {
     {
 
         for (int i = 0; i < 20; i++)
-        {
-            for (int j = 0; j < 20; j++)
+        { for (int j = 0; j < 20; j++)
             {
 
                 var height = UnityEngine.Random.value * 10;
@@ -45,10 +44,15 @@ public class ObjectTracking : MonoBehaviour {
             if (Math.Abs(pose[0]) > 0.001)
             {
                 transform.localPosition = new Vector3((float)pose[0] / scaling, -(float)pose[2] / scaling, (float)pose[1] / scaling);
-                //transform.localRotation = Quaternion.Euler((float)pose[3], (float)pose[4], (float)pose[5]);
+
+                float a = (float)pose[3];
+                float b = (float)pose[4];
+                float c = (float)pose[5];
+
+                transform.localRotation = Quaternion.Euler(a / Mathf.PI * 180f, c / Mathf.PI * 180f, b / Mathf.PI * 180f);
             }
 
-            newTransformId = currentTransformId;
+            currentTransformId = newTransformId;
         }
 	}
 }
