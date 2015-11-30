@@ -119,6 +119,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ImageProcessingUtil\ImageProcessingUtil.csproj">
+      <Project>{f6919444-0207-4458-90de-401a075766a1}</Project>
+      <Name>ImageProcessingUtil</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>copy "$(SolutionDir)Assets\Plugins\external\ImageProcessing.*" "$(TargetDir)"
