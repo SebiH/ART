@@ -41,13 +41,14 @@ public class ObjectTracking : MonoBehaviour {
         {
             var pose = CameraImageProvider.GetCurrentPose();
 
-            if (Math.Abs(pose[0]) > 0.001)
+            // TODO: add parameter to pose to indicate if a pose was found
+            if (Math.Abs(pose.translationX) > 0.001)
             {
-                transform.localPosition = new Vector3((float)pose[0] / scaling, -(float)pose[2] / scaling, (float)pose[1] / scaling);
+                transform.localPosition = new Vector3((float)pose.translationX / scaling, -(float)pose.translationY / scaling, (float)pose.translationZ / scaling);
 
-                float a = (float)pose[3];
-                float b = (float)pose[4];
-                float c = (float)pose[5];
+                float a = (float)pose.rotationX;
+                float b = (float)pose.rotationY;
+                float c = (float)pose.rotationZ;
 
                 transform.localRotation = Quaternion.Euler(a / Mathf.PI * 180f, c / Mathf.PI * 180f, b / Mathf.PI * 180f);
             }

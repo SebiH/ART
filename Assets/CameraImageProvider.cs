@@ -1,20 +1,14 @@
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using System;
+using ImageProcessingUtil;
 using System.Drawing;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Assets
 {
     class CameraImageProvider
     {
-        [DllImport("ImageProcessing")]
-        private static extern IntPtr DetectMarker(IntPtr data, int width, int height, IntPtr pose);
-
-
-
         private static bool isRunning;
         private static bool keepRunning = true;
 
@@ -37,17 +31,6 @@ namespace Assets
 
 
 
-        private static unsafe void TrackMarker(byte[] img, int width, int height, double[] pose)
-        {
-            fixed (double* posePtr = pose)
-            fixed (byte* imgPtr = img)
-            {
-                IntPtr rawImgPtr = (IntPtr)imgPtr;
-                IntPtr rawPosePtr = (IntPtr)posePtr;
-                var result = DetectMarker(rawImgPtr, width, height, rawPosePtr);
-            }
-        }
-
         private static void Run()
         {
             using (var capture = new Capture(0))
@@ -59,12 +42,10 @@ namespace Assets
                 {
                     // in
                     var frame = capture.QueryFrame();
-                    var tempImg = new Image<Bgr, byte>(new Size(frame.Width, frame.Height));
 
-                    var bytes = frame.GetData();
-                    TrackMarker(bytes, frame.Width, frame.Height, pose);
-
-                    tempImg.Bytes = bytes;
+                    pose = new MarshalledPose();
+                    var tempImg = frame.ToImage<Bgr, byte>();
+                    ImageProcessor.TrackMarker(ref tempImg, ref pose);
 
                     // out
                     // unity uses RGB byte arrays, and c# methods don't switch channels in byte array!
@@ -92,8 +73,8 @@ namespace Assets
         }
 
 
-        private static double[] pose = new double[6];
-        public static double[] GetCurrentPose()
+        private static MarshalledPose pose;
+        public static MarshalledPose GetCurrentPose()
         {
             return pose;
         }
