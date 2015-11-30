@@ -9,6 +9,34 @@
 
 using namespace cv;
 
+struct MarshalledImageData
+{
+	// Pointer to the byte array containing the image (*has* to be of length width x height x channels)
+	unsigned char *rawData;
+
+	// Width of the image
+	int width;
+
+	// Height of the image
+	int height;
+
+	//  Amount of channels in the image
+	int channels;
+};
+
+
+struct MarshalledPose
+{
+	double translationX;
+	double translationY;
+	double translationZ;
+
+	double rotationX;
+	double rotationY;
+	double rotationZ;
+};
+
+
 static bool readCameraParameters(std::string filename, Mat &camMatrix, Mat &distCoeffs) {
 	FileStorage fs(filename, FileStorage::READ);
 	if (!fs.isOpened())
@@ -27,9 +55,12 @@ static void drawError(Mat& img, const String error)
 }
 
 
-extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width, int height, double *pose)
+extern "C" DllExport void DetectMarker(MarshalledImageData *mImg, MarshalledPose *pose)
 {
-	Mat image = Mat(height, width, CV_8UC3, data);
+	// TODO: different channels based on MarshalledImageData!
+	int type = CV_8UC3;
+
+	Mat image = Mat(mImg->height, mImg->width, type, mImg->rawData);
 
 	aruco::Dictionary dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(aruco::DICT_5X5_250));
 
@@ -85,20 +116,17 @@ extern "C" DllExport unsigned char* DetectMarker(unsigned char *data, int width,
 	{
 		aruco::drawAxis(image, camMatrix, distCoeffs, rvec, tvec, axisLength);
 
-		pose[0] = tvec[0];
-		pose[1] = tvec[1];
-		pose[2] = tvec[2];
+		pose->translationX = tvec[0];
+		pose->translationY = tvec[1];
+		pose->translationZ = tvec[2];
 
 		// to 3d rotation matrix
 		Mat rot;
 		Rodrigues(rvec, rot);
 
 		// see: http://nghiaho.com/?page_id=846
-		pose[3] = atan2(rot.at<double>(2, 1), rot.at<double>(2, 2));
-		pose[4] = atan2(-(rot.at<double>(2, 0)), sqrt(pow(rot.at<double>(2, 1), 2) + pow(rot.at<double>(2, 2), 2)));
-		pose[5] = atan2(rot.at<double>(1, 0), rot.at<double>(0, 0));
+		pose->rotationX = atan2(rot.at<double>(2, 1), rot.at<double>(2, 2));
+		pose->rotationY = atan2(-(rot.at<double>(2, 0)), sqrt(pow(rot.at<double>(2, 1), 2) + pow(rot.at<double>(2, 2), 2)));
+		pose->rotationZ = atan2(rot.at<double>(1, 0), rot.at<double>(0, 0));
 	}
-
-	// TODO return ... something?
-	return NULL;
 }
