@@ -19,5 +19,16 @@ namespace Assets
         {
             knownCommands.Remove(cmd);
         }
+
+
+        // TODO: multiple consoles
+        private static UConsole console;
+
+        public static UConsole CreateConsole()
+        {
+            if (console == null)
+                console = new UConsole();
+            return console;
+        }
     }
 }

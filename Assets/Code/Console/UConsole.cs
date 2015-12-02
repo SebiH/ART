@@ -7,12 +7,12 @@ namespace Assets.Code.Console
 {
     class UConsole
     {
-        public static List<string> Log
+        public List<string> Log
         {
             get; private set;
         }
 
-        public static string CurrentInput
+        public string CurrentInput
         {
             get; set;
         }
@@ -24,9 +24,10 @@ namespace Assets.Code.Console
         }
 
 
-        public void ExecuteCommand(string cmd)
+        public void ExecuteCommand()
         {
-            Log.Add(cmd);
+            Log.Add(CurrentInput);
+            CurrentInput = "";
         }
     }
 }
