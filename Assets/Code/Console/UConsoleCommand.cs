@@ -7,7 +7,7 @@ namespace Assets.Code.Console
 {
     class UConsoleCommand
     {
-        public Action execute
+        public Func<IEnumerable<string>, string> execute
         {
             get; private set;
         }
@@ -18,7 +18,7 @@ namespace Assets.Code.Console
         }
 
 
-        public UConsoleCommand(string name, Action action)
+        public UConsoleCommand(string name, Func<IEnumerable<string>, string> action)
         {
             this.name = name;
             this.execute = action;

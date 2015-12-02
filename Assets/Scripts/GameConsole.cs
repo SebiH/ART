@@ -3,20 +3,36 @@ using System.Collections;
 using UnityEngine.UI;
 using Assets.Code.Console;
 using System.Text;
+using System.Collections.Generic;
+using Assets;
+using System;
 
 public class GameConsole : MonoBehaviour {
     public Text logComponent;
     public InputField commandComponent;
     private UConsole console;
 
+    private UConsoleCommand helpCmd;
 	void Start ()
     {
         console = new UConsole();
+
+        helpCmd = new UConsoleCommand("help", new Func<IEnumerable<string>, string>((args) =>
+        {
+            return "Hello, console!";
+        }));
+
+        UConsoleFactory.RegisterCommand(helpCmd);
 	}
 
     void OnDestroy()
     {
-        // TODO?
+        UConsoleFactory.UnregisterCommand(helpCmd);
+    }
+
+    private string HelpCmd(IEnumerable<string> args)
+    {
+        return "Hello, console!";
     }
 
 
