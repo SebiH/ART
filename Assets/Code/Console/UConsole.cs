@@ -46,7 +46,7 @@ namespace Assets.Code.Console
                 }
             }
 
-            Log.AddRange(UConsoleFactory.ExecuteCommand(actualCommand.Trim(), parameters));
+            Log.AddRange(UCommandRegister.ExecuteCommand(actualCommand.Trim(), parameters));
             CurrentInput = "";
         }
     }

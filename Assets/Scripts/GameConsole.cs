@@ -22,12 +22,12 @@ public class GameConsole : MonoBehaviour {
             return "Hello, console!";
         }));
 
-        UConsoleFactory.RegisterCommand(helpCmd);
+        UCommandRegister.RegisterCommand(helpCmd);
 	}
 
     void OnDestroy()
     {
-        UConsoleFactory.UnregisterCommand(helpCmd);
+        UCommandRegister.UnregisterCommand(helpCmd);
     }
 
     private string HelpCmd(IEnumerable<string> args)
