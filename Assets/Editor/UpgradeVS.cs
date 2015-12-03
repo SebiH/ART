@@ -8,10 +8,10 @@ class UpgradeVSProject : AssetPostprocessor
 {
     private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
-        Debug.Log("Adjusting visual studio files");
+        //Debug.Log("Adjusting visual studio files");
 
         string currentDir = Directory.GetCurrentDirectory();
-        string[] slnFiles = Directory.GetFiles(currentDir, "*.sln");
+        //string[] slnFiles = Directory.GetFiles(currentDir, "*.sln");
         string[] csprojFiles = Directory.GetFiles(currentDir, "*.csproj");
 
         //foreach (var slnFile in slnFiles)
