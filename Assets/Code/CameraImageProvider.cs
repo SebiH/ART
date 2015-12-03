@@ -5,7 +5,7 @@ using ImageProcessingUtil;
 using System.Drawing;
 using System.Threading;
 
-namespace Assets
+namespace Assets.Code
 {
     class CameraImageProvider
     {
