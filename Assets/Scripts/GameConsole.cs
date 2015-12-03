@@ -1,11 +1,7 @@
-using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
 using Assets.Code.Console;
 using System.Text;
-using System.Collections.Generic;
-using Assets;
-using System;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class GameConsole : MonoBehaviour {
     public Text logComponent;

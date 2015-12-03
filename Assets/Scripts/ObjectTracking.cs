@@ -1,7 +1,6 @@
-using UnityEngine;
-using Assets;
-using System;
 using Assets.Code;
+using System;
+using UnityEngine;
 
 public class ObjectTracking : MonoBehaviour {
 
