@@ -16,25 +16,7 @@ public class GameConsole : MonoBehaviour {
 	void Start ()
     {
         console = new UConsole();
-
-        helpCmd = new UConsoleCommand("help", new Func<IEnumerable<string>, string>((args) =>
-        {
-            return "Hello, console!";
-        }));
-
-        UCommandRegister.RegisterCommand(helpCmd);
 	}
-
-    void OnDestroy()
-    {
-        UCommandRegister.DeregisterCommand(helpCmd);
-    }
-
-    private string HelpCmd(IEnumerable<string> args)
-    {
-        return "Hello, console!";
-    }
-
 
     void Update()
     {
