@@ -50,7 +50,14 @@ public class GameConsole : MonoBehaviour {
         
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            console.CurrentInput = console.CurrentInput.Substring(0, console.CurrentInput.Length - 2);
+            if (console.CurrentInput.Length > 2)
+            {
+                console.CurrentInput = console.CurrentInput.Substring(0, console.CurrentInput.Length - 2);
+            }
+            else
+            {
+                console.CurrentInput = "";
+            }
         }
 
         StringBuilder sb = new StringBuilder();
