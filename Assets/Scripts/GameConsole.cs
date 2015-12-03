@@ -27,7 +27,7 @@ public class GameConsole : MonoBehaviour {
 
     void OnDestroy()
     {
-        UCommandRegister.UnregisterCommand(helpCmd);
+        UCommandRegister.DeregisterCommand(helpCmd);
     }
 
     private string HelpCmd(IEnumerable<string> args)

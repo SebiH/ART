@@ -12,7 +12,7 @@ namespace Assets.Code.Console
             knownCommands.Add(cmd);
         }
 
-        public static void UnregisterCommand(UConsoleCommand cmd)
+        public static void DeregisterCommand(UConsoleCommand cmd)
         {
             knownCommands.Remove(cmd);
         }
