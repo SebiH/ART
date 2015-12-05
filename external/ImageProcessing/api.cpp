@@ -3,6 +3,7 @@
 #define DllExport   __declspec( dllexport )
 
 #include <opencv2/aruco.hpp>
+#include <opencv2/aruco/charuco.hpp>
 #include <opencv2/opencv.hpp>
 #include <math.h>
 
@@ -62,19 +63,20 @@ extern "C" DllExport void DetectMarker(MarshalledImageData *mImg, MarshalledPose
 
 	Mat image = Mat(mImg->height, mImg->width, type, mImg->rawData);
 
-	aruco::Dictionary dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(aruco::DICT_5X5_250));
+	aruco::Dictionary dictionary = aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(aruco::DICT_5X5_1000));
 
 	// parameters from printed board
-	int markersX = 5;
-	int markersY = 3;
-	int markerLength = 300;
-	int markerSeparation = 75;
+	int markersX = 8;
+	int markersY = 5;
+	int markerLength = 100;
+	int squareLength = 200;
 
-	auto board = aruco::GridBoard::create(5, 3, 300, 75, dictionary);
-	float axisLength = 0.5f * ((float)min(markersX, markersY) * (markerLength + markerSeparation) + markerSeparation);
+	auto board = aruco::CharucoBoard::create(markersX, markersY, squareLength, markerLength, dictionary);
+	float axisLength = 0.5f * ((float)min(markersX, markersY) * (markerLength + squareLength) + squareLength);
 
 	bool showRejected = false;
 	bool estimatePose = true;
+	bool refindStrategy = false;
 
 	aruco::DetectorParameters detectorParams; // TODO?
 	detectorParams.doCornerRefinement = true; // do corner refinement in markers
@@ -88,45 +90,67 @@ extern "C" DllExport void DetectMarker(MarshalledImageData *mImg, MarshalledPose
 	}
 
 
-	std::vector< int > ids;
-	std::vector< std::vector< Point2f > > corners, rejected;
-	Vec3d rvec, tvec;
+	std::vector< int > markerIds, charucoIds;
+	std::vector< std::vector< Point2f > > markerCorners, rejectedMarkers;
+	std::vector< Point2f > charucoCorners;
+	Mat rvec, tvec;
 
-	// detect markers and estimate pose
-	int markersOfBoardDetected = 0;
-	aruco::detectMarkers(image, dictionary, corners, ids, detectorParams, rejected);
+	// detect markers
+	aruco::detectMarkers(image, dictionary, markerCorners, markerIds, detectorParams, rejectedMarkers);
 
-	if (estimatePose && ids.size() > 0)
+	// refind strategy to detect more markers
+	if (refindStrategy)
 	{
-		markersOfBoardDetected = aruco::estimatePoseBoard(corners, ids, board, camMatrix, distCoeffs, rvec, tvec);
+		aruco::refineDetectedMarkers(image, board, markerCorners, markerIds, rejectedMarkers, camMatrix, distCoeffs);
 	}
+
+	// interpolate charuco corners
+	int interpolatedCorners = 0;
+	if (markerIds.size() > 0)
+	{
+		interpolatedCorners = aruco::interpolateCornersCharuco(markerCorners, markerIds, image, board, charucoCorners, charucoIds, camMatrix, distCoeffs);
+	}
+
+	// estimate charuco board pose
+	bool validPose = false;
+	if (camMatrix.total() != 0)
+	{
+		validPose = aruco::estimatePoseCharucoBoard(charucoCorners, charucoIds, board, camMatrix, distCoeffs, rvec, tvec);
+	}
+
 
 	// draw results
-	if (ids.size() > 0)
+	if (markerIds.size() > 0)
 	{
-		aruco::drawDetectedMarkers(image, corners, ids);
+		aruco::drawDetectedMarkers(image, markerCorners);
 	}
 
-	if (showRejected && rejected.size() > 0)
+	if (showRejected && rejectedMarkers.size() > 0)
 	{
-		aruco::drawDetectedMarkers(image, rejected, noArray(), Scalar(100, 0, 255));
+		aruco::drawDetectedMarkers(image, rejectedMarkers, noArray(), Scalar(100, 0, 255));
 	}
 
-	if (markersOfBoardDetected > 0)
+	if (interpolatedCorners > 0) {
+		Scalar color;
+		color = Scalar(0, 0, 255);
+		aruco::drawDetectedCornersCharuco(image, charucoCorners, charucoIds, color);
+	}
+
+	if (validPose)
 	{
 		aruco::drawAxis(image, camMatrix, distCoeffs, rvec, tvec, axisLength);
 
-		pose->translationX = tvec[0];
-		pose->translationY = tvec[1];
-		pose->translationZ = tvec[2];
+		//pose->translationX = tvec[0];
+		//pose->translationY = tvec[1];
+		//pose->translationZ = tvec[2];
 
 		// to 3d rotation matrix
-		Mat rot;
-		Rodrigues(rvec, rot);
+		//Mat rot;
+		//Rodrigues(rvec, rot);
 
-		// see: http://nghiaho.com/?page_id=846
-		pose->rotationX = atan2(rot.at<double>(2, 1), rot.at<double>(2, 2));
-		pose->rotationY = atan2(-(rot.at<double>(2, 0)), sqrt(pow(rot.at<double>(2, 1), 2) + pow(rot.at<double>(2, 2), 2)));
-		pose->rotationZ = atan2(rot.at<double>(1, 0), rot.at<double>(0, 0));
+		//// see: http://nghiaho.com/?page_id=846
+		//pose->rotationX = atan2(rot.at<double>(2, 1), rot.at<double>(2, 2));
+		//pose->rotationY = atan2(-(rot.at<double>(2, 0)), sqrt(pow(rot.at<double>(2, 1), 2) + pow(rot.at<double>(2, 2), 2)));
+		//pose->rotationZ = atan2(rot.at<double>(1, 0), rot.at<double>(0, 0));
 	}
 }
