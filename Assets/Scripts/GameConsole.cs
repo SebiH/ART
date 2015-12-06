@@ -6,14 +6,31 @@ using UnityEngine.UI;
 public class GameConsole : MonoBehaviour {
     public Text logComponent;
     public InputField commandComponent;
+    public GameObject consoleContainer;
+
     private UConsole console;
 
-    public bool isActive;
+    private bool _isActive;
+    public bool isActive {
+        get
+        {
+            return _isActive;
+        }
+        
+        set
+        {
+            _isActive = value;
+            onIsActiveChange(value);
+        }
+    }
 
     private UConsoleCommand helpCmd;
 	void Start ()
     {
         console = new UConsole();
+        // make sure we're in the right state
+        // TODO: better solution??
+        onIsActiveChange(isActive);
 	}
 
     void Update()
@@ -58,6 +75,11 @@ public class GameConsole : MonoBehaviour {
 
             commandComponent.text = console.CurrentInput;
         }
+    }
+
+    private void onIsActiveChange(bool val)
+    {
+        consoleContainer.SetActive(val);
     }
 	
 }
