@@ -11,7 +11,7 @@ public class ObjectTracking : MonoBehaviour {
 
 	void Start ()
     {
-
+        tag = "tracked";
     }
 
     // Update is called once per frame
