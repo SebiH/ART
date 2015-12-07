@@ -20,7 +20,7 @@ public class GameConsole : MonoBehaviour {
         set
         {
             _isActive = value;
-            onIsActiveChange(value);
+            SetIsVisible(value);
         }
     }
 
@@ -29,8 +29,7 @@ public class GameConsole : MonoBehaviour {
     {
         console = new UConsole();
         // make sure we're in the right state
-        // TODO: better solution??
-        onIsActiveChange(isActive);
+        SetIsVisible(isActive);
 	}
 
     void Update()
@@ -79,7 +78,7 @@ public class GameConsole : MonoBehaviour {
         }
     }
 
-    private void onIsActiveChange(bool val)
+    private void SetIsVisible(bool val)
     {
         consoleContainer.SetActive(val);
     }
