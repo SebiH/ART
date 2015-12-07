@@ -12,24 +12,6 @@ public class ObjectTracking : MonoBehaviour {
 	void Start ()
     {
 
-        for (int i = 0; i < 20; i++)
-        { for (int j = 0; j < 20; j++)
-            {
-
-                var height = UnityEngine.Random.value * 10;
-
-                var obj = Instantiate(prefab);
-                obj.transform.parent = transform;
-
-                obj.transform.localScale = new Vector3(0.05f, height, 0.05f);
-
-                obj.transform.position = Vector3.zero;
-                obj.transform.localPosition = new Vector3(0.5f - (i/10f) * 0.5f, height/2, 0.5f - (j/10f) * 0.5f);
-
-                obj.transform.localRotation = new Quaternion();
-                obj.transform.rotation = new Quaternion();
-            }
-        }
     }
 
     // Update is called once per frame
