@@ -17,6 +17,11 @@ namespace Assets.Code.Console
             knownCommands.Remove(cmd);
         }
 
+        public static IEnumerable<string> GetAvailableCommands()
+        {
+            return knownCommands.Select(cmd => cmd.name);
+        }
+
         public static IEnumerable<string> ExecuteCommand(string cmd, IEnumerable<string> parameters)
         {
             var matchingCommands = knownCommands.Where(x => x.name == cmd);

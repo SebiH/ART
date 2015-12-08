@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets.Code.Console
 {
@@ -44,6 +45,17 @@ namespace Assets.Code.Console
 
             Log.AddRange(UCommandRegister.ExecuteCommand(actualCommand.Trim(), parameters));
             CurrentInput = "";
+        }
+
+
+        public void AutocompleteCurrentCommand()
+        {
+            var matchingCommands = UCommandRegister.GetAvailableCommands().Where(cmd => cmd.StartsWith(CurrentInput));
+
+            if (matchingCommands.Count() == 1)
+            {
+                CurrentInput = matchingCommands.First();
+            }
         }
     }
 }

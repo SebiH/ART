@@ -66,6 +66,11 @@ public class GameConsole : MonoBehaviour {
                 }
             }
 
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                console.AutocompleteCurrentCommand();
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (var logline in console.Log)
             {
