@@ -38,11 +38,8 @@ public class GameConsole : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
             isActive = !isActive;
-            // don't show this key as command in the console
-            return;
         }
-
-        if (isActive)
+        else if (isActive)
         {
             foreach (char c in Input.inputString)
             {
