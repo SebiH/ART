@@ -39,11 +39,20 @@ public class TrackingCalibration : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
-	    if (Input.GetKeyDown(KeyCode.Space))
+        // TODO: find out if this is actually nearest object, documentation isn't clear
+        var nearestObject = GameObject.FindWithTag("Tracked");
+
+        if (nearestObject != null)
         {
-            activateStep(currentStep + 1);
+            var distanceDelta = (nearestObject.transform.position - transform.position).sqrMagnitude;
+
+            if (distanceDelta < 10)
+            {
+                activateStep(currentStep + 1);
+            }
+
         }
-	}
+    }
 
     private void activateStep(int step)
     {
