@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Assets.Code.Console
 {
@@ -55,6 +56,19 @@ namespace Assets.Code.Console
             if (matchingCommands.Count() == 1)
             {
                 CurrentInput = matchingCommands.First();
+            }
+            else if (matchingCommands.Count() > 1)
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var cmd in matchingCommands)
+                {
+                    sb.AppendFormat("{0}\t", cmd);
+                }
+                Log.Add(sb.ToString());
+            }
+            else
+            {
+                Log.Add("No matching command found");
             }
         }
     }
