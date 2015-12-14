@@ -19,11 +19,12 @@ public class PlaneGraph : MonoBehaviour {
     private int[,] vertexIndices;
     private List<int> triangles = new List<int>();
 
+    private Mesh mesh;
+
 	// Use this for initialization
 	void Start ()
     {
-        //vertices = new List<Vector3>();
-        //triangles = new List<int>();
+        RegenerateMesh();
     }
 
 
@@ -42,7 +43,7 @@ public class PlaneGraph : MonoBehaviour {
                 }
             }
 
-            GenerateMesh();
+            RegenerateMesh();
         }
 	}
 
@@ -105,11 +106,35 @@ public class PlaneGraph : MonoBehaviour {
 
 
         // display mesh with generated vertices
-        Mesh mesh = new Mesh();
+        mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
 
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
+    }
+
+    private void RegenerateMesh()
+    {
+        // need a mesh to work with
+        if (mesh == null)
+        {
+            GenerateMesh();
+        }
+        else
+        {
+            vertices.Clear();
+
+            for (int x = 0; x < data.GetLength(0); x++)
+            {
+                for (int y = 0; y < data.GetLength(1); y++)
+                {
+                    vertices.Add(new Vector3(x, data[x, y], y));
+                }
+            }
+
+            mesh.vertices = vertices.ToArray();
+            mesh.RecalculateNormals();
+        }
     }
 }
