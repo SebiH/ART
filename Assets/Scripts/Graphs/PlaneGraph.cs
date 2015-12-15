@@ -58,8 +58,8 @@ public class PlaneGraph : MonoBehaviour {
 
     private void GenerateMesh()
     {
-        var rows = data.GetLength(0);
-        var columns = data.GetLength(1);
+        var columns = data.GetLength(0);
+        var rows = data.GetLength(1);
 
         vertices.Clear();
         triangles.Clear();
