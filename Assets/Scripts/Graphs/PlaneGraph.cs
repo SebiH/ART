@@ -24,7 +24,6 @@ public class PlaneGraph : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
     {
-        RegenerateMesh();
     }
 
 

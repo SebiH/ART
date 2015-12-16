@@ -24,7 +24,6 @@ public class BarGraph : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        GenerateMesh();
     }
 
 
