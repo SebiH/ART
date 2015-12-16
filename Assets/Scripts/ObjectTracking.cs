@@ -6,7 +6,6 @@ public class ObjectTracking : MonoBehaviour {
 
     private int currentTransformId;
 
-    public Transform prefab;
     public float scaling = 200;
 
 	void Start ()
