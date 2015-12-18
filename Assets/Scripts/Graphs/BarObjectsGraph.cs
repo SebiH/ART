@@ -41,7 +41,7 @@ public class BarObjectsGraph : MonoBehaviour
                 }
             }
 
-            GenerateGraph();
+            RegenerateGraph();
         }
 	}
 
@@ -64,13 +64,55 @@ public class BarObjectsGraph : MonoBehaviour
             for (int y = 0; y < ingameBars.GetLength(1); y++)
             {
                 var bar = Instantiate(prefabBar);
+                var dataPoint = bar.GetComponent<DataPoint>();
 
-                bar.transform.parent = transform;
-                bar.transform.localScale = new Vector3(1, data[x, y], 1);
-                bar.transform.localPosition = new Vector3(x, data[x,y] / 2, y);
+                if (!dataPoint)
+                {
+                    print("Error: Attach DataPoint script to graph prefab object!");
+                }
+                else
+                {
+                    bar.transform.parent = transform;
+                    dataPoint.SetHeight(data[x, y]);
+                    dataPoint.SetPosition(x, y);
+                }
 
                 ingameBars[x, y] = bar;
             }
         }
+    }
+
+    /**
+     *  Reuses existing bars, if possible.
+     */
+    private void RegenerateGraph()
+    {
+        var isInitialised = (ingameBars != null);
+        var hasSameDimensions = (isInitialised && ingameBars.GetLength(0) == data.GetLength(0) && ingameBars.GetLength(1) == data.GetLength(1));
+
+        if (isInitialised && hasSameDimensions)
+        {
+            for (int x = 0; x < data.GetLength(0); x++)
+            {
+                for (int y = 0; y < data.GetLength(1); y++)
+                {
+                    var dataPoint = ingameBars[x, y].GetComponent<DataPoint>();
+
+                    if (!dataPoint)
+                    {
+                        print("Error: Attach DataPoint script to graph prefab object!");
+                    }
+                    else
+                    {
+                        dataPoint.SetHeight(data[x, y]);
+                    }
+                }
+            }
+        }
+        else
+        {
+            GenerateGraph();
+        }
+
     }
 }
