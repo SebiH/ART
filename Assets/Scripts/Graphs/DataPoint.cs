@@ -2,10 +2,22 @@ using UnityEngine;
 
 public class DataPoint : MonoBehaviour
 {
-
-	void Start ()
+    private bool _isHighlighted;
+    public bool IsHighlighted
     {
-	
+        get { return _isHighlighted; }
+        set
+        {
+            _isHighlighted = value;
+            OnHighlightChange(value);
+        }
+    }
+
+
+
+    void Start ()
+    {
+
 	}
 	
 	void Update ()
@@ -26,5 +38,13 @@ public class DataPoint : MonoBehaviour
     {
         var currPos = transform.localPosition;
         transform.localPosition = new Vector3(x, currPos.y, y);
+    }
+
+
+    private void OnHighlightChange(bool isHighlighted)
+    {
+        var renderer = GetComponent<MeshRenderer>();
+        var color = isHighlighted ? Color.yellow : Color.white;
+        renderer.material.color = color;
     }
 }
