@@ -42,6 +42,18 @@ public class BarObjectsGraph : MonoBehaviour
             }
 
             RegenerateGraph();
+
+            // select a random amount of data
+            var startPoint = new Vector2(Random.Range(0, width), Random.Range(0, height));
+            var selectedRadius = Random.Range(1f, Mathf.Max(width, height) / 2);
+
+            for (int x = 0; x < ingameBars.GetLength(0); x++)
+            {
+                for (int y = 0; y < ingameBars.GetLength(1); y++)
+                {
+                    ingameBars[x, y].GetComponent<DataPoint>().IsHighlighted = ((new Vector2(x, y) - startPoint).magnitude < selectedRadius);
+                }
+            }
         }
 	}
 
