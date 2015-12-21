@@ -1,14 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using Assets.Code.DataProvider;
 
 public class BarObjectsGraph : MonoBehaviour
 {
-    [Range(1, 100)]
-    public int width;
-
-    [Range(1, 100)]
-    public int height;
-
     // Prefab representing a single bar
     // TODO: more requirements in the future? e.g., interfaces?
     public GameObject prefabBar;
@@ -31,21 +26,13 @@ public class BarObjectsGraph : MonoBehaviour
     {
 	    if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            data = new float[width, height];
-
-            for (int x = 0; x < data.GetLength(0); x++)
-            {
-                for (int y = 0; y < data.GetLength(1); y++)
-                {
-                    data[x, y] = Random.Range(0f, 5f);
-                }
-            }
+            data = new RandomDataProvider().GetData();
 
             RegenerateGraph();
 
             // select a random amount of data
-            var startPoint = new Vector2(Random.Range(0, width), Random.Range(0, height));
-            var selectedRadius = Random.Range(1f, Mathf.Max(width, height) / 2);
+            var startPoint = new Vector2(Random.Range(0, data.GetLength(0)), Random.Range(0, data.GetLength(1)));
+            var selectedRadius = Random.Range(1f, Mathf.Max(data.GetLength(0), data.GetLength(1)) / 2);
 
             for (int x = 0; x < ingameBars.GetLength(0); x++)
             {
@@ -69,7 +56,7 @@ public class BarObjectsGraph : MonoBehaviour
             }
         }
 
-        ingameBars = new GameObject[width, height];
+        ingameBars = new GameObject[data.GetLength(0), data.GetLength(1)];
 
         for (int x = 0; x < ingameBars.GetLength(0); x++)
         {
