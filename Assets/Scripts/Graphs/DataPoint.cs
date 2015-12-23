@@ -13,6 +13,19 @@ public class DataPoint : MonoBehaviour
         }
     }
 
+    private float _height;
+    public float Height
+    {
+        get { return _height; }
+        set
+        {
+            var currPos = transform.localPosition;
+            transform.localPosition = new Vector3(currPos.x, value / 2, currPos.z);
+            transform.localScale = new Vector3(1, value, 1);
+            _height = value;
+        }
+    }
+
 
 
     void Start ()
@@ -22,16 +35,29 @@ public class DataPoint : MonoBehaviour
 	
 	void Update ()
     {
-	
+        if (isAnimating)
+        {
+            var interpolatedHeight = Mathf.Lerp(Height, destinationHeight, animationTime);
+            animationTime += Time.deltaTime;
+            Height = interpolatedHeight;
+
+            // stop animating once we have reached desired height
+            if (Mathf.Abs(destinationHeight - Height) < Mathf.Epsilon)
+            {
+                isAnimating = false;
+            }
+        }
 	}
 
 
+    private float destinationHeight;
+    private float animationTime;
+    private bool isAnimating;
     public void SetHeight(float height)
     {
-        // TODO: animation?
-        var currPos = transform.localPosition;
-        transform.localPosition = new Vector3(currPos.x, height / 2, currPos.z);
-        transform.localScale = new Vector3(1, height, 1);
+        isAnimating = true;
+        destinationHeight = height;
+        animationTime = 0;
     }
 
     public void SetPosition(float x, float y)
