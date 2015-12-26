@@ -1,6 +1,7 @@
 using UnityEngine;
-using System.Collections;
 using Assets.Code.DataProvider;
+using Assets.Code.Console;
+using System.Linq;
 
 public class BarObjectsGraph : MonoBehaviour
 {
@@ -14,10 +15,25 @@ public class BarObjectsGraph : MonoBehaviour
     // matching bars
     private GameObject[,] ingameBars;
 
+    private FileDataProvider dataProvider;
+
 	// Use this for initialization
 	void Start ()
     {
-	
+        dataProvider = new FileDataProvider();
+        UCommandRegister.RegisterCommand(new UConsoleCommand("loadData", (args) =>
+        {
+            if (args.Count() < 1)
+                return "Not enough arguments!";
+
+            dataProvider.ReadData(args.First());
+            data = dataProvider.GetData();
+            RegenerateGraph();
+            return "success";
+        }));
+
+        // load sample data at startup for debugging
+        dataProvider.ReadData("E:/data.csv");
 	}
 	
 
@@ -26,7 +42,7 @@ public class BarObjectsGraph : MonoBehaviour
     {
 	    if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            data = new RandomDataProvider().GetData();
+            data = dataProvider.GetData();
 
             RegenerateGraph();
 
