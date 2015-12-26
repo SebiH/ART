@@ -40,7 +40,7 @@ namespace Assets.Code.Console
                 }
                 else
                 {
-                    parameters.Add(parameter);
+                    parameters.Add(parameter.Trim());
                 }
             }
 
