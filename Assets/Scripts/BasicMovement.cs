@@ -10,14 +10,17 @@ public class BasicMovement : MonoBehaviour {
 
     void Update ()
     {
-        transform.RotateAround(transform.position, transform.right, -Input.GetAxis("Mouse Y") * lookSensitivity);
-        transform.RotateAround(transform.position, Vector3.up, Input.GetAxis("Mouse X") * lookSensitivity);
+        if (Input.GetButton("Fire1") || Input.GetButton("Fire2"))
+        {
+            transform.RotateAround(transform.position, transform.right, -Input.GetAxis("Mouse Y") * lookSensitivity);
+            transform.RotateAround(transform.position, Vector3.up, Input.GetAxis("Mouse X") * lookSensitivity);
 
-        CharacterController controller = GetComponent<CharacterController>();
+            CharacterController controller = GetComponent<CharacterController>();
 
-        moveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Flying"), Input.GetAxis("Vertical"));
-        moveDirection = transform.TransformDirection(moveDirection) * movementSpeed;
+            moveDirection = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Flying"), Input.GetAxis("Vertical"));
+            moveDirection = transform.TransformDirection(moveDirection) * movementSpeed;
 
-        controller.Move(moveDirection * Time.deltaTime);
+            controller.Move(moveDirection * Time.deltaTime);
+        }
     }
 }
