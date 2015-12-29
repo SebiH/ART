@@ -27,10 +27,20 @@ public class DataPoint : MonoBehaviour
     }
 
 
+    private Color _color;
+    public Color Color
+    {
+        get { return _color;  }
+        set
+        {
+            var renderer = GetComponent<MeshRenderer>();
+            renderer.material.color = value;
+            _color = value;
+        }
+    }
 
     void Start ()
     {
-
 	}
 	
 	void Update ()
