@@ -2,6 +2,7 @@ using UnityEngine;
 using Assets.Code.DataProvider;
 using Assets.Code.Console;
 using System.Linq;
+using Assets.Code.Graph;
 
 public class BarObjectsGraph : MonoBehaviour
 {
@@ -88,7 +89,7 @@ public class BarObjectsGraph : MonoBehaviour
                 else
                 {
                     bar.transform.parent = transform;
-                    dataPoint.SetHeight(data[x, y]);
+                    dataPoint.TargetHeight = data[x, y];
                     dataPoint.SetPosition(x, y);
                 }
 
@@ -119,7 +120,7 @@ public class BarObjectsGraph : MonoBehaviour
                     }
                     else
                     {
-                        dataPoint.SetHeight(data[x, y]);
+                        dataPoint.TargetHeight = data[x, y];
                     }
                 }
             }
