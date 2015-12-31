@@ -1,4 +1,5 @@
 using UnityEngine;
+using Assets.Code.Util;
 
 namespace Assets.Code.Graph
 {
@@ -74,11 +75,11 @@ namespace Assets.Code.Graph
                     if (Mathf.Abs(_targetHeight - Height) < Mathf.Epsilon)
                     {
                         // animation finished, unregister handler
-                        OnUpdate -= animateHeight;
+                        GlobalUpdater.OnUpdate -= animateHeight;
                     }
                 };
 
-                OnUpdate += animateHeight;
+                GlobalUpdater.OnUpdate += animateHeight;
 
             }
         }
@@ -96,22 +97,5 @@ namespace Assets.Code.Graph
          */
         abstract protected void OnHeightChange(float height);
         abstract protected void OnHighlightChange(bool isHighlighted);
-
-
-
-        /*
-         *  Unity events
-         */
-        private delegate void OnUpdateHandler();
-        private event OnUpdateHandler OnUpdate;
-
-        void Update()
-        {
-            // TODO: replace with static utility updater?
-            if (OnUpdate != null)
-            {
-                OnUpdate();
-            }
-        }
     }
 }
