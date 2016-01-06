@@ -16,25 +16,24 @@ public class BarObjectsGraph : MonoBehaviour
     // matching bars
     private GameObject[,] ingameBars;
 
-    private FileDataProvider dataProvider;
+    private IDataProvider dataProvider;
 
 	// Use this for initialization
 	void Start ()
     {
-        dataProvider = new FileDataProvider();
+        dataProvider = new RandomDataProvider();
+
         UCommandRegister.RegisterCommand(new UConsoleCommand("loadData", (args) =>
         {
             if (args.Count() < 1)
                 return "Not enough arguments!";
 
-            dataProvider.ReadData(args.First());
+            dataProvider = new FileDataProvider();
+            ((FileDataProvider)dataProvider).ReadData(args.First());
             data = dataProvider.GetData();
             RegenerateGraph();
             return "success";
         }));
-
-        // load sample data at startup for debugging
-        dataProvider.ReadData("E:/data.csv");
 	}
 	
 
@@ -43,7 +42,8 @@ public class BarObjectsGraph : MonoBehaviour
     {
 	    if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            data = dataProvider.GetData();
+            // use random data for this event only
+            data = new RandomDataProvider().GetData();
 
             RegenerateGraph();
 
