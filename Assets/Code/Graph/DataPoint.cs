@@ -1,5 +1,5 @@
 using UnityEngine;
-using Assets.Code.Util;
+using System.Collections;
 
 namespace Assets.Code.Graph
 {
@@ -49,38 +49,23 @@ namespace Assets.Code.Graph
 
 
 
-        protected float _targetHeight;
         public float TargetHeight
         {
-            get
-            {
-                return _targetHeight;
-            }
-
             set
             {
-                _targetHeight = value;
+                StopCoroutine("AnimatePosition");
+                StartCoroutine("AnimatePosition", value);
+            }
+        }
 
-                float animationTime = 0f;
-
-                // separate initialisation since handler removes itself after it has finished
-                OnUpdateHandler animateHeight = null;
-                animateHeight = () =>
-                {
-                    animationTime += Time.deltaTime;
-                    var interpolatedHeight = Mathf.Lerp(Height, _targetHeight, animationTime);
-                    Height = interpolatedHeight;
-
-                    // stop animating once we have reached desired height
-                    if (Mathf.Abs(_targetHeight - Height) < Mathf.Epsilon)
-                    {
-                        // animation finished, unregister handler
-                        GlobalUpdater.OnUpdate -= animateHeight;
-                    }
-                };
-
-                GlobalUpdater.OnUpdate += animateHeight;
-
+        private IEnumerator AnimatePosition(float targetHeight)
+        {
+            var currentVelocity = 0f;
+            while (Mathf.Abs(Height - targetHeight) > Mathf.Epsilon)
+            {
+                Height = Mathf.SmoothDamp(Height, targetHeight, ref currentVelocity, 0.25f);
+                // resume after next update
+                yield return null;
             }
         }
 
