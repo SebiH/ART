@@ -16,6 +16,7 @@ public class ObjectTracking : MonoBehaviour {
     // Update is called once per frame
     void Update ()
     {
+        /*
         var newTransformId = CameraImageProvider.GetImageGeneration();
 
         if (newTransformId > currentTransformId)
@@ -36,5 +37,6 @@ public class ObjectTracking : MonoBehaviour {
 
             currentTransformId = newTransformId;
         }
+        */
 	}
 }

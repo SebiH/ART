@@ -1,7 +1,6 @@
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using ImageProcessingUtil;
 using System.Drawing;
 using System.Threading;
 
@@ -43,9 +42,9 @@ namespace Assets.Code
                     // in
                     var frame = capture.QueryFrame();
 
-                    pose = new MarshalledPose();
+                    //pose = new MarshalledPose();
                     var tempImg = frame.ToImage<Bgr, byte>();
-                    ImageProcessor.TrackMarker(ref tempImg, ref pose);
+                    //ImageProcessor.TrackMarker(ref tempImg, ref pose);
 
                     // out
                     // unity uses RGB byte arrays, and c# methods don't switch channels in byte array!
@@ -73,10 +72,10 @@ namespace Assets.Code
         }
 
 
-        private static MarshalledPose pose;
-        public static MarshalledPose GetCurrentPose()
-        {
-            return pose;
-        }
+        //private static MarshalledPose pose;
+        //public static MarshalledPose GetCurrentPose()
+        //{
+        //    return pose;
+        //}
     }
 }
