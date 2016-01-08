@@ -102,7 +102,7 @@ public class ToggleAction : BaseAction
             {
                 foreach (GameObject go in GameObjects)
                 {
-                    go.SetActive(!go.activeSelf);
+                    go.SetActive(!go.activeInHierarchy);
                 }
 
                 lastActivationTime = Time.time;
