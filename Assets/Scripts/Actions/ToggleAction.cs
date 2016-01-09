@@ -23,6 +23,12 @@ public class ToggleAction : BaseAction
     /// </summary>
     public float timeoutThreshold = 2;
 
+    /// <summary>
+    /// Determines the maximum distance between this GameObject and the gesture. If the gesture
+    /// happens outside of this distance, the gesture will not be recognized.
+    /// </summary>
+    public float maxTriggerDistance = Mathf.Infinity;
+
     #endregion
 
     #region Public Methods
@@ -76,6 +82,8 @@ public class ToggleAction : BaseAction
     #region Private Methods
 
     private float lastActivationTime = 0;
+    // for debugging
+    private List<Vector3> gesturePoints = new List<Vector3>();
 
     /// <summary>
     /// Update is called once per frame.
@@ -100,9 +108,52 @@ public class ToggleAction : BaseAction
         {
             if (trgr.Success)
             {
-                foreach (GameObject go in GameObjects)
+                // TODO: better gesturemanager, see issue #22
+                // workaround for now, since realsense's gesture do not seem to implement
+                // (works only with the default pinch gesture probably)
+                var thumbs = GameObject.FindGameObjectsWithTag("thumb");
+                var indexFingers = GameObject.FindGameObjectsWithTag("index");
+                var gestureThreshold = 5f;
+
+                bool gesturePointFound = false;
+                Vector3 gesturePosition = Vector3.zero;
+
+                foreach (var thumb in thumbs)
                 {
-                    go.SetActive(!go.activeInHierarchy);
+                    foreach (var indexFinger in indexFingers)
+                    {
+                        if ((thumb.transform.position - indexFinger.transform.position).magnitude < gestureThreshold)
+                        {
+                            // found cause of gesture
+                            gesturePointFound = true;
+                            gesturePosition = thumb.transform.position * 2 - indexFinger.transform.position;
+                            // for debugging
+                            gesturePoints.Add(gesturePosition);
+                            Debug.Log("Found gesture!");
+
+                            break;
+                        }
+                    }
+
+                    if (gesturePointFound)
+                    {
+                        break;
+                    }
+                }
+
+                if (gesturePointFound && (transform.position - gesturePosition).magnitude < maxTriggerDistance)
+                {
+                    foreach (GameObject go in GameObjects)
+                    {
+                        go.SetActive(!go.activeInHierarchy);
+                    }
+                }
+                else
+                {
+                    if (!gesturePointFound)
+                        Debug.Log("No GesturePoint Found");
+                    else
+                        Debug.Log("Outside of bounds!");
                 }
 
                 lastActivationTime = Time.time;
@@ -111,5 +162,23 @@ public class ToggleAction : BaseAction
         }
     }
 
+    #endregion
+
+
+    #region Debugging
+    private void OnDrawGizmos()
+    {
+        if (!float.IsInfinity(maxTriggerDistance))
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(transform.position, maxTriggerDistance);
+        }
+        
+        foreach (var gp in gesturePoints)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawSphere(gp, 0.5f);
+        }
+    }
     #endregion
 }
