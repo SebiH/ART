@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using RSUnityToolkit;
+using Assets.Code.Triggers;
+using Assets.Code.Rules;
 
 /// <summary>
 /// Proximity move action: moves the game object in the direction of the trigger's translation data, 
@@ -71,15 +73,8 @@ public class ProximityMoveAction : VirtualWorldBoxAction
         switch (index)
         {
             case 0:
-                trigger.FriendlyName = "Start Event";
-                ((EventTrigger)trigger).Rules = new BaseRule[1] { AddHiddenComponent<HandClosedRule>() };
-                break;
-            case 1:
-                ((TranslationTrigger)trigger).Rules = new BaseRule[1] { AddHiddenComponent<HandMoveRule>() };
-                break;
-            case 2:
-                trigger.FriendlyName = "Stop Event";
-                ((EventTrigger)trigger).Rules = new BaseRule[1] { AddHiddenComponent<HandOpennedRule>() };
+                trigger.FriendlyName = "Gesture Event";
+                ((GestureTrackingTrigger)trigger).Rules = new BaseRule[1] { AddHiddenComponent<GestureTrackingRule>() };
                 break;
         }
     }
@@ -93,10 +88,8 @@ public class ProximityMoveAction : VirtualWorldBoxAction
     /// </summary>
     protected override void SetDefaultTriggers()
     {
-        SupportedTriggers = new Trigger[3]{
-            AddHiddenComponent<EventTrigger>(),
-            AddHiddenComponent<TranslationTrigger>(),
-            AddHiddenComponent<EventTrigger>()
+        SupportedTriggers = new Trigger[1]{
+            AddHiddenComponent<GestureTrackingTrigger>(),
         };
     }
 
@@ -115,73 +108,64 @@ public class ProximityMoveAction : VirtualWorldBoxAction
 
         ProcessAllTriggers();
 
-        //Start Event
-        if (!_actionTriggered && SupportedTriggers[0].Success)
+        if (!SupportedTriggers[0].Success)
         {
             // TODO: better gesturemanager, see issue #22
             // workaround for now, since realsense's gesture do not seem to implement
             // (works only with the default pinch gesture probably)
-            var thumbs = GameObject.FindGameObjectsWithTag("thumb");
-            var indexFingers = GameObject.FindGameObjectsWithTag("index");
-            var gestureThreshold = 5f;
+            //var thumbs = GameObject.FindGameObjectsWithTag("thumb");
+            //var indexFingers = GameObject.FindGameObjectsWithTag("index");
+            //var gestureThreshold = 5f;
 
-            bool gesturePointFound = false;
-            Vector3 gesturePosition = Vector3.zero;
+            //bool gesturePointFound = false;
+            //Vector3 gesturePosition = Vector3.zero;
 
-            foreach (var thumb in thumbs)
-            {
-                foreach (var indexFinger in indexFingers)
-                {
-                    if ((thumb.transform.position - indexFinger.transform.position).magnitude < gestureThreshold)
-                    {
-                        // found cause of gesture
-                        gesturePointFound = true;
-                        gesturePosition = thumb.transform.position * 2 - indexFinger.transform.position;
-                        // for debugging
-                        gesturePoints.Add(gesturePosition);
-                        Debug.Log("Found gesture!");
+            //foreach (var thumb in thumbs)
+            //{
+            //    foreach (var indexFinger in indexFingers)
+            //    {
+            //        if ((thumb.transform.position - indexFinger.transform.position).magnitude < gestureThreshold)
+            //        {
+            //            // found cause of gesture
+            //            gesturePointFound = true;
+            //            gesturePosition = thumb.transform.position * 2 - indexFinger.transform.position;
+            //            // for debugging
+            //            gesturePoints.Add(gesturePosition);
+            //            Debug.Log("Found gesture!");
 
-                        break;
-                    }
-                }
+            //            break;
+            //        }
+            //    }
 
-                if (gesturePointFound)
-                {
-                    break;
-                }
-            }
-
-
+            //    if (gesturePointFound)
+            //    {
+            //        break;
+            //    }
+            //}
 
 
 
-            if (gesturePointFound && (transform.position - gesturePosition).magnitude < MaxActivationDistance)
-            {
-                _actionTriggered = true;
 
-                ((TranslationTrigger)SupportedTriggers[1]).Restart = true;
-            }
-            else
-            {
-                if (!gesturePointFound)
-                    Debug.Log("No GesturePoint Found");
-                else
-                    Debug.Log("Outside of bounds!");
-            }
+
+            //if (gesturePointFound && (transform.position - gesturePosition).magnitude < MaxActivationDistance)
+            //{
+
+            //}
+            //else
+            //{
+            //    if (!gesturePointFound)
+            //        Debug.Log("No GesturePoint Found");
+            //    else
+            //        Debug.Log("Outside of bounds!");
+            //}
         }
 
-        //Stop Event
-        if (_actionTriggered && SupportedTriggers[2].Success)
-        {
-            _actionTriggered = false;
-        }
+        //if (!_actionTriggered)
+        //{
+        //    return;
+        //}
 
-        if (!_actionTriggered)
-        {
-            return;
-        }
-
-        TranslationTrigger trgr = (TranslationTrigger)SupportedTriggers[1];
+        GestureTrackingTrigger trgr = (GestureTrackingTrigger)SupportedTriggers[0];
 
         if (trgr.Success)
         {
