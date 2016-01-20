@@ -97,8 +97,6 @@ public class ProximityMoveAction : VirtualWorldBoxAction
 
     #region Private Methods
 
-    private List<Vector3> gesturePoints = new List<Vector3>();
-
     /// <summary>
     /// Update is called once per frame.
     /// </summary>
@@ -130,7 +128,6 @@ public class ProximityMoveAction : VirtualWorldBoxAction
             //            gesturePointFound = true;
             //            gesturePosition = thumb.transform.position * 2 - indexFinger.transform.position;
             //            // for debugging
-            //            gesturePoints.Add(gesturePosition);
             //            Debug.Log("Found gesture!");
 
             //            break;
@@ -256,12 +253,6 @@ public class ProximityMoveAction : VirtualWorldBoxAction
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(transform.position, MaxActivationDistance);
-        }
-
-        foreach (var gp in gesturePoints)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(gp, 0.6f);
         }
     }
     #endregion

@@ -82,8 +82,6 @@ public class ToggleAction : BaseAction
     #region Private Methods
 
     private float lastActivationTime = 0;
-    // for debugging
-    private List<Vector3> gesturePoints = new List<Vector3>();
 
     /// <summary>
     /// Update is called once per frame.
@@ -128,7 +126,6 @@ public class ToggleAction : BaseAction
                             gesturePointFound = true;
                             gesturePosition = thumb.transform.position * 2 - indexFinger.transform.position;
                             // for debugging
-                            gesturePoints.Add(gesturePosition);
                             Debug.Log("Found gesture!");
 
                             break;
@@ -172,12 +169,6 @@ public class ToggleAction : BaseAction
         {
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(transform.position, maxTriggerDistance);
-        }
-        
-        foreach (var gp in gesturePoints)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(gp, 0.5f);
         }
     }
     #endregion
