@@ -14,7 +14,7 @@ public class OvrvisionTracker : MonoBehaviour {
 	private GameObject OvrvisionProCameraObj = null;
 
 	private float hideTime;
-	public float stopTime = 1.0f;
+	public float timeToDisappear = 1.0f;
 
 	private Vector3 offsetPos = new Vector3(-0.032f,0.0f,0.0f);
 	
@@ -33,7 +33,7 @@ public class OvrvisionTracker : MonoBehaviour {
 		}
 
 		this.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-		hideTime = stopTime;
+		hideTime = timeToDisappear;
 	}
 
 	// UpdateTracker
@@ -60,10 +60,10 @@ public class OvrvisionTracker : MonoBehaviour {
 		if (!MovieOVRCameraRig)
 		{
 			hideTime += Time.deltaTime;
-			if (hideTime >= stopTime)
+			if (hideTime >= timeToDisappear)
 			{
 				this.transform.localPosition = new Vector3(-10000.0f, -10000.0f, -10000.0f);
-				hideTime = stopTime;
+				hideTime = timeToDisappear;
 			}
 		}
 		else

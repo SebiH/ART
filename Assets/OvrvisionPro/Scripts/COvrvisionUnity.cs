@@ -59,6 +59,8 @@ public class COvrvisionUnity
     //Set camera properties
     [DllImport("ovrvision", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void ovSetExposure(int value);
+	[DllImport("ovrvision", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
+	static extern int ovSetExposurePerSec(float value);
     [DllImport("ovrvision", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void ovSetGain(int value);
     [DllImport("ovrvision", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
@@ -209,7 +211,7 @@ public class COvrvisionUnity
 			ovARRender();
 
 		if (useOvrvisionTrack)
-			ovTrackRender(useOvrvisionTrack_Calib, true);
+			ovTrackRender(useOvrvisionTrack_Calib, false);
 
 		ovGetCamImageForUnityNative(leftPtr, rightPtr);
     }
@@ -345,18 +347,12 @@ public class COvrvisionUnity
 		return ovARGetData(mdata, datasize);
 	}
 
-	//HandTracking
-	public int OvrvisionGetFinger3(System.IntPtr mdata)
-	{
-		return ovGetTrackData(mdata);
-	}
-
 	//Tracking
 	public void OvrvisionTrackRender(bool calib, bool point)
 	{
 		ovTrackRender(calib,point);
 	}
-	public int OvrvisionGetTracking(System.IntPtr mdata)
+	public int OvrvisionGetTrackingVec3(System.IntPtr mdata)
 	{
 		return ovGetTrackData(mdata);
 	}

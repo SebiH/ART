@@ -18,8 +18,8 @@ public class Ovrvision : MonoBehaviour
 	private GameObject CameraPlaneLeft;
 	private GameObject CameraPlaneRight;
 	//Camera texture
-	private Texture2D CameraTexLeft;
-	private Texture2D CameraTexRight;
+	private Texture2D CameraTexLeft = null;
+	private Texture2D CameraTexRight = null;
 	private Vector3 CameraRightGap;
 
 	//public propaty
@@ -125,6 +125,12 @@ public class Ovrvision : MonoBehaviour
 		CameraPlaneRight.transform.localPosition = new Vector3(CameraRightGap.x - 0.040f, 0.0f, OvrPro.GetFloatPoint() + IMAGE_ZOFFSET);
 
 		UnityEngine.VR.InputTracking.Recenter();
+
+		if (useOvrvisionTrack)
+		{
+			OvrPro.useOvrvisionTrack_Calib = true;
+			CameraPlaneRight.active = !OvrPro.useOvrvisionTrack_Calib;
+		}
 	}
 
 	private Mesh CreateCameraPlaneMesh()
@@ -235,9 +241,9 @@ public class Ovrvision : MonoBehaviour
 		float[] markerGet = new float[3];
 		GCHandle marker = GCHandle.Alloc(markerGet, GCHandleType.Pinned);
 		//Get marker data
-		int ri = OvrPro.OvrvisionGetFinger3(marker.AddrOfPinnedObject());
-		//if (ri > 0)
-		//	return 0;
+		int ri = OvrPro.OvrvisionGetTrackingVec3(marker.AddrOfPinnedObject());
+		if (ri == 0)
+			return 0;
 
 		Vector3 fgpos = new Vector3(markerGet[0], markerGet[1], markerGet[2]);
 
@@ -296,12 +302,18 @@ public class Ovrvision : MonoBehaviour
 	{
 		if (viewShader == 0)
 		{
+			CameraLeft.GetComponent<Camera>().enabled = true;
+			CameraRight.GetComponent<Camera>().enabled = true;
+
 			//Normal Shader
 			CameraPlaneLeft.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovTexture");
 			CameraPlaneRight.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovTexture");
 		}
 		else if (viewShader == 1)
 		{
+			CameraLeft.GetComponent<Camera>().enabled = true;
+			CameraRight.GetComponent<Camera>().enabled = true;
+
 			//Chroma-key Shader
 			CameraPlaneLeft.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovChromaticMask");
 			CameraPlaneRight.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovChromaticMask");
@@ -322,6 +334,9 @@ public class Ovrvision : MonoBehaviour
 		}
 		else if (viewShader == 2)
 		{
+			CameraLeft.GetComponent<Camera>().enabled = true;
+			CameraRight.GetComponent<Camera>().enabled = true;
+
 			//Hand Mask Shader
 			CameraPlaneLeft.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovHandMaskRev");
 			CameraPlaneRight.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovHandMaskRev");
@@ -354,5 +369,22 @@ public class Ovrvision : MonoBehaviour
 			CameraPlaneRight.GetComponent<Renderer>().material.SetFloat("_Color_maxCR", chroma_cr.x);
 			CameraPlaneRight.GetComponent<Renderer>().material.SetFloat("_Color_minCR", chroma_cr.y);
 		}
+		if (viewShader == 3)
+		{
+			//hide
+			CameraLeft.GetComponent<Camera>().enabled = false;
+			CameraRight.GetComponent<Camera>().enabled = false;
+		}
+	}
+
+	// get propaty
+	public Texture2D GetCameraTextureLeft()
+	{
+		return CameraTexLeft;
+	}
+
+	public Texture2D GetCameraTextureRight()
+	{
+		return CameraTexRight;
 	}
 }

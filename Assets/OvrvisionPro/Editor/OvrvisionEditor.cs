@@ -68,7 +68,7 @@ public class OvrvisionEditor : Editor {
 
 		EditorGUILayout.Space();
 
-		string[] planeshader = { "Normal Shader", "Chroma-key Shader", "Hand Mask Shader" };
+		string[] planeshader = { "Normal Shader", "Chroma-key Shader", "Hand Mask Shader", "None" };
 		obj.camViewShader = EditorGUILayout.Popup("Camera Overlay", obj.camViewShader, planeshader);
 
 		if (obj.camViewShader == 1)
