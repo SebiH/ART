@@ -1,15 +1,20 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 
 public class Button : MonoBehaviour
 {
-    private bool isPressed;
     public GameObject ButtonObj;
 
     public Vector3 ClickedPosition = new Vector3(0f, -0.1f, 0f);
     public Color ClickedColour = Color.green;
 
+    public UnityEvent OnButtonPress;
+    public UnityEvent OnButtonHold;
+    public UnityEvent OnButtonRelease;
+
     private Color OriginalColour;
+    private bool isPressed;
 
     private void Start()
     {
@@ -23,6 +28,8 @@ public class Button : MonoBehaviour
         {
             isPressed = true;
 
+            OnButtonPress.Invoke();
+
             // move button down to indicate pressed state
             StopCoroutine("AnimatePosition");
             StartCoroutine("AnimatePosition", ClickedPosition);
@@ -34,6 +41,10 @@ public class Button : MonoBehaviour
 
     }
 
+    private void OnTriggerStay()
+    {
+        OnButtonHold.Invoke();
+    }
 
     private void OnTriggerExit(Collider other)
     {
@@ -42,6 +53,8 @@ public class Button : MonoBehaviour
         if (isPressed)
         {
             isPressed = false;
+
+            OnButtonRelease.Invoke();
 
             // go to default location/state/colour
             StopCoroutine("AnimatePosition");
