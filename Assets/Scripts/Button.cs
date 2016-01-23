@@ -28,8 +28,8 @@ public class Button : MonoBehaviour
             StartCoroutine("AnimatePosition", ClickedPosition);
 
             // change colour
-            StopCoroutine("ChangeColour");
-            StartCoroutine("ChangeColour", ClickedColour);
+            StopCoroutine("AnimateColour");
+            StartCoroutine("AnimateColour", ClickedColour);
         }
 
     }
@@ -47,8 +47,8 @@ public class Button : MonoBehaviour
             StopCoroutine("AnimatePosition");
             StartCoroutine("AnimatePosition", Vector3.zero);
 
-            StopCoroutine("ChangeColour");
-            StartCoroutine("ChangeColour", Color.white);
+            StopCoroutine("AnimateColour");
+            StartCoroutine("AnimateColour", OriginalColour);
         }
     }
 
@@ -63,7 +63,7 @@ public class Button : MonoBehaviour
         }
     }
 
-    private IEnumerator ChangeColour(Color to)
+    private IEnumerator AnimateColour(Color to)
     {
         var renderer = ButtonObj.GetComponent<MeshRenderer>();
         var colorDistance = renderer.material.color - to;
