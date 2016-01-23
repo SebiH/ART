@@ -6,7 +6,7 @@ public class Button : MonoBehaviour
     private bool isPressed;
     public GameObject ButtonObj;
 
-    public float ClickedPositionChange = -0.1f;
+    public Vector3 ClickedPosition = new Vector3(0f, -0.1f, 0f);
     public Color ClickedColour = Color.green;
 
     private Color OriginalColour;
@@ -25,7 +25,7 @@ public class Button : MonoBehaviour
 
             // move button down to indicate pressed state
             StopCoroutine("AnimatePosition");
-            StartCoroutine("AnimatePosition", true);
+            StartCoroutine("AnimatePosition", ClickedPosition);
 
             // change colour
             StopCoroutine("ChangeColour");
@@ -45,7 +45,7 @@ public class Button : MonoBehaviour
 
             // go to default location/state/colour
             StopCoroutine("AnimatePosition");
-            StartCoroutine("AnimatePosition", false);
+            StartCoroutine("AnimatePosition", Vector3.zero);
 
             StopCoroutine("ChangeColour");
             StartCoroutine("ChangeColour", Color.white);
@@ -53,18 +53,11 @@ public class Button : MonoBehaviour
     }
 
 
-    private IEnumerator AnimatePosition(bool isPressed)
+    private IEnumerator AnimatePosition(Vector3 to)
     {
-        var currentVelocity = 0f;
-        var targetHeight = (isPressed) ? ClickedPositionChange : 0f;
-        var currentHeight = ButtonObj.transform.localPosition.y; 
-
-        while (Mathf.Abs(currentHeight - targetHeight) > Mathf.Epsilon)
+        while ((ButtonObj.transform.localPosition - to).sqrMagnitude > Mathf.Epsilon)
         {
-            var newHeight = Mathf.SmoothDamp(currentHeight, targetHeight, ref currentVelocity, 0.05f);
-
-            currentHeight = ButtonObj.transform.localPosition.y;
-            ButtonObj.transform.localPosition = new Vector3(ButtonObj.transform.localPosition.x, newHeight, ButtonObj.transform.localPosition.z);
+            ButtonObj.transform.localPosition = Vector3.Lerp(ButtonObj.transform.localPosition, to, Time.deltaTime * 15f);
             // resume after next update
             yield return null;
         }
@@ -80,7 +73,7 @@ public class Button : MonoBehaviour
                Mathf.Abs(colorDistance.b) > Mathf.Epsilon ||
                Mathf.Abs(colorDistance.a) > Mathf.Epsilon)
         {
-            var newColour = Color.Lerp(renderer.material.color, to, Time.deltaTime * 10f);
+            var newColour = Color.Lerp(renderer.material.color, to, Time.deltaTime * 15f);
             renderer.material.color = newColour;
 
             // resume after next update
