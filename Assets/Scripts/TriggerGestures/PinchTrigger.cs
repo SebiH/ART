@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Pinch : MonoBehaviour {
+public class PinchTrigger : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
