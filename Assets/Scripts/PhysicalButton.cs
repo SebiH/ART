@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.Events;
 
-public class Button : MonoBehaviour
+public class PhysicalButton : MonoBehaviour
 {
     public GameObject ButtonObj;
 
