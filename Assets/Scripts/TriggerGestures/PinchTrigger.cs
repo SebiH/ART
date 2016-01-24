@@ -1,7 +1,7 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
-public class PinchTrigger : MonoBehaviour {
+public class PinchTrigger : BaseTrigger {
 
     public string TriggerFingerTag = "index";
 
@@ -9,7 +9,8 @@ public class PinchTrigger : MonoBehaviour {
     {
         if (other.tag == TriggerFingerTag)
         {
-            print("On Trigger enter");
+            FireGestureDetected(GetCollisionPosition(other));
+            StopCoroutine("TimeoutGestureStop");
         }
     }
 
@@ -18,7 +19,7 @@ public class PinchTrigger : MonoBehaviour {
     {
         if (other.tag == TriggerFingerTag)
         {
-            print("On Trigger stay");
+            FireGestureHold(GetCollisionPosition(other));
         }
     }
 
@@ -27,7 +28,17 @@ public class PinchTrigger : MonoBehaviour {
     {
         if (other.tag == TriggerFingerTag)
         {
-            print("On Trigger exit");
+            FireGestureStop(GetCollisionPosition(other));
         }
     }
+
+
+    private Vector3 GetCollisionPosition(Collider collider)
+    {
+        // TODO: proper position of collision?
+        // [1] mentions contacts property, but collider doesn't seem to have this?
+        // [1]: http://docs.unity3d.com/ScriptReference/Collision.html
+        return transform.position;
+    }
+
 }
