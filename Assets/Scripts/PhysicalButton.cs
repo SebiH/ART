@@ -28,7 +28,8 @@ public class PhysicalButton : MonoBehaviour
         {
             isPressed = true;
 
-            OnButtonPress.Invoke();
+            if (OnButtonPress != null)
+                OnButtonPress.Invoke();
 
             // move button down to indicate pressed state
             StopCoroutine("AnimatePosition");
@@ -43,7 +44,8 @@ public class PhysicalButton : MonoBehaviour
 
     private void OnTriggerStay()
     {
-        OnButtonHold.Invoke();
+        if (OnButtonHold != null)
+            OnButtonHold.Invoke();
     }
 
     private void OnTriggerExit(Collider other)
@@ -54,7 +56,8 @@ public class PhysicalButton : MonoBehaviour
         {
             isPressed = false;
 
-            OnButtonRelease.Invoke();
+            if (OnButtonRelease != null)
+                OnButtonRelease.Invoke();
 
             // go to default location/state/colour
             StopCoroutine("AnimatePosition");
