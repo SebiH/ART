@@ -7,23 +7,23 @@ using System.Collections.Generic;
 /// </summary>
 public abstract class BaseTrigger : MonoBehaviour
 {
-    public UnityEvent<Vector3> OnGestureDetected;
-    public UnityEvent<Vector3> OnGestureHold;
-    public UnityEvent<Vector3> OnGestureStop;
+    public UnityEvent OnGestureDetected;
+    public UnityEvent OnGestureHold;
+    public UnityEvent OnGestureStop;
 
     public bool DrawDebugPoints = false;
 
     protected void FireGestureDetected(Vector3 pos)
     {
         if (OnGestureDetected != null)
-            OnGestureDetected.Invoke(pos);
+            OnGestureDetected.Invoke();
     }
 
 
     protected void FireGestureHold(Vector3 pos)
     {
         if (OnGestureHold != null)
-            OnGestureHold.Invoke(pos);
+            OnGestureHold.Invoke();
 
 
         if (DrawDebugPoints)
@@ -40,7 +40,7 @@ public abstract class BaseTrigger : MonoBehaviour
     protected void FireGestureStop(Vector3 pos)
     {
         if (OnGestureStop != null)
-            OnGestureStop.Invoke(pos);
+            OnGestureStop.Invoke();
 
         if (DrawDebugPoints)
         {
