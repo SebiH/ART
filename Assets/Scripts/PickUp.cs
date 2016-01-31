@@ -3,17 +3,14 @@ using System.Collections;
 
 public class PickUp : MonoBehaviour
 {
-    private SpringJoint joint;
+    private FixedJoint joint;
+    public GameObject attachTo;
 
     public void StartPickup()
     {
-        var finger = GameObject.FindGameObjectsWithTag("thumb")[0];
-        joint = finger.gameObject.AddComponent<SpringJoint>();
+        transform.position = attachTo.transform.position;
+        joint = attachTo.gameObject.AddComponent<FixedJoint>();
         joint.connectedBody = GetComponent<Rigidbody>();
-        joint.spring = 60f;
-        joint.damper = 0.2f;
-        joint.maxDistance = 0f;
-        joint.minDistance = 0f;
     }
 
     public void EndPickup()
