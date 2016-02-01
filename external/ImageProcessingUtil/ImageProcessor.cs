@@ -154,14 +154,13 @@ namespace ImageProcessingUtil
 
         public static void TestOvr()
         {
-            //ProcessOvr();
             ovSetExposure(12960);
             ovSetGain(47);
             ovSetWhiteBalanceAuto(true);
             ovSetCamSyncMode(false);
             ovSetBLC(0);
 
-            int opentype = 1;
+            int opentype = 3;
             int imageSizeW, imageSizeH;
             Bitmap imageDataLeft, imageDataRight;
 
@@ -184,19 +183,22 @@ namespace ImageProcessingUtil
             while (true)
             {
                 ovPreStoreCamData(1);
+
+                // get image data
                 BitmapData dataLeft = imageDataLeft.LockBits(new Rectangle(0, 0, imageSizeW, imageSizeH), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
-
-                //get image data
                 ovGetCamImageBGR(dataLeft.Scan0, OV_CAMEYE_LEFT);
-
                 imageDataLeft.UnlockBits(dataLeft);
 
-                // convert to EmguCV
-                //Mat img = new Mat(dataLeft.Height, dataLeft.Width, Emgu.CV.CvEnum.DepthType.Cv8U, 3, dataLeft.Scan0, dataLeft.Stride);
+                BitmapData dataRight = imageDataRight.LockBits(new Rectangle(0, 0, imageSizeW, imageSizeH), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
+                ovGetCamImageBGR(dataRight.Scan0, OV_CAMEYE_RIGHT);
+                imageDataRight.UnlockBits(dataRight);
 
-                using (var img = new Image<Bgra, byte>(imageDataLeft))
+                // convert to emgucv
+                using (var imgLeft = new Image<Bgra, byte>(imageDataLeft))
+                using (var imgRight = new Image<Bgra, byte>(imageDataRight))
                 {
-                    CvInvoke.Imshow("x", img);
+                    CvInvoke.Imshow("left", imgLeft);
+                    CvInvoke.Imshow("right", imgRight);
                     CvInvoke.WaitKey();
                 }
             }
