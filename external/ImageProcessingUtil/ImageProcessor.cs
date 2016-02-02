@@ -14,6 +14,9 @@ namespace ImageProcessingUtil
         private static extern void DetectMarker([MarshalAs(UnmanagedType.Struct)] ref MarshalledImageData image, [MarshalAs(UnmanagedType.Struct)] ref MarshalledPose pose);
 
 
+        [DllImport("ImageProcessing")]
+        private static extern void RunOvrTest();
+
 
 
 
@@ -154,6 +157,9 @@ namespace ImageProcessingUtil
 
         public static void TestOvr()
         {
+            RunOvrTest();
+            return;
+
             ovSetExposure(12960);
             ovSetGain(47);
             ovSetWhiteBalanceAuto(true);
