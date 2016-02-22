@@ -14,12 +14,6 @@ namespace ImageProcessingUtil
         private static extern void DetectMarker([MarshalAs(UnmanagedType.Struct)] ref MarshalledImageData image, [MarshalAs(UnmanagedType.Struct)] ref MarshalledPose pose);
 
 
-        [DllImport("ImageProcessing")]
-        private static extern void RunOvrTest();
-
-
-
-
         //Ovrvision Dll import
         //ovrvision_csharp.cpp
         ////////////// Main Ovrvision System //////////////
