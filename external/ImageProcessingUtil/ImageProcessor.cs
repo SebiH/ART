@@ -1,7 +1,7 @@
 using Emgu.CV;
 using Emgu.CV.Structure;
+using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
 namespace ImageProcessingUtil
@@ -155,10 +155,13 @@ namespace ImageProcessingUtil
         public const int OV_CAMEYE_LEFT = 0;
         public const int OV_CAMEYE_RIGHT = 1;
 
-        public static void TestOvr()
+        public static unsafe void TestOvr()
         {
-            RunOvrTest();
-            return;
+            // open camera
+            if (ovOpen(0, 0.15f, 3) != 0)
+            {
+                return;
+            }
 
             ovSetExposure(12960);
             ovSetGain(47);
@@ -166,45 +169,31 @@ namespace ImageProcessingUtil
             ovSetCamSyncMode(false);
             ovSetBLC(0);
 
-            int opentype = 3;
-            int imageSizeW, imageSizeH;
-            Bitmap imageDataLeft, imageDataRight;
+            var camWidth = ovGetImageWidth();
+            var camHeight = ovGetImageHeight();
 
-            //Open camera
-            if (ovOpen(0, 0.15f, opentype) == 0)
+            using (var imgLeft = new Image<Bgra, byte>(new Size(camWidth, camHeight)))
+            using (var imgRight = new Image<Bgra, byte>(new Size(camWidth, camHeight)))
+            using (var imgComposite = new Image<Bgra, byte>(new Size(camWidth * 2, camHeight)))
             {
-                imageSizeW = ovGetImageWidth();
-                imageSizeH = ovGetImageHeight();
-
-                //Create bitmap
-                imageDataLeft = new Bitmap(imageSizeW, imageSizeH, PixelFormat.Format24bppRgb);
-                imageDataRight = new Bitmap(imageSizeW, imageSizeH, PixelFormat.Format24bppRgb);
-            }
-            else
-            {
-                return;
-            }
-
-
-            while (true)
-            {
-                ovPreStoreCamData(1);
-
-                // get image data
-                BitmapData dataLeft = imageDataLeft.LockBits(new Rectangle(0, 0, imageSizeW, imageSizeH), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
-                ovGetCamImageBGR(dataLeft.Scan0, OV_CAMEYE_LEFT);
-                imageDataLeft.UnlockBits(dataLeft);
-
-                BitmapData dataRight = imageDataRight.LockBits(new Rectangle(0, 0, imageSizeW, imageSizeH), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
-                ovGetCamImageBGR(dataRight.Scan0, OV_CAMEYE_RIGHT);
-                imageDataRight.UnlockBits(dataRight);
-
-                // convert to emgucv
-                using (var imgLeft = new Image<Bgra, byte>(imageDataLeft))
-                using (var imgRight = new Image<Bgra, byte>(imageDataRight))
+                while (true)
                 {
-                    CvInvoke.Imshow("left", imgLeft);
-                    CvInvoke.Imshow("right", imgRight);
+                    ovPreStoreCamData(1);
+
+                    fixed (byte* imgLeftPtr = imgLeft.Data)
+                    fixed (byte* imgRightPtr = imgRight.Data)
+                    {
+                        ovGetCamImageBGRA(new IntPtr(imgLeftPtr), OV_CAMEYE_LEFT);
+                        ovGetCamImageBGRA(new IntPtr(imgRightPtr), OV_CAMEYE_RIGHT);
+                    }
+
+                    var roiLeft = new Mat(imgComposite.Mat, new Rectangle(0, 0, camWidth, camHeight));
+                    imgLeft.Mat.CopyTo(roiLeft);
+
+                    var roiRight = new Mat(imgComposite.Mat, new Rectangle(camWidth, 0, camWidth, camHeight));
+                    imgRight.Mat.CopyTo(roiRight);
+
+                    CvInvoke.Imshow("Composite", imgComposite);
                     CvInvoke.WaitKey(10);
                 }
             }
