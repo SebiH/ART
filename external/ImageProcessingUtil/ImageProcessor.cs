@@ -205,7 +205,7 @@ namespace ImageProcessingUtil
                 {
                     CvInvoke.Imshow("left", imgLeft);
                     CvInvoke.Imshow("right", imgRight);
-                    CvInvoke.WaitKey();
+                    CvInvoke.WaitKey(10);
                 }
             }
         }
