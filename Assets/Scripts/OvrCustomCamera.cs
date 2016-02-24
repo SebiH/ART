@@ -1,9 +1,10 @@
+using ComputerVision;
 using UnityEngine;
-using System.Collections;
-using Assets.Code;
 
 public class OvrCustomCamera : MonoBehaviour
 {
+    public bool UseImageProcessing = false;
+
 	// Camera GameObject
 	private GameObject CameraLeft;
 	private GameObject CameraRight;
@@ -14,9 +15,8 @@ public class OvrCustomCamera : MonoBehaviour
 	private Texture2D CameraTexRight = null;
 	private Vector3 CameraRightGap;
 
-    // TODO: get camera image size from OVRVision?
-    private int ImageWidth = 960;
-    private int ImageHeight = 950;
+    private int ImageWidth;
+    private int ImageHeight;
 
     private int appliedImageId = -1;
 
@@ -24,18 +24,14 @@ public class OvrCustomCamera : MonoBehaviour
 
     void Awake()
     {
-        CameraImageProvider.Start();
+        ImageProcessor.Initialize();
+        ImageWidth = ImageProcessor.Settings.imageSizeW;
+        ImageHeight = ImageProcessor.Settings.imageSizeH;
     }
 
 
     void Start()
     {
-        if (!CameraImageProvider.IsRunning)
-        {
-            Debug.Log("Unable to start: CameraImageProvider is not running!");
-            return;
-        }
-
 		// Initialize camera plane object(Left)
 		CameraLeft = transform.FindChild("LeftCamera").gameObject;
 		CameraRight = transform.FindChild("RightCamera").gameObject;
@@ -71,55 +67,24 @@ public class OvrCustomCamera : MonoBehaviour
 		CameraPlaneLeft.GetComponent<Renderer>().materials[1].SetTexture("_MainTex", CameraTexLeft);
 		CameraPlaneRight.GetComponent<Renderer>().materials[1].SetTexture("_MainTex", CameraTexRight);
 
-        // OvrPro is initialized elsewhere, so we'll just use standard parameters for 860x850
-        // TODO: maybe provide this via api? current problem is that the initialisation is async
-
-        // OvrPro.GetFloatPoint()
-        var defaultFloatpoint = 0.427990019f;
-        // OvrPro.HMDCameraRightGap();
-        var defaultRightGap = new Vector3(0.0566581376f, -0.000236578562f, 0.001237078f);
-        // OvrPro.aspectW
-        var defaultAspectW = 1.0105263f;
-
-        CameraRightGap = defaultRightGap;
+        CameraRightGap = ImageProcessor.Settings.HMDCameraRightGap();
 
         // Plane reset
-        CameraPlaneLeft.transform.localScale = new Vector3(defaultAspectW, -1.0f, 1.0f);
-        CameraPlaneRight.transform.localScale = new Vector3(defaultAspectW, -1.0f, 1.0f);
-        CameraPlaneLeft.transform.localPosition = new Vector3(-0.032f, 0.0f, defaultFloatpoint + IMAGE_ZOFFSET);
-        CameraPlaneRight.transform.localPosition = new Vector3(CameraRightGap.x - 0.040f, 0.0f, defaultFloatpoint + IMAGE_ZOFFSET);
+        CameraPlaneLeft.transform.localScale = new Vector3(ImageProcessor.Settings.aspectW, -1.0f, 1.0f);
+        CameraPlaneRight.transform.localScale = new Vector3(ImageProcessor.Settings.aspectW, -1.0f, 1.0f);
+        CameraPlaneLeft.transform.localPosition = new Vector3(-0.032f, 0.0f, ImageProcessor.Settings.GetFloatPoint() + IMAGE_ZOFFSET);
+        CameraPlaneRight.transform.localPosition = new Vector3(CameraRightGap.x - 0.040f, 0.0f, ImageProcessor.Settings.GetFloatPoint() + IMAGE_ZOFFSET);
     }
 
     void Update()
     {
-        if (CameraImageProvider.IsRunning)
-        {
-            // avoid unnecessary updates by only updating if there actually is an updated image available
-            var currentImageId = CameraImageProvider.GetCurrentImageId();
-
-            if (currentImageId > appliedImageId)
-            {
-                CameraTexLeft.LoadRawTextureData(CameraImageProvider.GetLeftRawImage());
-                CameraTexLeft.Apply();
-
-                CameraTexRight.LoadRawTextureData(CameraImageProvider.GetRightRawImage());
-                CameraTexRight.Apply();
-
-                appliedImageId = currentImageId;
-            }
-        }
-        else
-        {
-            Debug.LogError("Camera Provider isn't running");
-        }
+        ImageProcessor.FetchCurrentImage(CameraTexLeft.GetNativeTexturePtr(), CameraTexRight.GetNativeTexturePtr(), UseImageProcessing);
     }
 
     void OnDestroy()
     {
-        CameraImageProvider.Stop();
+        ImageProcessor.Stop();
     }
-
-
 
 	private Mesh CreateCameraPlaneMesh()
 	{

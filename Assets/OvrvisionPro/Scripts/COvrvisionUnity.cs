@@ -1,4 +1,4 @@
-﻿// COvrvisionUnity.cs
+// COvrvisionUnity.cs
 // Version 1.0 : 11/Nov/2015
 //
 //MIT License
@@ -214,6 +214,12 @@ public class COvrvisionUnity
 			ovTrackRender(useOvrvisionTrack_Calib, false);
 
 		ovGetCamImageForUnityNative(leftPtr, rightPtr);
+    }
+
+    public void UpdateImage2(IntPtr leftPtr, IntPtr rightPtr)
+    {
+        ovGetCamImageBGRA(leftPtr, OV_CAMEYE_LEFT);
+        ovGetCamImageBGRA(rightPtr, OV_CAMEYE_RIGHT);
     }
 
     //Close the Ovrvision
