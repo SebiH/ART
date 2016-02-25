@@ -4,16 +4,13 @@ Shader "LeapMotion/Passthrough/ImageHandHighlight" {
     _Fade            ("Fade", Range(0, 1))             = 0.0
     _Extrude         ("Extrude", Float)                = 0.008
     _Intersection    ("Intersection Threshold", Float) = 0.035
-    _IntersectionEffectBrightness ("Intersection Brightness", Range (0, 2000)) = 100
+    _IntersectPow    ("Intersection Brightness", Range (0, 2000)) = 100
 
     _MinThreshold    ("Min Threshold", Float)     = 0.1
     _MaxThreshold    ("Max Threshold", Float)     = 0.2
     _GlowThreshold   ("Glow Threshold", Float)    = 0.5
     _GlowPower       ("Glow Power", Float)        = 10.0
-    
-    _ColorSpaceGamma ("Color Space Gamma", Float) = 1.0
   }
-
 
   CGINCLUDE
   #pragma multi_compile LEAP_FORMAT_IR LEAP_FORMAT_RGB
@@ -27,12 +24,12 @@ Shader "LeapMotion/Passthrough/ImageHandHighlight" {
   uniform float     _Fade;
   uniform float     _Extrude;
   uniform float     _Intersection;
-  uniform float     _IntersectionEffectBrightness;
+  uniform float     _IntersectPow;
   uniform float     _MinThreshold;
   uniform float     _MaxThreshold;
   uniform float     _GlowThreshold;
   uniform float     _GlowPower;
-  uniform float     _ColorSpaceGamma;
+  uniform float     _LeapGlobalColorSpaceGamma;
   
   #ifdef USE_DEPTH_TEXTURE
   uniform sampler2D _CameraDepthTexture;
@@ -58,7 +55,7 @@ Shader "LeapMotion/Passthrough/ImageHandHighlight" {
     float3 norm   = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
     o.vertex.xy += TransformViewToProjection(norm.xy) * _Extrude;
 
-    o.screenPos = ComputeScreenPos(o.vertex);
+    o.screenPos = LeapGetWarpedScreenPos(o.vertex);
 
 #ifdef USE_DEPTH_TEXTURE
     o.projPos = o.screenPos;
@@ -69,14 +66,20 @@ Shader "LeapMotion/Passthrough/ImageHandHighlight" {
   }
 
   float4 trackingGlow(float4 screenPos) {
+    float leapBrightness = LeapGetStereoBrightness(screenPos);
+    clip(leapBrightness - _MinThreshold);
+
+    float3 leapRawColor = LeapGetStereoRawColor(screenPos);
+
     // Map leap image to linear color space
-    float4 leapRawColor = LeapRawColorBrightnessWarp(screenPos);
-    clip(leapRawColor.a - _MinThreshold);
-    float3 leapLinearColor = pow(pow(leapRawColor.rgb, _LeapGammaCorrectionExponent), 1/_ColorSpaceGamma);
+    float3 leapLinearColor = pow(pow(leapRawColor, _LeapGlobalGammaCorrectionExponent), 1/_LeapGlobalColorSpaceGamma);
+
     // Apply edge glow and interior shading
-    float brightness = smoothstep(_MinThreshold, _MaxThreshold, leapRawColor.a) * _Fade;
-    float glow = smoothstep(_GlowThreshold, _MinThreshold, leapRawColor.a) * brightness;
-    float4 linearColor = pow(_Color, _ColorSpaceGamma) * glow * _GlowPower;
+    float brightness = smoothstep(_MinThreshold, _MaxThreshold, leapBrightness) * _Fade;
+    float glow = smoothstep(_GlowThreshold, _MinThreshold, leapBrightness) * brightness;
+
+    float4 linearColor = pow(_Color, _LeapGlobalColorSpaceGamma) * glow * _GlowPower;
+
     return float4(leapLinearColor + linearColor, brightness);
   }
   
@@ -86,7 +89,7 @@ Shader "LeapMotion/Passthrough/ImageHandHighlight" {
     float sceneZ = LinearEyeDepth (SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture, UNITY_PROJ_COORD(projPos)));
     float partZ = projPos.z;
     float diff = smoothstep(_Intersection, 0, sceneZ - partZ);
-    float4 linearColor = pow(_Color, _ColorSpaceGamma) * _IntersectionEffectBrightness;
+    float4 linearColor = pow(_Color, _LeapGlobalColorSpaceGamma) * _IntersectPow;
     return float4(lerp(handGlow.rgb, linearColor.rgb, diff), handGlow.a * (1 - diff));
   }
   #endif
@@ -102,8 +105,8 @@ Shader "LeapMotion/Passthrough/ImageHandHighlight" {
   }
 
   float4 alphaFrag(frag_in i) : COLOR {
-    float4 leapRawColor = LeapRawColorBrightnessWarp(i.screenPos);
-    clip(leapRawColor.a - _MinThreshold);
+    float leapBrightness = LeapGetStereoBrightness(i.screenPos);
+    clip(leapBrightness - _MinThreshold);
     return float4(0,0,0,0);
   }
 
