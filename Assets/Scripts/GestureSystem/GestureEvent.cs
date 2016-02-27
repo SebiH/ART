@@ -1,4 +1,4 @@
-namespace Assets.Scripts.Gesture
+namespace GestureControl
 {
     public class GestureEvent
     {

@@ -1,18 +1,21 @@
-public enum InteractionLimb
+namespace GestureControl
 {
-    LeftThumbTip,
-    LeftIndexTip,
-    LeftMiddleTip,
-    LeftRingTip,
-    LeftLittleTip,
+    public enum InteractionLimb
+    {
+        LeftThumbTip,
+        LeftIndexTip,
+        LeftMiddleTip,
+        LeftRingTip,
+        LeftLittleTip,
 
-    LeftPalm,
+        LeftPalm,
 
-    RightThumbTip,
-    RightIndexTip,
-    RightMiddleTip,
-    RightRingTip,
-    RightLittleTip,
+        RightThumbTip,
+        RightIndexTip,
+        RightMiddleTip,
+        RightRingTip,
+        RightLittleTip,
 
-    RightPalm
+        RightPalm
+    }
 }
