@@ -30,6 +30,12 @@ namespace Assets.Scripts.Gesture
             RegisteredLimbs[typeIndex] = limb;
         }
 
+        public static void DeregisterLimb(InteractionLimb type)
+        {
+            var typeIndex = LimbToInt(type);
+            RegisteredLimbs[typeIndex] = null;
+        }
+
         public static GameObject GetLimb(InteractionLimb type)
         {
             var typeIndex = LimbToInt(type);
