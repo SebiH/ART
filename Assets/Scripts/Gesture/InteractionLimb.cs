@@ -1,18 +1,18 @@
 public enum InteractionLimb
 {
-    Left_Thumb_Tip,
-    Left_Index_Tip,
-    Left_Middle_Tip,
-    Left_Ring_Tip,
-    Left_Little_Tip,
+    LeftThumbTip,
+    LeftIndexTip,
+    LeftMiddleTip,
+    LeftRingTip,
+    LeftLittleTip,
 
-    Left_Palm,
+    LeftPalm,
 
-    Right_Thumb_Tip,
-    Right_Index_Tip,
-    Right_Middle_Tip,
-    Right_Ring_Tip,
-    Right_Little_Tip,
+    RightThumbTip,
+    RightIndexTip,
+    RightMiddleTip,
+    RightRingTip,
+    RightLittleTip,
 
-    Right_Palm
+    RightPalm
 }
