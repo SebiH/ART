@@ -12,10 +12,15 @@ namespace Assets.Scripts.Gesture
     {
         private static GameObject[] RegisteredLimbs = new GameObject[Enum.GetNames(typeof(InteractionLimb)).Length];
 
-        public static void RegisterLimb(InteractionLimb type, GameObject limb)
+        private static int LimbToInt(InteractionLimb limb)
         {
             // enums are usually just integers with names
-            var typeIndex = (int)type;
+            return (int)limb;
+        }
+
+        public static void RegisterLimb(InteractionLimb type, GameObject limb)
+        {
+            var typeIndex = LimbToInt(type);
 
             if (RegisteredLimbs[typeIndex] != null)
             {
@@ -25,11 +30,9 @@ namespace Assets.Scripts.Gesture
             RegisteredLimbs[typeIndex] = limb;
         }
 
-
         public static GameObject GetLimb(InteractionLimb type)
         {
-            // enums are usually just integers with names
-            var typeIndex = (int)type;
+            var typeIndex = LimbToInt(type);
 
             if (RegisteredLimbs[typeIndex] == null)
             {
