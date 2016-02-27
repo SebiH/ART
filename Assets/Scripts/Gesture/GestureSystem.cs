@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Assets.Scripts.Gesture
 {
+    /// <summary>
+    /// *One* GestureSystem per scene. This script behaves similar to EventSystem, which handles GUI elements.
+    /// </summary>
     public class GestureSystem : MonoBehaviour
     {
         private static GameObject[] RegisteredLimbs = new GameObject[Enum.GetNames(typeof(InteractionLimb)).Length];
