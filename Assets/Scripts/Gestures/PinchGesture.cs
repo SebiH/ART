@@ -33,17 +33,18 @@ public class PinchGesture : GestureBase
 
             if (GestureUtil.CollidesWith(rightThumb, rightIndex))
             {
+                hasTriggered = true;
+
                 if (!IsTriggeredRight)
                 {
                     Debug.Log("Triggered on right hand");
-                    hasTriggered = true;
                     IsTriggeredRight = true;
                 }
             }
-            else if (!IsTriggeredRight)
+            else if (IsTriggeredRight)
             {
                 Debug.Log("No longer triggered on right hand");
-                IsTriggeredRight = true;
+                IsTriggeredRight = false;
             }
         }
 
