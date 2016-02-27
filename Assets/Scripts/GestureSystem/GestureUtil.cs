@@ -11,6 +11,12 @@ namespace GestureControl
             var c1 = o1.GetComponent<Collider>();
             var c2 = o2.GetComponent<Collider>();
 
+            if (c1 == null || c2 == null)
+            {
+                Debug.LogError("Could not compare collision: null object detected");
+                return false;
+            }
+
             return c1.bounds.Intersects(c2.bounds);
         }
 
