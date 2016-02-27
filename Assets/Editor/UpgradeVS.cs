@@ -25,7 +25,7 @@ class UpgradeVSProject : AssetPostprocessor
         if (csprojFiles.Length > 0)
         {
             // enable unsafe code blocks - it's enabled in unity via 'gmcs' file, but we also need it in visual studio
-            ReplaceInFile(csprojFiles[0], "<AllowUnsafeBlocks>false</AllowUnsafeBlocks>", "<AllowUnsafeBlocks>true</AllowUnsafeBlocks>");
+            //ReplaceInFile(csprojFiles[0], "<AllowUnsafeBlocks>false</AllowUnsafeBlocks>", "<AllowUnsafeBlocks>true</AllowUnsafeBlocks>");
         }
     }
 
