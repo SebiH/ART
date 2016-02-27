@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Assets.Scripts.Gesture
 {
-    public class GestureManager : MonoBehaviour
+    public class GestureSystem : MonoBehaviour
     {
         private static GameObject[] RegisteredLimbs = new GameObject[Enum.GetNames(typeof(InteractionLimb)).Length];
 
