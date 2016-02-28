@@ -21,8 +21,7 @@ public class PinchGesture : GestureBase
 
         if (TriggerOnLeftHand)
         {
-            var leftThumb = GestureSystem.GetLimb(InteractionLimb.LeftThumbTip);
-            var leftIndex = GestureSystem.GetLimb(InteractionLimb.LeftIndexTip);
+            // TODO: analog to right hand
         }
 
 
