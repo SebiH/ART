@@ -90,12 +90,12 @@ namespace Assets.Scripts.Gestures
 
         private bool ShouldGestureStart(GameObject limb)
         {
-            return Vector3.Angle(limb.transform.up, Vector3.up) <= ActivateThreshold;
+            return Vector3.Angle(-limb.transform.up, Vector3.up) <= ActivateThreshold;
         }
 
         private bool ShouldGestureStop(GameObject limb)
         {
-            return Vector3.Angle(limb.transform.up, Vector3.up) >= DeactivateThreshold;
+            return Vector3.Angle(-limb.transform.up, Vector3.up) >= DeactivateThreshold;
         }
 
         private GestureStatus CheckStatus(GameObject limb)
