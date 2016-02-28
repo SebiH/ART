@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class PinchGesture : GestureBase
 {
-    public bool TriggerOnLeftHand = true;
-    public bool TriggerOnRightHand = true;
+    public Hand TriggerHand;
 
-    private bool IsTriggeredLeft = false;
-    private bool IsTriggeredRight = false;
+    private bool IsGestureActive;
 
     public override string GetName()
     {
@@ -17,36 +15,89 @@ public class PinchGesture : GestureBase
 
     public override bool CheckConditions()
     {
-        bool hasTriggered = false;
-
-        if (TriggerOnLeftHand)
+        if (TriggerHand == Hand.Both)
         {
-            // TODO: analog to right hand
-        }
+            var leftThumb = GestureSystem.GetLimb(InteractionLimb.LeftThumbTip);
+            var leftIndex = GestureSystem.GetLimb(InteractionLimb.LeftIndexTip);
+            var leftStatus = CheckStatus(leftThumb, leftIndex);
 
-
-        if (TriggerOnRightHand)
-        {
             var rightThumb = GestureSystem.GetLimb(InteractionLimb.RightThumbTip);
             var rightIndex = GestureSystem.GetLimb(InteractionLimb.RightIndexTip);
+            var rightStatus = CheckStatus(rightThumb, rightIndex);
 
-            if (GestureUtil.CollidesWith(rightThumb, rightIndex))
+            if (leftStatus == GestureStatus.Starting && rightStatus == GestureStatus.Starting)
             {
-                hasTriggered = true;
-
-                if (!IsTriggeredRight)
-                {
-                    Debug.Log("Triggered on right hand");
-                    IsTriggeredRight = true;
-                }
+                IsGestureActive = true;
+                OnGestureStart();
             }
-            else if (IsTriggeredRight)
+            else if (leftStatus == GestureStatus.Active && rightStatus == GestureStatus.Active)
             {
-                Debug.Log("No longer triggered on right hand");
-                IsTriggeredRight = false;
+                OnGestureHold();
+            }
+            else if (leftStatus == GestureStatus.Stopping || rightStatus == GestureStatus.Stopping)
+            {
+                IsGestureActive = false;
+                OnGestureEnd();
+            }
+        }
+        else
+        {
+            var indexType = (TriggerHand == Hand.Left) ? InteractionLimb.LeftIndexTip : InteractionLimb.RightIndexTip;
+            var thumbType = (TriggerHand == Hand.Left) ? InteractionLimb.LeftThumbTip : InteractionLimb.RightThumbTip;
+
+            var index = GestureSystem.GetLimb(indexType);
+            var thumb = GestureSystem.GetLimb(thumbType);
+
+            var status = CheckStatus(thumb, index);
+
+            switch (status)
+            {
+                case GestureStatus.Starting:
+                    IsGestureActive = true;
+                    OnGestureStart();
+                    break;
+
+                case GestureStatus.Active:
+                    OnGestureHold();
+                    break;
+
+                case GestureStatus.Stopping:
+                    IsGestureActive = false;
+                    OnGestureEnd();
+                    break;
+
+                case GestureStatus.Inactive:
+                    // do nothing
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unknown enum for GestureStatus");
             }
         }
 
-        return hasTriggered;
+        return IsGestureActive;
+    }
+
+
+    private GestureStatus CheckStatus(GameObject thumb, GameObject index)
+    {
+        GestureStatus status;
+
+        if (GestureUtil.CollidesWith(thumb, index))
+        {
+            status = (IsGestureActive) ? GestureStatus.Active : GestureStatus.Starting;
+        }
+        else if (IsGestureActive)
+        {
+            // does not collide (anymore) but is still marked as active -> deactivate
+            status = GestureStatus.Stopping;
+        }
+        else
+        {
+            // doesn't collide, nor is it active -> inactive
+            status = GestureStatus.Inactive;
+        }
+
+        return status;
     }
 }

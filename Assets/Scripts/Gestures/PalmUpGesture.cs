@@ -1,4 +1,5 @@
 using GestureControl;
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.Gestures
@@ -6,14 +7,9 @@ namespace Assets.Scripts.Gestures
     public class PalmUpGesture : GestureBase
     {
         /// <summary>
-        /// True, if this gesture should activate if the *left* palm is facing upwards. 
+        /// From which hand the gesture should trigger
         /// </summary>
-        public bool TriggerOnLeftHand = true;
-
-        /// <summary>
-        /// True, if this gesture should activate if the *right* palm is facing upwards. 
-        /// </summary>
-        public bool TriggerOnRightHand = true;
+        public Hand TriggerHand;
 
         /// <summary>
         /// Threshold how much the palm has to point upwards to activate this gesture, in degrees.
@@ -26,8 +22,7 @@ namespace Assets.Scripts.Gestures
         public float DeactivateThreshold = 50f;
 
 
-        private bool IsLeftHandActive = false;
-        private bool IsRightHandActive = false;
+        private bool IsGestureActive = false;
 
         public override string GetName()
         {
@@ -36,43 +31,101 @@ namespace Assets.Scripts.Gestures
 
         public override bool CheckConditions()
         {
-            if (TriggerOnLeftHand)
+            if (TriggerHand == Hand.Both)
             {
                 var leftPalm = GestureSystem.GetLimb(InteractionLimb.LeftPalm);
-                var leftCollider = leftPalm.GetComponent<Collider>();
+                var leftStatus = CheckStatus(leftPalm);
 
-                var handUpVector = -leftCollider.transform.up;
-                var worldUpVector = Vector3.up;
+                var rightPalm = GestureSystem.GetLimb(InteractionLimb.RightPalm);
+                var rightStatus = CheckStatus(rightPalm);
 
-                if (!IsLeftHandActive)
+                if (leftStatus == GestureStatus.Starting && rightStatus == GestureStatus.Starting)
                 {
-                    if (Vector3.Angle(handUpVector, worldUpVector) <= ActivateThreshold)
-                    {
-                        IsLeftHandActive = true;
+                    IsGestureActive = true;
+                    OnGestureStart();
+                }
+                else if (leftStatus == GestureStatus.Active && rightStatus == GestureStatus.Active)
+                {
+                    OnGestureHold();
+                }
+                else if (leftStatus == GestureStatus.Stopping || rightStatus == GestureStatus.Stopping)
+                {
+                    IsGestureActive = false;
+                    OnGestureEnd();
+                }
+            }
+            else
+            {
+                var limbType = (TriggerHand == Hand.Left) ? InteractionLimb.LeftPalm : InteractionLimb.RightPalm;
+                var palm = GestureSystem.GetLimb(limbType);
+                var status = CheckStatus(palm);
+
+                switch (status)
+                {
+                    case GestureStatus.Starting:
+                        IsGestureActive = true;
                         OnGestureStart();
-                    }
+                        break;
+
+                    case GestureStatus.Active:
+                        OnGestureHold();
+                        break;
+
+                    case GestureStatus.Stopping:
+                        IsGestureActive = false;
+                        OnGestureEnd();
+                        break;
+
+                    case GestureStatus.Inactive:
+                        // do nothing
+                        break;
+
+                    default:
+                        throw new InvalidOperationException("Unknown enum for GestureStatus");
+                }
+            }
+
+            return IsGestureActive;
+        }
+
+        private bool ShouldGestureStart(GameObject limb)
+        {
+            return Vector3.Angle(limb.transform.up, Vector3.up) <= ActivateThreshold;
+        }
+
+        private bool ShouldGestureStop(GameObject limb)
+        {
+            return Vector3.Angle(limb.transform.up, Vector3.up) >= DeactivateThreshold;
+        }
+
+        private GestureStatus CheckStatus(GameObject limb)
+        {
+            GestureStatus status;
+
+            if (!IsGestureActive)
+            {
+                if (ShouldGestureStart(limb))
+                {
+                    status = GestureStatus.Starting;
                 }
                 else
                 {
-                    if (Vector3.Angle(handUpVector, worldUpVector) >= DeactivateThreshold)
-                    {
-                        IsLeftHandActive = false;
-                        OnGestureEnd();
-                    }
-                    else
-                    {
-                        OnGestureHold();
-                    }
+                    status = GestureStatus.Inactive;
+                }
+            }
+            else
+            {
+                if (ShouldGestureStop(limb))
+                {
+                    status = GestureStatus.Stopping;
+                }
+                else
+                {
+                    status = GestureStatus.Active;
                 }
             }
 
-
-            if (TriggerOnRightHand)
-            {
-                // TODO - analog to lefthand
-            }
-
-            return false;
+            return status;
         }
     }
 }
