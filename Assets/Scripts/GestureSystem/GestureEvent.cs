@@ -1,6 +1,10 @@
+using System;
+using UnityEngine.Events;
+
 namespace GestureControl
 {
-    public class GestureEvent
+    [Serializable]
+    public class GestureEvent : UnityEvent<GestureEventArgs>
     {
     }
 }

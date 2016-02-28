@@ -9,36 +9,33 @@ namespace GestureControl
         public abstract bool CheckConditions();
 
 
+        public GestureEvent GestureStart;
+        public GestureEvent GestureHold;
+        public GestureEvent GestureEnd;
 
-        public delegate void GestureEventHandler(GestureBase gesture, GestureEvent e);
-
-        public event GestureEventHandler GestureStart;
-        public event GestureEventHandler GestureHold;
-        public event GestureEventHandler GestureEnd;
-
-        protected void OnGestureStart(GestureEvent e)
+        protected void OnGestureStart()
         {
             if (GestureStart != null)
             {
-                GestureStart(this, e);
+                GestureStart.Invoke(new GestureEventArgs(this));
             }
         }
 
 
-        protected void OnGestureHold(GestureEvent e)
+        protected void OnGestureHold()
         {
             if (GestureHold != null)
             {
-                GestureHold(this, e);
+                GestureHold.Invoke(new GestureEventArgs(this));
             }
         }
 
 
-        protected void OnGestureEnd(GestureEvent e)
+        protected void OnGestureEnd()
         {
             if (GestureEnd != null)
             {
-                GestureEnd(this, e);
+                GestureEnd.Invoke(new GestureEventArgs(this));
             }
         }
 
