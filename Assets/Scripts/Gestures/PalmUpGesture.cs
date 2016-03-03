@@ -21,6 +21,16 @@ namespace Assets.Scripts.Gestures
         /// </summary>
         public float DeactivateThreshold = 50f;
 
+        /// <summary>
+        /// Determines if the gesture activates if the palm faces upwards (false), or if it activates if it faces the user
+        /// </summary>
+        public bool ShouldPalmFaceUserInstead = false;
+
+        /// <summary>
+        /// Needed if ShouldPalmFaceUserInstead is true
+        /// </summary>
+        public Camera UserCamera;
+
 
         private bool IsGestureActive = false;
 
@@ -88,14 +98,28 @@ namespace Assets.Scripts.Gestures
             return IsGestureActive;
         }
 
+        private Vector3 GetActivationVector(GameObject limb)
+        {
+            if (ShouldPalmFaceUserInstead)
+            {
+                return UserCamera.transform.position - limb.transform.position ;
+            }
+            else
+            {
+                return Vector3.up;
+            }
+        }
+
         private bool ShouldGestureStart(GameObject limb)
         {
-            return Vector3.Angle(-limb.transform.up, Vector3.up) <= ActivateThreshold;
+            Vector3 activationVector = GetActivationVector(limb);
+            return Vector3.Angle(-limb.transform.up, activationVector) <= ActivateThreshold;
         }
 
         private bool ShouldGestureStop(GameObject limb)
         {
-            return Vector3.Angle(-limb.transform.up, Vector3.up) >= DeactivateThreshold;
+            Vector3 activationVector = GetActivationVector(limb);
+            return Vector3.Angle(-limb.transform.up, activationVector) >= DeactivateThreshold;
         }
 
         private GestureStatus CheckStatus(GameObject limb)
