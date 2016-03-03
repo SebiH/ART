@@ -52,16 +52,16 @@ namespace Assets.Scripts.Gestures
                 if (leftStatus == GestureStatus.Starting && rightStatus == GestureStatus.Starting)
                 {
                     IsGestureActive = true;
-                    OnGestureStart();
+                    RaiseGestureStartEvent();
                 }
                 else if (leftStatus == GestureStatus.Active && rightStatus == GestureStatus.Active)
                 {
-                    OnGestureHold();
+                    RaiseGestureActiveEvent();
                 }
                 else if (leftStatus == GestureStatus.Stopping || rightStatus == GestureStatus.Stopping)
                 {
                     IsGestureActive = false;
-                    OnGestureEnd();
+                    RaiseGestureStopEvent();
                 }
             }
             else
@@ -74,16 +74,16 @@ namespace Assets.Scripts.Gestures
                 {
                     case GestureStatus.Starting:
                         IsGestureActive = true;
-                        OnGestureStart();
+                        RaiseGestureStartEvent();
                         break;
 
                     case GestureStatus.Active:
-                        OnGestureHold();
+                        RaiseGestureActiveEvent();
                         break;
 
                     case GestureStatus.Stopping:
                         IsGestureActive = false;
-                        OnGestureEnd();
+                        RaiseGestureStopEvent();
                         break;
 
                     case GestureStatus.Inactive:

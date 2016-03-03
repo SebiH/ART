@@ -29,13 +29,13 @@ namespace Assets.Scripts.Gestures
                 if (GestureUtil.CollidesWith(leftThumb, leftIndex) && GestureUtil.CollidesWith(rightThumb, rightIndex))
                 {
                     // gesture still active!
-                    OnGestureHold();
+                    RaiseGestureActiveEvent();
                 }
                 else
                 {
                     // one of the hands stopped pinching - stop gesture
                     IsGestureActive = false;
-                    OnGestureEnd();
+                    RaiseGestureStopEvent();
                 }
 
             }
@@ -45,7 +45,7 @@ namespace Assets.Scripts.Gestures
                 if (GestureUtil.IsInProximity(ActivationDistance, new[] { leftThumb, leftIndex, rightThumb, rightIndex }))
                 {
                     IsGestureActive = true;
-                    OnGestureStart();
+                    RaiseGestureStartEvent();
                 }
             }
 

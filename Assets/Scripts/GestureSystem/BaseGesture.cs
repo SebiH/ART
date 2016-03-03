@@ -10,10 +10,10 @@ namespace GestureControl
 
 
         public GestureEvent GestureStart;
-        public GestureEvent GestureHold;
-        public GestureEvent GestureEnd;
+        public GestureEvent GestureActive;
+        public GestureEvent GestureStop;
 
-        protected void OnGestureStart()
+        protected void RaiseGestureStartEvent()
         {
             if (GestureStart != null)
             {
@@ -22,20 +22,20 @@ namespace GestureControl
         }
 
 
-        protected void OnGestureHold()
+        protected void RaiseGestureActiveEvent()
         {
-            if (GestureHold != null)
+            if (GestureActive != null)
             {
-                GestureHold.Invoke(new GestureEventArgs(this));
+                GestureActive.Invoke(new GestureEventArgs(this));
             }
         }
 
 
-        protected void OnGestureEnd()
+        protected void RaiseGestureStopEvent()
         {
-            if (GestureEnd != null)
+            if (GestureStop != null)
             {
-                GestureEnd.Invoke(new GestureEventArgs(this));
+                GestureStop.Invoke(new GestureEventArgs(this));
             }
         }
 
