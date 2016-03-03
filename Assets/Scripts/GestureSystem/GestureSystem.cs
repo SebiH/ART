@@ -73,7 +73,15 @@ namespace GestureControl
         {
             foreach (var gesture in RegisteredGestures)
             {
-                var triggered = gesture.CheckConditions();
+                try
+                {
+                    var triggered = gesture.CheckConditions();
+                }
+                catch (Exception e)
+                {
+                    // ?
+                }
+
                 //if (triggered)
                 //{
                 //    Debug.Log(String.Format("Triggered gesture {0}", gesture.GetName()));
