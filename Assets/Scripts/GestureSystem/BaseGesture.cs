@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GestureControl
+namespace Assets.Scripts.GestureControl
 {
     public abstract class GestureBase : MonoBehaviour
     {

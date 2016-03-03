@@ -1,4 +1,4 @@
-namespace GestureControl
+namespace Assets.Scripts.GestureControl
 {
     public enum GestureStatus
     {

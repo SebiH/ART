@@ -1,4 +1,4 @@
-using GestureControl;
+using Assets.Scripts.GestureControl;
 using UnityEngine;
 
 namespace Assets.Scripts.Gestures

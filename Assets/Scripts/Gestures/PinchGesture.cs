@@ -1,5 +1,5 @@
+using Assets.Scripts.GestureControl;
 using System;
-using GestureControl;
 using UnityEngine;
 
 public class PinchGesture : GestureBase

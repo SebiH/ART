@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-namespace GestureControl
+namespace Assets.Scripts.GestureControl
 {
     /// <summary>
     /// *One* GestureSystem per scene. This script behaves similar to EventSystem, which handles GUI elements.

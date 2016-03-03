@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GestureControl
+namespace Assets.Scripts.GestureControl
 {
     public static class GestureUtil
     {

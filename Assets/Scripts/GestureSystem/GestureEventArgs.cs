@@ -1,6 +1,6 @@
 using System;
 
-namespace GestureControl
+namespace Assets.Scripts.GestureControl
 {
     public class GestureEventArgs
     {
