@@ -68,46 +68,47 @@ namespace ComputerVision
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
-        public static unsafe void FetchCurrentImage(IntPtr left, IntPtr right, bool useImageProcessing)
+        //public static unsafe void FetchCurrentImage(IntPtr left, IntPtr right, bool useImageProcessing)
+        public static void FetchCurrentImage(IntPtr left, IntPtr right, bool useImageProcessing)
         {
-            Debug.Assert(isInitialized);
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
+            //Debug.Assert(isInitialized);
+            //var watch = new System.Diagnostics.Stopwatch();
+            //watch.Start();
 
-            if (!ovrCamera.camStatus)
-            {
-                Debug.Log("Could not fetch image: Cameras not ready yet");
-                return;
-            }
+            //if (!ovrCamera.camStatus)
+            //{
+            //    Debug.Log("Could not fetch image: Cameras not ready yet");
+            //    return;
+            //}
 
-            ovrCamera.UpdateImage(left, right);
+            //ovrCamera.UpdateImage(left, right);
 
-            if (useImageProcessing)
-            {
-                var imWidth = ovrCamera.imageSizeW;
-                var imHeight = ovrCamera.imageSizeH;
+            //if (useImageProcessing)
+            //{
+            //    var imWidth = ovrCamera.imageSizeW;
+            //    var imHeight = ovrCamera.imageSizeH;
 
-                var imgLeft = new Image<Bgra, byte>(new Size(imWidth, imHeight));
-                var imgRight = new Image<Bgra, byte>(new Size(imWidth, imHeight));
+            //    var imgLeft = new Image<Bgra, byte>(new Size(imWidth, imHeight));
+            //    var imgRight = new Image<Bgra, byte>(new Size(imWidth, imHeight));
 
-                fixed (byte* leftPtr = imgLeft.Data)
-                fixed (byte* rightPtr = imgRight.Data)
-                {
-                    ovrCamera.UpdateImage2(new IntPtr(leftPtr), new IntPtr(rightPtr));
-                }
+            //    fixed (byte* leftPtr = imgLeft.Data)
+            //    fixed (byte* rightPtr = imgRight.Data)
+            //    {
+            //        ovrCamera.UpdateImage2(new IntPtr(leftPtr), new IntPtr(rightPtr));
+            //    }
 
-                var thread = new Thread(() =>
-                {
-                    ProcessImages(imgLeft, imgRight);
-                    imgLeft.Dispose();
-                    imgRight.Dispose();
-                });
+            //    var thread = new Thread(() =>
+            //    {
+            //        ProcessImages(imgLeft, imgRight);
+            //        imgLeft.Dispose();
+            //        imgRight.Dispose();
+            //    });
 
-                thread.Start();
-            }
+            //    thread.Start();
+            //}
 
-            watch.Stop();
-            Debug.Log(String.Format("Took {0} ticks ({1} ms) {2} imageprocessing", watch.ElapsedTicks, watch.ElapsedMilliseconds, useImageProcessing ? "with" : "without"));
+            //watch.Stop();
+            //Debug.Log(String.Format("Took {0} ticks ({1} ms) {2} imageprocessing", watch.ElapsedTicks, watch.ElapsedMilliseconds, useImageProcessing ? "with" : "without"));
         }
 
 
