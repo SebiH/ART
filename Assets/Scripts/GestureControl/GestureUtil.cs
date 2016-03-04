@@ -29,22 +29,7 @@ namespace Assets.Scripts.GestureControl
         public static bool IsInProximity(double distanceThreshold, IEnumerable<GameObject> objects)
         {
             // build the average position to apply distanceThreshold to
-            Vector3 averagePosition = Vector3.zero;
-            int objectsCount = 0;
-
-            foreach (var gameObject in objects)
-            {
-                averagePosition += gameObject.transform.position;
-                objectsCount++;
-            }
-
-            if (objectsCount == 0)
-            {
-                Debug.LogError("Tried to call IsInProximity without objects!");
-                return false;
-            }
-
-            averagePosition = averagePosition / objectsCount;
+            Vector3 averagePosition = GetAveragePosition(objects);
 
 
             // check if all objects are within the threshold to the average position of all objects
@@ -57,6 +42,30 @@ namespace Assets.Scripts.GestureControl
             }
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Calculates and returns the average position out of all given objects
+        /// </summary>
+        public static Vector3 GetAveragePosition(IEnumerable<GameObject> objects)
+        {
+            Vector3 middle = Vector3.zero;
+            int objectsCount = 0;
+
+            foreach (var gameObject in objects)
+            {
+                middle += gameObject.transform.position;
+                objectsCount++;
+            }
+
+            if (objectsCount == 0)
+            {
+                Debug.LogError("Tried to call GetAverage without objects!");
+                return Vector3.zero;
+            }
+
+            return middle / objectsCount;
         }
     }
 }
