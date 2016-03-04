@@ -11,7 +11,6 @@ namespace Assets.Scripts.Gestures
         private bool IsGestureActive;
 
 
-
         // Position of the gesture occurence of the left hand
         private Vector3 GesturePosLeft;
 
@@ -64,7 +63,10 @@ namespace Assets.Scripts.Gestures
             if (IsGestureActive)
             {
                 // if the gesture is already active, we only need to check if the user is still pinching their fingers together
-                if (GestureUtil.CollidesWith(leftThumb, leftIndex) && GestureUtil.CollidesWith(rightThumb, rightIndex))
+                var isLeftHandPinching = GestureUtil.IsInProximity(ActivationDistance, new[] { leftThumb, leftIndex });
+                var isRightHandPinching = GestureUtil.IsInProximity(ActivationDistance, new[] { rightThumb, rightIndex });
+
+                if (isLeftHandPinching && isRightHandPinching)
                 {
                     // gesture still active
                     GesturePosLeft = GestureUtil.GetAveragePosition(new[] { leftThumb, leftIndex });
