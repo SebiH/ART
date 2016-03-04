@@ -24,7 +24,7 @@ public class PhysicalButton : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // TODO: tagmanager -> hasTag ( canTriggerInteraction ) ?
-        if (!isPressed)
+        if (!isPressed && other.GetComponentInParent<RigidHand>() != null) // only allow leapmotion hands for now
         {
             isPressed = true;
 
@@ -42,9 +42,9 @@ public class PhysicalButton : MonoBehaviour
 
     }
 
-    private void OnTriggerStay()
+    private void OnTriggerStay(Collider other)
     {
-        if (OnButtonHold != null)
+        if (OnButtonHold != null && other.GetComponentInParent<RigidHand>() != null) // only allow leapmotion hands for now
             OnButtonHold.Invoke();
     }
 
@@ -52,7 +52,7 @@ public class PhysicalButton : MonoBehaviour
     {
         // TODO: tagmanager -> hasTag ( canTriggerInteraction ) ?
 
-        if (isPressed)
+        if (isPressed && other.GetComponentInParent<RigidHand>() != null) // only allow leapmotion hands for now
         {
             isPressed = false;
 
