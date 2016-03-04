@@ -69,9 +69,9 @@ namespace Assets.Scripts.Gestures
                 if (isLeftHandPinching && isRightHandPinching)
                 {
                     // gesture still active
-                    GesturePosLeft = GestureUtil.GetAveragePosition(new[] { leftThumb, leftIndex });
-                    GesturePosRight = GestureUtil.GetAveragePosition(new[] { rightThumb, rightIndex });
-                    GesturePosCenter = GestureUtil.GetAveragePosition(new[] { leftThumb, leftIndex, rightThumb, rightIndex });
+                    GesturePosLeft = GestureUtil.GetCenterPosition(new[] { leftThumb, leftIndex });
+                    GesturePosRight = GestureUtil.GetCenterPosition(new[] { rightThumb, rightIndex });
+                    GesturePosCenter = GestureUtil.GetCenterPosition(new[] { leftThumb, leftIndex, rightThumb, rightIndex });
 
                     RaiseGestureActiveEvent();
                 }
@@ -90,9 +90,9 @@ namespace Assets.Scripts.Gestures
                 {
                     IsGestureActive = true;
 
-                    GesturePosLeft = GestureUtil.GetAveragePosition(new[] { leftThumb, leftIndex });
-                    GesturePosRight = GestureUtil.GetAveragePosition(new[] { rightThumb, rightIndex });
-                    GesturePosCenter = GestureUtil.GetAveragePosition(new[] { leftThumb, leftIndex, rightThumb, rightIndex });
+                    GesturePosLeft = GestureUtil.GetCenterPosition(new[] { leftThumb, leftIndex });
+                    GesturePosRight = GestureUtil.GetCenterPosition(new[] { rightThumb, rightIndex });
+                    GesturePosCenter = GestureUtil.GetCenterPosition(new[] { leftThumb, leftIndex, rightThumb, rightIndex });
 
                     RaiseGestureStartEvent();
                 }
