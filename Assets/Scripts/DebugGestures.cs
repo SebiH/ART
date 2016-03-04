@@ -14,7 +14,7 @@ public class DebugGestures : MonoBehaviour
     {
         Debug.Log(String.Format("Gesture Start: {0}", e.Sender.GetName()));
 
-        var gesture = e.Sender as DoublePinchDragGesture;
+        var gesture = e.Sender as IPositionGesture;
 
         if (gesture != null)
         {
@@ -29,7 +29,7 @@ public class DebugGestures : MonoBehaviour
 
     public void OnGestureActive(GestureEventArgs e)
     {
-        var gesture = e.Sender as DoublePinchDragGesture;
+        var gesture = e.Sender as IPositionGesture;
 
         if (gesture != null)
         {
@@ -43,7 +43,7 @@ public class DebugGestures : MonoBehaviour
     {
         Debug.Log(String.Format("Gesture Stop: {0}", e.Sender.GetName()));
 
-        var gesture = e.Sender as DoublePinchDragGesture;
+        var gesture = e.Sender as IPositionGesture;
 
         if (gesture != null)
         {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Gestures
 {
-    public class DoublePinchDragGesture : GestureBase
+    public class DoublePinchDragGesture : GestureBase, IPositionGesture
     {
         public float ActivationDistance = 0.05f;
         public float DeactivationDistance = 0.02f;
