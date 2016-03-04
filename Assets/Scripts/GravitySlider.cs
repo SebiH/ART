@@ -16,7 +16,7 @@ public class GravitySlider : SliderDemo
     private void TESTOvrGainSlider_ChangeHandler(object sender, LMWidgets.EventArg<float> arg)
     {
         var fraction = GetSliderFraction();
-        _expectedGravity = fraction * 4 - 2; // Range from -2 to 2
+        _expectedGravity = fraction * 2 - 1; // Range from -1 to 1
         Physics.gravity = new Vector3(Physics.gravity.x, _expectedGravity, Physics.gravity.z);
     }
 
@@ -26,6 +26,6 @@ public class GravitySlider : SliderDemo
         base.FixedUpdate();
 
         // set in each tick because it resets to 0 otherwise?
-        SetPositionFromFraction((Physics.gravity.y + 2) / 4);
+        SetPositionFromFraction((Physics.gravity.y + 1) / 2);
     }
 }
