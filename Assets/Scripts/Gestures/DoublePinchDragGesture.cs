@@ -6,7 +6,8 @@ namespace Assets.Scripts.Gestures
 {
     public class DoublePinchDragGesture : GestureBase
     {
-        public float ActivationDistance = 0.03f;
+        public float ActivationDistance = 0.05f;
+        public float DeactivationDistance = 0.02f;
 
         private bool IsGestureActive;
 
@@ -63,10 +64,10 @@ namespace Assets.Scripts.Gestures
             if (IsGestureActive)
             {
                 // if the gesture is already active, we only need to check if the user is still pinching their fingers together
-                var isLeftHandPinching = GestureUtil.IsInProximity(ActivationDistance, new[] { leftThumb, leftIndex });
-                var isRightHandPinching = GestureUtil.IsInProximity(ActivationDistance, new[] { rightThumb, rightIndex });
+                var isPinchingLeft = GestureUtil.IsInProximity(DeactivationDistance, new[] { leftThumb, leftIndex });
+                var isPinchingRight = GestureUtil.IsInProximity(DeactivationDistance, new[] { rightThumb, rightIndex });
 
-                if (isLeftHandPinching && isRightHandPinching)
+                if (isPinchingLeft && isPinchingRight)
                 {
                     // gesture still active
                     GesturePosLeft = GestureUtil.GetCenterPosition(new[] { leftThumb, leftIndex });
@@ -86,7 +87,12 @@ namespace Assets.Scripts.Gestures
             else
             {
                 // gesture not active, so we'll check if the gesture is initiated
-                if (GestureUtil.IsInProximity(ActivationDistance, new[] { leftThumb, leftIndex, rightThumb, rightIndex }))
+                var isPinchingLeft = GestureUtil.CollidesWith(leftThumb, leftIndex);
+                var isPinchingRight = GestureUtil.CollidesWith(rightThumb, rightIndex);
+                var areHandsTogether = GestureUtil.IsInProximity(ActivationDistance, new[] { leftThumb, leftIndex, rightThumb, rightIndex });
+
+
+                if (isPinchingLeft && isPinchingRight && areHandsTogether)
                 {
                     IsGestureActive = true;
 
