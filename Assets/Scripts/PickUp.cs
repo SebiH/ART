@@ -49,14 +49,24 @@ public class PickUp : MonoBehaviour
         {
             offset = pickedUpObject.transform.position - transform.position;
             pickedUpObject.GetComponent<Rigidbody>().detectCollisions = false;
+            lastGesturePositions.Add(pickedUpObject.transform.position);
         }
     }
+
+    private List<Vector3> lastGesturePositions = new List<Vector3>();
 
     public void UpdatePosition(GestureEventArgs e)
     {
         if (pickedUpObject != null)
         {
             pickedUpObject.transform.position = transform.position + offset;
+
+            lastGesturePositions.Add(pickedUpObject.transform.position);
+
+            while (lastGesturePositions.Count > 5)
+            {
+                lastGesturePositions.RemoveAt(0);
+            }
         }
     }
 
@@ -65,7 +75,15 @@ public class PickUp : MonoBehaviour
         if (pickedUpObject != null)
         {
             pickedUpObject.transform.position = transform.position + offset;
-            pickedUpObject.GetComponent<Rigidbody>().detectCollisions = true;
+
+            var body = pickedUpObject.GetComponent<Rigidbody>();
+            body.detectCollisions = true;
+
+            // apply last known velocity of gesture
+            var velocity = pickedUpObject.transform.position - GestureUtil.GetCenterPosition(lastGesturePositions);
+            body.AddForce(velocity * 60);
+            lastGesturePositions.Clear();
+
             pickedUpObject = null;
         }
     }
