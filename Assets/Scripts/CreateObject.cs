@@ -68,12 +68,28 @@ public class CreateObject : MonoBehaviour
     }
 
 
-    public void ApplyUpwardForceToCreatedObjects()
+    public void ApplyUpForce(float force)
+    {
+        ApplyForceToCreatedObjects(new Vector3(0, force, 0));
+    }
+
+
+    public void ApplyForwardForce(float force)
+    {
+        ApplyForceToCreatedObjects(new Vector3(0, 0, force));
+    }
+
+    public void ApplySideForce(float force)
+    {
+        ApplyForceToCreatedObjects(new Vector3(force, 0, 0));
+    }
+
+    private void ApplyForceToCreatedObjects(Vector3 force)
     {
         foreach (var instance in _createdInstances)
         {
             var body = instance.GetComponent<Rigidbody>();
-            body.AddForce(new Vector3(0, 0.02f, 0));
+            body.AddForce(force);
         }
     }
 
