@@ -26,7 +26,7 @@ public class CreateObject : MonoBehaviour
             // turn off rigidbody during creation
             var rigidbody = CreatedInstance.GetComponent<Rigidbody>();
             rigidbody.detectCollisions = false;
-            rigidbody.mass = scale;
+            rigidbody.mass = scale/5f;
         }
     }
 
@@ -42,7 +42,7 @@ public class CreateObject : MonoBehaviour
             CreatedInstance.transform.localScale = new Vector3(scale, scale, scale);
 
             var rigidbody = CreatedInstance.GetComponent<Rigidbody>();
-            rigidbody.mass = scale;
+            rigidbody.mass = scale/5f;
         }
     }
 
