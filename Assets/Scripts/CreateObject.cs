@@ -24,6 +24,7 @@ public class CreateObject : MonoBehaviour
         CurrentTemplate = useAlternate ? TemplateAlternate : Template;
     }
 
+    // cant switch public variable from script for some reason
     public void SetUniformScale(bool b)
     {
         UseUniformScale = b;
@@ -45,6 +46,9 @@ public class CreateObject : MonoBehaviour
 
             var scale = GetScale(gesture);
             CreatedInstance.transform.localScale = scale;
+
+            var rotation = GetRotation(gesture);
+            CreatedInstance.transform.rotation = rotation;
 
             // turn off rigidbody during creation
             var rigidbody = CreatedInstance.GetComponent<Rigidbody>();
@@ -73,6 +77,9 @@ public class CreateObject : MonoBehaviour
             var scale = GetScale(gesture);
             CreatedInstance.transform.localScale = scale;
 
+            var rotation = GetRotation(gesture);
+            CreatedInstance.transform.rotation = rotation;
+
             var rigidbody = CreatedInstance.GetComponent<Rigidbody>();
             rigidbody.mass = GetMass(scale);
         }
@@ -93,7 +100,7 @@ public class CreateObject : MonoBehaviour
 
             // apply last known velocity of gesture
             var velocity = pos - GestureUtil.GetCenterPosition(lastGesturePositions);
-            body.AddForce(velocity * 50);
+            body.AddForce(velocity * 60);
             lastGesturePositions.Clear();
 
             _createdInstances.Add(CreatedInstance);
@@ -135,10 +142,7 @@ public class CreateObject : MonoBehaviour
 
         if (UseUniformScale)
         {
-            var scale = (gesturePosLeft - gesturePosRight).magnitude;
-
-            // reduce scale a bit to avoid operlapping with fingers
-            scale -= 0.025f;
+            var scale = (gesturePosLeft - gesturePosRight).magnitude / 2;
 
             scale = Mathf.Clamp(scale, MinScale, MaxScale);
             return new Vector3(scale, scale, scale);
@@ -157,6 +161,27 @@ public class CreateObject : MonoBehaviour
     private float GetMass(Vector3 volume)
     {
         return (volume.x + volume.y + volume.z) / 15f;
+    }
+
+    private Quaternion GetRotation(IPositionGesture gesture)
+    {
+        // rotation only supported for cubes, since we use the 3d position for scale otherwise
+        if (!UseUniformScale)
+        {
+            return Quaternion.identity;
+        }
+
+        var defaultVector = Vector3.one;
+        var gestureVector = gesture.GetGesturePosition(Hand.Right) - gesture.GetGesturePosition(Hand.Left);
+
+        var rotation = Quaternion.FromToRotation(defaultVector, gestureVector).eulerAngles;
+
+        // rotate a bit back so that fingers hold the X-axis of the cube, rather than the corners
+        rotation.x = 0;
+        rotation.y -= 45f;
+        rotation.z -= 45f;
+
+        return Quaternion.Euler(rotation);
     }
 
 }
