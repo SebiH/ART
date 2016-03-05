@@ -1,5 +1,6 @@
 using Assets.Scripts.GestureControl;
 using Assets.Scripts.Gestures;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CreateObject : MonoBehaviour
@@ -10,6 +11,7 @@ public class CreateObject : MonoBehaviour
     public float MaxScale = 0.25f;
 
     private GameObject CreatedInstance;
+    private List<GameObject> _createdInstances = new List<GameObject>();
 
     public void StartCreation(GestureEventArgs e)
     {
@@ -57,10 +59,20 @@ public class CreateObject : MonoBehaviour
             CreatedInstance.GetComponent<Rigidbody>().detectCollisions = true;
             CreatedInstance.transform.position = gesture.GetGesturePosition(Hand.Both);
 
+            _createdInstances.Add(CreatedInstance);
             CreatedInstance = null;
         }
     }
 
+
+    public void ApplyUpwardForceToCreatedObjects()
+    {
+        foreach (var instance in _createdInstances)
+        {
+            var body = instance.GetComponent<Rigidbody>();
+            body.AddForce(new Vector3(0, 0.02f, 0));
+        }
+    }
 
     private float GetScale(IPositionGesture gesture)
     {
