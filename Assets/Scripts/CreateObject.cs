@@ -43,6 +43,7 @@ public class CreateObject : MonoBehaviour
         {
             CreatedInstance = Instantiate(CurrentTemplate);
             CreatedInstance.transform.position = gesture.GetGesturePosition(Hand.Both);
+            CreatedInstance.tag = "Pickup";
 
             var scale = GetScale(gesture);
             CreatedInstance.transform.localScale = scale;
