@@ -35,13 +35,22 @@ public class CreateObject : MonoBehaviour
         }
     }
 
+    private List<Vector3> lastGesturePositions = new List<Vector3>();
+
     public void ModifyCreation(GestureEventArgs e)
     {
         var gesture = e.Sender as IPositionGesture;
 
         if (gesture != null)
         {
-            CreatedInstance.transform.position = gesture.GetGesturePosition(Hand.Both);
+            var pos = gesture.GetGesturePosition(Hand.Both);
+            CreatedInstance.transform.position = pos;
+            lastGesturePositions.Add(pos);
+
+            while (lastGesturePositions.Count > 10)
+            {
+                lastGesturePositions.RemoveAt(0);
+            }
 
             var scale = GetScale(gesture);
             CreatedInstance.transform.localScale = scale;
@@ -59,8 +68,15 @@ public class CreateObject : MonoBehaviour
         if (gesture != null)
         {
             // turn on rigidbody on again
-            CreatedInstance.GetComponent<Rigidbody>().detectCollisions = true;
-            CreatedInstance.transform.position = gesture.GetGesturePosition(Hand.Both);
+            var body = CreatedInstance.GetComponent<Rigidbody>();
+            body.detectCollisions = true;
+            var pos = gesture.GetGesturePosition(Hand.Both);
+            CreatedInstance.transform.position = pos;
+
+            // apply last known velocity of gesture
+            var velocity = pos - GestureUtil.GetCenterPosition(lastGesturePositions);
+            body.AddForce(velocity * 50);
+            lastGesturePositions.Clear();
 
             _createdInstances.Add(CreatedInstance);
             CreatedInstance = null;

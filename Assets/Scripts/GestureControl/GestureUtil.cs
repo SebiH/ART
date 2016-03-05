@@ -45,6 +45,26 @@ namespace Assets.Scripts.GestureControl
         }
 
 
+        public static Vector3 GetCenterPosition(IEnumerable<Vector3> positions)
+        {
+            Vector3 middle = Vector3.zero;
+            int objectsCount = 0;
+
+            foreach (var position in positions)
+            {
+                middle += position;
+                objectsCount++;
+            }
+
+            if (objectsCount == 0)
+            {
+                Debug.LogError("Tried to call GetAverage without objects!");
+                return Vector3.zero;
+            }
+
+            return middle / objectsCount;
+        }
+
         /// <summary>
         /// Calculates and returns the average position out of all given objects
         /// </summary>
