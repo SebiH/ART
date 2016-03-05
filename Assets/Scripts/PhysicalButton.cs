@@ -13,59 +13,68 @@ public class PhysicalButton : MonoBehaviour
     public UnityEvent OnButtonHold;
     public UnityEvent OnButtonRelease;
 
-    private Color OriginalColour;
-    private bool isPressed;
+    protected Color OriginalColour;
+    protected bool isPressed;
 
-    private void Start()
+    protected void Start()
     {
         OriginalColour = ButtonObj.GetComponent<Renderer>().material.color;
     }
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void OnTriggerEnter(Collider other)
     {
         // TODO: tagmanager -> hasTag ( canTriggerInteraction ) ?
-        if (!isPressed && other.GetComponentInParent<RigidHand>() != null) // only allow leapmotion hands for now
+        if (!isPressed && other.GetComponentInParent<RigidHand>() != null && other.name.StartsWith("bone")) // only allow leapmotion hands for now
         {
-            isPressed = true;
-
-            if (OnButtonPress != null)
-                OnButtonPress.Invoke();
-
-            // move button down to indicate pressed state
-            StopCoroutine("AnimatePosition");
-            StartCoroutine("AnimatePosition", ClickedPosition);
-
-            // change colour
-            StopCoroutine("AnimateColour");
-            StartCoroutine("AnimateColour", ClickedColour);
+            PressButton();
         }
-
     }
 
-    private void OnTriggerStay(Collider other)
+    protected virtual void PressButton()
     {
-        if (OnButtonHold != null && other.GetComponentInParent<RigidHand>() != null) // only allow leapmotion hands for now
+        isPressed = true;
+
+        if (OnButtonPress != null)
+            OnButtonPress.Invoke();
+
+        // move button down to indicate pressed state
+        StopCoroutine("AnimatePosition");
+        StartCoroutine("AnimatePosition", ClickedPosition);
+
+        // change colour
+        StopCoroutine("AnimateColour");
+        StartCoroutine("AnimateColour", ClickedColour);
+    }
+
+    protected virtual void OnTriggerStay(Collider other)
+    {
+        if (OnButtonHold != null && other.GetComponentInParent<RigidHand>() != null && other.name.StartsWith("bone")) // only allow leapmotion hands for now
             OnButtonHold.Invoke();
     }
 
-    private void OnTriggerExit(Collider other)
+    protected virtual void OnTriggerExit(Collider other)
     {
         // TODO: tagmanager -> hasTag ( canTriggerInteraction ) ?
 
-        if (isPressed && other.GetComponentInParent<RigidHand>() != null) // only allow leapmotion hands for now
+        if (isPressed && other.GetComponentInParent<RigidHand>() != null && other.name.StartsWith("bone")) // only allow leapmotion hands for now
         {
-            isPressed = false;
-
-            if (OnButtonRelease != null)
-                OnButtonRelease.Invoke();
-
-            // go to default location/state/colour
-            StopCoroutine("AnimatePosition");
-            StartCoroutine("AnimatePosition", Vector3.zero);
-
-            StopCoroutine("AnimateColour");
-            StartCoroutine("AnimateColour", OriginalColour);
+            ReleaseButton();
         }
+    }
+
+    protected virtual void ReleaseButton()
+    {
+        isPressed = false;
+
+        if (OnButtonRelease != null)
+            OnButtonRelease.Invoke();
+
+        // go to default location/state/colour
+        StopCoroutine("AnimatePosition");
+        StartCoroutine("AnimatePosition", Vector3.zero);
+
+        StopCoroutine("AnimateColour");
+        StartCoroutine("AnimateColour", OriginalColour);
     }
 
 
