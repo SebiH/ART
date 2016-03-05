@@ -6,6 +6,9 @@ using UnityEngine;
 public class CreateObject : MonoBehaviour
 {
     public GameObject Template;
+    public GameObject TemplateAlternate;
+
+    private GameObject CurrentTemplate;
 
     public float MinScale = 0.05f;
     public float MaxScale = 0.25f;
@@ -16,13 +19,28 @@ public class CreateObject : MonoBehaviour
     private GameObject CreatedInstance;
     private List<GameObject> _createdInstances = new List<GameObject>();
 
+    public void UseAlternateTemplate(bool useAlternate)
+    {
+        CurrentTemplate = useAlternate ? TemplateAlternate : Template;
+    }
+
+    public void SetUniformScale(bool b)
+    {
+        UseUniformScale = b;
+    }
+
+    protected void Start()
+    {
+        CurrentTemplate = Template;
+    }
+
     public void StartCreation(GestureEventArgs e)
     {
         var gesture = e.Sender as IPositionGesture;
 
         if (gesture != null)
         {
-            CreatedInstance = Instantiate(Template);
+            CreatedInstance = Instantiate(CurrentTemplate);
             CreatedInstance.transform.position = gesture.GetGesturePosition(Hand.Both);
 
             var scale = GetScale(gesture);
@@ -47,7 +65,7 @@ public class CreateObject : MonoBehaviour
             CreatedInstance.transform.position = pos;
             lastGesturePositions.Add(pos);
 
-            while (lastGesturePositions.Count > 10)
+            while (lastGesturePositions.Count > 5)
             {
                 lastGesturePositions.RemoveAt(0);
             }
