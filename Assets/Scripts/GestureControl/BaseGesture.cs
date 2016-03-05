@@ -43,7 +43,7 @@ namespace Assets.Scripts.GestureControl
 
 
 
-        protected void Start()
+        protected virtual void Start()
         {
             GestureSystem.RegisterGesture(this);
         }
