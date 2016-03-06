@@ -14,6 +14,8 @@ public class PickUp : MonoBehaviour
         if (other.gameObject.tag == "Pickup")
         {
             ObjectsWithinReach.Add(other.gameObject);
+
+
         }
     }
 
@@ -47,9 +49,16 @@ public class PickUp : MonoBehaviour
 
         if (pickedUpObject != null)
         {
+            var body = pickedUpObject.GetComponent<Rigidbody>();
+
             offset = pickedUpObject.transform.position - transform.position;
-            pickedUpObject.GetComponent<Rigidbody>().detectCollisions = false;
             lastGesturePositions.Add(pickedUpObject.transform.position);
+
+            body.detectCollisions = false;
+            // stop all motion
+            body.velocity = Vector3.zero;
+            body.angularVelocity = Vector3.zero;
+            body.Sleep();
         }
     }
 
