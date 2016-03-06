@@ -1,13 +1,11 @@
 /* Has to be attached to a Collision Trigger Object! */
 
 using UnityEngine;
-using System.Collections;
-using Assets.Code.Logging;
-using UnityEngine.UI;
 
 public class ScrollInteraction : MonoBehaviour
 {
-    public ScrollRect scrollElement;
+    public GameObject scrollElement;
+    public float ForceMultiplier = 100;
 
     // only scroll on the first collider that entered
     // TODO: better alternative?
@@ -26,11 +24,10 @@ public class ScrollInteraction : MonoBehaviour
     private void OnTriggerStay(Collider collider)
     {
         // only allow interaction on the first collider that entered the trigger
-        // TODO: better alternative?
         if (collider == scrollCollider)
         {
             var movement = collider.transform.position.y - prevColliderPos;
-            scrollElement.verticalNormalizedPosition -= movement / 100f;
+            scrollElement.GetComponent<Rigidbody>().AddForce(new Vector3(0, movement * ForceMultiplier, 0));
             prevColliderPos = collider.transform.position.y;
         }
     }
