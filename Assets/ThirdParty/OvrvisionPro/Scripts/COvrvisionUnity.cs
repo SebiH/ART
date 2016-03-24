@@ -1,4 +1,4 @@
-// COvrvisionUnity.cs
+﻿// COvrvisionUnity.cs
 // Version 1.0 : 11/Nov/2015
 //
 //MIT License
@@ -44,6 +44,8 @@ public class COvrvisionUnity
 
     [DllImport("ovrvision", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern void ovGetCamImageForUnityNative(System.IntPtr pTexPtr_Left, System.IntPtr pTexPtr_Right);
+	[DllImport("ovrvision", CharSet = CharSet.Ansi)]
+	static extern System.IntPtr ovGetCamImageForUnityNativeGLCall(System.IntPtr pTexPtr_Left, System.IntPtr pTexPtr_Right);
 
     [DllImport("ovrvision", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
     static extern int ovGetImageWidth();
@@ -199,7 +201,8 @@ public class COvrvisionUnity
         return camStatus;
     }
 
-    //Update right camera data
+
+    //Update camera data
     public void UpdateImage(System.IntPtr leftPtr, System.IntPtr rightPtr)
     {
         if (!camStatus)
@@ -213,14 +216,15 @@ public class COvrvisionUnity
 		if (useOvrvisionTrack)
 			ovTrackRender(useOvrvisionTrack_Calib, false);
 
-		ovGetCamImageForUnityNative(leftPtr, rightPtr);
-    }
+		//ovGetCamImageForUnityNative(leftPtr, rightPtr);
+		GL.IssuePluginEvent(ovGetCamImageForUnityNativeGLCall(leftPtr, rightPtr), 1);
+	}
 
-    public void UpdateImage2(IntPtr leftPtr, IntPtr rightPtr)
+	//For get pixel
+	public void GetImagePixelColor(System.IntPtr leftPtr, int eye)
     {
-        ovGetCamImageBGRA(leftPtr, OV_CAMEYE_LEFT);
-        ovGetCamImageBGRA(rightPtr, OV_CAMEYE_RIGHT);
-    }
+		ovGetCamImageBGRA(leftPtr, eye);
+	}
 
     //Close the Ovrvision
     public bool Close()

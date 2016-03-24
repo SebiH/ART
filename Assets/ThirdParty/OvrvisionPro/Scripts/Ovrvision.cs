@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -21,6 +21,9 @@ public class Ovrvision : MonoBehaviour
 	private Texture2D CameraTexLeft = null;
 	private Texture2D CameraTexRight = null;
 	private Vector3 CameraRightGap;
+
+	private System.IntPtr CameraTexLeftPtr = System.IntPtr.Zero;
+	private System.IntPtr CameraTexRightPtr = System.IntPtr.Zero;
 
 	//public propaty
 	public int cameraMode = COvrvisionUnity.OV_CAMVR_FULL;
@@ -103,6 +106,12 @@ public class Ovrvision : MonoBehaviour
 		CameraTexLeft.wrapMode = TextureWrapMode.Clamp;
 		CameraTexRight.wrapMode = TextureWrapMode.Clamp;
 
+		CameraTexLeft.Apply();
+		CameraTexRight.Apply();
+
+		CameraTexLeftPtr = CameraTexLeft.GetNativeTexturePtr();
+		CameraTexRightPtr = CameraTexRight.GetNativeTexturePtr();
+
 		//Mesh
 		Mesh m = CreateCameraPlaneMesh();
 		CameraPlaneLeft.GetComponent<MeshFilter>().mesh = m;
@@ -131,6 +140,8 @@ public class Ovrvision : MonoBehaviour
 			OvrPro.useOvrvisionTrack_Calib = true;
 			CameraPlaneRight.active = !OvrPro.useOvrvisionTrack_Calib;
 		}
+
+		//yield return StartCoroutine("CallPluginAtEndOfFrames");
 	}
 
 	private Mesh CreateCameraPlaneMesh()
@@ -166,8 +177,7 @@ public class Ovrvision : MonoBehaviour
 		return m;
 	}
 
-	// Update is called once per frame
-	void Update ()
+	void Update()
 	{
 		//camStatus
 		if (!OvrPro.camStatus)
@@ -201,7 +211,7 @@ public class Ovrvision : MonoBehaviour
 		OvrPro.useOvrvisionAR = useOvrvisionAR;
 		OvrPro.useOvrvisionTrack = useOvrvisionTrack;
 
-		OvrPro.UpdateImage(CameraTexLeft.GetNativeTexturePtr(), CameraTexRight.GetNativeTexturePtr());
+		OvrPro.UpdateImage(CameraTexLeftPtr, CameraTexRightPtr);
 
 		if (useOvrvisionAR) OvrvisionARRender();
 		if (useOvrvisionTrack) OvrvisionTrackRender();
@@ -377,7 +387,7 @@ public class Ovrvision : MonoBehaviour
 		}
 	}
 
-	// get propaty
+	// get property
 	public Texture2D GetCameraTextureLeft()
 	{
 		return CameraTexLeft;
@@ -387,4 +397,5 @@ public class Ovrvision : MonoBehaviour
 	{
 		return CameraTexRight;
 	}
+
 }
