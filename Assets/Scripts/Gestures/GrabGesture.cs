@@ -36,7 +36,7 @@ namespace Assets.Scripts.Gestures
         public override bool CheckConditions()
         {
             Frame frame = controller.Frame();
-            HandList hands = frame.Hands;
+            var hands = frame.Hands;
             Leap.Hand currentHand = null;
 
             if (TriggerHand == GestureControl.Hand.Left)

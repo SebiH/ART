@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.Events;
+using Leap.Unity;
 
 public class PhysicalButton : MonoBehaviour
 {

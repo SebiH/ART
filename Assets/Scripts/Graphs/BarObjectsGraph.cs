@@ -1,6 +1,5 @@
 using UnityEngine;
 using Assets.Code.DataProvider;
-using Assets.Code.Console;
 using System.Linq;
 using Assets.Code.Graph;
 
@@ -22,18 +21,6 @@ public class BarObjectsGraph : MonoBehaviour
 	void Start ()
     {
         dataProvider = new RandomDataProvider();
-
-        UCommandRegister.RegisterCommand(new UConsoleCommand("loadData", (args) =>
-        {
-            if (args.Count() < 1)
-                return "Not enough arguments!";
-
-            dataProvider = new FileDataProvider();
-            ((FileDataProvider)dataProvider).ReadData(args.First());
-            data = dataProvider.GetData();
-            RegenerateGraph();
-            return "success";
-        }));
 	}
 	
 
