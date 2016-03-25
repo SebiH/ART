@@ -1,15 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Leap;
 
-namespace Leap {
+namespace Leap.Unity {
+  /**
+   * HandProxy is a concrete example of HandRepresentation
+   * @param parent The HandPool which creates HandRepresentations
+   * @param handModel the IHandModel to be paired with Leap Hand data.
+   * @param hand The Leap Hand data to paired with an IHandModel
+   */ 
   public class HandProxy:
     HandRepresentation
   {
     HandPool parent;
-    HandTransitionBehavior handFinishBehavior;
+    public IHandModel handModel;
 
-  
-    public HandProxy(HandPool parent, IHandModel handModel, Leap.Hand hand) :
+    public HandProxy(HandPool parent, IHandModel handModel, Hand hand) :
       base(hand.Id)
     {
       this.parent = parent;
@@ -22,23 +28,17 @@ namespace Leap {
       } else {
         handModel.SetLeapHand(hand);
       }
-
-
-      handFinishBehavior = handModel.GetComponent<HandTransitionBehavior>();
-      if (handFinishBehavior) {
-        handFinishBehavior.Reset();
-      }
+      handModel.BeginHand();
     }
-
+    /** To be called if the HandRepresentation no longer has a Leap Hand. */
     public override void Finish() {
-      if (handFinishBehavior) {
-        handFinishBehavior.HandFinish();
-      }
+      handModel.FinishHand();
       parent.ModelPool.Add(handModel);
       handModel = null;
     }
 
-    public override void UpdateRepresentation(Leap.Hand hand, ModelType modelType){
+    /** Calls Updates in IHandModels that are part of this HandRepresentation */
+    public override void UpdateRepresentation(Hand hand, ModelType modelType){
       handModel.SetLeapHand(hand);
       handModel.UpdateHand();
     }

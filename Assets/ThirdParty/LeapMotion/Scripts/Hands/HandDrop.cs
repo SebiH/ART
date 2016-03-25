@@ -1,25 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Leap {
+namespace Leap.Unity {
+  /** Simple implementation HandTransitionBehavior to lerp hand models back to their starting position and orientation with tracking ends*/
   public class HandDrop : HandTransitionBehavior {
     private Vector3 startingPalmPosition;
     private Quaternion startingOrientation;
-    private Vector3 startingScale;
     private Transform palm;
 
     // Use this for initialization
-    void Awake() {
+    protected override void Awake() {
+      base.Awake();
       palm = GetComponent<HandModel>().palm;
       startingPalmPosition = palm.localPosition;
       startingOrientation = palm.localRotation;
-      startingScale = transform.localScale;
     }
 
-    public override void HandFinish() {
+    protected override void HandFinish() {
       StartCoroutine(LerpToStart());
     }
-    public override void Reset() {
+    protected override void HandReset() {
       StopAllCoroutines();
     }
 
