@@ -127,11 +127,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>copy "$(SolutionDir)Assets\Plugins\external\ImageProcessing.*" "$(TargetDir)"
-copy "$(SolutionDir)Assets\Plugins\emgucv\x64\*.dll" "$(TargetDir)"
+    <PreBuildEvent>copy "$(SolutionDir)Assets\Plugins\x86_64\ImageProcessing.*" "$(TargetDir)"
 
-mkdir "$(TargetDir)Assets/CV/"
-copy "$(SolutionDir)Assets\CV\webcam.yml" "$(TargetDir)Assets/CV/"</PreBuildEvent>
+</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>

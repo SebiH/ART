@@ -2,6 +2,7 @@
 
 #define DllExport   __declspec( dllexport )
 
+#include <memory>
 #include <opencv2/opencv.hpp>
 #include <ovrvision_pro.h>
 
@@ -24,7 +25,7 @@ extern "C" DllExport void Start(int cameraMode = -1)
 	ovrCamera.SetCameraGain(47);
 	ovrCamera.SetCameraSyncMode(false);
 
-	// store propertys for later
+	// store properties for later
 	camWidth = ovrCamera.GetCamWidth();
 	camHeight = ovrCamera.GetCamHeight();
 }
@@ -36,46 +37,48 @@ extern "C" DllExport void Stop()
 }
 
 
-extern "C" DllExport float GetProperty(std::string *property)
+extern "C" DllExport float GetProperty(const char *prop)
 {
-	if (*property == "width")
+	if (prop == "width")
 	{
 		return (float)ovrCamera.GetCamWidth();
 	}
-	else if (*property == "height")
+	else if (prop == "height")
 	{
 		return (float)ovrCamera.GetCamHeight();
 	}
-	else if (*property == "exposure")
+	else if (prop == "exposure")
 	{
 		return (float)ovrCamera.GetCameraExposure();
 	}
-	else if (*property == "gain")
+	else if (prop == "gain")
 	{
 		return (float)ovrCamera.GetCameraGain();
 	}
 	else
 	{
-		// TODO: throw warning about unknown property
-		return .0f;
+		cv::Mat test(cv::Size(200, 500), CV_64F);
+		imshow("testwin", test);
+		// TODO: throw warning about unknown prop
+		return .05f;
 	}
 }
 
 
-extern "C" DllExport void SetProperty(std::string *property, float value)
+extern "C" DllExport void SetProperty(const char *prop, float value)
 {
-	// TODO: more propertys
-	if (*property == "exposure")
+	// TODO: more props
+	if (prop == "exposure")
 	{
 		ovrCamera.SetCameraExposure((int)value);
 	}
-	else if (*property == "gain")
+	else if (prop == "gain")
 	{
 		ovrCamera.SetCameraGain((int)value);
 	}
 	else
 	{
-		// TODO: throw warning about unkown property
+		// TODO: throw warning about unkown prop
 	}
 }
 
