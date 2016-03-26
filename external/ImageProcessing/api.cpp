@@ -24,7 +24,7 @@ extern "C" DllExport void Start(int cameraMode = -1)
 	ovrCamera.SetCameraGain(47);
 	ovrCamera.SetCameraSyncMode(false);
 
-	// store attributes for later
+	// store propertys for later
 	camWidth = ovrCamera.GetCamWidth();
 	camHeight = ovrCamera.GetCamHeight();
 }
@@ -36,46 +36,46 @@ extern "C" DllExport void Stop()
 }
 
 
-extern "C" DllExport float GetAttribute(std::string *attribute)
+extern "C" DllExport float GetProperty(std::string *property)
 {
-	if (*attribute == "width")
+	if (*property == "width")
 	{
 		return (float)ovrCamera.GetCamWidth();
 	}
-	else if (*attribute == "height")
+	else if (*property == "height")
 	{
 		return (float)ovrCamera.GetCamHeight();
 	}
-	else if (*attribute == "exposure")
+	else if (*property == "exposure")
 	{
 		return (float)ovrCamera.GetCameraExposure();
 	}
-	else if (*attribute == "gain")
+	else if (*property == "gain")
 	{
 		return (float)ovrCamera.GetCameraGain();
 	}
 	else
 	{
-		// TODO: throw warning about unknown attribute
+		// TODO: throw warning about unknown property
 		return .0f;
 	}
 }
 
 
-extern "C" DllExport void SetAttribute(std::string *attribute, float value)
+extern "C" DllExport void SetProperty(std::string *property, float value)
 {
-	// TODO: more attributes
-	if (*attribute == "exposure")
+	// TODO: more propertys
+	if (*property == "exposure")
 	{
 		ovrCamera.SetCameraExposure((int)value);
 	}
-	else if (*attribute == "gain")
+	else if (*property == "gain")
 	{
 		ovrCamera.SetCameraGain((int)value);
 	}
 	else
 	{
-		// TODO: throw warning about unkown attribute
+		// TODO: throw warning about unkown property
 	}
 }
 
