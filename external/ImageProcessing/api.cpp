@@ -6,10 +6,23 @@
 #include <opencv2/opencv.hpp>
 #include <ovrvision_pro.h>
 
+#include <mutex>
+#include <thread>
+
 using namespace cv;
+
+static void FillTexture(unsigned char *texturePtr, unsigned char *data);
+
 
 OVR::OvrvisionPro *ovrCamera;
 int camWidth, camHeight;
+
+// thread-safe memory for storing image data
+std::mutex imgMutex;
+size_t tsImageMemorySize;
+unsigned char *tsImageLeft;
+unsigned char *tsImageRight;
+
 
 extern "C" DllExport void OvrStart(int cameraMode = -1)
 {
@@ -19,7 +32,6 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 	// TODO: error on failure?
 	auto openSuccess = ovrCamera->Open(0, camProp);
 
-
 	// default settings
 	ovrCamera->SetCameraExposure(12960);
 	ovrCamera->SetCameraGain(47);
@@ -28,7 +40,32 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 	// store properties for later
 	camWidth = ovrCamera->GetCamWidth();
 	camHeight = ovrCamera->GetCamHeight();
+
+	// create memory for distributing memory across modules
+	tsImageMemorySize = camWidth * camHeight * 4;
+	tsImageLeft = new unsigned char[tsImageMemorySize];
+	tsImageRight = new unsigned char[tsImageMemorySize];
 }
+
+
+// TODO: put this into module
+unsigned char *roiLeft;
+unsigned char *roiRight;
+
+extern "C" DllExport void WriteROITexture(int startX, int startY, int width, int height, unsigned char *leftUnityPtr, unsigned char *rightUnityPtr)
+{
+	// TODO: maybe better to copy memory than to keep lock..?
+	std::lock_guard<std::mutex> guard(imgMutex);
+	cv::Mat leftMat(height, width, CV_8UC4, tsImageLeft);
+	cv::Mat rightMat(height, width, CV_8UC4, tsImageRight);
+
+	cv::Mat roiLeftMat(leftMat, cv::Rect(startX, startY, width, height));
+	cv::Mat roiRightMat(rightMat, cv::Rect(startX, startY, width, height));
+
+	FillTexture(leftUnityPtr, roiLeftMat.data);
+	FillTexture(rightUnityPtr, roiRightMat.data);
+}
+// /TODO
 
 
 extern "C" DllExport void OvrStop()
@@ -39,6 +76,8 @@ extern "C" DllExport void OvrStop()
 	}
 
 	delete ovrCamera;
+	delete[] tsImageLeft;
+	delete[] tsImageRight;
 }
 
 
@@ -68,8 +107,6 @@ extern "C" DllExport float GetProperty(const char *name)
 	}
 	else
 	{
-		cv::Mat test(cv::Size(200, 500), CV_64F);
-		imshow("testwin", test);
 		// TODO: throw warning about unknown prop
 		return -1.f;
 	}
@@ -123,5 +160,9 @@ extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned cha
 
 		FillTexture(leftUnityPtr, leftImg);
 		FillTexture(rightUnityPtr, rightImg);
+
+		std::lock_guard<std::mutex> guard(imgMutex);
+		memcpy_s(tsImageLeft, tsImageMemorySize, leftImg, tsImageMemorySize);
+		memcpy_s(tsImageRight, tsImageMemorySize, rightImg, tsImageMemorySize);
 	}
 }
