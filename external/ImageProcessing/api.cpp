@@ -54,16 +54,19 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 
 extern "C" DllExport void OvrStop()
 {
-	if (ovrCamera->isOpen())
+	if (hasStarted)
 	{
-		ovrCamera->Close();
+		if (ovrCamera->isOpen())
+		{
+			ovrCamera->Close();
+		}
+
+		delete ovrCamera;
+		delete[] tsImageLeft;
+		delete[] tsImageRight;
+
+		hasStarted = false;
 	}
-
-	delete ovrCamera;
-	delete[] tsImageLeft;
-	delete[] tsImageRight;
-
-	hasStarted = false;
 }
 
 
