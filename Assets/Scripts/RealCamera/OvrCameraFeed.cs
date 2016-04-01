@@ -14,6 +14,8 @@ namespace Assets.Scripts.RealCamera
         private Texture2D CameraTexLeft = null;
         private Texture2D CameraTexRight = null;
         private Vector3 CameraRightGap;
+        private IntPtr LeftTexturePtr;
+        private IntPtr RightTexturePtr;
 
         private int ImageWidth;
         private int ImageHeight;
@@ -22,9 +24,9 @@ namespace Assets.Scripts.RealCamera
 
         void Awake()
         {
-            ImageProcessing.OvrStart();
-            ImageWidth = (int)ImageProcessing.GetProperty("width");
-            ImageHeight = (int)ImageProcessing.GetProperty("height");
+            ImageProcessing.Instance.RequestStart();
+            ImageWidth = (int)ImageProcessing.Instance.GetCameraProperty("width");
+            ImageHeight = (int)ImageProcessing.Instance.GetCameraProperty("height");
         }
 
 
@@ -76,28 +78,16 @@ namespace Assets.Scripts.RealCamera
             CameraPlaneLeft.transform.localPosition = new Vector3(-0.032f, 0.0f, defaultFloatpoint + IMAGE_ZOFFSET);
             CameraPlaneRight.transform.localPosition = new Vector3(CameraRightGap.x - 0.040f, 0.0f, defaultFloatpoint + IMAGE_ZOFFSET);
 
-            leftTexturePtr = CameraTexLeft.GetNativeTexturePtr();
-            rightTexturePtr = CameraTexRight.GetNativeTexturePtr();
+            LeftTexturePtr = CameraTexLeft.GetNativeTexturePtr();
+            RightTexturePtr = CameraTexRight.GetNativeTexturePtr();
 
-        }
-
-        private IntPtr leftTexturePtr, rightTexturePtr;
-
-        void Update()
-        {
-            if (ImageProcessing.GetProperty("isOpen") >= 1.0f)
-            {
-                ImageProcessing.WriteTexture(leftTexturePtr, rightTexturePtr);
-            }
-            else
-            {
-                Debug.LogError("Camera is not open!");
-            }
+            ImageProcessing.Instance.RegisterTextureUpdate(ImageProcessing.ImageProcessingMethod.Native, LeftTexturePtr, RightTexturePtr);
         }
 
         void OnDestroy()
         {
-            ImageProcessing.OvrStop();
+            ImageProcessing.Instance.DeregisterTexture(LeftTexturePtr, RightTexturePtr);
+            ImageProcessing.Instance.RequestShutdown();
         }
 
         private Mesh CreateCameraPlaneMesh()

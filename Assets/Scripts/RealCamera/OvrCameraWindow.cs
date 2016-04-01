@@ -5,20 +5,24 @@ namespace Assets.Scripts.RealCamera
 {
     class OvrCameraWindow : MonoBehaviour
     {
-        public int ImageWidth;
-        public int ImageHeight;
+        public int ImageWidth = 500;
+        public int ImageHeight = 500;
+        public int StartPosX = 0;
+        public int StartPosY = 0;
 
         // max height depending on ovr camera feed - can't be more than is available!
         private int MaxImageWidth;
         private int MaxImageHeight;
+        private IntPtr LeftTexturePtr;
+        private IntPtr RightTexturePtr;
 
         private const float IMAGE_ZOFFSET = 0.02f;
 
         void Awake()
         {
-            ImageProcessing.OvrStart();
-            MaxImageWidth = (int)ImageProcessing.GetProperty("width");
-            MaxImageHeight = (int)ImageProcessing.GetProperty("height");
+            ImageProcessing.Instance.RequestStart();
+            MaxImageWidth = (int)ImageProcessing.Instance.GetCameraProperty("width");
+            MaxImageHeight = (int)ImageProcessing.Instance.GetCameraProperty("height");
         }
 
 
@@ -70,29 +74,24 @@ namespace Assets.Scripts.RealCamera
             CameraPlaneLeft.transform.localPosition = new Vector3(-0.032f, 0.0f, defaultFloatpoint + IMAGE_ZOFFSET);
             CameraPlaneRight.transform.localPosition = new Vector3(CameraRightGap.x - 0.040f, 0.0f, defaultFloatpoint + IMAGE_ZOFFSET);
 
-            leftTexturePtr = CameraTexLeft.GetNativeTexturePtr();
-            rightTexturePtr = CameraTexRight.GetNativeTexturePtr();
+            LeftTexturePtr = CameraTexLeft.GetNativeTexturePtr();
+            RightTexturePtr = CameraTexRight.GetNativeTexturePtr();
 
+            ImageProcessing.Instance.RegisterTextureUpdate(ImageProcessing.ImageProcessingMethod.ROI, LeftTexturePtr, RightTexturePtr,
+                Math.Min(StartPosX, MaxImageWidth - 1),
+                Math.Min(StartPosY, MaxImageHeight - 1),
+                Math.Min(ImageWidth, MaxImageWidth - StartPosX),
+                Math.Min(ImageHeight, MaxImageHeight - StartPosY));
         }
-
-        private IntPtr leftTexturePtr, rightTexturePtr;
 
         void Update()
         {
-            if (ImageProcessing.GetProperty("isOpen") >= 1.0f)
-            {
-                ImageProcessing.WriteTexture(new IntPtr(0), new IntPtr(0));
-                ImageProcessing.WriteROITexture(0, 0, Math.Min(ImageWidth, MaxImageWidth), Math.Min(ImageHeight, MaxImageHeight), leftTexturePtr, rightTexturePtr);
-            }
-            else
-            {
-                Debug.LogError("Camera is not open!");
-            }
+            // TODO: support changing of ImageWidth during runtime!
         }
 
         void OnDestroy()
         {
-            ImageProcessing.OvrStop();
+            ImageProcessing.Instance.RequestShutdown();
         }
 
         private Mesh CreateCameraPlaneMesh()

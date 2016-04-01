@@ -138,8 +138,12 @@ static void FillTexture(unsigned char *texturePtr, unsigned char *data)
 	ctx->Release();
 }
 
-extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned char *rightUnityPtr)
+/// <summary>
+///	Fetches a new camera image from the OVRvision cameras
+/// </summary>
+extern "C" DllExport void FetchImage()
 {
+	// TODO: maybe invoke automatically within C++ every x seconds instead of waiting for unity update?
 	if (ovrCamera->isOpen())
 	{
 		ovrCamera->PreStoreCamData(OVR::OV_CAMQT_DMS);
@@ -147,25 +151,31 @@ extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned cha
 		unsigned char *leftImg = ovrCamera->GetCamImageBGRA(OVR::OV_CAMEYE_LEFT);
 		unsigned char *rightImg = ovrCamera->GetCamImageBGRA(OVR::OV_CAMEYE_RIGHT);
 
-		if (leftUnityPtr != NULL)
-		{
-			FillTexture(leftUnityPtr, leftImg);
-		}
-		
-		if (rightUnityPtr != NULL)
-		{
-			FillTexture(rightUnityPtr, rightImg);
-		}
-
 		std::lock_guard<std::mutex> guard(imgMutex);
 		memcpy_s(tsImageLeft, tsImageMemorySize, leftImg, tsImageMemorySize);
 		memcpy_s(tsImageRight, tsImageMemorySize, rightImg, tsImageMemorySize);
 	}
 }
 
+extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned char *rightUnityPtr)
+{
+	// TODO: maybe unnecessary, since only FetchImages should write threadsafe images,
+	//		 and both cannot (?) be called at the same time
+	std::lock_guard<std::mutex> guard(imgMutex);
+	if (leftUnityPtr != NULL)
+	{
+		FillTexture(leftUnityPtr, tsImageLeft);
+	}
+
+	if (rightUnityPtr != NULL)
+	{
+		FillTexture(rightUnityPtr, tsImageRight);
+	}
+
+}
+
 
 // TODO: put this into module
-
 extern "C" DllExport void WriteROITexture(int startX, int startY, int width, int height, unsigned char *leftUnityPtr, unsigned char *rightUnityPtr)
 {
 	auto *imgLeft = new unsigned char[width * height * 4];
