@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Assets.Scripts.Camera
+namespace Assets.Scripts.RealCamera
 {
     class ImageProcessing
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Assets.Scripts.Camera
+namespace Assets.Scripts.RealCamera
 {
     class OvrCameraFeed : MonoBehaviour
     {
@@ -54,8 +54,8 @@ namespace Assets.Scripts.Camera
             CameraPlaneRight.GetComponent<MeshFilter>().mesh = m;
 
             // SetShader
-            CameraLeft.GetComponent<UnityEngine.Camera>().enabled = true;
-            CameraRight.GetComponent<UnityEngine.Camera>().enabled = true;
+            CameraLeft.GetComponent<Camera>().enabled = true;
+            CameraRight.GetComponent<Camera>().enabled = true;
 
             CameraPlaneLeft.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovTexture");
             CameraPlaneRight.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovTexture");
