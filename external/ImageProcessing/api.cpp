@@ -147,8 +147,11 @@ extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned cha
 		unsigned char *leftImg = ovrCamera->GetCamImageBGRA(OVR::OV_CAMEYE_LEFT);
 		unsigned char *rightImg = ovrCamera->GetCamImageBGRA(OVR::OV_CAMEYE_RIGHT);
 
-		FillTexture(leftUnityPtr, leftImg);
-		FillTexture(rightUnityPtr, rightImg);
+		if (leftUnityPtr != NULL && rightUnityPtr != NULL)
+		{
+			FillTexture(leftUnityPtr, leftImg);
+			FillTexture(rightUnityPtr, rightImg);
+		}
 
 		std::lock_guard<std::mutex> guard(imgMutex);
 		memcpy_s(tsImageLeft, tsImageMemorySize, leftImg, tsImageMemorySize);
@@ -158,20 +161,38 @@ extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned cha
 
 
 // TODO: put this into module
-unsigned char *roiLeft;
-unsigned char *roiRight;
 
 extern "C" DllExport void WriteROITexture(int startX, int startY, int width, int height, unsigned char *leftUnityPtr, unsigned char *rightUnityPtr)
 {
+	auto *imgLeft = new unsigned char[width * height * 4];
+	auto *imgRight = new unsigned char[width * height * 4];
+
 	// TODO: maybe better to copy memory than to keep lock..?
 	std::lock_guard<std::mutex> guard(imgMutex);
-	cv::Mat leftMat(height, width, CV_8UC4, tsImageLeft);
-	cv::Mat rightMat(height, width, CV_8UC4, tsImageRight);
 
-	cv::Mat roiLeftMat(leftMat, cv::Rect(startX, startY, width, height));
-	cv::Mat roiRightMat(rightMat, cv::Rect(startX, startY, width, height));
+	auto *currRowRoiLeft = imgLeft;
+	auto *currRowRoiRight = imgRight;
+	auto *currRowSrcLeft = tsImageLeft + startX * 4 + camWidth * 4 * startY;
+	auto *currRowSrcRight = tsImageRight + startX * 4 + camWidth * 4 * startY;
 
-	FillTexture(leftUnityPtr, roiLeftMat.data);
-	FillTexture(rightUnityPtr, roiRightMat.data);
+	for (int i = 0; i < height; i++)
+	{
+		memcpy_s(currRowRoiLeft, width * 4, currRowSrcLeft, width * 4);
+		currRowRoiLeft += width * 4;
+		currRowSrcLeft += camWidth * 4;
+
+		memcpy_s(currRowRoiRight, width * 4, currRowSrcRight, width * 4);
+		currRowRoiRight += width * 4;
+		currRowSrcRight += camWidth * 4;
+	}
+
+	if (leftUnityPtr != NULL && rightUnityPtr != NULL)
+	{
+		FillTexture(leftUnityPtr, imgLeft);
+		FillTexture(rightUnityPtr, imgRight);
+	}
+
+	delete[] imgLeft;
+	delete[] imgRight;
 }
 // /TODO

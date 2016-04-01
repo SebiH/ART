@@ -3,47 +3,44 @@ using UnityEngine;
 
 namespace Assets.Scripts.RealCamera
 {
-    class OvrCameraFeed : MonoBehaviour
+    class OvrCameraWindow : MonoBehaviour
     {
-        // Camera GameObject
-        private GameObject CameraLeft;
-        private GameObject CameraRight;
-        private GameObject CameraPlaneLeft;
-        private GameObject CameraPlaneRight;
-        // Camera texture
-        private Texture2D CameraTexLeft = null;
-        private Texture2D CameraTexRight = null;
-        private Vector3 CameraRightGap;
+        public int ImageWidth;
+        public int ImageHeight;
 
-        private int ImageWidth;
-        private int ImageHeight;
+        // max height depending on ovr camera feed - can't be more than is available!
+        private int MaxImageWidth;
+        private int MaxImageHeight;
 
         private const float IMAGE_ZOFFSET = 0.02f;
 
         void Awake()
         {
             ImageProcessing.OvrStart();
-            ImageWidth = (int)ImageProcessing.GetProperty("width");
-            ImageHeight = (int)ImageProcessing.GetProperty("height");
+            MaxImageWidth = (int)ImageProcessing.GetProperty("width");
+            MaxImageHeight = (int)ImageProcessing.GetProperty("height");
         }
 
 
+        private GameObject CreatePlane()
+        {
+            var plane = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            plane.transform.SetParent(transform);
+
+            return plane;
+        }
+
         void Start()
         {
-            // Initialize camera plane object(Left)
-            CameraLeft = transform.FindChild("LeftCamera").gameObject;
-            CameraRight = transform.FindChild("RightCamera").gameObject;
-            CameraPlaneLeft = CameraLeft.transform.FindChild("LeftImagePlane").gameObject;
-            CameraPlaneRight = CameraRight.transform.FindChild("RightImagePlane").gameObject;
-
-            CameraLeft.transform.localPosition = Vector3.zero;
-            CameraRight.transform.localPosition = Vector3.zero;
-            CameraLeft.transform.localRotation = Quaternion.identity;
-            CameraRight.transform.localRotation = Quaternion.identity;
+            var CameraPlaneLeft = CreatePlane();
+            var CameraPlaneRight = CreatePlane();
 
             // Create cam texture
-            CameraTexLeft = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
-            CameraTexRight = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
+            var imgWidth = Math.Min(ImageWidth, MaxImageWidth);
+            var imgHeight = Math.Min(ImageHeight, MaxImageHeight);
+            var CameraTexLeft = new Texture2D(imgWidth, imgHeight, TextureFormat.BGRA32, false);
+            var CameraTexRight = new Texture2D(imgWidth, imgHeight, TextureFormat.BGRA32, false);
+
             // Cam setting
             CameraTexLeft.wrapMode = TextureWrapMode.Clamp;
             CameraTexRight.wrapMode = TextureWrapMode.Clamp;
@@ -54,22 +51,19 @@ namespace Assets.Scripts.RealCamera
             CameraPlaneRight.GetComponent<MeshFilter>().mesh = m;
 
             // SetShader
-            CameraLeft.GetComponent<Camera>().enabled = true;
-            CameraRight.GetComponent<Camera>().enabled = true;
-
             CameraPlaneLeft.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovTexture");
             CameraPlaneRight.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovTexture");
 
             CameraPlaneLeft.GetComponent<Renderer>().materials[0].SetTexture("_MainTex", CameraTexLeft);
             CameraPlaneRight.GetComponent<Renderer>().materials[0].SetTexture("_MainTex", CameraTexRight);
-            CameraPlaneLeft.GetComponent<Renderer>().materials[1].SetTexture("_MainTex", CameraTexLeft);
-            CameraPlaneRight.GetComponent<Renderer>().materials[1].SetTexture("_MainTex", CameraTexRight);
+            //CameraPlaneLeft.GetComponent<Renderer>().materials[1].SetTexture("_MainTex", CameraTexLeft);
+            //CameraPlaneRight.GetComponent<Renderer>().materials[1].SetTexture("_MainTex", CameraTexRight);
 
             var defaultFloatpoint = 0.427990019f;
             var defaultRightGap = new Vector3(0.0566581376f, -0.000236578562f, 0.001237078f);
             var defaultAspectW = 1.0105263f;
 
-            CameraRightGap = defaultRightGap;
+            var CameraRightGap = defaultRightGap;
 
             CameraPlaneLeft.transform.localScale = new Vector3(defaultAspectW, -1.0f, 1.0f);
             CameraPlaneRight.transform.localScale = new Vector3(defaultAspectW, -1.0f, 1.0f);
@@ -87,7 +81,8 @@ namespace Assets.Scripts.RealCamera
         {
             if (ImageProcessing.GetProperty("isOpen") >= 1.0f)
             {
-                ImageProcessing.WriteTexture(leftTexturePtr, rightTexturePtr);
+                ImageProcessing.WriteTexture(new IntPtr(0), new IntPtr(0));
+                ImageProcessing.WriteROITexture(0, 0, Math.Min(ImageWidth, MaxImageWidth), Math.Min(ImageHeight, MaxImageHeight), leftTexturePtr, rightTexturePtr);
             }
             else
             {
