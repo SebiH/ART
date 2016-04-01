@@ -1,29 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using UnityEngine;
 
-namespace Assets.Scripts.Util
+namespace Assets.Scripts.Camera
 {
     class OvrCameraFeed : MonoBehaviour
     {
-        [DllImport("ImageProcessing")]
-        static extern void OvrStart(int cameraMode = -1);
-
-        [DllImport("ImageProcessing")]
-        static extern void OvrStop();
-
-        [DllImport("ImageProcessing")]
-        static extern float GetProperty(string prop);
-
-        [DllImport("ImageProcessing")]
-        static extern void SetProperty(string prop, float val);
-
-        [DllImport("ImageProcessing")]
-        static extern void WriteTexture(IntPtr leftUnityPtr, IntPtr rightUnityPtr);
-
         // Camera GameObject
         private GameObject CameraLeft;
         private GameObject CameraRight;
@@ -41,9 +22,9 @@ namespace Assets.Scripts.Util
 
         void Awake()
         {
-            OvrStart();
-            ImageWidth = (int)GetProperty("width");
-            ImageHeight = (int)GetProperty("height");
+            ImageProcessing.OvrStart();
+            ImageWidth = (int)ImageProcessing.GetProperty("width");
+            ImageHeight = (int)ImageProcessing.GetProperty("height");
         }
 
 
@@ -73,8 +54,8 @@ namespace Assets.Scripts.Util
             CameraPlaneRight.GetComponent<MeshFilter>().mesh = m;
 
             // SetShader
-            CameraLeft.GetComponent<Camera>().enabled = true;
-            CameraRight.GetComponent<Camera>().enabled = true;
+            CameraLeft.GetComponent<UnityEngine.Camera>().enabled = true;
+            CameraRight.GetComponent<UnityEngine.Camera>().enabled = true;
 
             CameraPlaneLeft.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovTexture");
             CameraPlaneRight.GetComponent<Renderer>().material.shader = Shader.Find("Ovrvision/ovTexture");
@@ -106,9 +87,9 @@ namespace Assets.Scripts.Util
         {
             if (leftTexturePtr != null && rightTexturePtr != null)
             {
-                if (GetProperty("isOpen") >= 1.0f)
+                if (ImageProcessing.GetProperty("isOpen") >= 1.0f)
                 {
-                    WriteTexture(leftTexturePtr, rightTexturePtr);
+                    ImageProcessing.WriteTexture(leftTexturePtr, rightTexturePtr);
                 }
                 else
                 {
@@ -119,7 +100,7 @@ namespace Assets.Scripts.Util
 
         void OnDestroy()
         {
-            OvrStop();
+            ImageProcessing.OvrStop();
         }
 
         private Mesh CreateCameraPlaneMesh()
