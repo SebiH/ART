@@ -11,11 +11,9 @@
 
 using namespace cv;
 
-static void FillTexture(unsigned char *texturePtr, unsigned char *data);
-
-
 OVR::OvrvisionPro *ovrCamera;
 int camWidth, camHeight;
+bool hasStarted = false;
 
 // thread-safe memory for storing image data
 std::mutex imgMutex;
@@ -26,6 +24,12 @@ unsigned char *tsImageRight;
 
 extern "C" DllExport void OvrStart(int cameraMode = -1)
 {
+	if (hasStarted)
+	{
+		return;
+	}
+
+	hasStarted = true;
 	OVR::Camprop camProp = (cameraMode == -1) ? OVR::OV_CAMVR_FULL : (OVR::Camprop)cameraMode;
 	ovrCamera = new OVR::OvrvisionPro();
 
@@ -48,26 +52,6 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 }
 
 
-// TODO: put this into module
-unsigned char *roiLeft;
-unsigned char *roiRight;
-
-extern "C" DllExport void WriteROITexture(int startX, int startY, int width, int height, unsigned char *leftUnityPtr, unsigned char *rightUnityPtr)
-{
-	// TODO: maybe better to copy memory than to keep lock..?
-	std::lock_guard<std::mutex> guard(imgMutex);
-	cv::Mat leftMat(height, width, CV_8UC4, tsImageLeft);
-	cv::Mat rightMat(height, width, CV_8UC4, tsImageRight);
-
-	cv::Mat roiLeftMat(leftMat, cv::Rect(startX, startY, width, height));
-	cv::Mat roiRightMat(rightMat, cv::Rect(startX, startY, width, height));
-
-	FillTexture(leftUnityPtr, roiLeftMat.data);
-	FillTexture(rightUnityPtr, roiRightMat.data);
-}
-// /TODO
-
-
 extern "C" DllExport void OvrStop()
 {
 	if (ovrCamera->isOpen())
@@ -78,6 +62,8 @@ extern "C" DllExport void OvrStop()
 	delete ovrCamera;
 	delete[] tsImageLeft;
 	delete[] tsImageRight;
+
+	hasStarted = false;
 }
 
 
@@ -166,3 +152,23 @@ extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned cha
 		memcpy_s(tsImageRight, tsImageMemorySize, rightImg, tsImageMemorySize);
 	}
 }
+
+
+// TODO: put this into module
+unsigned char *roiLeft;
+unsigned char *roiRight;
+
+extern "C" DllExport void WriteROITexture(int startX, int startY, int width, int height, unsigned char *leftUnityPtr, unsigned char *rightUnityPtr)
+{
+	// TODO: maybe better to copy memory than to keep lock..?
+	std::lock_guard<std::mutex> guard(imgMutex);
+	cv::Mat leftMat(height, width, CV_8UC4, tsImageLeft);
+	cv::Mat rightMat(height, width, CV_8UC4, tsImageRight);
+
+	cv::Mat roiLeftMat(leftMat, cv::Rect(startX, startY, width, height));
+	cv::Mat roiRightMat(rightMat, cv::Rect(startX, startY, width, height));
+
+	FillTexture(leftUnityPtr, roiLeftMat.data);
+	FillTexture(rightUnityPtr, roiRightMat.data);
+}
+// /TODO
