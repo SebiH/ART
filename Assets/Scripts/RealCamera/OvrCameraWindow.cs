@@ -1,3 +1,4 @@
+using Assets.Code.Util;
 using System;
 using UnityEngine;
 
@@ -38,6 +39,9 @@ namespace Assets.Scripts.RealCamera
         {
             var CameraPlaneLeft = CreatePlane();
             var CameraPlaneRight = CreatePlane();
+
+            CameraPlaneLeft.layer = Layers.LEFT_EYE_ONLY;
+            CameraPlaneRight.layer = Layers.RIGHT_EYE_ONLY;
 
             // Create cam texture
             var imgWidth = Math.Min(ImageWidth, MaxImageWidth);
