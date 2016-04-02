@@ -6,20 +6,21 @@
 #include <opencv2/opencv.hpp>
 #include <ovrvision_pro.h>
 
+#include <memory>
 #include <mutex>
 #include <thread>
 
 using namespace cv;
 
-OVR::OvrvisionPro *ovrCamera;
+std::unique_ptr<OVR::OvrvisionPro> ovrCamera;
 int camWidth, camHeight;
 bool hasStarted = false;
 
 // thread-safe memory for storing image data
 std::mutex imgMutex;
 size_t tsImageMemorySize;
-unsigned char *tsImageLeft;
-unsigned char *tsImageRight;
+std::unique_ptr<unsigned char []> tsImageLeft;
+std::unique_ptr<unsigned char []> tsImageRight;
 
 
 extern "C" DllExport void OvrStart(int cameraMode = -1)
@@ -31,7 +32,7 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 
 	hasStarted = true;
 	OVR::Camprop camProp = (cameraMode == -1) ? OVR::OV_CAMVR_FULL : (OVR::Camprop)cameraMode;
-	ovrCamera = new OVR::OvrvisionPro();
+	ovrCamera = std::unique_ptr<OVR::OvrvisionPro>(new OVR::OvrvisionPro());
 
 	// TODO: error on failure?
 	auto openSuccess = ovrCamera->Open(0, camProp);
@@ -47,8 +48,8 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 
 	// create memory for distributing memory across modules
 	tsImageMemorySize = camWidth * camHeight * 4;
-	tsImageLeft = new unsigned char[tsImageMemorySize];
-	tsImageRight = new unsigned char[tsImageMemorySize];
+	tsImageLeft = std::unique_ptr<unsigned char []>(new unsigned char[tsImageMemorySize]);
+	tsImageRight = std::unique_ptr<unsigned char []>(new unsigned char[tsImageMemorySize]);
 }
 
 
@@ -60,10 +61,6 @@ extern "C" DllExport void OvrStop()
 		{
 			ovrCamera->Close();
 		}
-
-		delete ovrCamera;
-		delete[] tsImageLeft;
-		delete[] tsImageRight;
 
 		hasStarted = false;
 	}
@@ -121,7 +118,7 @@ extern "C" DllExport void SetProperty(const char *name, float value)
 	}
 }
 
-static void FillTexture(unsigned char *texturePtr, unsigned char *data)
+static void FillTexture(unsigned char *texturePtr, const unsigned char *data)
 {
 	ID3D11Texture2D* d3dtex = (ID3D11Texture2D*)texturePtr;
 	ID3D11Device *g_D3D11Device;
@@ -152,8 +149,8 @@ extern "C" DllExport void FetchImage()
 		unsigned char *rightImg = ovrCamera->GetCamImageBGRA(OVR::OV_CAMEYE_RIGHT);
 
 		std::lock_guard<std::mutex> guard(imgMutex);
-		memcpy_s(tsImageLeft, tsImageMemorySize, leftImg, tsImageMemorySize);
-		memcpy_s(tsImageRight, tsImageMemorySize, rightImg, tsImageMemorySize);
+		memcpy_s(tsImageLeft.get(), tsImageMemorySize, leftImg, tsImageMemorySize);
+		memcpy_s(tsImageRight.get(), tsImageMemorySize, rightImg, tsImageMemorySize);
 	}
 }
 
@@ -164,12 +161,12 @@ extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned cha
 	std::lock_guard<std::mutex> guard(imgMutex);
 	if (leftUnityPtr != NULL)
 	{
-		FillTexture(leftUnityPtr, tsImageLeft);
+		FillTexture(leftUnityPtr, tsImageLeft.get());
 	}
 
 	if (rightUnityPtr != NULL)
 	{
-		FillTexture(rightUnityPtr, tsImageRight);
+		FillTexture(rightUnityPtr, tsImageRight.get());
 	}
 
 }
@@ -178,13 +175,13 @@ extern "C" DllExport void WriteTexture(unsigned char *leftUnityPtr, unsigned cha
 // TODO: put this into module
 extern "C" DllExport void WriteROITexture(int startX, int startY, int width, int height, unsigned char *leftUnityPtr, unsigned char *rightUnityPtr)
 {
-	auto *imgLeft = new unsigned char[width * height * 4];
-	auto *imgRight = new unsigned char[width * height * 4];
+	auto imgLeft = std::unique_ptr<unsigned char[]>(new unsigned char[width * height * 4]);
+	auto imgRight = std::unique_ptr<unsigned char[]>(new unsigned char[width * height * 4]);
 
-	auto *currRowRoiLeft = imgLeft;
-	auto *currRowRoiRight = imgRight;
-	auto *currRowSrcLeft = tsImageLeft + startX * 4 + camWidth * 4 * startY;
-	auto *currRowSrcRight = tsImageRight + startX * 4 + camWidth * 4 * startY;
+	auto *currRowRoiLeft = imgLeft.get();
+	auto *currRowRoiRight = imgRight.get();
+	auto *currRowSrcLeft = tsImageLeft.get() + startX * 4 + camWidth * 4 * startY;
+	auto *currRowSrcRight = tsImageRight.get() + startX * 4 + camWidth * 4 * startY;
 
 	// lock
 	{
@@ -204,15 +201,12 @@ extern "C" DllExport void WriteROITexture(int startX, int startY, int width, int
 
 	if (leftUnityPtr != NULL)
 	{
-		FillTexture(leftUnityPtr, imgLeft);
+		FillTexture(leftUnityPtr, imgLeft.get());
 	}
 
 	if (rightUnityPtr != NULL)
 	{
-		FillTexture(rightUnityPtr, imgRight);
+		FillTexture(rightUnityPtr, imgRight.get());
 	}
-
-	delete[] imgLeft;
-	delete[] imgRight;
 }
 // /TODO
