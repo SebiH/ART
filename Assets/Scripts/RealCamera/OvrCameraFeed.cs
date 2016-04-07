@@ -81,7 +81,8 @@ namespace Assets.Scripts.RealCamera
             LeftTexturePtr = CameraTexLeft.GetNativeTexturePtr();
             RightTexturePtr = CameraTexRight.GetNativeTexturePtr();
 
-            ImageProcessing.Instance.RegisterTextureUpdate(ImageProcessing.ImageProcessingMethod.Native, LeftTexturePtr, RightTexturePtr);
+            ImageProcessing.Instance.RegisterTextureUpdate(ImageProcessing.ImageProcessingMethod.Native, LeftTexturePtr, new IntPtr()/*RightTexturePtr*/);
+            ImageProcessing.Instance.AddExperimentalTexturePtr(RightTexturePtr);
         }
 
         void OnDestroy()

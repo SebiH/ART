@@ -37,6 +37,12 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void FetchImage();
 
+        [DllImport("ImageProcessing")]
+        private static extern void RegisterExperimentalTexturePtr(IntPtr ptr);
+
+        [DllImport("ImageProcessing")]
+        private static extern void UpdateExperimentalTexturePtr();
+
         #endregion
 
         #region Singleton
@@ -124,6 +130,11 @@ namespace Assets.Scripts.RealCamera
             });
         }
 
+        public void AddExperimentalTexturePtr(IntPtr texture)
+        {
+            RegisterExperimentalTexturePtr(texture);
+        }
+
 
         public void DeregisterTexture(IntPtr leftPtr, IntPtr rightPtr)
         {
@@ -156,6 +167,8 @@ namespace Assets.Scripts.RealCamera
                         break;
                 }
             }
+
+            UpdateExperimentalTexturePtr();
 
         }
 

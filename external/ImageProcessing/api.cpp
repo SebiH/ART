@@ -16,12 +16,19 @@ std::unique_ptr<OVR::OvrvisionPro> ovrCamera;
 int camWidth, camHeight;
 bool hasStarted = false;
 
+bool keepExperimentalThreadRunning;
+long frameCounter = 0;
+
 // thread-safe memory for storing image data
 std::mutex imgMutex;
+std::mutex experimentalMutex;
 size_t tsImageMemorySize;
-std::unique_ptr<unsigned char []> tsImageLeft;
-std::unique_ptr<unsigned char []> tsImageRight;
+std::unique_ptr<unsigned char[]> tsImageLeft;
+std::unique_ptr<unsigned char[]> tsImageRight;
+std::unique_ptr<unsigned char[]> tsExperimentalStereoImageData;
 
+std::unique_ptr<std::thread> experimentalThread;
+void TestThread();
 
 extern "C" DllExport void OvrStart(int cameraMode = -1)
 {
@@ -48,10 +55,15 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 
 	// create memory for distributing memory across modules
 	tsImageMemorySize = camWidth * camHeight * 4;
-	tsImageLeft = std::unique_ptr<unsigned char []>(new unsigned char[tsImageMemorySize]);
-	tsImageRight = std::unique_ptr<unsigned char []>(new unsigned char[tsImageMemorySize]);
-}
+	tsImageLeft = std::unique_ptr<unsigned char[]>(new unsigned char[tsImageMemorySize]);
+	tsImageRight = std::unique_ptr<unsigned char[]>(new unsigned char[tsImageMemorySize]);
 
+	// experimental
+	tsExperimentalStereoImageData = std::unique_ptr<unsigned char[]>(new unsigned char[tsImageMemorySize]);
+	keepExperimentalThreadRunning = true;
+	experimentalThread = std::unique_ptr<std::thread>(new std::thread(TestThread));
+	frameCounter = 0;
+}
 
 extern "C" DllExport void OvrStop()
 {
@@ -63,6 +75,8 @@ extern "C" DllExport void OvrStop()
 		}
 
 		hasStarted = false;
+
+		keepExperimentalThreadRunning = false;
 	}
 }
 
@@ -130,6 +144,7 @@ static void FillTexture(unsigned char *texturePtr, const unsigned char *data)
 	D3D11_TEXTURE2D_DESC desc;
 	d3dtex->GetDesc(&desc);
 
+	// TODO: store metadata to avoid unnecessary updates in case frame hasn't changed?
 	ctx->UpdateSubresource(d3dtex, 0, NULL, data, desc.Width * 4, 0);
 
 	ctx->Release();
@@ -151,6 +166,7 @@ extern "C" DllExport void FetchImage()
 		std::lock_guard<std::mutex> guard(imgMutex);
 		memcpy_s(tsImageLeft.get(), tsImageMemorySize, leftImg, tsImageMemorySize);
 		memcpy_s(tsImageRight.get(), tsImageMemorySize, rightImg, tsImageMemorySize);
+		frameCounter++;
 	}
 }
 
@@ -210,3 +226,82 @@ extern "C" DllExport void WriteROITexture(int startX, int startY, int width, int
 	}
 }
 // /TODO
+
+
+
+
+
+
+std::vector<unsigned char *> experimentalTexturePtrs;
+
+extern "C" DllExport void RegisterExperimentalTexturePtr(unsigned char *ptr)
+{
+	experimentalTexturePtrs.push_back(ptr);
+}
+
+extern "C" DllExport void UpdateExperimentalTexturePtr()
+{
+	std::lock_guard<std::mutex> guard(experimentalMutex);
+	for (const auto &ptr : experimentalTexturePtrs)
+	{
+		FillTexture(ptr, tsExperimentalStereoImageData.get());
+	}
+}
+
+
+
+void TestThread()
+{
+	long currentFrame = -1;
+	std::unique_ptr<unsigned char[]> localImgDataLeft(new unsigned char[tsImageMemorySize]);
+	std::unique_ptr<unsigned char[]> localImgDataRight(new unsigned char[tsImageMemorySize]);
+	std::unique_ptr<unsigned char[]> playground(new unsigned char[tsImageMemorySize]);
+
+
+	cv::Mat matLeft(cv::Size(camWidth, camHeight), CV_8UC4, localImgDataLeft.get());
+	cv::Mat matRight(cv::Size(camWidth, camHeight), CV_8UC4, localImgDataRight.get());
+
+	while (keepExperimentalThreadRunning)
+	{
+		if (currentFrame < frameCounter)
+		{
+			// new image is available! start processing
+			{
+				std::lock_guard<std::mutex> guard(imgMutex);
+				memcpy(localImgDataLeft.get(), tsImageLeft.get(), tsImageMemorySize);
+				memcpy(localImgDataRight.get(), tsImageRight.get(), tsImageMemorySize);
+				currentFrame = frameCounter;
+			}
+
+			// process-heavy method for testing..
+			for (int i = 0; i < tsImageMemorySize; )
+			{
+				playground[i] = localImgDataLeft[i];
+				playground[i + 1] = localImgDataLeft[i + 1];
+				playground[i + 2] = localImgDataLeft[i + 2];
+				playground[i + 3] = localImgDataLeft[i + 3];
+				i += 4;
+
+				if (i + 4 < tsImageMemorySize)
+				{
+					playground[i] = localImgDataRight[i];
+					playground[i + 1] = localImgDataRight[i + 1];
+					playground[i + 2] = localImgDataRight[i + 2];
+					playground[i + 3] = localImgDataRight[i + 3];
+					i += 4;
+				}
+			}
+
+			{
+				std::lock_guard<std::mutex> guard(experimentalMutex);
+				memcpy(tsExperimentalStereoImageData.get(), playground.get(), tsImageMemorySize);
+			}
+
+		}
+		else
+		{
+			Sleep(10);
+		}
+	}
+}
+
