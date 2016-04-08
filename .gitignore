@@ -71,6 +71,7 @@ sysinfo.txt
 *.pdb
 *.iobj
 *.ipdb
+*.nlp
 
 # Files for debugging unmanaged .dll in unity
 *.exp.meta
@@ -79,3 +80,4 @@ sysinfo.txt
 *.lib.meta
 *.iobj.meta
 *.ipdb.meta
+Assets/Plugins/x86_64/mscorlib.dll
