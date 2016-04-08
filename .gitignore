@@ -80,4 +80,6 @@ sysinfo.txt
 *.lib.meta
 *.iobj.meta
 *.ipdb.meta
+*.nlp.meta
 Assets/Plugins/x86_64/mscorlib.dll
+Assets/Plugins/x86_64/mscorlib.dll.meta
