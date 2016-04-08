@@ -8,10 +8,13 @@ namespace ImageProcessingUtil
         [DllImport("ImageProcessing")]
         private static extern void StereoCalibration();
 
+        [DllImport("ImageProcessing")]
+        private static extern void StereoDetection();
+
         static void Main(string[] args)
         {
             // Test things without unity
-            StereoCalibration();
+            StereoDetection();
         }
     }
 }

@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="api.cpp" />
     <ClCompile Include="stereo_calibration.cpp" />
+    <ClCompile Include="stereo_detection.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
