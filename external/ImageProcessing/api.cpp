@@ -29,6 +29,7 @@ std::unique_ptr<unsigned char[]> tsExperimentalStereoImageData;
 
 std::unique_ptr<std::thread> experimentalThread;
 void TestThread();
+bool initialized_once = false;
 
 extern "C" DllExport void OvrStart(int cameraMode = -1)
 {
@@ -39,7 +40,12 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 
 	hasStarted = true;
 	OVR::Camprop camProp = (cameraMode == -1) ? OVR::OV_CAMVR_FULL : (OVR::Camprop)cameraMode;
-	ovrCamera = std::unique_ptr<OVR::OvrvisionPro>(new OVR::OvrvisionPro());
+
+	if (!initialized_once)
+	{
+		ovrCamera = std::unique_ptr<OVR::OvrvisionPro>(new OVR::OvrvisionPro());
+		initialized_once = true;
+	}
 
 	// TODO: error on failure?
 	auto openSuccess = ovrCamera->Open(0, camProp);
@@ -61,7 +67,7 @@ extern "C" DllExport void OvrStart(int cameraMode = -1)
 	// experimental
 	tsExperimentalStereoImageData = std::unique_ptr<unsigned char[]>(new unsigned char[tsImageMemorySize]);
 	keepExperimentalThreadRunning = true;
-	experimentalThread = std::unique_ptr<std::thread>(new std::thread(TestThread));
+	//experimentalThread = std::unique_ptr<std::thread>(new std::thread(TestThread));
 	frameCounter = 0;
 }
 
@@ -77,6 +83,7 @@ extern "C" DllExport void OvrStop()
 		hasStarted = false;
 
 		keepExperimentalThreadRunning = false;
+		//experimentalThread->join();
 	}
 }
 
