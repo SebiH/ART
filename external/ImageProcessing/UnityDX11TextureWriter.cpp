@@ -8,6 +8,6 @@ ImageProcessing::UnityDX11TextureWriter::~UnityDX11TextureWriter()
 {
 }
 
-void ImageProcessing::UnityDX11TextureWriter::WriteTexture(unsigned char * rawData)
+void ImageProcessing::UnityDX11TextureWriter::WriteTexture(std::vector<cv::Mat> processedImages)
 {
 }
