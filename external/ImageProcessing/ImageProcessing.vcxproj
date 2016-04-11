@@ -84,12 +84,20 @@
   <ItemGroup>
     <ClCompile Include="api.cpp" />
     <ClCompile Include="apinew.cpp" />
-    <ClCompile Include="module.cpp" />
+    <ClCompile Include="OpenCvTextureWriter.cpp" />
+    <ClCompile Include="OvrFrameProducer.cpp" />
+    <ClCompile Include="ThreadedModule.cpp" />
     <ClCompile Include="stereo_calibration.cpp" />
     <ClCompile Include="stereo_detection.cpp" />
+    <ClCompile Include="UnityDX11TextureWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="module.h" />
+    <ClInclude Include="UnityDX11TextureWriter.h" />
+    <ClInclude Include="OpenCvTextureWriter.h" />
+    <ClInclude Include="OvrFrameProducer.h" />
+    <ClInclude Include="IProcessingModule.h" />
+    <ClInclude Include="ITextureWriter.h" />
+    <ClInclude Include="ThreadedModule.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

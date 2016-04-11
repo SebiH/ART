@@ -27,12 +27,36 @@
     <ClCompile Include="apinew.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="module.cpp">
+    <ClCompile Include="ThreadedModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OvrFrameProducer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenCvTextureWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UnityDX11TextureWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="module.h">
+    <ClInclude Include="ThreadedModule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OvrFrameProducer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ITextureWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IProcessingModule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenCvTextureWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UnityDX11TextureWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
