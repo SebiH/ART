@@ -39,6 +39,9 @@
     <ClCompile Include="src\texturewriter\UnityDX11TextureWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\processingmodule\RawImageModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\util\OvrFrameProducer.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\processingmodule\RawImageModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

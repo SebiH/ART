@@ -1,6 +1,7 @@
 #pragma once
 
-#include <opencv2/core/mat.hpp>
+#include <memory>
+#include <vector>
 
 namespace ImageProcessing
 {
@@ -8,6 +9,6 @@ namespace ImageProcessing
 	{
 	public:
 		virtual ~ITextureWriter() {}
-		virtual void WriteTexture(std::vector<cv::Mat> processedImages) = 0;
+		virtual void WriteTexture(std::vector<std::unique_ptr<unsigned char[]>> processedImages) = 0;
 	};
 }

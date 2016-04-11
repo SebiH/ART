@@ -54,7 +54,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\;src\;src\processingmodule\;src\texturewriter\;src\util\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -70,7 +70,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\;src\;src\processingmodule\;src\texturewriter\;src\util\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="src\api.cpp" />
     <ClCompile Include="src\apinew.cpp" />
+    <ClCompile Include="src\processingmodule\RawImageModule.cpp" />
     <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp" />
     <ClCompile Include="src\util\OvrFrameProducer.cpp" />
     <ClCompile Include="src\util\ThreadedModule.cpp" />
@@ -92,6 +93,7 @@
     <ClCompile Include="src\texturewriter\UnityDX11TextureWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h" />
     <ClInclude Include="src\texturewriter\OpenCvTextureWriter.h" />
     <ClInclude Include="src\util\OvrFrameProducer.h" />

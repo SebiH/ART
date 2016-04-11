@@ -26,7 +26,7 @@ namespace ImageProcessing
 		~OvrFrameProducer();
 
 		void poll(unsigned char *dataLeft, unsigned char *dataRight);
-		const OVR::OvrvisionPro* getCamera();
-		const std::size_t getImageMemorySize();
+		OVR::OvrvisionPro* getCamera() const;
+		std::size_t getImageMemorySize() const;
 	};
 }

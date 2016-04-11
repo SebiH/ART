@@ -10,11 +10,14 @@ namespace ImageProcessing
 	{
 	private:
 		std::string _windowName;
+		int _expectedImageWidth;
+		int _expectedImageHeight;
+		int _expectedImageCount;
 
 	public:
-		OpenCvTextureWriter(std::string windowName);
+		OpenCvTextureWriter(std::string windowName, int expectedImageWidth, int expectedImageHeight, int expectedImageCount);
 		~OpenCvTextureWriter();
-		virtual void WriteTexture(std::vector<cv::Mat> processedImages) override;
+		virtual void WriteTexture(std::vector<std::unique_ptr<unsigned char[]>> processedImages) override;
 	};
 
 }

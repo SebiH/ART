@@ -77,12 +77,12 @@ void OvrFrameProducer::query()
 }
 
 
-const OVR::OvrvisionPro* OvrFrameProducer::getCamera()
+OVR::OvrvisionPro* OvrFrameProducer::getCamera() const
 {
 	return _ovrCamera.get();
 }
 
-const std::size_t OvrFrameProducer::getImageMemorySize()
+std::size_t OvrFrameProducer::getImageMemorySize() const
 {
 	return _imgMemSize;
 }
