@@ -15,48 +15,48 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="api.cpp">
+    <ClCompile Include="src\util\OvrFrameProducer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stereo_calibration.cpp">
+    <ClCompile Include="src\util\ThreadedModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stereo_detection.cpp">
+    <ClCompile Include="src\api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="apinew.cpp">
+    <ClCompile Include="src\apinew.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadedModule.cpp">
+    <ClCompile Include="src\stereo_detection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OvrFrameProducer.cpp">
+    <ClCompile Include="src\stereo_calibration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenCvTextureWriter.cpp">
+    <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UnityDX11TextureWriter.cpp">
+    <ClCompile Include="src\texturewriter\UnityDX11TextureWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ThreadedModule.h">
+    <ClInclude Include="src\util\OvrFrameProducer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OvrFrameProducer.h">
+    <ClInclude Include="src\util\ThreadedModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ITextureWriter.h">
+    <ClInclude Include="src\processingmodule\IProcessingModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IProcessingModule.h">
+    <ClInclude Include="src\texturewriter\ITextureWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenCvTextureWriter.h">
+    <ClInclude Include="src\texturewriter\OpenCvTextureWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UnityDX11TextureWriter.h">
+    <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

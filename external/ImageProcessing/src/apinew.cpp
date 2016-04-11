@@ -20,7 +20,7 @@ extern "C" DllExport void StartImageProcessing()
 
 extern "C" DllExport float GetCameraProperty(char *propName)
 {
-
+	return 0.f;
 }
 
 extern "C" DllExport void SetCameraProperty(char *propName, float propVal)
@@ -41,6 +41,7 @@ extern "C" DllExport int RegisterTexturePtr(char *moduleName)
 	// if module doesn't exist, start it
 	// append textureptr to module
 
+	return -1;
 }
 
 

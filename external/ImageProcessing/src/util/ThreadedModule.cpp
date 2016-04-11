@@ -19,14 +19,14 @@ ThreadedModule::~ThreadedModule()
 
 void ThreadedModule::start()
 {
-	_thread = std::thread(&run);
+	_thread = std::thread(&ThreadedModule::run, this);
 }
 
 
 
 bool ThreadedModule::isRunning()
 {
-
+	return _isRunning;
 }
 
 

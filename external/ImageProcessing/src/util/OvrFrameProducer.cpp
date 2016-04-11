@@ -25,7 +25,7 @@ OvrFrameProducer::OvrFrameProducer()
 	_dataRight = std::unique_ptr<unsigned char[]>(new unsigned char[_imgMemSize]);
 
 	_isRunning = true;
-	_thread = std::thread(&run);
+	_thread = std::thread(&OvrFrameProducer::run, this);
 }
 
 
