@@ -25,7 +25,7 @@ extern "C" DllExport void StartImageProcessing()
 	if (!_isInitialized)
 	{
 		_isInitialized = true;
-		frameProducer = std::shared_ptr<OvrFrameProducer>(new OvrFrameProducer());
+		frameProducer = std::make_shared<OvrFrameProducer>();
 		moduleManager = std::unique_ptr<ModuleManager>(new ModuleManager(frameProducer));
 	}
 }
