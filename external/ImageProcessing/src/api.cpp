@@ -5,13 +5,12 @@
 #include <string>
 #include <opencv2/highgui.hpp>
 
-#include "processingmodule/IProcessingModule.h"
-#include "processingmodule/RawImageModule.h"
 #include "texturewriter/ITextureWriter.h"
 #include "texturewriter/OpenCvTextureWriter.h"
 #include "texturewriter/UnityDX11TextureWriter.h"
-#include "util/ThreadedModule.h"
+#include "util/ModuleManager.h"
 #include "util/OvrFrameProducer.h"
+#include "util/ThreadedModule.h"
 
 #define DllExport   __declspec( dllexport )
 
@@ -19,6 +18,7 @@ using namespace ImageProcessing;
 
 bool _isInitialized;
 std::shared_ptr<OvrFrameProducer> frameProducer;
+std::unique_ptr<ModuleManager> moduleManager;
 
 extern "C" DllExport void StartImageProcessing()
 {
@@ -26,6 +26,7 @@ extern "C" DllExport void StartImageProcessing()
 	{
 		_isInitialized = true;
 		frameProducer = std::shared_ptr<OvrFrameProducer>(new OvrFrameProducer());
+		moduleManager = std::unique_ptr<ModuleManager>(new ModuleManager(frameProducer));
 	}
 }
 
@@ -84,14 +85,9 @@ extern "C" DllExport void SetCameraProperty(char *propName, float propVal)
 }
 
 
-std::map<std::string, std::shared_ptr<ThreadedModule>> runningModules;
-
 extern "C" DllExport void UpdateTextures()
 {
-	for (auto module : runningModules)
-	{
-		module.second->updateTextures();
-	}
+	moduleManager->triggerTextureUpdate();
 }
 
 
@@ -101,42 +97,10 @@ extern "C" DllExport int OpenCvWaitKey(int delay)
 }
 
 
-std::shared_ptr<ThreadedModule> getModule(char *moduleName)
-{
-	std::string modName(moduleName);
-	std::shared_ptr<ThreadedModule> module;
-	auto cam = frameProducer->getCamera();
-
-	bool isModuleRunning = runningModules.count(modName) > 0;
-
-	if (isModuleRunning)
-	{
-		module = runningModules[modName];
-	}
-	else // module not running yet, start a new one
-	{
-		if (modName == "RawImage")
-		{
-			auto cam = frameProducer->getCamera();
-			module = std::make_shared<ThreadedModule>(frameProducer, std::unique_ptr<IProcessingModule>(new RawImageModule(cam->GetCamWidth(), cam->GetCamHeight(), cam->GetCamPixelsize())));
-		}
-		else // unknown module
-		{
-			// TODO: exception / error code?
-		}
-
-		runningModules.insert({ modName, module });
-		module->start();
-	}
-
-	return module;
-}
-
-
 extern "C" DllExport int RegisterOpenCVTextureWriter(char *moduleName, char *windowname)
 {
 	auto cam = frameProducer->getCamera();
-	auto module = getModule(moduleName);
+	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
 	module->addTextureWriter(std::make_shared<OpenCvTextureWriter>(std::string(windowname), cam->GetCamWidth(), cam->GetCamHeight(), 2));
 
 	// TODO: return handle to deregister
@@ -146,7 +110,7 @@ extern "C" DllExport int RegisterOpenCVTextureWriter(char *moduleName, char *win
 
 extern "C" DllExport int RegisterDx11TexturePtr(char *moduleName, int texturePtrCount, unsigned char **texturePtrs)
 {
-	auto module = getModule(moduleName);
+	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
 
 	std::vector<unsigned char *> texturePtrList;
 

@@ -85,6 +85,7 @@
     <ClCompile Include="src\api.cpp" />
     <ClCompile Include="src\processingmodule\RawImageModule.cpp" />
     <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp" />
+    <ClCompile Include="src\util\ModuleManager.cpp" />
     <ClCompile Include="src\util\OvrFrameProducer.cpp" />
     <ClCompile Include="src\util\ThreadedModule.cpp" />
     <ClCompile Include="src\stereo_calibration.cpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="src\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h" />
     <ClInclude Include="src\texturewriter\OpenCvTextureWriter.h" />
+    <ClInclude Include="src\util\ModuleManager.h" />
     <ClInclude Include="src\util\OvrFrameProducer.h" />
     <ClInclude Include="src\processingmodule\IProcessingModule.h" />
     <ClInclude Include="src\texturewriter\ITextureWriter.h" />
