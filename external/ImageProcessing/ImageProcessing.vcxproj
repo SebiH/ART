@@ -83,7 +83,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\api.cpp" />
-    <ClCompile Include="src\apinew.cpp" />
     <ClCompile Include="src\processingmodule\RawImageModule.cpp" />
     <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp" />
     <ClCompile Include="src\util\OvrFrameProducer.cpp" />
