@@ -74,6 +74,7 @@ extern "C" DllExport int RegisterOpenCVTextureWriter(char *modulename, char *win
 			auto cam = frameProducer->getCamera();
 			module = std::make_shared<ThreadedModule>(frameProducer, std::unique_ptr<IProcessingModule>(new RawImageModule(cam->GetCamWidth(), cam->GetCamHeight(), cam->GetCamPixelsize())));
 			runningModules.insert({ modName, module });
+			module->start();
 		}
 		else
 		{

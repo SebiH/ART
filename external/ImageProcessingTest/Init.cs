@@ -26,7 +26,7 @@ namespace ImageProcessingUtil
             {
                 UpdateTextures();
             }
-            while (OpenCvWaitKey(20) != 'q');
+            while (OpenCvWaitKey(5) != 'q');
         }
     }
 }

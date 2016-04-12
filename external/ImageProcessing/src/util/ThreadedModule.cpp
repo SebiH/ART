@@ -59,6 +59,7 @@ void ThreadedModule::run()
 			// write result into memory, so that it's instantly available if textureupdate is requested
 			std::lock_guard<std::mutex> guard(_mutex);
 			_currentResults = std::move(result);
+			_firstProcessingFinished = true;
 		}
 	}
 }
@@ -72,9 +73,15 @@ void ThreadedModule::addTextureWriter(std::shared_ptr<ITextureWriter> writer)
 
 void ThreadedModule::updateTextures()
 {
+	if (!_firstProcessingFinished)
+	{
+		return;
+	}
+
 	std::lock_guard<std::mutex> guard(_mutex);
 	for (auto writer : _writers)
 	{
+		writer->writeTexture(_currentResults);
 	}
 	// TODO: check if new texture are available to avoid writing the same texture twice
 	// forEach registered texture writer

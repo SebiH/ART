@@ -9,6 +9,6 @@ namespace ImageProcessing
 	{
 	public:
 		virtual ~ITextureWriter() {}
-		virtual void WriteTexture(std::vector<std::unique_ptr<unsigned char[]>> processedImages) = 0;
+		virtual void writeTexture(const std::vector<std::unique_ptr<unsigned char[]>> &processedImages) = 0;
 	};
 }

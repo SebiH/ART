@@ -22,7 +22,7 @@ OpenCvTextureWriter::~OpenCvTextureWriter()
 
 
 
-void OpenCvTextureWriter::WriteTexture(std::vector<std::unique_ptr<unsigned char[]>> processedImages)
+void OpenCvTextureWriter::writeTexture(const std::vector<std::unique_ptr<unsigned char[]>> &processedImages)
 {
 	cv::Mat mergedMat(cv::Size(_expectedImageWidth * processedImages.size(), _expectedImageHeight), CV_8UC4);
 

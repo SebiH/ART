@@ -17,7 +17,7 @@ namespace ImageProcessing
 	public:
 		OpenCvTextureWriter(std::string windowName, int expectedImageWidth, int expectedImageHeight, int expectedImageCount);
 		~OpenCvTextureWriter();
-		virtual void WriteTexture(std::vector<std::unique_ptr<unsigned char[]>> processedImages) override;
+		virtual void writeTexture(const std::vector<std::unique_ptr<unsigned char[]>> &processedImages) override;
 	};
 
 }

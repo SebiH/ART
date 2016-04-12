@@ -9,7 +9,8 @@ OvrFrameProducer::OvrFrameProducer()
 	  _ovrCamera(std::unique_ptr<OVR::OvrvisionPro>(new OVR::OvrvisionPro())),
 	  _mutex()
 {
-	auto openSuccess = _ovrCamera->Open(0, OVR::OV_CAMVR_FULL);
+	//auto openSuccess = _ovrCamera->Open(0, OVR::OV_CAMVR_FULL);
+	auto openSuccess = _ovrCamera->Open(0, OVR::OV_CAM5MP_FHD);
 
 	if (!openSuccess)
 	{
