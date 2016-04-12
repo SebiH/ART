@@ -8,170 +8,61 @@ namespace Assets.Scripts.RealCamera
 
     public class ImageProcessing : MonoBehaviour
     {
-        public enum ImageProcessingMethod
-        {
-            Native,
-            ROI
-        }
+        public static readonly String MODULE_RAW_IMAGE = "RawImage";
+        public static readonly String MODULE_ROI = "ROI";
 
         #region DllImports
 
         [DllImport("ImageProcessing")]
-        private static extern void OvrStart(int cameraMode = -1);
+        private static extern void StartImageProcessing();
 
         [DllImport("ImageProcessing")]
-        private static extern void OvrStop();
+        private static extern float GetCameraProperty(string propName);
 
         [DllImport("ImageProcessing")]
-        private static extern void WriteROITexture(int startX, int startY, int width, int height, IntPtr leftUnityPtr, IntPtr rightUnityPtr);
+        private static extern void SetCameraProperty(string propName, float propVal);
 
         [DllImport("ImageProcessing")]
-        private static extern float GetProperty(string prop);
+        private static extern void UpdateTextures();
 
         [DllImport("ImageProcessing")]
-        private static extern void SetProperty(string prop, float val);
+        private static extern void RegisterDx11TexturePtr(string moduleName, int texturePtrCount, IntPtr[] texturePtr);
 
         [DllImport("ImageProcessing")]
-        private static extern void WriteTexture(IntPtr leftUnityPtr, IntPtr rightUnityPtr);
+        private static extern void DeregisterTexturePtr(int handle);
 
-        [DllImport("ImageProcessing")]
-        private static extern void FetchImage();
-
-        [DllImport("ImageProcessing")]
-        private static extern void RegisterExperimentalTexturePtr(IntPtr ptr);
-
-        [DllImport("ImageProcessing")]
-        private static extern void UpdateExperimentalTexturePtr();
-
-        #endregion
-
-        #region Singleton
-
-        // Singleton ..if possible
-        public static ImageProcessing Instance;
-
-        public ImageProcessing() : base()
-        {
-            if (Instance != null)
-            {
-                Debug.LogError("There should only be one instance of ImageProcessing");
-            }
-            else
-            {
-                Instance = this;
-            }
-        }
 
         #endregion
 
         #region API
 
-        private bool _hasStarted = false;
-        private int _subscriberCount = 0;
-        public void RequestStart(int cameraMode = -1)
+        public static void StartProcessing()
         {
-            _subscriberCount++;
-            if (!_hasStarted)
-            {
-                OvrStart(cameraMode);
-            }
+            StartImageProcessing();
+        }
+
+        public static float GetCamProperty(string prop)
+        {
+            return GetCameraProperty(prop);
+        }
+
+        public static void SetCamProperty(string prop, float val)
+        {
+            SetCameraProperty(prop, val);
         }
 
 
-        public void RequestShutdown()
+        public static void AddTexturePtrs(string moduleName, IntPtr[] texturePtrs)
         {
-            _subscriberCount--;
-
-            if (_subscriberCount <= 0)
-            {
-                OvrStop();
-            }
-
-            if (_subscriberCount < 0)
-            {
-                Debug.LogError("SubscriberCount should not be negative!");
-            }
+            RegisterDx11TexturePtr(moduleName, texturePtrs.Length, texturePtrs);
         }
-
-
-        public float GetCameraProperty(string prop)
-        {
-            return GetProperty(prop);
-        }
-
-        public void SetCameraProperty(string prop, float val)
-        {
-            SetProperty(prop, val);
-        }
-
 
         #endregion
-
-        #region Updating textures
-
-        struct TextureRequest
-        {
-            public ImageProcessingMethod method;
-            public IntPtr leftPtr;
-            public IntPtr rightPtr;
-            public object[] args;
-        }
-
-        private List<TextureRequest> _textureUpdateRequests = new List<TextureRequest>();
-
-        public void RegisterTextureUpdate(ImageProcessingMethod method, IntPtr leftPtr, IntPtr rightPtr, params object[] args)
-        {
-            _textureUpdateRequests.Add(new TextureRequest
-            {
-                method = method,
-                leftPtr = leftPtr,
-                rightPtr = rightPtr,
-                args = args
-            });
-        }
-
-        public void AddExperimentalTexturePtr(IntPtr texture)
-        {
-            RegisterExperimentalTexturePtr(texture);
-        }
-
-
-        public void DeregisterTexture(IntPtr leftPtr, IntPtr rightPtr)
-        {
-            _textureUpdateRequests.RemoveAll((req) =>
-            {
-                return req.leftPtr == leftPtr && req.rightPtr == rightPtr;
-            });
-        }
-
-
 
         void Update()
         {
-            FetchImage();
-
-            foreach (var req in _textureUpdateRequests)
-            {
-                switch (req.method)
-                {
-                    case ImageProcessingMethod.Native:
-                        WriteTexture(req.leftPtr, req.rightPtr);
-                        break;
-
-                    case ImageProcessingMethod.ROI:
-                        WriteROITexture((int)req.args[0], (int)req.args[1], (int)req.args[2], (int)req.args[3], req.leftPtr, req.rightPtr);
-                        break;
-
-                    default:
-                        Debug.LogError("Unknown ImageProcessingMethod");
-                        break;
-                }
-            }
-
-            UpdateExperimentalTexturePtr();
-
+            UpdateTextures();
         }
 
-        #endregion
     }
 }

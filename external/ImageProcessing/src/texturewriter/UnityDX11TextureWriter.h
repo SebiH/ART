@@ -7,10 +7,10 @@ namespace ImageProcessing
 	class UnityDX11TextureWriter : public ITextureWriter
 	{
 	private:
-		unsigned char *_texturePtr;
+		std::vector<unsigned char *> _texturePtrs;
 
 	public:
-		UnityDX11TextureWriter(unsigned char *texturePtr);
+		UnityDX11TextureWriter(std::vector<unsigned char *> &texturePtrs);
 		~UnityDX11TextureWriter();
 
 		virtual void writeTexture(const std::vector<std::unique_ptr<unsigned char[]>> &processedImages) override;

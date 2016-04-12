@@ -21,9 +21,9 @@ namespace Assets.Scripts.RealCamera
 
         void Awake()
         {
-            ImageProcessing.Instance.RequestStart();
-            MaxImageWidth = (int)ImageProcessing.Instance.GetCameraProperty("width");
-            MaxImageHeight = (int)ImageProcessing.Instance.GetCameraProperty("height");
+            ImageProcessing.StartProcessing();
+            MaxImageWidth = (int)ImageProcessing.GetCamProperty("width");
+            MaxImageHeight = (int)ImageProcessing.GetCamProperty("height");
         }
 
 
@@ -81,11 +81,11 @@ namespace Assets.Scripts.RealCamera
             LeftTexturePtr = CameraTexLeft.GetNativeTexturePtr();
             RightTexturePtr = CameraTexRight.GetNativeTexturePtr();
 
-            ImageProcessing.Instance.RegisterTextureUpdate(ImageProcessing.ImageProcessingMethod.ROI, LeftTexturePtr, RightTexturePtr,
-                Math.Min(StartPosX, MaxImageWidth - 1),
-                Math.Min(StartPosY, MaxImageHeight - 1),
-                Math.Min(ImageWidth, MaxImageWidth - StartPosX),
-                Math.Min(ImageHeight, MaxImageHeight - StartPosY));
+            //ImageProcessing.Instance.RegisterTextureUpdate(ImageProcessing.ImageProcessingMethod.ROI, LeftTexturePtr, RightTexturePtr,
+            //    Math.Min(StartPosX, MaxImageWidth - 1),
+            //    Math.Min(StartPosY, MaxImageHeight - 1),
+            //    Math.Min(ImageWidth, MaxImageWidth - StartPosX),
+            //    Math.Min(ImageHeight, MaxImageHeight - StartPosY));
         }
 
         void Update()
@@ -95,7 +95,8 @@ namespace Assets.Scripts.RealCamera
 
         void OnDestroy()
         {
-            ImageProcessing.Instance.RequestShutdown();
+            // TODO: deregister texture ptrs
+            //ImageProcessing.Instance.RequestShutdown();
         }
 
         private Mesh CreateCameraPlaneMesh()
