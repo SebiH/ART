@@ -17,7 +17,7 @@ UnityDX11TextureWriter::~UnityDX11TextureWriter()
 
 void UnityDX11TextureWriter::writeTexture(const std::vector<ProcessingOutput> &processedImages)
 {
-	auto minSize = std::min<int>(processedImages.size(), _texturePtrs.size());
+	auto minSize = std::min<size_t>(processedImages.size(), _texturePtrs.size());
 
 	for (int i = 0; i < minSize; i++)
 	{
