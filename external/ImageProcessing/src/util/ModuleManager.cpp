@@ -1,6 +1,9 @@
 #include "ModuleManager.h"
 
+#include <utility>
+
 #include "../processingmodule/RawImageModule.h"
+#include "../processingmodule/RoiModule.h"
 
 using namespace ImageProcessing;
 
@@ -28,15 +31,22 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 	}
 	else // module not running yet, start a new one
 	{
+		std::unique_ptr<IProcessingModule> processingModule;
+
 		if (modName == "RawImage")
 		{
-			module = std::make_shared<ThreadedModule>(_frameProducer, std::unique_ptr<IProcessingModule>(new RawImageModule(cam->GetCamWidth(), cam->GetCamHeight(), cam->GetCamPixelsize())));
+			processingModule = std::make_unique<RawImageModule>(cam->GetCamWidth(), cam->GetCamHeight(), cam->GetCamPixelsize());
+		}
+		else if (modName == "ROI")
+		{
+			processingModule = std::make_unique<RoiModule>(cam->GetCamWidth(), cam->GetCamHeight());
 		}
 		else // unknown module
 		{
 			// TODO: exception / error code?
 		}
 
+		module = std::make_shared<ThreadedModule>(_frameProducer, std::move(processingModule));
 		_createdModules.insert({ modName, module });
 		module->start();
 	}
