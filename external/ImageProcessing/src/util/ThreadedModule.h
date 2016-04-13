@@ -7,6 +7,7 @@
 
 #include "../processingmodule/IProcessingModule.h"
 #include "../texturewriter/ITextureWriter.h"
+#include "../processingoutput.h"
 #include "OvrFrameProducer.h"
 
 namespace ImageProcessing
@@ -23,7 +24,7 @@ namespace ImageProcessing
 		std::vector<std::shared_ptr<ITextureWriter>> _writers;
 
 		bool _firstProcessingFinished = false;
-		std::vector<std::unique_ptr<unsigned char[]>> _currentResults;
+		std::vector<ProcessingOutput> _currentResults;
 
 
 		void run();

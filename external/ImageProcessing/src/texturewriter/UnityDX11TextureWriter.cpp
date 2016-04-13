@@ -15,14 +15,14 @@ UnityDX11TextureWriter::~UnityDX11TextureWriter()
 {
 }
 
-void UnityDX11TextureWriter::writeTexture(const std::vector<std::unique_ptr<unsigned char[]>> &processedImages)
+void UnityDX11TextureWriter::writeTexture(const std::vector<ProcessingOutput> &processedImages)
 {
 	auto minSize = std::min<int>(processedImages.size(), _texturePtrs.size());
 
 	for (int i = 0; i < minSize; i++)
 	{
 		auto texturePtr = _texturePtrs[i];
-		auto processedImage = processedImages[i].get();
+		auto processedImage = processedImages[i].data.get();
 
 		ID3D11Texture2D* d3dtex = (ID3D11Texture2D*)texturePtr;
 		ID3D11Device *g_D3D11Device;

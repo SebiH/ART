@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <vector>
+#include "../processingoutput.h"
 
 namespace ImageProcessing
 {
@@ -9,7 +9,7 @@ namespace ImageProcessing
 	{
 	public:
 		virtual ~IProcessingModule() {}
-		virtual std::vector<std::unique_ptr<unsigned char[]>> processImage(unsigned char *rawDataLeft, unsigned char *rawDataRight) = 0;
+		virtual std::vector<ProcessingOutput> processImage(unsigned char *rawDataLeft, unsigned char *rawDataRight) = 0;
 	};
 
 }

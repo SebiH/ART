@@ -13,7 +13,7 @@ namespace ImageProcessing
 		UnityDX11TextureWriter(std::vector<unsigned char *> &texturePtrs);
 		~UnityDX11TextureWriter();
 
-		virtual void writeTexture(const std::vector<std::unique_ptr<unsigned char[]>> &processedImages) override;
+		virtual void writeTexture(const std::vector<ProcessingOutput> &processedImages) override;
 	};
 
 }

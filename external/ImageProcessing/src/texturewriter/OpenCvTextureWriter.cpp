@@ -22,18 +22,19 @@ OpenCvTextureWriter::~OpenCvTextureWriter()
 
 
 
-void OpenCvTextureWriter::writeTexture(const std::vector<std::unique_ptr<unsigned char[]>> &processedImages)
+void OpenCvTextureWriter::writeTexture(const std::vector<ProcessingOutput> &processedImages)
 {
 	cv::Mat mergedMat(cv::Size(_expectedImageWidth * processedImages.size(), _expectedImageHeight), CV_8UC4);
 
-	for (int i = 0; i < processedImages.size(); i++)
-	{
-		auto imgSize = cv::Size(_expectedImageWidth, _expectedImageHeight);
-		auto imgRawData = processedImages.at(i).get();
-		cv::Mat imgMat(imgSize.height, imgSize.width, CV_8UC4, imgRawData);
-		cv::Mat roi = cv::Mat(mergedMat, cv::Rect(cv::Point(i * _expectedImageWidth, 0), imgSize));
-		imgMat.copyTo(roi);
-	}
+	auto i = 0;
+
+	//for (auto processedImage : processedImages)
+	//{
+	//	auto imgSize = cv::Size(_expectedImageWidth, _expectedImageHeight);
+	//	cv::Mat roi = cv::Mat(mergedMat, cv::Rect(cv::Point(i * _expectedImageWidth, 0), imgSize));
+	//	processedImage.img.copyTo(roi);
+	//	i++;
+	//}
 
 	imshow(_windowName, mergedMat);
 }

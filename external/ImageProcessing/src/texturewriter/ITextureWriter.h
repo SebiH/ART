@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <vector>
+#include "../processingoutput.h"
 
 namespace ImageProcessing
 {
@@ -9,6 +9,6 @@ namespace ImageProcessing
 	{
 	public:
 		virtual ~ITextureWriter() {}
-		virtual void writeTexture(const std::vector<std::unique_ptr<unsigned char[]>> &processedImages) = 0;
+		virtual void writeTexture(const std::vector<ProcessingOutput> &processedImages) = 0;
 	};
 }

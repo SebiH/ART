@@ -84,6 +84,7 @@
   <ItemGroup>
     <ClCompile Include="src\api.cpp" />
     <ClCompile Include="src\processingmodule\RawImageModule.cpp" />
+    <ClCompile Include="src\processingmodule\RoiModule.cpp" />
     <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp" />
     <ClCompile Include="src\util\ModuleManager.cpp" />
     <ClCompile Include="src\util\OvrFrameProducer.cpp" />
@@ -94,6 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\processingmodule\RawImageModule.h" />
+    <ClInclude Include="src\processingmodule\RoiModule.h" />
+    <ClInclude Include="src\processingoutput.h" />
     <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h" />
     <ClInclude Include="src\texturewriter\OpenCvTextureWriter.h" />
     <ClInclude Include="src\util\ModuleManager.h" />
