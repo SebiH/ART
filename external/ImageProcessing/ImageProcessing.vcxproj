@@ -96,7 +96,7 @@
   <ItemGroup>
     <ClInclude Include="src\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\processingmodule\RoiModule.h" />
-    <ClInclude Include="src\processingoutput.h" />
+    <ClInclude Include="src\ProcessingOutput.h" />
     <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h" />
     <ClInclude Include="src\texturewriter\OpenCvTextureWriter.h" />
     <ClInclude Include="src\util\ModuleManager.h" />
