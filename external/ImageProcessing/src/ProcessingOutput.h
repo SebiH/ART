@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <utility>
-#include <opencv2/core/mat.hpp>
+#include <opencv2/core.hpp>
 
 namespace ImageProcessing
 {

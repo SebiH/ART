@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "../processingoutput.h"
+#include "../ProcessingOutput.h"
 
 namespace ImageProcessing
 {

@@ -7,7 +7,7 @@
 
 #include "../processingmodule/IProcessingModule.h"
 #include "../texturewriter/ITextureWriter.h"
-#include "../processingoutput.h"
+#include "../ProcessingOutput.h"
 #include "OvrFrameProducer.h"
 
 namespace ImageProcessing
