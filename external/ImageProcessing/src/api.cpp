@@ -101,9 +101,8 @@ extern "C" DllExport int OpenCvWaitKey(int delay)
 
 extern "C" DllExport int RegisterOpenCVTextureWriter(char *moduleName, char *windowname)
 {
-	auto cam = frameProducer->getCamera();
 	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
-	module->addTextureWriter(std::make_shared<OpenCvTextureWriter>(std::string(windowname), cam->GetCamWidth(), cam->GetCamHeight(), 2));
+	module->addTextureWriter(std::make_shared<OpenCvTextureWriter>(std::string(windowname)));
 
 	// TODO: return handle to deregister
 	return -1;

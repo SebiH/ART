@@ -5,11 +5,8 @@
 
 using namespace ImageProcessing;
 
-OpenCvTextureWriter::OpenCvTextureWriter(std::string windowName, int expectedImageWidth, int expectedImageHeight, int expectedImageCount)
-	: _windowName(windowName),
-	  _expectedImageWidth(expectedImageWidth),
-	  _expectedImageHeight(expectedImageHeight),
-	  _expectedImageCount(expectedImageCount)
+OpenCvTextureWriter::OpenCvTextureWriter(std::string windowName)
+	: _windowName(windowName)
 {
 	cv::namedWindow(_windowName);
 }
@@ -24,17 +21,31 @@ OpenCvTextureWriter::~OpenCvTextureWriter()
 
 void OpenCvTextureWriter::writeTexture(const std::vector<ProcessingOutput> &processedImages)
 {
-	cv::Mat mergedMat(cv::Size(_expectedImageWidth * processedImages.size(), _expectedImageHeight), CV_8UC4);
+	int totalWidth = 0;
+	int maxHeight = 0;
 
-	auto i = 0;
+	for (int i = 0; i < processedImages.size(); i++)
+	{
+		auto currentSize = processedImages[i].img.size();
+		maxHeight = std::max<int>(currentSize.height, maxHeight);
+		totalWidth += currentSize.width;
+	}
 
-	//for (auto processedImage : processedImages)
-	//{
-	//	auto imgSize = cv::Size(_expectedImageWidth, _expectedImageHeight);
-	//	cv::Mat roi = cv::Mat(mergedMat, cv::Rect(cv::Point(i * _expectedImageWidth, 0), imgSize));
-	//	processedImage.img.copyTo(roi);
-	//	i++;
-	//}
+	if (totalWidth == 0 || maxHeight == 0)
+	{
+		return;
+	}
+
+	cv::Mat mergedMat(cv::Size(totalWidth, maxHeight), CV_8UC4);
+	int currentOffset = 0;
+
+	for (int i = 0; i < processedImages.size(); i++)
+	{
+		auto currentImage = processedImages[i].img;
+		cv::Mat roi = cv::Mat(mergedMat, cv::Rect(cv::Point(currentOffset, 0), currentImage.size()));
+		currentImage.copyTo(roi);
+		currentOffset += currentImage.size().width;
+	}
 
 	imshow(_windowName, mergedMat);
 }
