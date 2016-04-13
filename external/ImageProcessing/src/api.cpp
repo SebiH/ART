@@ -5,6 +5,8 @@
 #include <string>
 #include <opencv2/highgui.hpp>
 
+#include "processingmodule/IProcessingModule.h"
+#include "processingmodule/RoiModule.h"
 #include "texturewriter/ITextureWriter.h"
 #include "texturewriter/OpenCvTextureWriter.h"
 #include "texturewriter/UnityDX11TextureWriter.h"
@@ -129,4 +131,11 @@ extern "C" DllExport int RegisterDx11TexturePtr(char *moduleName, int texturePtr
 extern "C" DllExport void DeregisterTexturePtr(int handle)
 {
 
+}
+
+extern "C" DllExport void ChangeRoi(int moduleHandle, int x, int y, int width, int height)
+{
+	IProcessingModule *module = moduleManager->getOrCreateModule("ROI")->getProcessingModule();
+	auto roiModule = dynamic_cast<RoiModule*>(module);
+	roiModule->setRegion(cv::Rect(x, y, width, height));
 }

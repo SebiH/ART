@@ -25,7 +25,7 @@ void ThreadedModule::start()
 
 
 
-bool ThreadedModule::isRunning()
+bool ThreadedModule::isRunning() const
 {
 	return _isRunning;
 }
@@ -86,4 +86,9 @@ void ThreadedModule::updateTextures()
 	// TODO: check if new texture are available to avoid writing the same texture twice
 	// forEach registered texture writer
 		// update texture
+}
+
+IProcessingModule* ThreadedModule::getProcessingModule() const
+{
+	return _module.get();
 }

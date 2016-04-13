@@ -34,11 +34,12 @@ namespace ImageProcessing
 		~ThreadedModule();
 
 		void start();
-		bool isRunning();
+		bool isRunning() const;
 		void stop();
 
 		void addTextureWriter(std::shared_ptr<ITextureWriter> writer);
 		void updateTextures();
+		IProcessingModule* getProcessingModule() const;
 	};
 
 }
