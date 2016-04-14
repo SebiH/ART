@@ -134,7 +134,10 @@ extern "C" DllExport void DeregisterTexturePtr(int handle)
 
 extern "C" DllExport void ChangeRoi(int moduleHandle, int x, int y, int width, int height)
 {
-	IProcessingModule *module = moduleManager->getOrCreateModule("ROI")->getProcessingModule();
-	auto roiModule = dynamic_cast<RoiModule*>(module);
-	roiModule->setRegion(cv::Rect(x, y, width, height));
+	if (moduleManager->hasModule("ROI"))
+	{
+		IProcessingModule *module = moduleManager->getOrCreateModule("ROI")->getProcessingModule();
+		auto roiModule = static_cast<RoiModule*>(module);
+		roiModule->setRegion(cv::Rect(x, y, width, height));
+	}
 }

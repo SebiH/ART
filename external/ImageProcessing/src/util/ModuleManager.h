@@ -19,6 +19,7 @@ namespace ImageProcessing
 		ModuleManager(const std::shared_ptr<OvrFrameProducer> frameProducer);
 		~ModuleManager();
 
+		bool hasModule(const std::string &moduleName);
 		std::shared_ptr<ThreadedModule> getOrCreateModule(const std::string &moduleName);
 		void triggerTextureUpdate();
 	};

@@ -23,9 +23,7 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 	std::shared_ptr<ThreadedModule> module;
 	auto cam = _frameProducer->getCamera();
 
-	bool isModuleRunning = _createdModules.count(modName) > 0;
-
-	if (isModuleRunning)
+	if (hasModule(modName))
 	{
 		module = _createdModules[modName];
 	}
@@ -60,4 +58,9 @@ void ModuleManager::triggerTextureUpdate()
 	{
 		module.second->updateTextures();
 	}
+}
+
+bool ModuleManager::hasModule(const std::string &moduleName)
+{
+	return _createdModules.count(moduleName) > 0;
 }
