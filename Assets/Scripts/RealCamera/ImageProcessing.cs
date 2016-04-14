@@ -26,7 +26,7 @@ namespace Assets.Scripts.RealCamera
         private static extern void UpdateTextures();
 
         [DllImport("ImageProcessing")]
-        private static extern void RegisterDx11TexturePtr(string moduleName, int texturePtrCount, IntPtr[] texturePtr);
+        private static extern int RegisterDx11TexturePtr(string moduleName, IntPtr texturePtr, int type);
 
         [DllImport("ImageProcessing")]
         private static extern void DeregisterTexturePtr(int handle);
@@ -51,10 +51,16 @@ namespace Assets.Scripts.RealCamera
             SetCameraProperty(prop, val);
         }
 
+        public enum Type { left = 0, right = 1, combined = 2 };
 
-        public static void AddTexturePtrs(string moduleName, IntPtr[] texturePtrs)
+        public static int AddTexturePtr(string moduleName, IntPtr texturePtr, Type type)
         {
-            RegisterDx11TexturePtr(moduleName, texturePtrs.Length, texturePtrs);
+            return RegisterDx11TexturePtr(moduleName, texturePtr, (int)type);
+        }
+
+        public static void RemoveTexturePtr(int handle)
+        {
+            DeregisterTexturePtr(handle);
         }
 
         #endregion

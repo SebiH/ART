@@ -116,18 +116,11 @@ extern "C" DllExport int RegisterOpenCVTextureWriter(char *moduleName, char *win
 }
 
 
-extern "C" DllExport int RegisterDx11TexturePtr(char *moduleName, int texturePtrCount, unsigned char **texturePtrs)
+extern "C" DllExport int RegisterDx11TexturePtr(char *moduleName, unsigned char *texturePtr, /* ProcessingOutput::Type */ int textureType)
 {
 	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
 
-	std::vector<unsigned char *> texturePtrList;
-
-	for (int i = 0; i < texturePtrCount; i++)
-	{
-		texturePtrList.push_back(texturePtrs[i]);
-	}
-
-	auto textureWriter = std::make_shared<UnityDX11TextureWriter>(texturePtrList);
+	auto textureWriter = std::make_shared<UnityDX11TextureWriter>(texturePtr, static_cast<ProcessingOutput::Type>(textureType));
 	module->addTextureWriter(textureWriter);
 
 	auto id = idCounter++;

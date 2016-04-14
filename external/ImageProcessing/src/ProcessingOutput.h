@@ -10,7 +10,9 @@ namespace ImageProcessing
 	{
 		enum class Type
 		{
-			left, right, combined
+			left = 0,
+			right = 1,
+			combined =2
 		};
 
 		Type type;

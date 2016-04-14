@@ -1,16 +1,18 @@
 #pragma once
 
 #include "ITextureWriter.h"
+#include "../ProcessingOutput.h"
 
 namespace ImageProcessing
 {
 	class UnityDX11TextureWriter : public ITextureWriter
 	{
 	private:
-		std::vector<unsigned char *> _texturePtrs;
+		unsigned char * _texturePtr;
+		ProcessingOutput::Type _type;
 
 	public:
-		UnityDX11TextureWriter(std::vector<unsigned char *> &texturePtrs);
+		UnityDX11TextureWriter(unsigned char *texturePtr, ProcessingOutput::Type type);
 		~UnityDX11TextureWriter();
 
 		virtual void writeTexture(const std::vector<ProcessingOutput> &processedImages) override;
