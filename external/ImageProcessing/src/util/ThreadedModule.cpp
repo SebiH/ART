@@ -67,7 +67,19 @@ void ThreadedModule::run()
 
 void ThreadedModule::addTextureWriter(std::shared_ptr<ITextureWriter> writer)
 {
-	_writers.push_back(std::move(writer));
+	_writers.push_back(writer);
+}
+
+void ThreadedModule::removeTextureWriter(std::shared_ptr<ITextureWriter> writer)
+{
+	for (int i = 0; i < _writers.size(); i++)
+	{
+		if (_writers[i].get() == writer.get())
+		{
+			_writers.erase(_writers.begin() + i);
+			return;
+		}
+	}
 }
 
 

@@ -11,6 +11,9 @@ namespace ImageProcessingUtil
         private static extern int RegisterOpenCVTextureWriter(string modulename, string windowname);
 
         [DllImport("ImageProcessing")]
+        private static extern void DeregisterTexturePtr(int handle);
+
+        [DllImport("ImageProcessing")]
         private static extern void UpdateTextures();
 
         [DllImport("ImageProcessing")]
@@ -26,8 +29,8 @@ namespace ImageProcessingUtil
         {
             // Test things without unity
             StartImageProcessing();
-            RegisterOpenCVTextureWriter("RawImage", "testWindow1");
-            RegisterOpenCVTextureWriter("ROI", "testWindow2");
+            int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
+            int handleRoi = RegisterOpenCVTextureWriter("ROI", "testWindow2");
 
             int currentX = 0;
             int currentY = 0;
@@ -56,6 +59,19 @@ namespace ImageProcessingUtil
                         currentY = 0;
                         currentWidth = (int)GetCameraProperty("width");
                         currentHeight = (int)GetCameraProperty("height");
+                    }
+                }
+
+                if (keyPressed == 'x')
+                {
+                    if (handleRaw == -1)
+                    {
+                        handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
+                    }
+                    else
+                    {
+                        DeregisterTexturePtr(handleRaw);
+                        handleRaw = -1;
                     }
                 }
             }

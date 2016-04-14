@@ -19,23 +19,22 @@ ModuleManager::~ModuleManager()
 
 std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::string &moduleName)
 {
-	std::string modName(moduleName);
 	std::shared_ptr<ThreadedModule> module;
 	auto cam = _frameProducer->getCamera();
 
-	if (hasModule(modName))
+	if (hasModule(moduleName))
 	{
-		module = _createdModules[modName];
+		module = _createdModules[moduleName];
 	}
 	else // module not running yet, start a new one
 	{
 		std::unique_ptr<IProcessingModule> processingModule;
 
-		if (modName == "RawImage")
+		if (moduleName == "RawImage")
 		{
 			processingModule = std::make_unique<RawImageModule>(cam->GetCamWidth(), cam->GetCamHeight(), cam->GetCamPixelsize());
 		}
-		else if (modName == "ROI")
+		else if (moduleName == "ROI")
 		{
 			processingModule = std::make_unique<RoiModule>(cam->GetCamWidth(), cam->GetCamHeight());
 		}
@@ -45,7 +44,7 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 		}
 
 		module = std::make_shared<ThreadedModule>(_frameProducer, std::move(processingModule));
-		_createdModules.insert({ modName, module });
+		_createdModules.insert({ moduleName, module });
 		module->start();
 	}
 
@@ -54,9 +53,9 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 
 void ModuleManager::triggerTextureUpdate()
 {
-	for (auto module : _createdModules)
+	for (auto pair : _createdModules)
 	{
-		module.second->updateTextures();
+		pair.second->updateTextures();
 	}
 }
 

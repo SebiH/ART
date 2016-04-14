@@ -21,6 +21,7 @@ namespace ImageProcessing
 
 		bool hasModule(const std::string &moduleName);
 		std::shared_ptr<ThreadedModule> getOrCreateModule(const std::string &moduleName);
+
 		void triggerTextureUpdate();
 	};
 }

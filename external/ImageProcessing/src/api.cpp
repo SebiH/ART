@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <opencv2/highgui.hpp>
 
 #include "processingmodule/IProcessingModule.h"
@@ -21,6 +22,9 @@ using namespace ImageProcessing;
 bool _isInitialized;
 std::shared_ptr<OvrFrameProducer> frameProducer;
 std::unique_ptr<ModuleManager> moduleManager;
+
+int idCounter = 0;
+std::map<int, std::pair<std::shared_ptr<ThreadedModule>, std::shared_ptr<ITextureWriter>>> registeredTextureWriters;
 
 extern "C" DllExport void StartImageProcessing()
 {
@@ -102,10 +106,13 @@ extern "C" DllExport int OpenCvWaitKey(int delay)
 extern "C" DllExport int RegisterOpenCVTextureWriter(char *moduleName, char *windowname)
 {
 	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
-	module->addTextureWriter(std::make_shared<OpenCvTextureWriter>(std::string(windowname)));
+	auto textureWriter = std::make_shared<OpenCvTextureWriter>(std::string(windowname));
+	module->addTextureWriter(textureWriter);
 
-	// TODO: return handle to deregister
-	return -1;
+	auto id = idCounter++;
+	registeredTextureWriters[id] = std::make_pair(module, textureWriter);
+
+	return id;
 }
 
 
@@ -120,16 +127,26 @@ extern "C" DllExport int RegisterDx11TexturePtr(char *moduleName, int texturePtr
 		texturePtrList.push_back(texturePtrs[i]);
 	}
 
-	module->addTextureWriter(std::make_shared<UnityDX11TextureWriter>(texturePtrList));
+	auto textureWriter = std::make_shared<UnityDX11TextureWriter>(texturePtrList);
+	module->addTextureWriter(textureWriter);
 
-	// TODO: return handle to deregister
-	return -1;
+	auto id = idCounter++;
+	registeredTextureWriters[id] = std::make_pair(module, textureWriter);
+
+	return id;
 }
 
 
 extern "C" DllExport void DeregisterTexturePtr(int handle)
 {
+	bool hasId = registeredTextureWriters.count(handle) > 0;
 
+	if (hasId)
+	{
+		auto entry = registeredTextureWriters[handle];
+		entry.first->removeTextureWriter(entry.second);
+		registeredTextureWriters.erase(handle);
+	}
 }
 
 extern "C" DllExport void ChangeRoi(int moduleHandle, int x, int y, int width, int height)

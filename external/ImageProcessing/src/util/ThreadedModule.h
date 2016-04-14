@@ -38,6 +38,7 @@ namespace ImageProcessing
 		void stop();
 
 		void addTextureWriter(std::shared_ptr<ITextureWriter> writer);
+		void removeTextureWriter(std::shared_ptr<ITextureWriter> writer);
 		void updateTextures();
 		IProcessingModule* getProcessingModule() const;
 	};
