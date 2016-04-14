@@ -1,7 +1,5 @@
 #include "OvrFrameProducer.h"
 
-#include <mutex>
-
 using namespace ImageProcessing;
 
 OvrFrameProducer::OvrFrameProducer()
@@ -10,7 +8,8 @@ OvrFrameProducer::OvrFrameProducer()
 	  _mutex()
 {
 	//auto openSuccess = _ovrCamera->Open(0, OVR::OV_CAMVR_FULL);
-	auto openSuccess = _ovrCamera->Open(0, OVR::OV_CAM5MP_FHD);
+	//auto openSuccess = _ovrCamera->Open(0, OVR::OV_CAM5MP_FHD);
+	auto openSuccess = _ovrCamera->Open(0, OVR::Camprop::OV_CAMVR_QVGA);
 
 	if (!openSuccess)
 	{
@@ -40,11 +39,22 @@ OvrFrameProducer::~OvrFrameProducer()
 }
 
 
-void OvrFrameProducer::poll(unsigned char *dataLeft, unsigned char *dataRight)
+void OvrFrameProducer::poll(long &frameId, unsigned char *dataLeft, unsigned char *dataRight)
 {
-	std::lock_guard<std::mutex> lock(_mutex);
-	memcpy(dataLeft, _dataLeft.get(), _imgMemSize);
-	memcpy(dataRight, _dataRight.get(), _imgMemSize);
+	std::unique_lock<std::mutex> lock(_mutex);
+
+	_frameNotifier.wait(lock, [&]() { return frameId < _frameCounter; });
+	frameId = _frameCounter;
+
+	if (dataLeft != nullptr)
+	{
+		memcpy(dataLeft, _dataLeft.get(), _imgMemSize);
+	}
+
+	if (dataRight != nullptr)
+	{
+		memcpy(dataRight, _dataRight.get(), _imgMemSize);
+	}
 }
 
 
@@ -52,14 +62,14 @@ void OvrFrameProducer::run()
 {
 	// TODO ?
 	time_t timeOfLastFrame = 0;
-	time_t desiredFramerate = 1/60; // in ms - better name?
+	time_t desiredFramerate = 1/60; // in seconds - better name?
 
 
 	while (_isRunning)
 	{
 		// TODO: if isNextFrameAvailable
 		query();
-		Sleep(10);
+		Sleep(desiredFramerate * 1000);
 	}
 }
 
@@ -70,11 +80,13 @@ void OvrFrameProducer::query()
 	auto dataLeft = _ovrCamera->GetCamImageBGRA(OVR::Cameye::OV_CAMEYE_LEFT);
 	auto dataRight = _ovrCamera->GetCamImageBGRA(OVR::Cameye::OV_CAMEYE_RIGHT);
 
-	std::lock_guard<std::mutex> lock(_mutex);
-	memcpy(_dataLeft.get(), dataLeft, _imgMemSize);
-	memcpy(_dataRight.get(), dataRight, _imgMemSize);
-
-	// TODO: eventbased system that triggers other threads to poll() new data?
+	{
+		std::unique_lock<std::mutex> lock(_mutex);
+		memcpy(_dataLeft.get(), dataLeft, _imgMemSize);
+		memcpy(_dataRight.get(), dataRight, _imgMemSize);
+		_frameCounter++;
+		_frameNotifier.notify_all();
+	}
 }
 
 
@@ -86,4 +98,14 @@ OVR::OvrvisionPro* OvrFrameProducer::getCamera() const
 std::size_t OvrFrameProducer::getImageMemorySize() const
 {
 	return _imgMemSize;
+}
+
+long OvrFrameProducer::getCurrentFrameCount() const
+{
+	return _frameCounter;
+}
+
+std::condition_variable* OvrFrameProducer::getFrameNotifier()
+{
+	return &_frameNotifier;
 }

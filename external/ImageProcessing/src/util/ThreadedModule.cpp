@@ -45,6 +45,7 @@ void ThreadedModule::run()
 {
 	std::unique_ptr<unsigned char[]> rawDataLeft(new unsigned char[_producer->getImageMemorySize()]);
 	std::unique_ptr<unsigned char[]> rawDataRight(new unsigned char[_producer->getImageMemorySize()]);
+	long currentFrameId = -1;
 
 	while (_isRunning)
 	{
@@ -52,7 +53,7 @@ void ThreadedModule::run()
 		// if (new frame is available) (else sleep)
 
 		// load frames into local memory (for isolated processing)
-		_producer->poll(rawDataLeft.get(), rawDataRight.get());
+		_producer->poll(currentFrameId, rawDataLeft.get(), rawDataRight.get());
 		auto result = _module->processImage(rawDataLeft.get(), rawDataRight.get());
 
 		{

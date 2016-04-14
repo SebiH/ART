@@ -1,6 +1,7 @@
 #pragma once
 
 #include <atomic>
+#include <condition_variable>
 #include <thread>
 #include <mutex>
 #include <ovrvision_pro.h>
@@ -16,7 +17,9 @@ namespace ImageProcessing
 
 		std::thread _thread;
 		std::mutex _mutex;
+		std::condition_variable _frameNotifier;
 		std::atomic<bool> _isRunning;
+		std::atomic<int> _frameCounter = -1;
 
 		void query();
 		void run();
@@ -25,8 +28,10 @@ namespace ImageProcessing
 		OvrFrameProducer();
 		~OvrFrameProducer();
 
-		void poll(unsigned char *dataLeft, unsigned char *dataRight);
+		void poll(long &frameId, unsigned char *dataLeft, unsigned char *dataRight);
 		OVR::OvrvisionPro* getCamera() const;
 		std::size_t getImageMemorySize() const;
+		long getCurrentFrameCount() const;
+		std::condition_variable* getFrameNotifier();
 	};
 }
