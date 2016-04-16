@@ -61,6 +61,11 @@ namespace Assets.Scripts.Gestures
             var rightThumb = GestureSystem.GetLimb(InteractionLimb.RightThumbTip);
             var rightIndex = GestureSystem.GetLimb(InteractionLimb.RightIndexTip);
 
+            if (leftThumb == null || leftIndex == null || rightThumb == null || rightIndex == null)
+            {
+                return IsGestureActive;
+            }
+
             if (IsGestureActive)
             {
                 // if the gesture is already active, we only need to check if the user is still pinching their fingers together

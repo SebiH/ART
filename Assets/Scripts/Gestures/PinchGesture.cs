@@ -19,10 +19,16 @@ public class PinchGesture : GestureBase
         {
             var leftThumb = GestureSystem.GetLimb(InteractionLimb.LeftThumbTip);
             var leftIndex = GestureSystem.GetLimb(InteractionLimb.LeftIndexTip);
-            var leftStatus = CheckStatus(leftThumb, leftIndex);
 
             var rightThumb = GestureSystem.GetLimb(InteractionLimb.RightThumbTip);
             var rightIndex = GestureSystem.GetLimb(InteractionLimb.RightIndexTip);
+
+            if (leftThumb == null || leftIndex == null || rightThumb == null || rightIndex == null)
+            {
+                return IsGestureActive;
+            }
+
+            var leftStatus = CheckStatus(leftThumb, leftIndex);
             var rightStatus = CheckStatus(rightThumb, rightIndex);
 
             if (leftStatus == GestureStatus.Starting && rightStatus == GestureStatus.Starting)
@@ -47,6 +53,11 @@ public class PinchGesture : GestureBase
 
             var index = GestureSystem.GetLimb(indexType);
             var thumb = GestureSystem.GetLimb(thumbType);
+
+            if (index == null || thumb == null)
+            {
+                return IsGestureActive;
+            }
 
             var status = CheckStatus(thumb, index);
 

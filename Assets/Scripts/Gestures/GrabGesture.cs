@@ -52,33 +52,39 @@ namespace Assets.Scripts.Gestures
                 currentHand = hands.FirstOrDefault();
             }
 
-            if (currentHand != null && currentHand.GrabStrength >= 0.99)
+            if (currentHand != null)
             {
-                // leapmotion's position seems to be different than our own position
-                if (currentHand.IsLeft)
+                if (currentHand.GrabStrength >= 0.99)
                 {
-                    grabPosition = GestureSystem.GetLimb(InteractionLimb.LeftPalm).transform.position;
-                }
-                else
-                {
-                    grabPosition = GestureSystem.GetLimb(InteractionLimb.RightPalm).transform.position;
-                }
+                    // leapmotion's position seems to be different than our own position
+                    if (currentHand.IsLeft)
+                    {
+                        grabPosition = GestureSystem.GetLimb(InteractionLimb.LeftPalm).transform.position;
+                    }
+                    else
+                    {
+                        grabPosition = GestureSystem.GetLimb(InteractionLimb.RightPalm).transform.position;
+                    }
 
-                if (IsGestureActive)
-                {
-                    RaiseGestureActiveEvent();
+                    if (IsGestureActive)
+                    {
+                        RaiseGestureActiveEvent();
+                    }
+                    else
+                    {
+                        IsGestureActive = true;
+                        RaiseGestureStartEvent();
+                    }
                 }
-                else
+                else if (IsGestureActive)
                 {
-                    IsGestureActive = true;
-                    RaiseGestureStartEvent();
+                    IsGestureActive = false;
+                    RaiseGestureStopEvent();
                 }
-
             }
-            else if (IsGestureActive)
+            else
             {
-                IsGestureActive = false;
-                RaiseGestureStopEvent();
+                // currenthand not found, keep event as it is
             }
 
             return IsGestureActive;

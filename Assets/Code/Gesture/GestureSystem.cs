@@ -38,12 +38,6 @@ namespace Assets.Scripts.GestureControl
         public static GameObject GetLimb(InteractionLimb type)
         {
             var typeIndex = LimbToInt(type);
-
-            if (RegisteredLimbs[typeIndex] == null)
-            {
-                Debug.LogWarning(String.Format("Tried to use unregistered limb of type '{0}'!", type.ToString()));
-            }
-
             return RegisteredLimbs[typeIndex];
         }
 

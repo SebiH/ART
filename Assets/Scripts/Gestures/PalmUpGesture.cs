@@ -44,9 +44,14 @@ namespace Assets.Scripts.Gestures
             if (TriggerHand == Hand.Both)
             {
                 var leftPalm = GestureSystem.GetLimb(InteractionLimb.LeftPalm);
-                var leftStatus = CheckStatus(leftPalm);
-
                 var rightPalm = GestureSystem.GetLimb(InteractionLimb.RightPalm);
+
+                if (leftPalm == null || rightPalm == null)
+                {
+                    return IsGestureActive;
+                }
+
+                var leftStatus = CheckStatus(leftPalm);
                 var rightStatus = CheckStatus(rightPalm);
 
                 if (leftStatus == GestureStatus.Starting && rightStatus == GestureStatus.Starting)
@@ -69,6 +74,11 @@ namespace Assets.Scripts.Gestures
                 var limbType = (TriggerHand == Hand.Left) ? InteractionLimb.LeftPalm : InteractionLimb.RightPalm;
                 var palm = GestureSystem.GetLimb(limbType);
                 var status = CheckStatus(palm);
+
+                if (palm == null)
+                {
+                    return IsGestureActive;
+                }
 
                 switch (status)
                 {
