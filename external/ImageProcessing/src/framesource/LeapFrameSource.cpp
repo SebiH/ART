@@ -1,0 +1,150 @@
+#include "LeapFrameSource.h"
+
+#include <opencv2/core.hpp>
+#include <Windows.h>
+
+using namespace ImageProcessing;
+
+LeapFrameSource::LeapFrameSource()
+	: _isRunning(ATOMIC_VAR_INIT(false)),
+	_camera(std::make_unique<Leap::Controller>()),
+	_mutex()
+{
+	_camera->setPolicy(Leap::Controller::POLICY_IMAGES);
+
+	// first few times the leap controller can return a zero-sized image,
+	// therefore repeat until we have something useful
+	while (true)
+	{
+		auto images = _camera->images();
+
+		int camWidth = images[0].width();
+		int camHeight = images[0].height();
+		int camDepth = images[0].bytesPerPixel();
+		_imgBufferSize = camWidth * camHeight * camDepth;
+
+		if (_imgBufferSize == 0)
+		{
+			Sleep(100);
+		}
+		else
+		{
+			_imgInfo = ImageInfo(camWidth, camHeight, camDepth, CV_8UC1);
+			_dataLeft = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
+			_dataRight = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
+			break;
+		}
+	}
+
+	_isRunning = true;
+	_thread = std::thread(&LeapFrameSource::run, this);
+}
+
+
+LeapFrameSource::~LeapFrameSource()
+{
+	if (std::atomic_exchange(&_isRunning, false))
+	{
+		_camera.release();
+		_thread.join();
+	}
+}
+
+
+ImageInfo LeapFrameSource::poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight)
+{
+	std::unique_lock<std::mutex> lock(_mutex);
+
+	_frameNotifier.wait(lock, [&]() { return frameId < _frameCounter; });
+	frameId = _frameCounter;
+
+	if (bufferLeft != nullptr)
+	{
+		memcpy(bufferLeft, _dataLeft.get(), _imgBufferSize);
+	}
+
+	if (bufferRight != nullptr)
+	{
+		memcpy(bufferRight, _dataRight.get(), _imgBufferSize);
+	}
+
+	return _imgInfo;
+}
+
+
+void LeapFrameSource::run()
+{
+	// TODO ?
+	time_t timeOfLastFrame = 0;
+	float desiredFramerate = 1 / 30.f; // in seconds - better name?
+
+	while (_isRunning)
+	{
+		// TODO: if isNextFrameAvailable
+		query();
+		Sleep(desiredFramerate * 1000);
+	}
+}
+
+void LeapFrameSource::query()
+{
+	auto images = _camera->images();
+
+	std::unique_lock<std::mutex> lock(_mutex);
+	memcpy(_dataLeft.get(), images[0].data(), _imgBufferSize);
+	memcpy(_dataRight.get(), images[1].data(), _imgBufferSize);
+	_frameCounter++;
+	_frameNotifier.notify_all();
+}
+
+
+std::size_t LeapFrameSource::getImageBufferSize() const
+{
+	return _imgBufferSize;
+}
+
+// camera properties
+int LeapFrameSource::getFrameWidth() const
+{
+	return _imgInfo.width;
+}
+
+int LeapFrameSource::getFrameHeight() const
+{
+	return _imgInfo.height;
+}
+
+int LeapFrameSource::getFrameChannels() const
+{
+	return _imgInfo.channels;
+}
+
+float LeapFrameSource::getCamExposure() const
+{
+	// not possible?
+	return 0;
+}
+
+
+void LeapFrameSource::setCamExposure(float val) const
+{
+	// not possible?
+}
+
+
+float LeapFrameSource::getCamGain() const
+{
+	// not possible?
+	return 0;
+}
+
+
+void LeapFrameSource::setCamGain(float val) const
+{
+	// not possible?
+}
+
+bool LeapFrameSource::isOpen() const
+{
+	return _camera->isConnected();
+}

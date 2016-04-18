@@ -9,6 +9,7 @@
 #include "framesource\IFrameSource.h"
 #include "framesource\OpenCVFrameProducer.h"
 #include "framesource\OvrFrameProducer.h"
+#include "framesource\LeapFrameSource.h"
 #include "processingmodule/IProcessingModule.h"
 #include "processingmodule/RoiModule.h"
 #include "texturewriter/ITextureWriter.h"
@@ -22,7 +23,7 @@
 using namespace ImageProcessing;
 
 bool _isInitialized;
-std::shared_ptr<OpenCVFrameProducer> frameProducer;
+std::shared_ptr<IFrameSource> frameProducer;
 std::unique_ptr<ModuleManager> moduleManager;
 
 int idCounter = 0;
@@ -33,7 +34,7 @@ extern "C" DllExport void StartImageProcessing()
 	if (!_isInitialized)
 	{
 		_isInitialized = true;
-		frameProducer = std::make_shared<OpenCVFrameProducer>();
+		frameProducer = std::make_shared<LeapFrameSource>();
 		moduleManager = std::unique_ptr<ModuleManager>(new ModuleManager(frameProducer));
 	}
 }
