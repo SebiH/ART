@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\framesource\IFrameSource.h" />
+    <ClInclude Include="src\ImageInfo.h" />
     <ClInclude Include="src\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\processingmodule\RoiModule.h" />
     <ClInclude Include="src\ProcessingOutput.h" />

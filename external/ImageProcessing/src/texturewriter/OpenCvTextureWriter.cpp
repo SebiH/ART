@@ -23,25 +23,27 @@ void OpenCvTextureWriter::writeTexture(const std::vector<ProcessingOutput> &proc
 {
 	int totalWidth = 0;
 	int maxHeight = 0;
+	int matType = -1;
 
-	for (int i = 0; i < processedImages.size(); i++)
+	for (auto const &processedImg : processedImages)
 	{
-		auto currentSize = processedImages[i].img.size();
+		matType = processedImg.img.type();
+		auto currentSize = processedImg.img.size();
 		maxHeight = std::max<int>(currentSize.height, maxHeight);
 		totalWidth += currentSize.width;
 	}
 
-	if (totalWidth == 0 || maxHeight == 0)
+	if (totalWidth == 0 || maxHeight == 0 || matType == -1)
 	{
 		return;
 	}
 
-	cv::Mat mergedMat(cv::Size(totalWidth, maxHeight), CV_8UC3);
+	cv::Mat mergedMat(cv::Size(totalWidth, maxHeight), matType);
 	int currentOffset = 0;
 
-	for (int i = 0; i < processedImages.size(); i++)
+	for (auto const &processedImg : processedImages)
 	{
-		auto currentImage = processedImages[i].img;
+		auto currentImage = processedImg.img;
 		cv::Mat roi = cv::Mat(mergedMat, cv::Rect(cv::Point(currentOffset, 0), currentImage.size()));
 		currentImage.copyTo(roi);
 		currentOffset += currentImage.size().width;

@@ -16,6 +16,7 @@ namespace ImageProcessing
 		std::unique_ptr<cv::VideoCapture> _camera;
 		std::unique_ptr<unsigned char[]> _dataLeft, _dataRight;
 		std::size_t _imgBufferSize;
+		ImageInfo _imgInfo;
 
 		std::thread _thread;
 		std::mutex _mutex;
@@ -30,7 +31,7 @@ namespace ImageProcessing
 		OpenCVFrameProducer();
 		~OpenCVFrameProducer();
 
-		virtual void poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight) override;
+		virtual ImageInfo poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight) override;
 		virtual std::size_t getImageBufferSize() const override;
 
 		// camera properties

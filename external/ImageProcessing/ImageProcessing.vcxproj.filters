@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\util\OvrFrameProducer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\util\ThreadedModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,14 +42,14 @@
     <ClCompile Include="src\processingmodule\RoiModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\util\OpenCvFrameProducer.cpp">
+    <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framesource\OvrFrameProducer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\util\OvrFrameProducer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\util\ThreadedModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -80,7 +77,16 @@
     <ClInclude Include="src\ProcessingOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\util\OpenCVFrameProducer.h">
+    <ClInclude Include="src\framesource\IFrameSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\framesource\OpenCVFrameProducer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\framesource\OvrFrameProducer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImageInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

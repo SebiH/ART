@@ -31,11 +31,11 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 
 		if (moduleName == "RawImage")
 		{
-			processingModule = std::make_unique<RawImageModule>(_frameProducer->getFrameWidth(), _frameProducer->getFrameHeight(), _frameProducer->getFrameChannels());
+			processingModule = std::make_unique<RawImageModule>();
 		}
 		else if (moduleName == "ROI")
 		{
-			processingModule = std::make_unique<RoiModule>(_frameProducer->getFrameWidth(), _frameProducer->getFrameHeight());
+			processingModule = std::make_unique<RoiModule>(cv::Rect(0, 0, _frameProducer->getFrameWidth(), _frameProducer->getFrameHeight()));
 		}
 		else // unknown module
 		{

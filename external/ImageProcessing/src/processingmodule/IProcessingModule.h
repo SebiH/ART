@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "../ProcessingOutput.h"
+#include "../ImageInfo.h"
 
 namespace ImageProcessing
 {
@@ -9,7 +10,7 @@ namespace ImageProcessing
 	{
 	public:
 		virtual ~IProcessingModule() {}
-		virtual std::vector<ProcessingOutput> processImage(unsigned char *rawDataLeft, unsigned char *rawDataRight) = 0;
+		virtual std::vector<ProcessingOutput> processImage(unsigned char *rawDataLeft, unsigned char *rawDataRight, const ImageInfo &info) = 0;
 	};
 
 }

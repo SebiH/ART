@@ -1,5 +1,7 @@
 #include "OvrFrameProducer.h"
 
+#include <opencv2/core.hpp>
+
 using namespace ImageProcessing;
 
 OvrFrameProducer::OvrFrameProducer()
@@ -20,6 +22,7 @@ OvrFrameProducer::OvrFrameProducer()
 	auto camHeight = _ovrCamera->GetCamHeight();
 	auto camDepth = _ovrCamera->GetCamPixelsize();
 	_imgBufferSize = camWidth * camHeight * camDepth;
+	_imgInfo = ImageInfo(camWidth, camHeight, camDepth, CV_8UC4);
 
 	_dataLeft = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
 	_dataRight = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
@@ -39,7 +42,7 @@ OvrFrameProducer::~OvrFrameProducer()
 }
 
 
-void OvrFrameProducer::poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight)
+ImageInfo OvrFrameProducer::poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight)
 {
 	std::unique_lock<std::mutex> lock(_mutex);
 
@@ -55,6 +58,8 @@ void OvrFrameProducer::poll(long &frameId, unsigned char *bufferLeft, unsigned c
 	{
 		memcpy(bufferRight, _dataRight.get(), _imgBufferSize);
 	}
+
+	return _imgInfo;
 }
 
 

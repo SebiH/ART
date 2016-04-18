@@ -9,10 +9,11 @@ OpenCVFrameProducer::OpenCVFrameProducer()
 	  _camera(std::make_unique<cv::VideoCapture>(0)),
 	  _mutex()
 {
-	auto camWidth = _camera->get(cv::CAP_PROP_FRAME_WIDTH);
-	auto camHeight = _camera->get(cv::CAP_PROP_FRAME_HEIGHT);
-	auto camDepth = 3;
+	int camWidth = static_cast<int>(_camera->get(cv::CAP_PROP_FRAME_WIDTH));
+	int camHeight = static_cast<int>(_camera->get(cv::CAP_PROP_FRAME_HEIGHT));
+	int camDepth = 3;
 	_imgBufferSize = camWidth * camHeight * camDepth;
+	_imgInfo = ImageInfo(camWidth, camHeight, 3, CV_8UC3);
 
 	_dataLeft = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
 	_dataRight = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
@@ -33,7 +34,7 @@ OpenCVFrameProducer::~OpenCVFrameProducer()
 }
 
 
-void OpenCVFrameProducer::poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight)
+ImageInfo OpenCVFrameProducer::poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight)
 {
 	std::unique_lock<std::mutex> lock(_mutex);
 
@@ -49,6 +50,8 @@ void OpenCVFrameProducer::poll(long &frameId, unsigned char *bufferLeft, unsigne
 	{
 		memcpy(bufferRight, _dataRight.get(), _imgBufferSize);
 	}
+
+	return _imgInfo;
 }
 
 
@@ -100,7 +103,6 @@ int OpenCVFrameProducer::getFrameChannels() const
 {
 	return 3;
 }
-
 
 float OpenCVFrameProducer::getCamExposure() const
 {

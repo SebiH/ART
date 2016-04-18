@@ -4,18 +4,17 @@
 
 using namespace ImageProcessing;
 
-RoiModule::RoiModule(int camWidth, int camHeight)
-	: _maxWidth(camWidth),
-	  _maxHeight(camHeight)
+RoiModule::RoiModule(cv::Rect roi)
+	: _roi(roi)
 {
-	_roi = cv::Rect(0, 0, camWidth, camHeight);
+
 }
 
 RoiModule::~RoiModule()
 {
 }
 
-std::vector<ProcessingOutput> RoiModule::processImage(unsigned char * rawDataLeft, unsigned char * rawDataRight)
+std::vector<ProcessingOutput> RoiModule::processImage(unsigned char * rawDataLeft, unsigned char * rawDataRight, const ImageInfo &info)
 {
 	cv::Rect roi;
 
@@ -24,20 +23,20 @@ std::vector<ProcessingOutput> RoiModule::processImage(unsigned char * rawDataLef
 		roi = _roi;
 	}
 
-	cv::Mat rawMatLeft = cv::Mat(cv::Size(_maxWidth, _maxHeight), CV_8UC3, rawDataLeft);
+	cv::Mat rawMatLeft = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataLeft);
 	cv::Mat rawRoiLeft = cv::Mat(rawMatLeft, roi);
 	cv::Mat pureRoiLeft;
 	rawRoiLeft.copyTo(pureRoiLeft);
 
 
-	cv::Mat rawMatRight = cv::Mat(cv::Size(_maxWidth, _maxHeight), CV_8UC3, rawDataRight);
+	cv::Mat rawMatRight = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataRight);
 	cv::Mat rawRoiRight = cv::Mat(rawMatRight, roi);
 	cv::Mat pureRoiRight;
 	rawRoiRight.copyTo(pureRoiRight);
 
 	// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
 	// TODO: verify?
-	auto memSize = roi.width * roi.height * 3;
+	auto memSize = roi.width * roi.height * info.channels;
 
 	ProcessingOutput outputLeft;
 	outputLeft.type = ProcessingOutput::Type::left;
@@ -54,8 +53,6 @@ std::vector<ProcessingOutput> RoiModule::processImage(unsigned char * rawDataLef
 	std::vector<ProcessingOutput> output;
 	output.push_back(std::move(outputLeft));
 	output.push_back(std::move(outputRight));
-
-	//return std::vector<ProcessingOutput> { outputLeft, outputRight };
 	return output;
 }
 

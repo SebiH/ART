@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include "../ImageInfo.h"
 
 namespace ImageProcessing
 {
@@ -9,7 +10,7 @@ namespace ImageProcessing
 	public:
 		virtual ~IFrameSource() {}
 
-		virtual void poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight) = 0;
+		virtual ImageInfo poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight) = 0;
 		virtual std::size_t getImageBufferSize() const = 0;
 
 		// camera properties

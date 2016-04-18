@@ -53,8 +53,8 @@ void ThreadedModule::run()
 		// if (new frame is available) (else sleep)
 
 		// load frames into local memory (for isolated processing)
-		_producer->poll(currentFrameId, rawDataLeft.get(), rawDataRight.get());
-		auto result = _module->processImage(rawDataLeft.get(), rawDataRight.get());
+		ImageInfo info = _producer->poll(currentFrameId, rawDataLeft.get(), rawDataRight.get());
+		auto result = _module->processImage(rawDataLeft.get(), rawDataRight.get(), info);
 
 		{
 			// write result into memory, so that it's instantly available if textureupdate is requested
