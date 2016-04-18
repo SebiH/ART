@@ -59,7 +59,7 @@ void OpenCVFrameProducer::run()
 {
 	// TODO ?
 	time_t timeOfLastFrame = 0;
-	time_t desiredFramerate = 1/30; // in seconds - better name?
+	float desiredFramerate = 1/30.f; // in seconds - better name?
 
 
 	while (_isRunning)

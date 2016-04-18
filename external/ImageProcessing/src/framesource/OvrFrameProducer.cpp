@@ -67,7 +67,7 @@ void OvrFrameProducer::run()
 {
 	// TODO ?
 	time_t timeOfLastFrame = 0;
-	time_t desiredFramerate = 1/60; // in seconds - better name?
+	float desiredFramerate = 1/60.f; // in seconds - better name?
 
 
 	while (_isRunning)
