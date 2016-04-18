@@ -68,8 +68,8 @@ namespace ImageProcessingUtil
                     ChangeRoi(-1, currentX, currentY, currentWidth, currentHeight);
                     currentX += 10;
                     currentY += 10;
-                    currentWidth -= 10;
-                    currentHeight -= 10;
+                    currentWidth -= 20;
+                    currentHeight -= 20;
 
                     if (currentWidth < 50 || currentHeight < 50)
                     {
