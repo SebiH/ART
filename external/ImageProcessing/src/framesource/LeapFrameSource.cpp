@@ -1,6 +1,7 @@
 #include "LeapFrameSource.h"
 
 #include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 #include <Windows.h>
 
 using namespace ImageProcessing;
@@ -20,7 +21,9 @@ LeapFrameSource::LeapFrameSource()
 
 		int camWidth = images[0].width();
 		int camHeight = images[0].height();
-		int camDepth = images[0].bytesPerPixel();
+		//int camDepth = images[0].bytesPerPixel();
+		int camDepth = 4; // enforce RGBA later on
+
 		_imgBufferSize = camWidth * camHeight * camDepth;
 
 		if (_imgBufferSize == 0)
@@ -29,7 +32,7 @@ LeapFrameSource::LeapFrameSource()
 		}
 		else
 		{
-			_imgInfo = ImageInfo(camWidth, camHeight, camDepth, CV_8UC1);
+			_imgInfo = ImageInfo(camWidth, camHeight, camDepth, CV_8UC4);
 			_dataLeft = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
 			_dataRight = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
 			break;
@@ -90,9 +93,32 @@ void LeapFrameSource::query()
 {
 	auto images = _camera->images();
 
+	auto memSize = images[0].width() * images[0].height() * images[0].bytesPerPixel();
+
+	if (memSize == 0)
+	{
+		return;
+	}
+
+	std::unique_ptr<unsigned char[]> tempLeftData(new unsigned char[memSize]);
+	memcpy(tempLeftData.get(), images[0].data(), memSize);
+
+	std::unique_ptr<unsigned char[]> tempRightData(new unsigned char[memSize]);
+	memcpy(tempRightData.get(), images[1].data(), memSize);
+
+	cv::Mat grayLeft(cv::Size(_imgInfo.width, _imgInfo.height), CV_8UC1, tempLeftData.get());
+	cv::Mat colourLeft, outputLeft;
+	cv::cvtColor(grayLeft, colourLeft, cv::COLOR_GRAY2BGRA);
+	colourLeft.copyTo(outputLeft);
+
+	cv::Mat grayRight(cv::Size(_imgInfo.width, _imgInfo.height), CV_8UC1, tempRightData.get());
+	cv::Mat colourRight, outputRight;
+	cv::cvtColor(grayRight, colourRight, cv::COLOR_GRAY2BGRA);
+	colourRight.copyTo(outputRight);
+
 	std::unique_lock<std::mutex> lock(_mutex);
-	memcpy(_dataLeft.get(), images[0].data(), _imgBufferSize);
-	memcpy(_dataRight.get(), images[1].data(), _imgBufferSize);
+	memcpy(_dataLeft.get(), outputLeft.data, _imgBufferSize);
+	memcpy(_dataRight.get(), outputRight.data, _imgBufferSize);
 	_frameCounter++;
 	_frameNotifier.notify_all();
 }

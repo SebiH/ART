@@ -12,7 +12,7 @@ OpenCVFrameProducer::OpenCVFrameProducer()
 {
 	int camWidth = static_cast<int>(_camera->get(cv::CAP_PROP_FRAME_WIDTH));
 	int camHeight = static_cast<int>(_camera->get(cv::CAP_PROP_FRAME_HEIGHT));
-	int camDepth = getFrameChannels();
+	int camDepth = 4; // enforce 4 channels by converting to RGBA later on
 	_imgBufferSize = camWidth * camHeight * camDepth;
 	_imgInfo = ImageInfo(camWidth, camHeight, camDepth, CV_8UC4);
 
@@ -106,7 +106,7 @@ int OpenCVFrameProducer::getFrameHeight() const
 
 int OpenCVFrameProducer::getFrameChannels() const
 {
-	return 4;
+	return _imgInfo.channels;
 }
 
 float OpenCVFrameProducer::getCamExposure() const
