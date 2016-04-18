@@ -28,8 +28,8 @@ namespace Assets.Scripts.RealCamera
         void Awake()
         {
             ImageProcessing.StartProcessing();
-            ImageWidth = ImageProcessing.CameraHeight;
-            ImageHeight = ImageProcessing.CameraWidth;
+            ImageWidth = ImageProcessing.CameraWidth;
+            ImageHeight = ImageProcessing.CameraHeight;
         }
 
 
@@ -46,11 +46,9 @@ namespace Assets.Scripts.RealCamera
             CameraLeft.transform.localRotation = Quaternion.identity;
             CameraRight.transform.localRotation = Quaternion.identity;
 
-            TextureFormat tf = (ImageProcessing.CameraChannels == 3) ? TextureFormat.RGB24 : TextureFormat.BGRA32;
-
             // Create cam texture
-            CameraTexLeft = new Texture2D(ImageWidth, ImageHeight, tf, false);
-            CameraTexRight = new Texture2D(ImageWidth, ImageHeight, tf, false);
+            CameraTexLeft = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
+            CameraTexRight = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
 
             // Cam setting
             CameraTexLeft.wrapMode = TextureWrapMode.Clamp;
