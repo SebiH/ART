@@ -17,12 +17,6 @@ namespace Assets.Scripts.RealCamera
         private static extern void StartImageProcessing();
 
         [DllImport("ImageProcessing")]
-        private static extern float GetCameraProperty(string propName);
-
-        [DllImport("ImageProcessing")]
-        private static extern void SetCameraProperty(string propName, float propVal);
-
-        [DllImport("ImageProcessing")]
         private static extern void UpdateTextures();
 
         [DllImport("ImageProcessing")]
@@ -31,6 +25,26 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void DeregisterTexturePtr(int handle);
 
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamWidth();
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamHeight();
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamChannels();
+
+        [DllImport("ImageProcessing")]
+        private static extern float GetCamGain();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamGain(float val);
+
+        [DllImport("ImageProcessing")]
+        private static extern float GetCamExposure();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamExposure(float val);
 
         #endregion
 
@@ -39,16 +53,6 @@ namespace Assets.Scripts.RealCamera
         public static void StartProcessing()
         {
             StartImageProcessing();
-        }
-
-        public static float GetCamProperty(string prop)
-        {
-            return GetCameraProperty(prop);
-        }
-
-        public static void SetCamProperty(string prop, float val)
-        {
-            SetCameraProperty(prop, val);
         }
 
         public enum Type { left = 0, right = 1, combined = 2 };
@@ -70,5 +74,34 @@ namespace Assets.Scripts.RealCamera
             UpdateTextures();
         }
 
+
+        // Camera properties
+
+        public static int CameraWidth
+        {
+            get { return GetCamWidth(); }
+        }
+
+        public static int CameraHeight
+        {
+            get { return GetCamHeight(); }
+        }
+
+        public static int CameraChannels
+        {
+            get { return GetCamChannels(); }
+        }
+
+        public static float CameraGain
+        {
+            get { return GetCamGain(); }
+            set { SetCamGain(value); }
+        }
+
+        public static float CameraExposure
+        {
+            get { return GetCamExposure(); }
+            set { SetCamExposure(value); }
+        }
     }
 }

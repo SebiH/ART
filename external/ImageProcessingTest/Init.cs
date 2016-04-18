@@ -23,7 +23,25 @@ namespace ImageProcessingUtil
         private static extern void ChangeRoi(int moduleHandle, int x, int y, int width, int height);
 
         [DllImport("ImageProcessing")]
-        private static extern float GetCameraProperty(string propName);
+        private static extern int GetCamWidth();
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamHeight();
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamChannels();
+
+        [DllImport("ImageProcessing")]
+        private static extern float GetCamGain();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamGain(float val);
+
+        [DllImport("ImageProcessing")]
+        private static extern float GetCamExposure();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamExposure(float val);
 
         static void Main(string[] args)
         {
@@ -34,8 +52,8 @@ namespace ImageProcessingUtil
 
             int currentX = 0;
             int currentY = 0;
-            int currentWidth = (int)GetCameraProperty("width");
-            int currentHeight = (int)GetCameraProperty("height");
+            int currentWidth = GetCamWidth();
+            int currentHeight = GetCamHeight();
             ChangeRoi(-1, currentX, currentY, currentWidth, currentHeight);
 
             char keyPressed;
@@ -57,8 +75,8 @@ namespace ImageProcessingUtil
                     {
                         currentX = 0;
                         currentY = 0;
-                        currentWidth = (int)GetCameraProperty("width");
-                        currentHeight = (int)GetCameraProperty("height");
+                        currentWidth = GetCamWidth();
+                        currentHeight = GetCamHeight();
                     }
                 }
 

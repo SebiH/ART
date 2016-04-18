@@ -33,7 +33,7 @@ void UnityDX11TextureWriter::writeTexture(const std::vector<ProcessingOutput> &p
 			d3dtex->GetDesc(&desc);
 
 			// TODO: store metadata to avoid unnecessary updates in case frame hasn't changed?
-			ctx->UpdateSubresource(d3dtex, 0, NULL, processedImg.data.get(), desc.Width * 4, 0);
+			ctx->UpdateSubresource(d3dtex, 0, NULL, processedImg.data.get(), desc.Width * 3, 0);
 
 			ctx->Release();
 			return;

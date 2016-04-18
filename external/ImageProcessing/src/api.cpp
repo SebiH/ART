@@ -39,58 +39,6 @@ extern "C" DllExport void StartImageProcessing()
 }
 
 
-extern "C" DllExport float GetCameraProperty(char *propName)
-{
-	std::string prop(propName);
-
-	if (prop == "width")
-	{
-		return (float)frameProducer->getFrameWidth();
-	}
-	else if (prop == "height")
-	{
-		return (float)frameProducer->getFrameHeight();
-	}
-	else if (prop == "exposure")
-	{
-		return (float)frameProducer->getCamExposure();
-	}
-	else if (prop == "gain")
-	{
-		return (float)frameProducer->getCamGain();
-	}
-	else if (prop == "isOpen")
-	{
-		return (frameProducer->isOpen()) ? 10.0f : 0.0f; // TODO: better return value?
-	}
-	else
-	{
-		// TODO: throw warning about unknown prop
-		return -1.f;
-	}
-}
-
-
-extern "C" DllExport void SetCameraProperty(char *propName, float propVal)
-{
-	std::string prop(propName);
-
-	// TODO: more props
-	if (prop == "exposure")
-	{
-		frameProducer->setCamExposure(propVal);
-	}
-	else if (prop == "gain")
-	{
-		frameProducer->setCamGain(propVal);
-	}
-	else
-	{
-		// TODO: throw warning about unkown prop
-	}
-}
-
-
 extern "C" DllExport void UpdateTextures()
 {
 	moduleManager->triggerTextureUpdate();
@@ -150,4 +98,42 @@ extern "C" DllExport void ChangeRoi(int moduleHandle, int x, int y, int width, i
 		auto roiModule = static_cast<RoiModule*>(module);
 		roiModule->setRegion(cv::Rect(x, y, width, height));
 	}
+}
+
+
+// Camera properties
+
+extern "C" DllExport int GetCamWidth()
+{
+	return frameProducer->getFrameWidth();
+}
+
+extern "C" DllExport int GetCamHeight()
+{
+	return frameProducer->getFrameHeight();
+}
+
+extern "C" DllExport int GetCamChannels()
+{
+	return frameProducer->getFrameChannels();
+}
+
+extern "C" DllExport float GetCamGain()
+{
+	return frameProducer->getCamGain();
+}
+
+extern "C" DllExport void SetCamGain(float val)
+{
+	frameProducer->setCamGain(val);
+}
+
+extern "C" DllExport float GetCamExposure()
+{
+	return frameProducer->getCamExposure();
+}
+
+extern "C" DllExport void SetCamExposure(float val)
+{
+	frameProducer->setCamExposure(val);
 }

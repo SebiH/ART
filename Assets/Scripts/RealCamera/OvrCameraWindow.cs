@@ -22,8 +22,8 @@ namespace Assets.Scripts.RealCamera
         void Awake()
         {
             ImageProcessing.StartProcessing();
-            MaxImageWidth = (int)ImageProcessing.GetCamProperty("width");
-            MaxImageHeight = (int)ImageProcessing.GetCamProperty("height");
+            MaxImageWidth = ImageProcessing.CameraWidth;
+            MaxImageHeight = ImageProcessing.CameraHeight;
         }
 
 
@@ -46,8 +46,9 @@ namespace Assets.Scripts.RealCamera
             // Create cam texture
             var imgWidth = Math.Min(ImageWidth, MaxImageWidth);
             var imgHeight = Math.Min(ImageHeight, MaxImageHeight);
-            var CameraTexLeft = new Texture2D(imgWidth, imgHeight, TextureFormat.BGRA32, false);
-            var CameraTexRight = new Texture2D(imgWidth, imgHeight, TextureFormat.BGRA32, false);
+            TextureFormat tf = (ImageProcessing.CameraChannels == 3) ? TextureFormat.RGB24 : TextureFormat.BGRA32;
+            var CameraTexLeft = new Texture2D(imgWidth, imgHeight, tf, false);
+            var CameraTexRight = new Texture2D(imgWidth, imgHeight, tf, false);
 
             // Cam setting
             CameraTexLeft.wrapMode = TextureWrapMode.Clamp;
