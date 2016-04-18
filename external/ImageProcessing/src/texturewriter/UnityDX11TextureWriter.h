@@ -10,6 +10,7 @@ namespace ImageProcessing
 	private:
 		unsigned char * _texturePtr;
 		ProcessingOutput::Type _type;
+		std::unique_ptr<unsigned char[]> _tempData;
 
 	public:
 		UnityDX11TextureWriter(unsigned char *texturePtr, ProcessingOutput::Type type);
