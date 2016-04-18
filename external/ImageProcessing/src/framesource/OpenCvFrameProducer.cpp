@@ -1,6 +1,7 @@
 #include "OpenCVFrameProducer.h"
 
 #include <Windows.h>
+#include <opencv2/imgproc.hpp>
 
 using namespace ImageProcessing;
 
@@ -11,9 +12,9 @@ OpenCVFrameProducer::OpenCVFrameProducer()
 {
 	int camWidth = static_cast<int>(_camera->get(cv::CAP_PROP_FRAME_WIDTH));
 	int camHeight = static_cast<int>(_camera->get(cv::CAP_PROP_FRAME_HEIGHT));
-	int camDepth = 3;
+	int camDepth = getFrameChannels();
 	_imgBufferSize = camWidth * camHeight * camDepth;
-	_imgInfo = ImageInfo(camWidth, camHeight, 3, CV_8UC3);
+	_imgInfo = ImageInfo(camWidth, camHeight, camDepth, CV_8UC4);
 
 	_dataLeft = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
 	_dataRight = std::unique_ptr<unsigned char[]>(new unsigned char[_imgBufferSize]);
@@ -75,6 +76,10 @@ void OpenCVFrameProducer::query()
 	cv::Mat frame;
 	(*_camera) >> frame;
 
+	cv::Mat converted;
+	cv::cvtColor(frame, converted, CV_BGR2BGRA);
+	converted.copyTo(frame);
+
 	std::unique_lock<std::mutex> lock(_mutex);
 	memcpy(_dataLeft.get(), frame.data, _imgBufferSize);
 	memcpy(_dataRight.get(), frame.data, _imgBufferSize);
@@ -101,7 +106,7 @@ int OpenCVFrameProducer::getFrameHeight() const
 
 int OpenCVFrameProducer::getFrameChannels() const
 {
-	return 3;
+	return 4;
 }
 
 float OpenCVFrameProducer::getCamExposure() const
