@@ -87,20 +87,23 @@
     <ClCompile Include="src\processingmodule\RoiModule.cpp" />
     <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp" />
     <ClCompile Include="src\util\ModuleManager.cpp" />
-    <ClCompile Include="src\util\OvrFrameProducer.cpp" />
+    <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp" />
+    <ClCompile Include="src\framesource\OvrFrameProducer.cpp" />
     <ClCompile Include="src\util\ThreadedModule.cpp" />
     <ClCompile Include="src\stereo_calibration.cpp" />
     <ClCompile Include="src\stereo_detection.cpp" />
     <ClCompile Include="src\texturewriter\UnityDX11TextureWriter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\framesource\IFrameSource.h" />
     <ClInclude Include="src\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\processingmodule\RoiModule.h" />
     <ClInclude Include="src\ProcessingOutput.h" />
     <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h" />
     <ClInclude Include="src\texturewriter\OpenCvTextureWriter.h" />
     <ClInclude Include="src\util\ModuleManager.h" />
-    <ClInclude Include="src\util\OvrFrameProducer.h" />
+    <ClInclude Include="src\framesource\OpenCVFrameProducer.h" />
+    <ClInclude Include="src\framesource\OvrFrameProducer.h" />
     <ClInclude Include="src\processingmodule\IProcessingModule.h" />
     <ClInclude Include="src\texturewriter\ITextureWriter.h" />
     <ClInclude Include="src\util\ThreadedModule.h" />

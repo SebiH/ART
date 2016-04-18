@@ -7,7 +7,7 @@
 
 using namespace ImageProcessing;
 
-ModuleManager::ModuleManager(const std::shared_ptr<OvrFrameProducer> frameProducer)
+ModuleManager::ModuleManager(const std::shared_ptr<IFrameSource> frameProducer)
 	: _frameProducer(frameProducer)
 {
 }
@@ -20,7 +20,6 @@ ModuleManager::~ModuleManager()
 std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::string &moduleName)
 {
 	std::shared_ptr<ThreadedModule> module;
-	auto cam = _frameProducer->getCamera();
 
 	if (hasModule(moduleName))
 	{
@@ -32,11 +31,11 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 
 		if (moduleName == "RawImage")
 		{
-			processingModule = std::make_unique<RawImageModule>(cam->GetCamWidth(), cam->GetCamHeight(), cam->GetCamPixelsize());
+			processingModule = std::make_unique<RawImageModule>(_frameProducer->getFrameWidth(), _frameProducer->getFrameHeight(), _frameProducer->getFrameChannels());
 		}
 		else if (moduleName == "ROI")
 		{
-			processingModule = std::make_unique<RoiModule>(cam->GetCamWidth(), cam->GetCamHeight());
+			processingModule = std::make_unique<RoiModule>(_frameProducer->getFrameWidth(), _frameProducer->getFrameHeight());
 		}
 		else // unknown module
 		{

@@ -36,7 +36,7 @@ void OpenCvTextureWriter::writeTexture(const std::vector<ProcessingOutput> &proc
 		return;
 	}
 
-	cv::Mat mergedMat(cv::Size(totalWidth, maxHeight), CV_8UC4);
+	cv::Mat mergedMat(cv::Size(totalWidth, maxHeight), CV_8UC3);
 	int currentOffset = 0;
 
 	for (int i = 0; i < processedImages.size(); i++)

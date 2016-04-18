@@ -4,16 +4,16 @@
 #include <condition_variable>
 #include <thread>
 #include <mutex>
-#include <ovrvision_pro.h>
+#include <opencv2/videoio.hpp>
 
 #include "IFrameSource.h"
 
 namespace ImageProcessing
 {
-	class OvrFrameProducer : public IFrameSource
+	class OpenCVFrameProducer : public IFrameSource
 	{
 	private:
-		std::unique_ptr<OVR::OvrvisionPro> _ovrCamera;
+		std::unique_ptr<cv::VideoCapture> _camera;
 		std::unique_ptr<unsigned char[]> _dataLeft, _dataRight;
 		std::size_t _imgBufferSize;
 
@@ -27,8 +27,8 @@ namespace ImageProcessing
 		void run();
 
 	public:
-		OvrFrameProducer();
-		~OvrFrameProducer();
+		OpenCVFrameProducer();
+		~OpenCVFrameProducer();
 
 		virtual void poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight) override;
 		virtual std::size_t getImageBufferSize() const override;

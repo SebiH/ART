@@ -6,13 +6,15 @@
 #include <utility>
 #include <opencv2/highgui.hpp>
 
+#include "framesource\IFrameSource.h"
+#include "framesource\OpenCVFrameProducer.h"
+#include "framesource\OvrFrameProducer.h"
 #include "processingmodule/IProcessingModule.h"
 #include "processingmodule/RoiModule.h"
 #include "texturewriter/ITextureWriter.h"
 #include "texturewriter/OpenCvTextureWriter.h"
 #include "texturewriter/UnityDX11TextureWriter.h"
 #include "util/ModuleManager.h"
-#include "util/OvrFrameProducer.h"
 #include "util/ThreadedModule.h"
 
 #define DllExport   __declspec( dllexport )
@@ -20,7 +22,7 @@
 using namespace ImageProcessing;
 
 bool _isInitialized;
-std::shared_ptr<OvrFrameProducer> frameProducer;
+std::shared_ptr<OpenCVFrameProducer> frameProducer;
 std::unique_ptr<ModuleManager> moduleManager;
 
 int idCounter = 0;
@@ -31,7 +33,7 @@ extern "C" DllExport void StartImageProcessing()
 	if (!_isInitialized)
 	{
 		_isInitialized = true;
-		frameProducer = std::make_shared<OvrFrameProducer>();
+		frameProducer = std::make_shared<OpenCVFrameProducer>();
 		moduleManager = std::unique_ptr<ModuleManager>(new ModuleManager(frameProducer));
 	}
 }
@@ -40,27 +42,26 @@ extern "C" DllExport void StartImageProcessing()
 extern "C" DllExport float GetCameraProperty(char *propName)
 {
 	std::string prop(propName);
-	auto ovrCamera = frameProducer->getCamera();
 
 	if (prop == "width")
 	{
-		return (float)ovrCamera->GetCamWidth();
+		return (float)frameProducer->getFrameWidth();
 	}
 	else if (prop == "height")
 	{
-		return (float)ovrCamera->GetCamHeight();
+		return (float)frameProducer->getFrameHeight();
 	}
 	else if (prop == "exposure")
 	{
-		return (float)ovrCamera->GetCameraExposure();
+		return (float)frameProducer->getCamExposure();
 	}
 	else if (prop == "gain")
 	{
-		return (float)ovrCamera->GetCameraGain();
+		return (float)frameProducer->getCamGain();
 	}
 	else if (prop == "isOpen")
 	{
-		return (ovrCamera->isOpen()) ? 10.0f : 0.0f; // TODO: better return value?
+		return (frameProducer->isOpen()) ? 10.0f : 0.0f; // TODO: better return value?
 	}
 	else
 	{
@@ -73,16 +74,15 @@ extern "C" DllExport float GetCameraProperty(char *propName)
 extern "C" DllExport void SetCameraProperty(char *propName, float propVal)
 {
 	std::string prop(propName);
-	auto ovrCamera = frameProducer->getCamera();
 
 	// TODO: more props
 	if (prop == "exposure")
 	{
-		ovrCamera->SetCameraExposure((int)propVal);
+		frameProducer->setCamExposure(propVal);
 	}
 	else if (prop == "gain")
 	{
-		ovrCamera->SetCameraGain((int)propVal);
+		frameProducer->setCamGain(propVal);
 	}
 	else
 	{

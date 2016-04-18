@@ -5,18 +5,18 @@
 #include <string>
 
 #include "ThreadedModule.h"
-#include "OvrFrameProducer.h"
+#include "../framesource/IFrameSource.h"
 
 namespace ImageProcessing
 {
 	class ModuleManager
 	{
 	private:
-		std::shared_ptr<OvrFrameProducer> _frameProducer;
+		std::shared_ptr<IFrameSource> _frameProducer;
 		std::map<std::string, std::shared_ptr<ThreadedModule>> _createdModules;
 
 	public:
-		ModuleManager(const std::shared_ptr<OvrFrameProducer> frameProducer);
+		ModuleManager(const std::shared_ptr<IFrameSource> frameProducer);
 		~ModuleManager();
 
 		bool hasModule(const std::string &moduleName);

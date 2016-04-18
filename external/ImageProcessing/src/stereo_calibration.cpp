@@ -67,10 +67,10 @@ extern "C" __declspec(dllexport) void StereoCalibration()
 		unsigned char *leftImgData = ovrCamera->GetCamImageBGRA(OVR::OV_CAMEYE_LEFT);
 		unsigned char *rightImgData = ovrCamera->GetCamImageBGRA(OVR::OV_CAMEYE_RIGHT);
 
-		Mat leftMat(Size(camWidth, camHeight), CV_8UC4, leftImgData);
-		Mat rightMat(Size(camWidth, camHeight), CV_8UC4, rightImgData);
+		Mat leftMat(Size(camWidth, camHeight), CV_8UC3, leftImgData);
+		Mat rightMat(Size(camWidth, camHeight), CV_8UC3, rightImgData);
 		
-		Mat both(Size(camWidth * 2, camHeight), CV_8UC4);
+		Mat both(Size(camWidth * 2, camHeight), CV_8UC3);
 		Mat leftRoi = Mat(both, cv::Rect(0, 0, camWidth, camHeight));
 		Mat rightRoi = Mat(both, cv::Rect(camWidth, 0, camWidth, camHeight));
 		

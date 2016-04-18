@@ -5,10 +5,10 @@
 #include <thread>
 #include <vector>
 
+#include "../framesource/IFrameSource.h"
 #include "../processingmodule/IProcessingModule.h"
 #include "../texturewriter/ITextureWriter.h"
 #include "../ProcessingOutput.h"
-#include "OvrFrameProducer.h"
 
 namespace ImageProcessing
 {
@@ -19,7 +19,7 @@ namespace ImageProcessing
 		std::mutex _mutex;
 		std::atomic<bool> _isRunning;
 
-		const std::shared_ptr<OvrFrameProducer> _producer;
+		const std::shared_ptr<IFrameSource> _producer;
 		const std::unique_ptr<IProcessingModule> _module;
 		std::vector<std::shared_ptr<ITextureWriter>> _writers;
 
@@ -30,7 +30,7 @@ namespace ImageProcessing
 		void run();
 
 	public:
-		explicit ThreadedModule(const std::shared_ptr<OvrFrameProducer> producer, std::unique_ptr<IProcessingModule> module);
+		explicit ThreadedModule(const std::shared_ptr<IFrameSource> producer, std::unique_ptr<IProcessingModule> module);
 		~ThreadedModule();
 
 		void start();

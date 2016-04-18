@@ -24,20 +24,20 @@ std::vector<ProcessingOutput> RoiModule::processImage(unsigned char * rawDataLef
 		roi = _roi;
 	}
 
-	cv::Mat rawMatLeft = cv::Mat(cv::Size(_maxWidth, _maxHeight), CV_8UC4, rawDataLeft);
+	cv::Mat rawMatLeft = cv::Mat(cv::Size(_maxWidth, _maxHeight), CV_8UC3, rawDataLeft);
 	cv::Mat rawRoiLeft = cv::Mat(rawMatLeft, roi);
 	cv::Mat pureRoiLeft;
 	rawRoiLeft.copyTo(pureRoiLeft);
 
 
-	cv::Mat rawMatRight = cv::Mat(cv::Size(_maxWidth, _maxHeight), CV_8UC4, rawDataRight);
+	cv::Mat rawMatRight = cv::Mat(cv::Size(_maxWidth, _maxHeight), CV_8UC3, rawDataRight);
 	cv::Mat rawRoiRight = cv::Mat(rawMatRight, roi);
 	cv::Mat pureRoiRight;
 	rawRoiRight.copyTo(pureRoiRight);
 
 	// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
 	// TODO: verify?
-	auto memSize = roi.width * roi.height * 4;
+	auto memSize = roi.width * roi.height * 3;
 
 	ProcessingOutput outputLeft;
 	outputLeft.type = ProcessingOutput::Type::left;

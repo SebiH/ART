@@ -4,7 +4,7 @@
 
 using namespace ImageProcessing;
 
-ThreadedModule::ThreadedModule(const std::shared_ptr<OvrFrameProducer> producer, std::unique_ptr<IProcessingModule> module)
+ThreadedModule::ThreadedModule(const std::shared_ptr<IFrameSource> producer, std::unique_ptr<IProcessingModule> module)
 	: _producer(producer),
       _module(std::move(module))
 {
@@ -43,8 +43,8 @@ void ThreadedModule::stop()
 
 void ThreadedModule::run()
 {
-	std::unique_ptr<unsigned char[]> rawDataLeft(new unsigned char[_producer->getImageMemorySize()]);
-	std::unique_ptr<unsigned char[]> rawDataRight(new unsigned char[_producer->getImageMemorySize()]);
+	std::unique_ptr<unsigned char[]> rawDataLeft(new unsigned char[_producer->getImageBufferSize()]);
+	std::unique_ptr<unsigned char[]> rawDataRight(new unsigned char[_producer->getImageBufferSize()]);
 	long currentFrameId = -1;
 
 	while (_isRunning)
