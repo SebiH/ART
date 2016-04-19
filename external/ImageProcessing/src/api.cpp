@@ -34,7 +34,7 @@ extern "C" DllExport void StartImageProcessing()
 	if (!_isInitialized)
 	{
 		_isInitialized = true;
-		frameProducer = std::make_shared<LeapFrameSource>();
+		frameProducer = std::make_shared<OpenCVFrameProducer>();
 		moduleManager = std::unique_ptr<ModuleManager>(new ModuleManager(frameProducer));
 	}
 }
