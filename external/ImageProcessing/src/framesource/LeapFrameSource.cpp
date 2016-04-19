@@ -13,10 +13,16 @@ LeapFrameSource::LeapFrameSource()
 {
 	_camera->setPolicy(Leap::Controller::POLICY_IMAGES);
 
+	// avoid endless loop in case of device not connected
+	int retries = 0;
+	int maxRetries = 1000;
+
 	// first few times the leap controller can return a zero-sized image,
 	// therefore repeat until we have something useful
-	while (true)
+	while (retries < maxRetries)
 	{
+		retries++;
+
 		auto images = _camera->images();
 
 		int camWidth = images[0].width();
