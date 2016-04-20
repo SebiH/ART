@@ -35,6 +35,7 @@ void UnityDX11TextureWriter::writeTexture(const std::vector<ProcessingOutput> &p
 			D3D11_TEXTURE2D_DESC desc;
 			d3dtex->GetDesc(&desc);
 
+			// TODO: https://gamedev.stackexchange.com/questions/60668/how-to-use-updatesubresource-and-map-unmap ?
 			// TODO: store metadata to avoid unnecessary updates in case frame hasn't changed?
 			//ctx->UpdateSubresource(d3dtex, 0, NULL, processedImg.data.get(), desc.Width * processedImg.img.channels(), 0);
 			ctx->UpdateSubresource(d3dtex, 0, NULL, _tempData.get(), desc.Width * processedImg.img.channels(), 0);

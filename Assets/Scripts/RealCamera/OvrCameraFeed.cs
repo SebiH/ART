@@ -11,6 +11,7 @@ namespace Assets.Scripts.RealCamera
         private GameObject CameraPlaneLeft;
         private GameObject CameraPlaneRight;
         // Camera texture
+        // TODO: should be rendertexture??
         private Texture2D CameraTexLeft = null;
         private Texture2D CameraTexRight = null;
         private Vector3 CameraRightGap;
@@ -88,6 +89,10 @@ namespace Assets.Scripts.RealCamera
             // TODO: store handle for deregister
             TextureHandleLeft = ImageProcessing.AddTexturePtr(ImageProcessing.MODULE_RAW_IMAGE, LeftTexturePtr, ImageProcessing.Type.left);
             TextureHandleRight = ImageProcessing.AddTexturePtr(ImageProcessing.MODULE_RAW_IMAGE, RightTexturePtr, ImageProcessing.Type.right);
+
+            // quick hack to stop unity from crashing :(
+            ImageProcessing.AddTextureSync(CameraTexLeft);
+            ImageProcessing.AddTextureSync(CameraTexRight);
         }
 
         void OnDestroy()
