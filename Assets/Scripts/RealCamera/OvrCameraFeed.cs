@@ -9,29 +9,17 @@ namespace Assets.Scripts.RealCamera
         private GameObject CameraPlaneLeft;
         private GameObject CameraPlaneRight;
 
-        // Camera texture
-        // TODO: should be rendertexture??
-        private Texture2D CameraTexLeft = null;
-        private Texture2D CameraTexRight = null;
-
-        private int ImageWidth;
-        private int ImageHeight;
-
         private int TextureHandleLeft;
         private int TextureHandleRight;
 
         private const float IMAGE_ZOFFSET = 0.02f;
 
-        void Awake()
-        {
-            ImageProcessing.StartProcessing();
-            ImageWidth = ImageProcessing.CameraWidth;
-            ImageHeight = ImageProcessing.CameraHeight;
-        }
-
-
         void Start()
         {
+            ImageProcessing.StartProcessing();
+            var ImageWidth = ImageProcessing.CameraWidth;
+            var ImageHeight = ImageProcessing.CameraHeight;
+
             // Initialize camera plane object(Left)
             var CameraLeft = transform.FindChild("LeftCamera").gameObject;
             var CameraRight = transform.FindChild("RightCamera").gameObject;
@@ -44,8 +32,9 @@ namespace Assets.Scripts.RealCamera
             CameraRight.transform.localRotation = Quaternion.identity;
 
             // Create cam texture
-            CameraTexLeft = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
-            CameraTexRight = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
+            // TODO: should be rendertexture??
+            var CameraTexLeft = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
+            var CameraTexRight = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
 
             // Cam setting
             CameraTexLeft.wrapMode = TextureWrapMode.Clamp;
@@ -61,7 +50,9 @@ namespace Assets.Scripts.RealCamera
 
             var defaultFloatpoint = 0.427990019f;
             var defaultRightGap = new Vector3(0.0566581376f, -0.000236578562f, 0.001237078f);
-            var defaultAspectW = 1.0105263f;
+            // TODO: calculate automagically
+            //var defaultAspectW = 1.0105263f; // OVR
+            var defaultAspectW = 2.66f; // LeapMotion
 
             var CameraRightGap = defaultRightGap;
 
