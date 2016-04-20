@@ -42,6 +42,17 @@ namespace Assets.Scripts.GestureControl
         }
 
 
+        public static Dictionary<InteractionLimb, GameObject> GetLimbs(InteractionLimb[] limbs)
+        {
+            var limbMap = new Dictionary<InteractionLimb, GameObject>();
+
+            foreach (var limb in limbs)
+            {
+                limbMap.Add(limb, GetLimb(limb));
+            }
+
+            return limbMap;
+        }
 
 
 
