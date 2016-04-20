@@ -62,8 +62,14 @@ public class CreateWindow : MonoBehaviour
         var gesturePosRight = gesture.GetGesturePosition(Hand.Right);
 
         var delta = gesturePosLeft - gesturePosRight;
+        var delta = gesturePosRight - gesturePosLeft;
         var rad = Mathf.Atan2(delta.z, delta.x);
         var deg = rad * (180f / Mathf.PI);
+
+        if (deg < -90)
+            deg += 180;
+        if (deg > 90)
+            deg -= 180;
 
         return new Vector3(270, -deg, 0);
     }
