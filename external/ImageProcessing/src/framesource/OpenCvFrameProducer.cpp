@@ -7,12 +7,34 @@ using namespace ImageProcessing;
 
 OpenCVFrameProducer::OpenCVFrameProducer()
 	: _isRunning(ATOMIC_VAR_INIT(false)),
-	  _camera(std::make_unique<cv::VideoCapture>(0)),
+	  _camera(std::make_unique<cv::VideoCapture>()),
 	  _mutex()
 {
-	int camWidth = static_cast<int>(_camera->get(cv::CAP_PROP_FRAME_WIDTH));
-	int camHeight = static_cast<int>(_camera->get(cv::CAP_PROP_FRAME_HEIGHT));
+	// set camSize manually to avoid gray image..
+	// settings for Logitech C310
+	int camWidth = 640;
+	int camHeight = 480;
+	int fps = 30;
+	int exposure = -4;
+	int gain = 181;
+	int brightness = 128;
+	int contrast = 32;
+
+	_camera->set(cv::CAP_PROP_FRAME_WIDTH, camWidth);
+	_camera->set(cv::CAP_PROP_FRAME_HEIGHT, camHeight);
+
+	_camera->set(cv::CAP_PROP_EXPOSURE, exposure);
+	_camera->set(cv::CAP_PROP_GAIN, gain);
+	_camera->set(cv::CAP_PROP_BRIGHTNESS, brightness);
+	_camera->set(cv::CAP_PROP_CONTRAST, contrast);
+
+	if (!_camera->open(0))
+	{
+		throw new std::exception("Unable to open camera");
+	}
+
 	int camDepth = 4; // enforce 4 channels by converting to RGBA later on
+
 	_imgBufferSize = camWidth * camHeight * camDepth;
 	_imgInfo = ImageInfo(camWidth, camHeight, camDepth, CV_8UC4);
 
@@ -28,9 +50,11 @@ OpenCVFrameProducer::~OpenCVFrameProducer()
 {
 	if (std::atomic_exchange(&_isRunning, false))
 	{
-		_camera->release();
-		_camera.release();
 		_thread.join();
+		if (_camera->isOpened())
+		{
+			_camera->release();
+		}
 	}
 }
 
