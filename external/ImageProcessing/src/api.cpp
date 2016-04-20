@@ -102,6 +102,29 @@ extern "C" DllExport void ChangeRoi(int moduleHandle, int x, int y, int width, i
 }
 
 
+// See: http://answers.unity3d.com/questions/30620/how-to-debug-c-dll-code.html
+typedef void(__stdcall * DebugCallback) (const char *str);
+DebugCallback gDebugCallback;
+
+extern "C" DllExport void RegisterDebugCallback(DebugCallback callback)
+{
+	if (callback)
+	{
+		gDebugCallback = callback;
+	}
+}
+
+void DebugInUnity(std::string message)
+{
+	if (gDebugCallback)
+	{
+		gDebugCallback(message.c_str());
+	}
+}
+
+
+
+
 // Camera properties
 
 extern "C" DllExport int GetCamWidth()

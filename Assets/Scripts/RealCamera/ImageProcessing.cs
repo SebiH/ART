@@ -46,6 +46,10 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void SetCamExposure(float val);
 
+        private delegate void DebugCallback(string message);
+        [DllImport("ImageProcessing")]
+        private static extern void RegisterDebugCallback(DebugCallback callback);
+
         #endregion
 
         #region API
@@ -68,6 +72,18 @@ namespace Assets.Scripts.RealCamera
         }
 
         #endregion
+
+
+        void Start()
+        {
+            RegisterDebugCallback(new DebugCallback(DebugMethod));
+        }
+
+        private static void DebugMethod(string message)
+        {
+            Debug.Log("[ImageProcessing]: " + message);
+        }
+
 
         void Update()
         {
