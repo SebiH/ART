@@ -7,6 +7,7 @@ public class CreateWindow : MonoBehaviour
     public int MinWidth = 50;
     public int MinHeight = 50;
 
+    public GameObject Template;
     private GameObject _createdWindow;
 
     public void StartCreation(GestureEventArgs e)
@@ -15,7 +16,7 @@ public class CreateWindow : MonoBehaviour
         
         if (gesture != null)
         {
-            _createdWindow = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            _createdWindow = Instantiate(Template);
 
             _createdWindow.transform.position = gesture.GetGesturePosition(Hand.Both);
             _createdWindow.transform.localScale = GetScale(gesture);
@@ -61,7 +62,6 @@ public class CreateWindow : MonoBehaviour
         var gesturePosLeft = gesture.GetGesturePosition(Hand.Left);
         var gesturePosRight = gesture.GetGesturePosition(Hand.Right);
 
-        var delta = gesturePosLeft - gesturePosRight;
         var delta = gesturePosRight - gesturePosLeft;
         var rad = Mathf.Atan2(delta.z, delta.x);
         var deg = rad * (180f / Mathf.PI);
