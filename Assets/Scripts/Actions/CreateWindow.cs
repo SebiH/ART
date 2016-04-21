@@ -1,6 +1,7 @@
 using UnityEngine;
 using Assets.Scripts.GestureControl;
 using Assets.Scripts.Gestures;
+using System.Collections.Generic;
 
 public class CreateWindow : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class CreateWindow : MonoBehaviour
 
     public GameObject Template;
     private GameObject _createdWindow;
+
+    private List<GameObject> _createdWindows = new List<GameObject>();
 
     public void StartCreation(GestureEventArgs e)
     {
@@ -38,7 +41,18 @@ public class CreateWindow : MonoBehaviour
 
     public void FinishCreation(GestureEventArgs e)
     {
+        _createdWindows.Add(_createdWindow);
         _createdWindow = null;
+    }
+
+    public void DeleteAllWindows()
+    {
+        foreach (var win in _createdWindows)
+        {
+            Destroy(win);
+        }
+
+        _createdWindows.Clear();
     }
 
 
