@@ -61,7 +61,7 @@ public class DebugGestures : MonoBehaviour
         Gizmos.color = Color.green;
         foreach (var point in GestureStartPoints)
         {
-            Gizmos.DrawSphere(point, 0.01f);
+            Gizmos.DrawSphere(point, 0.002f);
         }
 
         Gizmos.color = Color.yellow;
@@ -73,13 +73,13 @@ public class DebugGestures : MonoBehaviour
 
         foreach (var point in GestureActivePoints)
         {
-            Gizmos.DrawSphere(point, 0.01f);
+            Gizmos.DrawSphere(point, 0.002f);
         }
 
         Gizmos.color = Color.red;
         foreach (var point in GestureEndPoints)
         {
-            Gizmos.DrawSphere(point, 0.01f);
+            Gizmos.DrawSphere(point, 0.002f);
         }
     }
 }
