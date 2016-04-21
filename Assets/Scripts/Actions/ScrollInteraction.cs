@@ -14,10 +14,12 @@ public class ScrollInteraction : MonoBehaviour
 
     private void OnTriggerEnter(Collider collider)
     {
-        if (scrollCollider == null)
+        if (scrollCollider == null && collider.name.StartsWith("bone"))
         {
             scrollCollider = collider;
             prevColliderPos = collider.transform.position.y;
+            // stop old inertia
+            scrollElement.GetComponent<Rigidbody>().isKinematic = true;
         }
     }
 
@@ -26,6 +28,9 @@ public class ScrollInteraction : MonoBehaviour
         // only allow interaction on the first collider that entered the trigger
         if (collider == scrollCollider)
         {
+            // reenable inertia
+            scrollElement.GetComponent<Rigidbody>().isKinematic = false;
+
             var movement = collider.transform.position.y - prevColliderPos;
             scrollElement.GetComponent<Rigidbody>().AddForce(new Vector3(0, movement * ForceMultiplier, 0));
             prevColliderPos = collider.transform.position.y;
