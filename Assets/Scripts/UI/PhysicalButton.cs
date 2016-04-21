@@ -8,18 +8,18 @@ public class PhysicalButton : MonoBehaviour
     public GameObject ButtonObj;
 
     public Vector3 ClickedPosition = new Vector3(0f, -0.1f, 0f);
-    public Color ClickedColour = Color.green;
+    public Color ActiveColour = Color.green;
+    public Color InactiveColour = Color.white;
 
     public UnityEvent OnButtonPress;
     public UnityEvent OnButtonHold;
     public UnityEvent OnButtonRelease;
 
-    protected Color OriginalColour;
     protected bool isPressed;
 
-    protected void Start()
+    void Start()
     {
-        OriginalColour = ButtonObj.GetComponent<Renderer>().material.color;
+        ButtonObj.GetComponent<Renderer>().material.color = InactiveColour;
     }
 
     protected virtual void OnTriggerEnter(Collider other)
@@ -44,7 +44,7 @@ public class PhysicalButton : MonoBehaviour
 
         // change colour
         StopCoroutine("AnimateColour");
-        StartCoroutine("AnimateColour", ClickedColour);
+        StartCoroutine("AnimateColour", ActiveColour);
     }
 
     protected virtual void OnTriggerStay(Collider other)
@@ -75,7 +75,7 @@ public class PhysicalButton : MonoBehaviour
         StartCoroutine("AnimatePosition", Vector3.zero);
 
         StopCoroutine("AnimateColour");
-        StartCoroutine("AnimateColour", OriginalColour);
+        StartCoroutine("AnimateColour", InactiveColour);
     }
 
 
