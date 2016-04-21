@@ -1,21 +1,69 @@
 using Assets.Scripts.GestureControl;
+using Assets.Scripts.Gestures;
 using System;
 using UnityEngine;
 
-public class PinchGesture : GestureBase
+public class PinchGesture : GestureBase, IPositionGesture
 {
     public Hand TriggerHand;
 
     private bool IsGestureActive;
+    private Vector3 _activePosition;
 
     public override string GetName()
     {
         return "PinchGesture";
     }
 
+    public Vector3 GetGesturePosition(Hand hand)
+    {
+        return _activePosition;
+    }
+
     public override bool CheckConditions()
     {
-        if (TriggerHand == Hand.Both)
+        if (TriggerHand == Hand.Either)
+        {
+            var leftThumb = GestureSystem.GetLimb(InteractionLimb.LeftThumbTip);
+            var leftIndex = GestureSystem.GetLimb(InteractionLimb.LeftIndexTip);
+
+            var rightThumb = GestureSystem.GetLimb(InteractionLimb.RightThumbTip);
+            var rightIndex = GestureSystem.GetLimb(InteractionLimb.RightIndexTip);
+
+            if (leftThumb == null || leftIndex == null || rightThumb == null || rightIndex == null)
+            {
+                return IsGestureActive;
+            }
+
+            var leftStatus = CheckStatus(leftThumb, leftIndex);
+            var rightStatus = CheckStatus(rightThumb, rightIndex);
+
+            if (leftStatus == GestureStatus.Starting || rightStatus == GestureStatus.Starting)
+            {
+                if (leftStatus == GestureStatus.Starting)
+                    _activePosition = leftIndex.transform.position;
+                else
+                    _activePosition = rightIndex.transform.position;
+
+                IsGestureActive = true;
+                RaiseGestureStartEvent();
+            }
+            else if (leftStatus == GestureStatus.Active || rightStatus == GestureStatus.Active)
+            {
+                if (leftStatus == GestureStatus.Active)
+                    _activePosition = leftIndex.transform.position;
+                else
+                    _activePosition = rightIndex.transform.position;
+
+                RaiseGestureActiveEvent();
+            }
+            else if (leftStatus == GestureStatus.Stopping && rightStatus == GestureStatus.Stopping)
+            {
+                IsGestureActive = false;
+                RaiseGestureStopEvent();
+            }
+        }
+        else if (TriggerHand == Hand.Both)
         {
             var leftThumb = GestureSystem.GetLimb(InteractionLimb.LeftThumbTip);
             var leftIndex = GestureSystem.GetLimb(InteractionLimb.LeftIndexTip);
@@ -34,10 +82,14 @@ public class PinchGesture : GestureBase
             if (leftStatus == GestureStatus.Starting && rightStatus == GestureStatus.Starting)
             {
                 IsGestureActive = true;
+                // TODO
+                _activePosition = Vector3.zero;
                 RaiseGestureStartEvent();
             }
             else if (leftStatus == GestureStatus.Active && rightStatus == GestureStatus.Active)
             {
+                // TODO
+                _activePosition = Vector3.zero;
                 RaiseGestureActiveEvent();
             }
             else if (leftStatus == GestureStatus.Stopping || rightStatus == GestureStatus.Stopping)
@@ -64,11 +116,13 @@ public class PinchGesture : GestureBase
             switch (status)
             {
                 case GestureStatus.Starting:
+                    _activePosition = index.transform.position;
                     IsGestureActive = true;
                     RaiseGestureStartEvent();
                     break;
 
                 case GestureStatus.Active:
+                    _activePosition = index.transform.position;
                     RaiseGestureActiveEvent();
                     break;
 
