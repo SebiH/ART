@@ -4,7 +4,7 @@
 #include <condition_variable>
 #include <thread>
 #include <mutex>
-#include <Leap.h>
+#include <leapmotion/Leap.h>
 
 #include "IFrameSource.h"
 

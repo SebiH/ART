@@ -4,7 +4,7 @@
 #include <condition_variable>
 #include <thread>
 #include <mutex>
-#include <ovrvision_pro.h>
+#include <ovrvision/ovrvision_pro.h>
 
 #include "IFrameSource.h"
 

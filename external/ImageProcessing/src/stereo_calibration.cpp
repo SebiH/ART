@@ -12,7 +12,7 @@
 #include <memory>
 #include <string>
 
-#include <ovrvision_pro.h>
+#include <ovrvision/ovrvision_pro.h>
 
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/imgcodecs.hpp>
