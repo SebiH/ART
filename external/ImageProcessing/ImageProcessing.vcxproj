@@ -54,13 +54,15 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\;%leap_dir%\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\;%leap_dir%\include\;3rdparty\include\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>%opencv_dir%\lib\;%ovrvision_dir%\bin\x64\;%leap_dir%\lib\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%opencv_dir%\lib\;%ovrvision_dir%\bin\x64\;%leap_dir%\lib\x64\;.\3rdparty\include\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ovrvision64.lib;Leap.lib;opencv_aruco300d.lib;opencv_ts300d.lib;opencv_calib3d300d.lib;opencv_core300d.lib;opencv_features2d300d.lib;opencv_flann300d.lib;opencv_hal300d.lib;opencv_highgui300d.lib;opencv_imgcodecs300d.lib;opencv_imgproc300d.lib;opencv_ml300d.lib;opencv_objdetect300d.lib;opencv_photo300d.lib;opencv_shape300d.lib;opencv_stitching300d.lib;opencv_superres300d.lib;opencv_video300d.lib;opencv_videoio300d.lib;opencv_videostab300d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>Modules.def</ModuleDefinitionFile>
+      <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /yr "$(LEAP_DIR)\lib\x64\Leap.dll" "$(TargetDir)"</Command>
@@ -73,15 +75,17 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\;%leap_dir%\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\;%leap_dir%\include\;3rdparty\include\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>%opencv_dir%\lib\;%ovrvision_dir%\bin\x64\;%leap_dir%\lib\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%opencv_dir%\lib\;%ovrvision_dir%\bin\x64\;%leap_dir%\lib\x64\;.\3rdparty\include\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ovrvision64.lib;Leap.lib;opencv_aruco300.lib;opencv_ts300.lib;opencv_calib3d300.lib;opencv_core300.lib;opencv_features2d300.lib;opencv_flann300.lib;opencv_hal300.lib;opencv_highgui300.lib;opencv_imgcodecs300.lib;opencv_imgproc300.lib;opencv_ml300.lib;opencv_objdetect300.lib;opencv_photo300.lib;opencv_shape300.lib;opencv_stitching300.lib;opencv_superres300.lib;opencv_video300.lib;opencv_videoio300.lib;opencv_videostab300.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ModuleDefinitionFile>Modules.def</ModuleDefinitionFile>
+      <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
       <Command>xcopy /yr "$(LEAP_DIR)\lib\x64\Leap.dll" "$(TargetDir)"</Command>
@@ -92,6 +96,7 @@
     <ClCompile Include="src\framesource\LeapFrameSource.cpp" />
     <ClCompile Include="src\processingmodule\RawImageModule.cpp" />
     <ClCompile Include="src\processingmodule\RoiModule.cpp" />
+    <ClCompile Include="src\RenderingPlugin.cpp" />
     <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp" />
     <ClCompile Include="src\util\ModuleManager.cpp" />
     <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp" />
@@ -108,6 +113,7 @@
     <ClInclude Include="src\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\processingmodule\RoiModule.h" />
     <ClInclude Include="src\ProcessingOutput.h" />
+    <ClInclude Include="src\RenderingPlugin.h" />
     <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h" />
     <ClInclude Include="src\texturewriter\OpenCvTextureWriter.h" />
     <ClInclude Include="src\util\ModuleManager.h" />

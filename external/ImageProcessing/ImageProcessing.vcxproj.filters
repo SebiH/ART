@@ -51,6 +51,9 @@
     <ClCompile Include="src\framesource\LeapFrameSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\RenderingPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\util\ThreadedModule.h">
@@ -93,6 +96,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\framesource\LeapFrameSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderingPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
