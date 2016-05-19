@@ -152,7 +152,9 @@ public class OVRCameraRig : MonoBehaviour
 		{
 			UpdatedAnchors(this);
 		}
-	}
+
+        trackingSpace.FromOVRPose(centerEyeAnchor.ToOVRPose(true).Inverse());
+    }
 
 	public void EnsureGameObjectIntegrity()
 	{

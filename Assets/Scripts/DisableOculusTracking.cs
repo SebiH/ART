@@ -12,6 +12,6 @@ public class DisableOculusTracking : MonoBehaviour
         // disable position tracking
         ovrp_SetCaps(14);
         // disable rotation tracking
-        ovrp_SetCaps(6);
+        //ovrp_SetCaps(6);
     }
 }
