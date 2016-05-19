@@ -85,3 +85,6 @@ Assets/Plugins/x86_64/mscorlib.dll
 Assets/Plugins/x86_64/mscorlib.dll.meta
 Assets/Plugins/x86_64/Leap.dll
 Assets/Plugins/x86_64/Leap.dll.meta
+
+# Library folder, managed via other scripts
+external/ImageProcessing/thirdparty/libs/*
