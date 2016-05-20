@@ -110,6 +110,7 @@
     <ClCompile Include="src\util\UnityUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\api\common.h" />
     <ClInclude Include="src\framesource\IFrameSource.h" />
     <ClInclude Include="src\framesource\LeapFrameSource.h" />
     <ClInclude Include="src\util\ImageInfo.h" />

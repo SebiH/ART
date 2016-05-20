@@ -1,7 +1,6 @@
-#pragma once
+#include "common.h"
 
 #include <map>
-#include <memory>
 #include <string>
 #include <utility>
 #include <opencv2/highgui.hpp>
@@ -16,14 +15,13 @@
 #include "..\texturewriter/ITextureWriter.h"
 #include "..\texturewriter/OpenCvTextureWriter.h"
 #include "..\texturewriter/UnityDX11TextureWriter.h"
-#include "..\util/ModuleManager.h"
 #include "..\util/ThreadedModule.h"
 
 using namespace ImageProcessing;
 
 bool _isInitialized;
 std::shared_ptr<IFrameSource> frameProducer;
-std::unique_ptr<ModuleManager> moduleManager;
+std::unique_ptr<ModuleManager> g_moduleManager;
 
 int idCounter = 0;
 std::map<int, std::pair<std::shared_ptr<ThreadedModule>, std::shared_ptr<ITextureWriter>>> registeredTextureWriters;
@@ -36,7 +34,7 @@ extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 		//frameProducer = std::make_shared<OpenCVFrameProducer>();
 		//frameProducer = std::make_shared<LeapFrameSource>();
 		frameProducer = std::make_shared<OvrFrameProducer>();
-		moduleManager = std::unique_ptr<ModuleManager>(new ModuleManager(frameProducer));
+		g_moduleManager = std::make_unique<ModuleManager>(frameProducer);
 	}
 }
 
@@ -44,7 +42,7 @@ extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 // Do not use within Unity!
 extern "C" UNITY_INTERFACE_EXPORT void UpdateTextures()
 {
-	moduleManager->triggerTextureUpdate();
+	g_moduleManager->triggerTextureUpdate();
 }
 
 
@@ -56,7 +54,7 @@ extern "C" UNITY_INTERFACE_EXPORT int OpenCvWaitKey(int delay)
 
 extern "C" UNITY_INTERFACE_EXPORT int RegisterOpenCVTextureWriter(const char *moduleName, const char *windowname)
 {
-	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
+	auto module = g_moduleManager->getOrCreateModule(std::string(moduleName));
 	auto textureWriter = std::make_shared<OpenCvTextureWriter>(std::string(windowname));
 	module->addTextureWriter(textureWriter);
 
@@ -69,7 +67,7 @@ extern "C" UNITY_INTERFACE_EXPORT int RegisterOpenCVTextureWriter(const char *mo
 
 extern "C" UNITY_INTERFACE_EXPORT int RegisterDx11TexturePtr(const char *moduleName, void* texturePtr, /* ProcessingOutput::Type */ const int textureType)
 {
-	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
+	auto module = g_moduleManager->getOrCreateModule(std::string(moduleName));
 
 	auto textureWriter = std::make_shared<UnityDX11TextureWriter>(texturePtr, static_cast<ProcessingOutput::Type>(textureType));
 	module->addTextureWriter(textureWriter);
@@ -95,9 +93,9 @@ extern "C" UNITY_INTERFACE_EXPORT void DeregisterTexturePtr(const int handle)
 
 extern "C" UNITY_INTERFACE_EXPORT void ChangeRoi(const int moduleHandle, const int x, const int y, const int width, const int height)
 {
-	if (moduleManager->hasModule("ROI"))
+	if (g_moduleManager->hasModule("ROI"))
 	{
-		IProcessingModule *module = moduleManager->getOrCreateModule("ROI")->getProcessingModule();
+		IProcessingModule *module = g_moduleManager->getOrCreateModule("ROI")->getProcessingModule();
 		auto roiModule = static_cast<RoiModule*>(module);
 		roiModule->setRegion(cv::Rect(x, y, width, height));
 	}
