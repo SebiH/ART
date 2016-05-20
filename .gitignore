@@ -88,3 +88,4 @@ Assets/Plugins/x86_64/Leap.dll.meta
 
 # Library folder, managed via other scripts
 external/ImageProcessing/thirdparty/libs/*
+external/ImageProcessing/thirdparty/dll/*
