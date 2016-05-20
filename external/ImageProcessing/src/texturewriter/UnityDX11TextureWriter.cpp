@@ -4,7 +4,7 @@
 
 using namespace ImageProcessing;
 
-UnityDX11TextureWriter::UnityDX11TextureWriter(unsigned char * texturePtr, ProcessingOutput::Type type)
+UnityDX11TextureWriter::UnityDX11TextureWriter(void* texturePtr, ProcessingOutput::Type type)
 	: _texturePtr(texturePtr),
 	  _type(type)
 {

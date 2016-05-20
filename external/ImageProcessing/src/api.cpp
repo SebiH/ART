@@ -5,6 +5,7 @@
 #include <string>
 #include <utility>
 #include <opencv2/highgui.hpp>
+#include <Unity\IUnityInterface.h>
 
 #include "framesource\IFrameSource.h"
 #include "framesource\OpenCVFrameProducer.h"
@@ -18,8 +19,6 @@
 #include "util/ModuleManager.h"
 #include "util/ThreadedModule.h"
 
-#define DllExport   __declspec( dllexport )
-
 using namespace ImageProcessing;
 
 bool _isInitialized;
@@ -29,31 +28,33 @@ std::unique_ptr<ModuleManager> moduleManager;
 int idCounter = 0;
 std::map<int, std::pair<std::shared_ptr<ThreadedModule>, std::shared_ptr<ITextureWriter>>> registeredTextureWriters;
 
-extern "C" DllExport void StartImageProcessing()
+extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 {
 	if (!_isInitialized)
 	{
 		_isInitialized = true;
 		//frameProducer = std::make_shared<OpenCVFrameProducer>();
-		frameProducer = std::make_shared<LeapFrameSource>();
+		//frameProducer = std::make_shared<LeapFrameSource>();
+		frameProducer = std::make_shared<OvrFrameProducer>();
 		moduleManager = std::unique_ptr<ModuleManager>(new ModuleManager(frameProducer));
 	}
 }
 
 
-extern "C" DllExport void UpdateTextures()
+// Do not use within Unity!
+extern "C" UNITY_INTERFACE_EXPORT void UpdateTextures()
 {
 	moduleManager->triggerTextureUpdate();
 }
 
 
-extern "C" DllExport int OpenCvWaitKey(int delay)
+extern "C" UNITY_INTERFACE_EXPORT int OpenCvWaitKey(int delay)
 {
 	return cv::waitKey(delay);
 }
 
 
-extern "C" DllExport int RegisterOpenCVTextureWriter(char *moduleName, char *windowname)
+extern "C" UNITY_INTERFACE_EXPORT int RegisterOpenCVTextureWriter(const char *moduleName, const char *windowname)
 {
 	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
 	auto textureWriter = std::make_shared<OpenCvTextureWriter>(std::string(windowname));
@@ -66,7 +67,7 @@ extern "C" DllExport int RegisterOpenCVTextureWriter(char *moduleName, char *win
 }
 
 
-extern "C" DllExport int RegisterDx11TexturePtr(char *moduleName, unsigned char *texturePtr, /* ProcessingOutput::Type */ int textureType)
+extern "C" UNITY_INTERFACE_EXPORT int RegisterDx11TexturePtr(const char *moduleName, void* texturePtr, /* ProcessingOutput::Type */ const int textureType)
 {
 	auto module = moduleManager->getOrCreateModule(std::string(moduleName));
 
@@ -80,7 +81,7 @@ extern "C" DllExport int RegisterDx11TexturePtr(char *moduleName, unsigned char 
 }
 
 
-extern "C" DllExport void DeregisterTexturePtr(int handle)
+extern "C" UNITY_INTERFACE_EXPORT void DeregisterTexturePtr(const int handle)
 {
 	bool hasId = registeredTextureWriters.count(handle) > 0;
 
@@ -92,7 +93,7 @@ extern "C" DllExport void DeregisterTexturePtr(int handle)
 	}
 }
 
-extern "C" DllExport void ChangeRoi(int moduleHandle, int x, int y, int width, int height)
+extern "C" UNITY_INTERFACE_EXPORT void ChangeRoi(const int moduleHandle, const int x, const int y, const int width, const int height)
 {
 	if (moduleManager->hasModule("ROI"))
 	{
@@ -103,62 +104,39 @@ extern "C" DllExport void ChangeRoi(int moduleHandle, int x, int y, int width, i
 }
 
 
-// See: http://answers.unity3d.com/questions/30620/how-to-debug-c-dll-code.html
-typedef void(__stdcall * DebugCallback) (const char *str);
-DebugCallback gDebugCallback;
-
-extern "C" DllExport void RegisterDebugCallback(DebugCallback callback)
-{
-	if (callback)
-	{
-		gDebugCallback = callback;
-	}
-}
-
-void DebugInUnity(std::string message)
-{
-	if (gDebugCallback)
-	{
-		gDebugCallback(message.c_str());
-	}
-}
-
-
-
-
 // Camera properties
 
-extern "C" DllExport int GetCamWidth()
+extern "C" UNITY_INTERFACE_EXPORT int GetCamWidth()
 {
 	return frameProducer->getFrameWidth();
 }
 
-extern "C" DllExport int GetCamHeight()
+extern "C" UNITY_INTERFACE_EXPORT int GetCamHeight()
 {
 	return frameProducer->getFrameHeight();
 }
 
-extern "C" DllExport int GetCamChannels()
+extern "C" UNITY_INTERFACE_EXPORT int GetCamChannels()
 {
 	return frameProducer->getFrameChannels();
 }
 
-extern "C" DllExport float GetCamGain()
+extern "C" UNITY_INTERFACE_EXPORT float GetCamGain()
 {
 	return frameProducer->getCamGain();
 }
 
-extern "C" DllExport void SetCamGain(float val)
+extern "C" UNITY_INTERFACE_EXPORT void SetCamGain(const float val)
 {
 	frameProducer->setCamGain(val);
 }
 
-extern "C" DllExport float GetCamExposure()
+extern "C" UNITY_INTERFACE_EXPORT float GetCamExposure()
 {
 	return frameProducer->getCamExposure();
 }
 
-extern "C" DllExport void SetCamExposure(float val)
+extern "C" UNITY_INTERFACE_EXPORT void SetCamExposure(const float val)
 {
 	frameProducer->setCamExposure(val);
 }

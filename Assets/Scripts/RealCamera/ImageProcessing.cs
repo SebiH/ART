@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -16,8 +17,12 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void StartImageProcessing();
 
+        // Deprecated for native rendering plugin
+        //[DllImport("ImageProcessing")]
+        //private static extern void UpdateTextures();
+
         [DllImport("ImageProcessing")]
-        private static extern void UpdateTextures();
+        private static extern IntPtr GetRenderEventFunc();
 
         [DllImport("ImageProcessing")]
         private static extern int RegisterDx11TexturePtr(string moduleName, IntPtr texturePtr, int type);
@@ -74,14 +79,30 @@ namespace Assets.Scripts.RealCamera
         #endregion
 
 
-        void Start()
+        IEnumerator Start()
         {
             RegisterDebugCallback(new DebugCallback(DebugMethod));
+            yield return StartCoroutine("CallPluginAtEndOfFrames");
         }
 
         private static void DebugMethod(string message)
         {
             Debug.Log("[ImageProcessing]: " + message);
+        }
+
+        private IEnumerator CallPluginAtEndOfFrames()
+        {
+            while (true)
+            {
+                // Wait until all frame rendering is done
+                yield return new WaitForEndOfFrame();
+
+                // Issue a plugin event with arbitrary integer identifier.
+                // The plugin can distinguish between different
+                // things it needs to do based on this ID.
+                // For our simple plugin, it does not matter which ID we pass here.
+                GL.IssuePluginEvent(GetRenderEventFunc(), 1);
+            }
         }
 
 
@@ -101,7 +122,7 @@ namespace Assets.Scripts.RealCamera
             foreach (var tex in syncHack)
                 syncHack2.Add(tex.GetNativeTexturePtr());
 
-            UpdateTextures();
+            //UpdateTextures();
         }
 
 

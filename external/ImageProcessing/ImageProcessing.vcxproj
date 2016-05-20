@@ -107,6 +107,7 @@
     <ClCompile Include="src\stereo_calibration.cpp" />
     <ClCompile Include="src\stereo_detection.cpp" />
     <ClCompile Include="src\texturewriter\UnityDX11TextureWriter.cpp" />
+    <ClCompile Include="src\util\UnityUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\framesource\IFrameSource.h" />
@@ -124,6 +125,7 @@
     <ClInclude Include="src\processingmodule\IProcessingModule.h" />
     <ClInclude Include="src\texturewriter\ITextureWriter.h" />
     <ClInclude Include="src\util\ThreadedModule.h" />
+    <ClInclude Include="src\util\UnityUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Modules.def" />
