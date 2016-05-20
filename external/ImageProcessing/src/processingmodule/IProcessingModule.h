@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include "../ProcessingOutput.h"
-#include "../ImageInfo.h"
+#include "../util/ProcessingOutput.h"
+#include "../util/ImageInfo.h"
 
 namespace ImageProcessing
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ITextureWriter.h"
-#include "../ProcessingOutput.h"
+#include "../util/ProcessingOutput.h"
 
 namespace ImageProcessing
 {

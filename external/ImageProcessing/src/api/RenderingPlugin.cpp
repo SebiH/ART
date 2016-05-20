@@ -15,7 +15,7 @@
 //#include <Unity/IUnityGraphicsD3D12.h>
 #endif
 
-#include "util/UnityUtils.h"
+#include "../util/UnityUtils.h"
 
 
 // ------------------------------------------

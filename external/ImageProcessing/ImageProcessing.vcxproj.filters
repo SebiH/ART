@@ -33,9 +33,6 @@
     <ClCompile Include="src\processingmodule\RawImageModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\api.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\util\ModuleManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,10 +48,13 @@
     <ClCompile Include="src\framesource\LeapFrameSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderingPlugin.cpp">
+    <ClCompile Include="src\util\UnityUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\util\UnityUtils.cpp">
+    <ClCompile Include="src\api\RenderingPlugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,9 +83,6 @@
     <ClInclude Include="src\processingmodule\RoiModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ProcessingOutput.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\framesource\IFrameSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -95,16 +92,19 @@
     <ClInclude Include="src\framesource\OvrFrameProducer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImageInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\framesource\LeapFrameSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\RenderingPlugin.h">
+    <ClInclude Include="src\util\UnityUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\util\UnityUtils.h">
+    <ClInclude Include="src\api\RenderingPlugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\ImageInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util\ProcessingOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstddef>
-#include "../ImageInfo.h"
+#include "../util/ImageInfo.h"
 
 namespace ImageProcessing
 {

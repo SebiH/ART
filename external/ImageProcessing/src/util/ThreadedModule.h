@@ -8,7 +8,7 @@
 #include "../framesource/IFrameSource.h"
 #include "../processingmodule/IProcessingModule.h"
 #include "../texturewriter/ITextureWriter.h"
-#include "../ProcessingOutput.h"
+#include "../util/ProcessingOutput.h"
 
 namespace ImageProcessing
 {
