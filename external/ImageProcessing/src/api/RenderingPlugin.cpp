@@ -15,7 +15,7 @@
 //#include <Unity/IUnityGraphicsD3D12.h>
 #endif
 
-#include "../util/UnityUtils.h"
+#include "common.h"
 
 
 // ------------------------------------------
@@ -24,7 +24,10 @@
 
 static void UNITY_INTERFACE_API OnRenderEvent(int eventID)
 {
-	//TODO: user rendering code
+	if (g_moduleManager.get() != nullptr)
+	{
+		g_moduleManager->triggerTextureUpdate();
+	}
 }
 
 
