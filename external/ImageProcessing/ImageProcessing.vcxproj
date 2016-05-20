@@ -123,6 +123,13 @@
     <ClInclude Include="src\texturewriter\ITextureWriter.h" />
     <ClInclude Include="src\util\ThreadedModule.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Modules.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shaders\SimplePixelShader.hlsl" />
+    <FxCompile Include="shaders\SimpleVertexShader.hlsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
