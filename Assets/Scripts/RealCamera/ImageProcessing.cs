@@ -105,29 +105,7 @@ namespace Assets.Scripts.RealCamera
             }
         }
 
-
-
-        private static List<Texture2D> syncHack = new List<Texture2D>();
-        private static List<IntPtr> syncHack2 = new List<IntPtr>();
-        public static void AddTextureSync(Texture2D tex)
-        {
-            syncHack.Add(tex);
-        }
-
-        void Update()
-        {
-            // quick hack to synchronize the rendering thread with this thread, to avoid crashes
-            // TODO: better to write DLL as native rendering plugin
-            syncHack2.Clear();
-            foreach (var tex in syncHack)
-                syncHack2.Add(tex.GetNativeTexturePtr());
-
-            //UpdateTextures();
-        }
-
-
         // Camera properties
-
         public static int CameraWidth
         {
             get { return GetCamWidth(); }
