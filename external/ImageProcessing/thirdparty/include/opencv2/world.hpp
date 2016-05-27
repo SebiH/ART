@@ -11,7 +11,7 @@
 //                For Open Source Computer Vision Library
 //
 // Copyright (C) 2000-2008, Intel Corporation, all rights reserved.
-// Copyright (C) 2009, Willow Garage Inc., all rights reserved.
+// Copyright (C) 2009-2010, Willow Garage Inc., all rights reserved.
 // Third party copyrights are property of their respective owners.
 //
 // Redistribution and use in source and binary forms, with or without modification,
@@ -40,47 +40,19 @@
 //
 //M*/
 
-#ifndef __OPENCV_CORE_CUDA_STREAM_ACCESSOR_HPP__
-#define __OPENCV_CORE_CUDA_STREAM_ACCESSOR_HPP__
+#ifndef __OPENCV_WORLD_HPP__
+#define __OPENCV_WORLD_HPP__
 
-#ifndef __cplusplus
-#  error cuda_stream_accessor.hpp header must be compiled as C++
-#endif
+#include "opencv2/core.hpp"
 
-/** @file cuda_stream_accessor.hpp
- * This is only header file that depends on CUDA Runtime API. All other headers are independent.
- */
-
-#include <cuda_runtime.h>
-#include "opencv2/core/cuda.hpp"
-
+#ifdef __cplusplus
 namespace cv
 {
-    namespace cuda
-    {
 
-//! @addtogroup cudacore_struct
-//! @{
+CV_EXPORTS_W bool initAll();
 
-        /** @brief Class that enables getting cudaStream_t from cuda::Stream
-         */
-        struct StreamAccessor
-        {
-            CV_EXPORTS static cudaStream_t getStream(const Stream& stream);
-            CV_EXPORTS static Stream wrapStream(cudaStream_t stream);
-        };
-
-        /** @brief Class that enables getting cudaEvent_t from cuda::Event
-         */
-        struct EventAccessor
-        {
-            CV_EXPORTS static cudaEvent_t getEvent(const Event& event);
-            CV_EXPORTS static Event wrapEvent(cudaEvent_t event);
-        };
-
-//! @}
-
-    }
 }
 
-#endif /* __OPENCV_CORE_CUDA_STREAM_ACCESSOR_HPP__ */
+#endif
+
+#endif
