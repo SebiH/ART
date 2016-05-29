@@ -48,6 +48,11 @@ OpenCVFrameProducer::OpenCVFrameProducer()
 
 OpenCVFrameProducer::~OpenCVFrameProducer()
 {
+	this->close();
+}
+
+void OpenCVFrameProducer::close()
+{
 	if (std::atomic_exchange(&_isRunning, false))
 	{
 		_thread.join();

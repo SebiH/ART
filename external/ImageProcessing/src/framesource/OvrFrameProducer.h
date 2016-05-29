@@ -31,6 +31,7 @@ namespace ImageProcessing
 		OvrFrameProducer();
 		~OvrFrameProducer();
 
+		virtual void close();
 		virtual ImageInfo poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight) override;
 		virtual std::size_t getImageBufferSize() const override;
 

@@ -52,6 +52,12 @@ LeapFrameSource::LeapFrameSource()
 
 LeapFrameSource::~LeapFrameSource()
 {
+	this->close();
+}
+
+
+void LeapFrameSource::close()
+{
 	if (std::atomic_exchange(&_isRunning, false))
 	{
 		_camera.release();

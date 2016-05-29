@@ -34,13 +34,17 @@ OvrFrameProducer::OvrFrameProducer()
 
 OvrFrameProducer::~OvrFrameProducer()
 {
+	this->close();
+}
+
+void OvrFrameProducer::close()
+{
 	if (std::atomic_exchange(&_isRunning, false))
 	{
 		_ovrCamera->Close();
 		_thread.join();
 	}
 }
-
 
 ImageInfo OvrFrameProducer::poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight)
 {

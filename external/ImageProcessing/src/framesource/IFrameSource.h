@@ -10,6 +10,7 @@ namespace ImageProcessing
 	public:
 		virtual ~IFrameSource() {}
 
+		virtual void close() = 0;
 		virtual ImageInfo poll(long &frameId, unsigned char *bufferLeft, unsigned char *bufferRight) = 0;
 		virtual std::size_t getImageBufferSize() const = 0;
 
@@ -22,6 +23,5 @@ namespace ImageProcessing
 		virtual float getCamGain() const = 0;
 		virtual void setCamGain(float val) const = 0;
 		virtual bool isOpen() const = 0;
-
 	};
 }
