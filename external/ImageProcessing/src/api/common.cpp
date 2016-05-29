@@ -26,7 +26,7 @@ std::unique_ptr<ModuleManager> g_moduleManager;
 int idCounter = 0;
 std::map<int, std::pair<std::shared_ptr<ThreadedModule>, std::shared_ptr<ITextureWriter>>> registeredTextureWriters;
 
-extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
+void InitializeImageProcessing()
 {
 	if (!_isInitialized)
 	{
@@ -38,6 +38,21 @@ extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 	}
 }
 
+void ShutdownImageProcessing()
+{
+	if (_isInitialized)
+	{
+		_isInitialized = false;
+		frameProducer->close();
+	}
+}
+
+
+// Unnecessary within Unity!
+extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
+{
+	InitializeImageProcessing();
+}
 
 // Do not use within Unity!
 extern "C" UNITY_INTERFACE_EXPORT void UpdateTextures()
