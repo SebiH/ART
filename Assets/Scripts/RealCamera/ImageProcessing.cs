@@ -55,6 +55,9 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void RegisterDebugCallback(DebugCallback callback);
 
+        [DllImport("ImageProcessing")]
+        private static extern void ChangeRoi(int moduleHandle, int x, int y, int width, int height);
+
         #endregion
 
         #region API
@@ -69,6 +72,11 @@ namespace Assets.Scripts.RealCamera
         public static void RemoveTexturePtr(int handle)
         {
             DeregisterTexturePtr(handle);
+        }
+
+        public static void ChangeRegionOfInterest(int x, int y, int width, int height)
+        {
+            ChangeRoi(-1, x, y, width, height);
         }
 
         #endregion
