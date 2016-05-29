@@ -16,7 +16,6 @@ namespace Assets.Scripts.RealCamera
 
         void Start()
         {
-            ImageProcessing.StartProcessing();
             var ImageWidth = ImageProcessing.CameraWidth;
             var ImageHeight = ImageProcessing.CameraHeight;
 

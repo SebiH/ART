@@ -59,11 +59,6 @@ namespace Assets.Scripts.RealCamera
 
         #region API
 
-        public static void StartProcessing()
-        {
-            StartImageProcessing();
-        }
-
         public enum Type { left = 0, right = 1, combined = 2 };
 
         public static int AddTexturePtr(string moduleName, IntPtr texturePtr, Type type)

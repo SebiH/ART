@@ -9,7 +9,6 @@ public class AttachCameraFeed : MonoBehaviour
 
 	void Start ()
     {
-        ImageProcessing.StartProcessing();
         var ImageWidth = ImageProcessing.CameraWidth;
         var ImageHeight = ImageProcessing.CameraHeight;
 

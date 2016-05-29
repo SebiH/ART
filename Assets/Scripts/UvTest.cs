@@ -26,7 +26,6 @@ public class UvTest : MonoBehaviour
 
     void Start()
     {
-        ImageProcessing.StartProcessing();
         var ImageWidth = ImageProcessing.CameraWidth;
         var ImageHeight = ImageProcessing.CameraHeight;
 

@@ -21,7 +21,6 @@ namespace Assets.Scripts.RealCamera
 
         void Awake()
         {
-            ImageProcessing.StartProcessing();
             MaxImageWidth = ImageProcessing.CameraWidth;
             MaxImageHeight = ImageProcessing.CameraHeight;
         }
