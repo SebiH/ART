@@ -3,19 +3,19 @@
 #include <map>
 #include <string>
 #include <utility>
-#include <opencv2/highgui.hpp>
+#include <opencv2\highgui.hpp>
 #include <Unity\IUnityInterface.h>
 
 #include "..\framesource\IFrameSource.h"
 #include "..\framesource\OpenCVFrameProducer.h"
 #include "..\framesource\OvrFrameProducer.h"
 #include "..\framesource\LeapFrameSource.h"
-#include "..\processingmodule/IProcessingModule.h"
-#include "..\processingmodule/RoiModule.h"
-#include "..\texturewriter/ITextureWriter.h"
-#include "..\texturewriter/OpenCvTextureWriter.h"
-#include "..\texturewriter/UnityDX11TextureWriter.h"
-#include "..\util/ThreadedModule.h"
+#include "..\processingmodule\IProcessingModule.h"
+#include "..\processingmodule\RoiModule.h"
+#include "..\texturewriter\ITextureWriter.h"
+#include "..\texturewriter\OpenCvTextureWriter.h"
+#include "..\texturewriter\UnityDX11TextureWriter.h"
+#include "..\util\ThreadedModule.h"
 
 using namespace ImageProcessing;
 
