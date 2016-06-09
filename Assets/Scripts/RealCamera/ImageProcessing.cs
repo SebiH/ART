@@ -60,9 +60,8 @@ namespace Assets.Scripts.RealCamera
 
         #region API
 
-        public enum Type { left = 0, right = 1, combined = 2 };
 
-        public static int AddTexturePtr(Module module, IntPtr texturePtr, Type type)
+        public static int AddTexturePtr(Module module, IntPtr texturePtr, OutputType type)
         {
             return RegisterDx11TexturePtr(ModuleUtils.ModuleToString(module), texturePtr, (int)type);
         }

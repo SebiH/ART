@@ -95,13 +95,13 @@ namespace Assets.Scripts.RealCamera
             if (leftTexture != null)
             {
                 var leftTexturePtr = leftTexture.GetNativeTexturePtr();
-                ImageProcessing.AddTexturePtr(Module.RegionOfInterest, leftTexturePtr, ImageProcessing.Type.left);
+                ImageProcessing.AddTexturePtr(Module.RegionOfInterest, leftTexturePtr, OutputType.Left);
             }
 
             if (rightTexture != null)
             {
                 var rightTexturePtr = rightTexture.GetNativeTexturePtr();
-                ImageProcessing.AddTexturePtr(Module.RegionOfInterest, rightTexturePtr, ImageProcessing.Type.right);
+                ImageProcessing.AddTexturePtr(Module.RegionOfInterest, rightTexturePtr, OutputType.Right);
             }
         }
 

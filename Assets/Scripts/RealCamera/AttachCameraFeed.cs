@@ -20,7 +20,7 @@ public class AttachCameraFeed : MonoBehaviour
         GetComponent<Renderer>().material.SetTexture("_MainTex", texLeft);
 
         var leftTexturePtr = texLeft.GetNativeTexturePtr();
-        texHandleLeft = ImageProcessing.AddTexturePtr(Module.RawImage, leftTexturePtr, ImageProcessing.Type.left);
+        texHandleLeft = ImageProcessing.AddTexturePtr(Module.RawImage, leftTexturePtr, OutputType.Left);
     }
 
     void OnDestroy()

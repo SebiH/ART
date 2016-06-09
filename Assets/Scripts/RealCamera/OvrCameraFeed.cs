@@ -65,8 +65,8 @@ namespace Assets.Scripts.RealCamera
             var RightTexturePtr = CameraTexRight.GetNativeTexturePtr();
 
             // TODO: store handle for deregister
-            TextureHandleLeft = ImageProcessing.AddTexturePtr(Module.RawImage, LeftTexturePtr, ImageProcessing.Type.left);
-            TextureHandleRight = ImageProcessing.AddTexturePtr(Module.RawImage, RightTexturePtr, ImageProcessing.Type.right);
+            TextureHandleLeft = ImageProcessing.AddTexturePtr(Module.RawImage, LeftTexturePtr, OutputType.Left);
+            TextureHandleRight = ImageProcessing.AddTexturePtr(Module.RawImage, RightTexturePtr, OutputType.Right);
         }
 
         public void SetAlpha(float alpha)
