@@ -1,3 +1,4 @@
+using Assets.Code.Vision;
 using System;
 using UnityEngine;
 
@@ -64,8 +65,8 @@ namespace Assets.Scripts.RealCamera
             var RightTexturePtr = CameraTexRight.GetNativeTexturePtr();
 
             // TODO: store handle for deregister
-            TextureHandleLeft = ImageProcessing.AddTexturePtr(ImageProcessing.MODULE_RAW_IMAGE, LeftTexturePtr, ImageProcessing.Type.left);
-            TextureHandleRight = ImageProcessing.AddTexturePtr(ImageProcessing.MODULE_RAW_IMAGE, RightTexturePtr, ImageProcessing.Type.right);
+            TextureHandleLeft = ImageProcessing.AddTexturePtr(Module.RawImage, LeftTexturePtr, ImageProcessing.Type.left);
+            TextureHandleRight = ImageProcessing.AddTexturePtr(Module.RawImage, RightTexturePtr, ImageProcessing.Type.right);
         }
 
         public void SetAlpha(float alpha)

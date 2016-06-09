@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Assets.Scripts.RealCamera;
+using Assets.Code.Vision;
 
 public class AttachCameraFeed : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class AttachCameraFeed : MonoBehaviour
         GetComponent<Renderer>().material.SetTexture("_MainTex", texLeft);
 
         var leftTexturePtr = texLeft.GetNativeTexturePtr();
-        texHandleLeft = ImageProcessing.AddTexturePtr(ImageProcessing.MODULE_RAW_IMAGE, leftTexturePtr, ImageProcessing.Type.left);
+        texHandleLeft = ImageProcessing.AddTexturePtr(Module.RawImage, leftTexturePtr, ImageProcessing.Type.left);
     }
 
     void OnDestroy()

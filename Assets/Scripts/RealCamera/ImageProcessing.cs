@@ -1,3 +1,4 @@
+using Assets.Code.Vision;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,9 +10,6 @@ namespace Assets.Scripts.RealCamera
 
     public class ImageProcessing : MonoBehaviour
     {
-        public static readonly String MODULE_RAW_IMAGE = "RawImage";
-        public static readonly String MODULE_ROI = "ROI";
-
         #region DllImports
 
         [DllImport("ImageProcessing")]
@@ -64,9 +62,9 @@ namespace Assets.Scripts.RealCamera
 
         public enum Type { left = 0, right = 1, combined = 2 };
 
-        public static int AddTexturePtr(string moduleName, IntPtr texturePtr, Type type)
+        public static int AddTexturePtr(Module module, IntPtr texturePtr, Type type)
         {
-            return RegisterDx11TexturePtr(moduleName, texturePtr, (int)type);
+            return RegisterDx11TexturePtr(ModuleUtils.ModuleToString(module), texturePtr, (int)type);
         }
 
         public static void RemoveTexturePtr(int handle)

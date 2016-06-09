@@ -1,4 +1,5 @@
 using Assets.Code.Util;
+using Assets.Code.Vision;
 using System;
 using UnityEngine;
 
@@ -94,13 +95,13 @@ namespace Assets.Scripts.RealCamera
             if (leftTexture != null)
             {
                 var leftTexturePtr = leftTexture.GetNativeTexturePtr();
-                ImageProcessing.AddTexturePtr(ImageProcessing.MODULE_ROI, leftTexturePtr, ImageProcessing.Type.left);
+                ImageProcessing.AddTexturePtr(Module.RegionOfInterest, leftTexturePtr, ImageProcessing.Type.left);
             }
 
             if (rightTexture != null)
             {
                 var rightTexturePtr = rightTexture.GetNativeTexturePtr();
-                ImageProcessing.AddTexturePtr(ImageProcessing.MODULE_ROI, rightTexturePtr, ImageProcessing.Type.right);
+                ImageProcessing.AddTexturePtr(Module.RegionOfInterest, rightTexturePtr, ImageProcessing.Type.right);
             }
         }
 
