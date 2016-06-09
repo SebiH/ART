@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Assets.Scripts.RealCamera;
+using Assets.Code.Vision;
 
 public class UvTest : MonoBehaviour
 {
@@ -36,7 +37,7 @@ public class UvTest : MonoBehaviour
         GetComponent<Renderer>().material.SetTexture("_MainTex", texLeft);
 
         var leftTexturePtr = texLeft.GetNativeTexturePtr();
-        texHandleLeft = ImageProcessing.AddTexturePtr(ImageProcessing.MODULE_RAW_IMAGE, leftTexturePtr, ImageProcessing.Type.left);
+        texHandleLeft = ImageProcessing.AddTexturePtr(Module.RawImage, leftTexturePtr, OutputType.Left);
     }
 
     void OnDestroy()
