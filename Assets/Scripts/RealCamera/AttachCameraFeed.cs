@@ -1,36 +1,34 @@
 using UnityEngine;
-using System.Collections;
 using Assets.Scripts.RealCamera;
 using Assets.Code.Vision;
 
 public class AttachCameraFeed : MonoBehaviour
 {
-    private int texHandleLeft;
-    private int texHandleRight;
+    // TODO: only supports RawImage, needs some options for the others?
+    public Module VisionModule = Module.RawImage;
+    public OutputType Output = OutputType.Left;
 
-	void Start ()
+    private int _textureHandle;
+
+    void Start()
     {
-        var ImageWidth = ImageProcessing.CameraWidth;
-        var ImageHeight = ImageProcessing.CameraHeight;
+        // TODO: might depend on module..
+        var imageWidth = ImageProcessing.CameraWidth;
+        var imageHeight = ImageProcessing.CameraHeight;
 
         // TODO: rendertexture?
-        var texLeft = new Texture2D(ImageWidth, ImageHeight, TextureFormat.BGRA32, false);
-        texLeft.wrapMode = TextureWrapMode.Clamp;
+        var camTexture = new Texture2D(imageWidth, imageHeight, TextureFormat.BGRA32, false);
+        camTexture.wrapMode = TextureWrapMode.Clamp;
 
-        GetComponent<Renderer>().material.SetTexture("_MainTex", texLeft);
+        GetComponent<Renderer>().materials[0].SetTexture("_MainTex", camTexture);
 
-        var leftTexturePtr = texLeft.GetNativeTexturePtr();
-        texHandleLeft = ImageProcessing.AddTexturePtr(Module.RawImage, leftTexturePtr, OutputType.Left);
+        var texturePtr = camTexture.GetNativeTexturePtr();
+        _textureHandle = ImageProcessing.AddTexturePtr(VisionModule, texturePtr, Output);
     }
 
     void OnDestroy()
     {
-        ImageProcessing.RemoveTexturePtr(texHandleLeft);
-        texHandleLeft = -1;
+        ImageProcessing.RemoveTexturePtr(_textureHandle);
+        _textureHandle = -1;
     }
-	
-	void Update ()
-    {
-	
-	}
 }
