@@ -4,14 +4,22 @@
  */
 using UnityEngine;
 using OptitrackManagement;
+using System;
 
 public class OptiTrackManager : MonoBehaviour 
 {
 	public string myName;
 	public float scale = 20.0f;
 	private static OptiTrackManager instance;
-    private IOptitrackSocket _socket = new DirectMulticastSocketClient();
+    private IOptitrackSocket _socket = null;
 	public Vector3 origin = Vector3.zero; // set this to wherever you want the center to be in your scene
+
+    public SocketType ConnectionType = SocketType.Unicast;
+
+    public enum SocketType
+    {
+        Multicast, Unicast
+    };
 
 
 	public static OptiTrackManager Instance
@@ -33,6 +41,20 @@ public class OptiTrackManager : MonoBehaviour
 	void Start () 
 	{
 		Debug.Log(myName + ": Initializing");
+
+        switch (ConnectionType)
+        {
+            case SocketType.Multicast:
+                _socket = new DirectMulticastSocketClient();
+                break;
+
+            case SocketType.Unicast:
+                _socket = new DirectUnicastSocketClient();
+                break;
+
+            default:
+                throw new Exception("Unknown ConnectionType " + ConnectionType.ToString());
+        }
 		
 		_socket.Start();
 		Application.runInBackground = true;
