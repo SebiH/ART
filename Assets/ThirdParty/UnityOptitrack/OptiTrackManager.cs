@@ -7,12 +7,12 @@ using OptitrackManagement;
 using System;
 using System.Net;
 
-public class OptiTrackManager : MonoBehaviour 
+public class OptiTrackManager : MonoBehaviour
 {
-	private static OptiTrackManager instance;
+    private static OptiTrackManager instance;
 
-	public string myName;
-	public float scale = 20.0f;
+    public string myName;
+    public float scale = 20.0f;
 
     public string OptitrackIPAddress = "127.0.0.1";
     public int OptitrackPort = 1511;
@@ -30,25 +30,25 @@ public class OptiTrackManager : MonoBehaviour
     };
 
 
-	public static OptiTrackManager Instance
-	{
-		get { return instance; } 
-	}
+    public static OptiTrackManager Instance
+    {
+        get { return instance; }
+    }
 
-	void Awake()
-	{
-		instance = this;
-	}
+    void Awake()
+    {
+        instance = this;
+    }
 
-	~OptiTrackManager ()
-	{      
-		Debug.Log("OptitrackManager: Destruct");
-		_socket.Close();
-	}
-	
-	void Start () 
-	{
-		Debug.Log(myName + ": Initializing");
+    ~OptiTrackManager()
+    {
+        Debug.Log("OptitrackManager: Destruct");
+        _socket.Close();
+    }
+
+    void Start()
+    {
+        Debug.Log(myName + ": Initializing");
 
         switch (ConnectionType)
         {
@@ -63,74 +63,74 @@ public class OptiTrackManager : MonoBehaviour
             default:
                 throw new Exception("Unknown ConnectionType " + ConnectionType.ToString());
         }
-		
-		_socket.Start(IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
-		Application.runInBackground = true;
-	}
 
-	public OptiTrackRigidBody getOptiTrackRigidBody(int index)
-	{
-		// only do this if you want the raw data
-		if(_socket.IsInit())
-		{
-			DataStream networkData = _socket.GetDataStream();
-			return networkData.getRigidbody(index);
-		}
-		else
-		{
-			_socket.Start(IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
-			return getOptiTrackRigidBody(index);
-		}
-	}
+        _socket.Start(IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
+        Application.runInBackground = true;
+    }
 
-	public Vector3 getPosition(int rigidbodyIndex)
-	{
-		if(_socket.IsInit())
-		{
-			DataStream networkData = _socket.GetDataStream();
-			Vector3 pos = origin + networkData.getRigidbody(rigidbodyIndex).position * scale;
-			pos.x = -pos.x; // not really sure if this is the best way to do it
-			//pos.y = pos.y; // these may change depending on your configuration and calibration
-			//pos.z = -pos.z;
-			return pos;
-		}
-		else
-		{
-			return Vector3.zero;
-		}
-	}
+    public OptiTrackRigidBody getOptiTrackRigidBody(int index)
+    {
+        // only do this if you want the raw data
+        if (_socket.IsInit())
+        {
+            DataStream networkData = _socket.GetDataStream();
+            return networkData.getRigidbody(index);
+        }
+        else
+        {
+            _socket.Start(IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
+            return getOptiTrackRigidBody(index);
+        }
+    }
 
-	public Quaternion getOrientation(int rigidbodyIndex)
-	{
-		// should add a way to filter it
-		if(_socket.IsInit())
-		{
-			DataStream networkData = _socket.GetDataStream();
-			Quaternion rot = networkData.getRigidbody(rigidbodyIndex).orientation;
+    public Vector3 getPosition(int rigidbodyIndex)
+    {
+        if (_socket.IsInit())
+        {
+            DataStream networkData = _socket.GetDataStream();
+            Vector3 pos = origin + networkData.getRigidbody(rigidbodyIndex).position * scale;
+            pos.x = -pos.x; // not really sure if this is the best way to do it
+                            //pos.y = pos.y; // these may change depending on your configuration and calibration
+                            //pos.z = -pos.z;
+            return pos;
+        }
+        else
+        {
+            return Vector3.zero;
+        }
+    }
 
-			// change the handedness from motive
-			//rot = new Quaternion(rot.z, rot.y, rot.x, rot.w); // depending on calibration
-			
-			// Invert pitch and yaw
-			Vector3 euler = rot.eulerAngles;
-			rot.eulerAngles = new Vector3(euler.x, -euler.y, euler.z); // these may change depending on your calibration
+    public Quaternion getOrientation(int rigidbodyIndex)
+    {
+        // should add a way to filter it
+        if (_socket.IsInit())
+        {
+            DataStream networkData = _socket.GetDataStream();
+            Quaternion rot = networkData.getRigidbody(rigidbodyIndex).orientation;
 
-			return rot;
-		}
-		else
-		{
-			return Quaternion.identity;
-		}
-	}
+            // change the handedness from motive
+            //rot = new Quaternion(rot.z, rot.y, rot.x, rot.w); // depending on calibration
 
-	public void DeInitialize()
-	{
-		_socket.Close();
-	}
+            // Invert pitch and yaw
+            Vector3 euler = rot.eulerAngles;
+            rot.eulerAngles = new Vector3(euler.x, -euler.y, euler.z); // these may change depending on your calibration
 
-	// Update is called once per frame
-	void Update () 
-	{
+            return rot;
+        }
+        else
+        {
+            return Quaternion.identity;
+        }
+    }
 
-	}
+    public void DeInitialize()
+    {
+        _socket.Close();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 }
