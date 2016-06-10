@@ -8,11 +8,15 @@ using System;
 
 public class OptiTrackManager : MonoBehaviour 
 {
+	private static OptiTrackManager instance;
+
 	public string myName;
 	public float scale = 20.0f;
-	private static OptiTrackManager instance;
+
+    // set this to wherever you want the center to be in your scene
+    public Vector3 origin = Vector3.zero;
+
     private IOptitrackSocket _socket = null;
-	public Vector3 origin = Vector3.zero; // set this to wherever you want the center to be in your scene
 
     public SocketType ConnectionType = SocketType.Unicast;
 
