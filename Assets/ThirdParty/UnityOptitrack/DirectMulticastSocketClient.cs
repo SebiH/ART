@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Adapted from johny3212
  * Written by Matt Oskamp
  */
@@ -23,19 +23,19 @@ namespace OptitrackManagement
 		public StringBuilder sb = new StringBuilder();
 	}
 	
-	public static class DirectMulticastSocketClient {
+	public class DirectMulticastSocketClient
+    {
+		private Socket client;
+		private bool _isInitRecieveStatus = false;
+		private bool _isIsActiveThread = false;
+		private DataStream _dataStream = null;
+		private String _strFrameLog = String.Empty;
 		
-		private static Socket client;
-		private static bool _isInitRecieveStatus = false;
-		private static bool _isIsActiveThread = false;
-		private static DataStream _dataStream = null;
-		private static String _strFrameLog = String.Empty;
+		private int _dataPort = 1511;
+		//private int _commandPort = 1510;
+		private string _multicastIPAddress = "239.255.42.99";
 		
-		private static int _dataPort = 1511;
-		//private static int _commandPort = 1510;
-		private static string _multicastIPAddress = "239.255.42.99";
-		
-		private static void StartClient() 
+		private void StartClient() 
 		{
 			// Connect to a remote device.
 			try
@@ -62,7 +62,7 @@ namespace OptitrackManagement
 			}
 		}
 		
-		private static bool Receive(Socket client) 
+		private bool Receive(Socket client) 
 		{
 			try 
 			{
@@ -85,7 +85,7 @@ namespace OptitrackManagement
 			return true;
 		}
 		
-		private static void ReceiveCallback( IAsyncResult ar ) 
+		private void ReceiveCallback( IAsyncResult ar ) 
 		{
 			try {
 				//Debug.Log("[UDP multicast] Start ReceiveCallback");
@@ -127,7 +127,7 @@ namespace OptitrackManagement
 			
 		}
 		
-		private static void ReadPacket(Byte[] b)
+		private void ReadPacket(Byte[] b)
 		{
 			int offset = 0;
 			int nBytes = 0;
@@ -201,7 +201,7 @@ namespace OptitrackManagement
 		}
 		
 		// Unpack RigidBody data
-		private static void ReadRigidBody(Byte[] b, ref int offset, OptiTrackRigidBody rb)
+		private void ReadRigidBody(Byte[] b, ref int offset, OptiTrackRigidBody rb)
 		{
 			try
 			{
@@ -239,20 +239,20 @@ namespace OptitrackManagement
 		}
 		
 		// Use this for initialization
-		public static void Start () 
+		public void Start () 
 		{
 			StartClient();
 		}
  
-		public static void Close () 
+		public void Close () 
 		{
 			_isIsActiveThread = false;
 		}   
-		public static bool IsInit()
+		public bool IsInit()
 		{
 			return _isInitRecieveStatus;
 		}
-		public static DataStream GetDataStream()
+		public DataStream GetDataStream()
 		{
 			return _dataStream;
 		}   
