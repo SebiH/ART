@@ -5,6 +5,7 @@
 using UnityEngine;
 using OptitrackManagement;
 using System;
+using System.Net;
 
 public class OptiTrackManager : MonoBehaviour 
 {
@@ -12,6 +13,9 @@ public class OptiTrackManager : MonoBehaviour
 
 	public string myName;
 	public float scale = 20.0f;
+
+    public string OptitrackIPAddress = "127.0.0.1";
+    public int OptitrackPort = 1511;
 
     // set this to wherever you want the center to be in your scene
     public Vector3 origin = Vector3.zero;
@@ -60,7 +64,7 @@ public class OptiTrackManager : MonoBehaviour
                 throw new Exception("Unknown ConnectionType " + ConnectionType.ToString());
         }
 		
-		_socket.Start();
+		_socket.Start(IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
 		Application.runInBackground = true;
 	}
 
@@ -74,7 +78,7 @@ public class OptiTrackManager : MonoBehaviour
 		}
 		else
 		{
-			_socket.Start();
+			_socket.Start(IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
 			return getOptiTrackRigidBody(index);
 		}
 	}

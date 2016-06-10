@@ -31,11 +31,11 @@ namespace OptitrackManagement
 		private DataStream _dataStream = null;
 		private String _strFrameLog = String.Empty;
 		
-		private int _dataPort = 1511;
+		//private int _dataPort = 1511;
 		//private int _commandPort = 1510;
-		private string _multicastIPAddress = "239.255.42.99";
+		//private string _multicastIPAddress = "239.255.42.99";
 		
-		private void StartClient() 
+		private void StartClient(IPAddress ip, int dataPort) 
 		{
 			// Connect to a remote device.
 			try
@@ -47,10 +47,9 @@ namespace OptitrackManagement
 				client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
 				//client.ExclusiveAddressUse = false;
 				
-				IPEndPoint ipep=new IPEndPoint(IPAddress.Any, _dataPort);
+				IPEndPoint ipep=new IPEndPoint(IPAddress.Any, dataPort);
 				client.Bind(ipep);
 				
-				IPAddress ip=IPAddress.Parse(_multicastIPAddress);
 				client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(ip,IPAddress.Any));
 				
 				_isInitRecieveStatus = Receive(client);
@@ -238,10 +237,9 @@ namespace OptitrackManagement
 			}
 		}
 		
-		// Use this for initialization
-		public void Start () 
+		public void Start(IPAddress ip, int port) 
 		{
-			StartClient();
+			StartClient(ip, port);
 		}
  
 		public void Close () 
