@@ -20,7 +20,7 @@ namespace OptitrackManagement
         public bool InitializeRigidBody()
         {
             _nRigidBodies = 0;
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < _rigidBody.Length; i++)
             {
                 _rigidBody[i] = new OptiTrackRigidBody();
             }
