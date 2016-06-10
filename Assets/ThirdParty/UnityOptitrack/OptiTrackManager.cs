@@ -10,7 +10,7 @@ public class OptiTrackManager : MonoBehaviour
 	public string myName;
 	public float scale = 20.0f;
 	private static OptiTrackManager instance;
-    private DirectMulticastSocketClient _socket = new DirectMulticastSocketClient();
+    private IOptitrackSocket _socket = new DirectMulticastSocketClient();
 	public Vector3 origin = Vector3.zero; // set this to wherever you want the center to be in your scene
 
 

@@ -23,7 +23,7 @@ namespace OptitrackManagement
 		public StringBuilder sb = new StringBuilder();
 	}
 	
-	public class DirectMulticastSocketClient
+	public class DirectMulticastSocketClient : IOptitrackSocket
     {
 		private Socket client;
 		private bool _isInitRecieveStatus = false;
