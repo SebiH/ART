@@ -20,7 +20,7 @@ public class OptiTrackManager : MonoBehaviour
     // set this to wherever you want the center to be in your scene
     public Vector3 origin = Vector3.zero;
 
-    private IOptitrackSocket _socket = null;
+    private OptitrackSocket _socket = null;
 
     public SocketType ConnectionType = SocketType.Unicast;
 
