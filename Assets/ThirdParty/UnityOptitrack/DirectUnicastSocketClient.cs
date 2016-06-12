@@ -1,28 +1,40 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
+using UnityEngine;
 
 namespace OptitrackManagement
 {
-    class DirectUnicastSocketClient : IOptitrackSocket
+    class DirectUnicastSocketClient : OptitrackSocket
     {
-        public void Start(IPAddress ip, int port)
+        private Socket _client;
+
+        override public void Start(IPAddress ip, int port)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Debug.Log("[UDP] Starting unicast client");
+                _dataStream = new DataStream();
+
+                _client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                _client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _client.Connect(ip, port);
+
+                _isInitRecieveStatus = Receive(_client);
+                _isIsActiveThread = _isInitRecieveStatus;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("[UDP] Optitrack Unicast Socket: " + e.ToString());
+            }
+
+
         }
 
-        public void Close()
+        override public void Close()
         {
-            throw new NotImplementedException();
+            _isIsActiveThread = false;
         }
 
-        public DataStream GetDataStream()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsInit()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
