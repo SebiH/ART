@@ -18,7 +18,14 @@ namespace OptitrackManagement
 
                 _client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                 _client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
+                //_client.Connect(ip, port);
+                _client.Bind(new IPEndPoint(IPAddress.Parse("192.168.178.76"), 1510));
+
+                // natnet only starts streaming after receiving a PING packet
+                byte[] pingPacket = { 0, 0, 0, 0 };
                 _client.Connect(ip, port);
+                _client.Send(pingPacket);
 
                 _isInitRecieveStatus = Receive(_client);
                 _isIsActiveThread = _isInitRecieveStatus;
