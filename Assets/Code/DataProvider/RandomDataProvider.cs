@@ -4,8 +4,8 @@ namespace Assets.Code.DataProvider
 {
     class RandomDataProvider : IDataProvider
     {
-        public int width = 50;
-        public int height = 50;
+        public int width = 10;
+        public int height = 10;
 
         public float[,] GetData()
         {
