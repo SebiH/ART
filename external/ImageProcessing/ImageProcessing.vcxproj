@@ -95,7 +95,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\api\common.cpp" />
-    <ClCompile Include="src\api\kalman_test.cpp" />
     <ClCompile Include="src\framesource\LeapFrameSource.cpp" />
     <ClCompile Include="src\processingmodule\RawImageModule.cpp" />
     <ClCompile Include="src\processingmodule\RoiModule.cpp" />
