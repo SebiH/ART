@@ -138,25 +138,25 @@ int OpenCVFrameProducer::getFrameChannels() const
 	return _imgInfo.channels;
 }
 
-float OpenCVFrameProducer::getCamExposure() const
+int OpenCVFrameProducer::getCamExposure() const
 {
-	return static_cast<float>(_camera->get(cv::CAP_PROP_EXPOSURE));
+	return _camera->get(cv::CAP_PROP_EXPOSURE);
 }
 
 
-void OpenCVFrameProducer::setCamExposure(float val) const
+void OpenCVFrameProducer::setCamExposure(int val) const
 {
 	_camera->set(cv::CAP_PROP_EXPOSURE, val);
 }
 
 
-float OpenCVFrameProducer::getCamGain() const
+int OpenCVFrameProducer::getCamGain() const
 {
-	return static_cast<float>(_camera->get(cv::CAP_PROP_GAIN));
+	return _camera->get(cv::CAP_PROP_GAIN);
 }
 
 
-void OpenCVFrameProducer::setCamGain(float val) const
+void OpenCVFrameProducer::setCamGain(int val) const
 {
 	_camera->set(cv::CAP_PROP_GAIN, val);
 }
@@ -164,4 +164,59 @@ void OpenCVFrameProducer::setCamGain(float val) const
 bool OpenCVFrameProducer::isOpen() const
 {
 	return _camera->isOpened();
+}
+
+int OpenCVFrameProducer::getCamBLC() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void OpenCVFrameProducer::setCamBLC(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+bool OpenCVFrameProducer::getCamAutoWhiteBalance() const
+{
+	// Not implemented/possible(?)
+	return true;
+}
+
+void OpenCVFrameProducer::setCamAutoWhiteBalance(const bool val) const
+{
+	// Not implemented/possible(?)
+}
+
+int OpenCVFrameProducer::getCamWhiteBalanceR() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void OpenCVFrameProducer::setCamWhiteBalanceR(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+int OpenCVFrameProducer::getCamWhiteBalanceG() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void OpenCVFrameProducer::setCamWhiteBalanceG(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+int OpenCVFrameProducer::getCamWhiteBalanceB() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void OpenCVFrameProducer::setCamWhiteBalanceB(const int val) const
+{
+	// Not implemented/possible(?)
 }

@@ -123,30 +123,85 @@ int OvrFrameProducer::getFrameChannels() const
 }
 
 
-float OvrFrameProducer::getCamExposure() const
+int OvrFrameProducer::getCamExposure() const
 {
 	return _ovrCamera->GetCameraExposure();
 }
 
 
-void OvrFrameProducer::setCamExposure(float val) const
+void OvrFrameProducer::setCamExposure(int val) const
 {
-	_ovrCamera->SetCameraExposure(static_cast<int>(val));
+	_ovrCamera->SetCameraExposure(val);
 }
 
 
-float OvrFrameProducer::getCamGain() const
+int OvrFrameProducer::getCamGain() const
 {
 	return _ovrCamera->GetCameraGain();
 }
 
 
-void OvrFrameProducer::setCamGain(float val) const
+void OvrFrameProducer::setCamGain(int val) const
 {
-	_ovrCamera->SetCameraGain(static_cast<int>(val));
+	_ovrCamera->SetCameraGain(val);
 }
 
 bool OvrFrameProducer::isOpen() const
 {
 	return _ovrCamera->isOpen();
+}
+
+int OvrFrameProducer::getCamBLC() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void OvrFrameProducer::setCamBLC(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+bool OvrFrameProducer::getCamAutoWhiteBalance() const
+{
+	// Not implemented/possible(?)
+	return true;
+}
+
+void OvrFrameProducer::setCamAutoWhiteBalance(const bool val) const
+{
+	// Not implemented/possible(?)
+}
+
+int OvrFrameProducer::getCamWhiteBalanceR() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void OvrFrameProducer::setCamWhiteBalanceR(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+int OvrFrameProducer::getCamWhiteBalanceG() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void OvrFrameProducer::setCamWhiteBalanceG(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+int OvrFrameProducer::getCamWhiteBalanceB() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void OvrFrameProducer::setCamWhiteBalanceB(const int val) const
+{
+	// Not implemented/possible(?)
 }

@@ -18,10 +18,20 @@ namespace ImageProcessing
 		virtual int getFrameWidth() const = 0;
 		virtual int getFrameHeight() const = 0;
 		virtual int getFrameChannels() const = 0;
-		virtual float getCamExposure() const = 0;
-		virtual void setCamExposure(float val) const = 0;
-		virtual float getCamGain() const = 0;
-		virtual void setCamGain(float val) const = 0;
+		virtual int getCamExposure() const = 0;
+		virtual void setCamExposure(const int val) const = 0;
+		virtual int getCamGain() const = 0;
+		virtual void setCamGain(const int val) const = 0;
+		virtual int getCamBLC() const = 0;
+		virtual void setCamBLC(const int val) const = 0;
+		virtual bool getCamAutoWhiteBalance() const = 0;
+		virtual void setCamAutoWhiteBalance(const bool val) const = 0;
+		virtual int getCamWhiteBalanceR() const = 0;
+		virtual void setCamWhiteBalanceR(const int val) const = 0;
+		virtual int getCamWhiteBalanceG() const = 0;
+		virtual void setCamWhiteBalanceG(const int val) const = 0;
+		virtual int getCamWhiteBalanceB() const = 0;
+		virtual void setCamWhiteBalanceB(const int val) const = 0;
 		virtual bool isOpen() const = 0;
 	};
 }

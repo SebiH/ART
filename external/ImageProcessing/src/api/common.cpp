@@ -31,9 +31,9 @@ void InitializeImageProcessing()
 	if (!_isInitialized)
 	{
 		_isInitialized = true;
-		//frameProducer = std::make_shared<OpenCVFrameProducer>();
+		frameProducer = std::make_shared<OpenCVFrameProducer>();
 		//frameProducer = std::make_shared<LeapFrameSource>();
-		frameProducer = std::make_shared<OvrFrameProducer>();
+		//frameProducer = std::make_shared<OvrFrameProducer>();
 		g_moduleManager = std::make_unique<ModuleManager>(frameProducer);
 	}
 }
@@ -134,22 +134,73 @@ extern "C" UNITY_INTERFACE_EXPORT int GetCamChannels()
 	return frameProducer->getFrameChannels();
 }
 
-extern "C" UNITY_INTERFACE_EXPORT float GetCamGain()
+extern "C" UNITY_INTERFACE_EXPORT int GetCamGain()
 {
 	return frameProducer->getCamGain();
 }
 
-extern "C" UNITY_INTERFACE_EXPORT void SetCamGain(const float val)
+extern "C" UNITY_INTERFACE_EXPORT void SetCamGain(const int val)
 {
 	frameProducer->setCamGain(val);
 }
 
-extern "C" UNITY_INTERFACE_EXPORT float GetCamExposure()
+extern "C" UNITY_INTERFACE_EXPORT int GetCamExposure()
 {
 	return frameProducer->getCamExposure();
 }
 
-extern "C" UNITY_INTERFACE_EXPORT void SetCamExposure(const float val)
+extern "C" UNITY_INTERFACE_EXPORT void SetCamExposure(const int val)
 {
 	frameProducer->setCamExposure(val);
 }
+
+extern "C" UNITY_INTERFACE_EXPORT int GetCamBLC()
+{
+	return frameProducer->getCamBLC();
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void SetCamBLC(const int val)
+{
+	frameProducer->setCamBLC(val);
+}
+
+extern "C" UNITY_INTERFACE_EXPORT bool GetCamAutoWhiteBalance()
+{
+	return frameProducer->getCamAutoWhiteBalance();
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void SetCamAutoWhiteBalance(const bool val)
+{
+	frameProducer->setCamAutoWhiteBalance(val);
+}
+
+extern "C" UNITY_INTERFACE_EXPORT int GetCamWhiteBalanceR()
+{
+	return frameProducer->getCamWhiteBalanceR();
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void SetCamWhiteBalanceR(const int val)
+{
+	frameProducer->setCamWhiteBalanceR(val);
+}
+
+extern "C" UNITY_INTERFACE_EXPORT int GetCamWhiteBalanceG()
+{
+	return frameProducer->getCamWhiteBalanceG();
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void SetCamWhiteBalanceG(const int val)
+{
+	frameProducer->setCamWhiteBalanceG(val);
+}
+
+extern "C" UNITY_INTERFACE_EXPORT int GetCamWhiteBalanceB()
+{
+	return frameProducer->getCamWhiteBalanceB();
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void SetCamWhiteBalanceB(const int val)
+{
+	frameProducer->setCamWhiteBalanceB(val);
+}
+

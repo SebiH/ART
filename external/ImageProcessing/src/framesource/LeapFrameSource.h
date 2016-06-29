@@ -39,10 +39,20 @@ namespace ImageProcessing
 		virtual int getFrameWidth() const override;
 		virtual int getFrameHeight() const override;
 		virtual int getFrameChannels() const override;
-		virtual float getCamExposure() const override;
-		virtual void setCamExposure(float val) const override;
-		virtual float getCamGain() const override;
-		virtual void setCamGain(float val) const override;
+		virtual int getCamExposure() const override;
+		virtual void setCamExposure(int val) const override;
+		virtual int getCamGain() const override;
+		virtual void setCamGain(int val) const override;
+		virtual int getCamBLC() const override;
+		virtual void setCamBLC(const int val) const override;
+		virtual bool getCamAutoWhiteBalance() const override;
+		virtual void setCamAutoWhiteBalance(const bool val) const override;
+		virtual int getCamWhiteBalanceR() const override;
+		virtual void setCamWhiteBalanceR(const int val) const override;
+		virtual int getCamWhiteBalanceG() const override;
+		virtual void setCamWhiteBalanceG(const int val) const override;
+		virtual int getCamWhiteBalanceB() const override;
+		virtual void setCamWhiteBalanceB(const int val) const override;
 		virtual bool isOpen() const override;
 	};
 }

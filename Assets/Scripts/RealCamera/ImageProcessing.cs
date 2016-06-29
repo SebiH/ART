@@ -38,16 +38,46 @@ namespace Assets.Scripts.RealCamera
         private static extern int GetCamChannels();
 
         [DllImport("ImageProcessing")]
-        private static extern float GetCamGain();
+        private static extern int GetCamGain();
 
         [DllImport("ImageProcessing")]
-        private static extern void SetCamGain(float val);
+        private static extern void SetCamGain(int val);
 
         [DllImport("ImageProcessing")]
-        private static extern float GetCamExposure();
+        private static extern int GetCamExposure();
 
         [DllImport("ImageProcessing")]
-        private static extern void SetCamExposure(float val);
+        private static extern void SetCamExposure(int val);
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamBLC();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamBLC(int val);
+
+        [DllImport("ImageProcessing")]
+        private static extern bool GetCamAutoWhiteBalance();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamAutoWhiteBalance(bool val);
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamWhiteBalanceR();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamWhiteBalanceR(int val);
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamWhiteBalanceG();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamWhiteBalanceG(int val);
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamWhiteBalanceB();
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetCamWhiteBalanceB(int val);
 
         private delegate void DebugCallback(string message);
         [DllImport("ImageProcessing")]
@@ -97,6 +127,8 @@ namespace Assets.Scripts.RealCamera
                 // Wait until all frame rendering is done
                 yield return new WaitForEndOfFrame();
 
+                UpdateCameraProperties();
+
                 // Issue a plugin event with arbitrary integer identifier.
                 // The plugin can distinguish between different
                 // things it needs to do based on this ID.
@@ -105,7 +137,81 @@ namespace Assets.Scripts.RealCamera
             }
         }
 
-        // Camera properties
+        #region Camera Properties
+
+        [Range(1, 47)]
+        public int Gain = 8;
+        private int _prevGain;
+
+        [Range(0, 32767)]
+        public int Exposure = 12960;
+        private int _prevExposure;
+
+        [Range(0, 1023)]
+        public int BLC = 32;
+        private int _prevBLC;
+
+        public bool AutoWhiteBalance = true;
+        private bool _prevAutoWhiteBalance;
+
+        [Range(0, 4095)]
+        public int WhiteBalanceR = 1474;
+        private int _prevWhiteBalanceR;
+
+        [Range(0, 4095)]
+        public int WhiteBalanceG = 1024;
+        private int _prevWhiteBalanceG;
+
+        [Range(0, 4095)]
+        public int WhiteBalanceB = 1738;
+        private int _prevWhiteBalanceB;
+
+        private void UpdateCameraProperties(bool forceUpdate = false)
+        {
+            if (_prevGain != Gain || forceUpdate)
+            {
+                CameraGain = 8;
+                _prevGain = Gain;
+            }
+
+            if (_prevExposure != Exposure || forceUpdate)
+            {
+                CameraExposure = _prevExposure;
+                _prevExposure = Exposure;
+            }
+            
+            if (_prevBLC != BLC || forceUpdate)
+            {
+                CameraBLC = BLC;
+                _prevBLC = BLC;
+            }
+
+            if (_prevAutoWhiteBalance != AutoWhiteBalance || forceUpdate)
+            {
+                CameraAutoWhiteBalance = AutoWhiteBalance;
+                _prevAutoWhiteBalance = AutoWhiteBalance;
+            }
+
+            if (_prevWhiteBalanceR != WhiteBalanceR || forceUpdate)
+            {
+                CameraWhiteBalanceR = WhiteBalanceR;
+                _prevWhiteBalanceR = WhiteBalanceR;
+            }
+
+            if (_prevWhiteBalanceG != WhiteBalanceG || forceUpdate)
+            {
+                CameraWhiteBalanceG = WhiteBalanceG;
+                _prevWhiteBalanceG = WhiteBalanceG;
+            }
+
+            if (_prevWhiteBalanceB != WhiteBalanceB || forceUpdate)
+            {
+                CameraWhiteBalanceB = WhiteBalanceB;
+                _prevWhiteBalanceB = WhiteBalanceB;
+            }
+        }
+
+
         public static int CameraWidth
         {
             get { return GetCamWidth(); }
@@ -121,16 +227,49 @@ namespace Assets.Scripts.RealCamera
             get { return GetCamChannels(); }
         }
 
-        public static float CameraGain
+        public static int CameraGain
         {
             get { return GetCamGain(); }
             set { SetCamGain(value); }
         }
 
-        public static float CameraExposure
+        public static int CameraExposure
         {
             get { return GetCamExposure(); }
             set { SetCamExposure(value); }
         }
+
+        public static int CameraBLC
+        {
+            get { return GetCamBLC(); }
+            set { SetCamBLC(value); }
+        }
+
+        public static bool CameraAutoWhiteBalance
+        {
+            get { return GetCamAutoWhiteBalance(); }
+            set { SetCamAutoWhiteBalance(value); }
+        }
+
+        public static int CameraWhiteBalanceR
+        {
+            get { return GetCamWhiteBalanceR(); }
+            set { SetCamWhiteBalanceR(value); }
+        }
+
+        public static int CameraWhiteBalanceG
+        {
+            get { return GetCamWhiteBalanceG(); }
+            set { SetCamWhiteBalanceG(value); }
+        }
+
+        public static int CameraWhiteBalanceB
+        {
+            get { return GetCamWhiteBalanceB(); }
+            set { SetCamWhiteBalanceB(value); }
+        }
+
+        #endregion
+
     }
 }

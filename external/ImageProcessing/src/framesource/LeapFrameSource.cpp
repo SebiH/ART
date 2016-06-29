@@ -157,27 +157,27 @@ int LeapFrameSource::getFrameChannels() const
 	return _imgInfo.channels;
 }
 
-float LeapFrameSource::getCamExposure() const
+int LeapFrameSource::getCamExposure() const
 {
 	// not possible?
 	return 0;
 }
 
 
-void LeapFrameSource::setCamExposure(float val) const
+void LeapFrameSource::setCamExposure(int val) const
 {
 	// not possible?
 }
 
 
-float LeapFrameSource::getCamGain() const
+int LeapFrameSource::getCamGain() const
 {
 	// not possible?
 	return 0;
 }
 
 
-void LeapFrameSource::setCamGain(float val) const
+void LeapFrameSource::setCamGain(int val) const
 {
 	// not possible?
 }
@@ -185,4 +185,60 @@ void LeapFrameSource::setCamGain(float val) const
 bool LeapFrameSource::isOpen() const
 {
 	return _camera->isConnected();
+}
+
+
+int LeapFrameSource::getCamBLC() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void LeapFrameSource::setCamBLC(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+bool LeapFrameSource::getCamAutoWhiteBalance() const
+{
+	// Not implemented/possible(?)
+	return true;
+}
+
+void LeapFrameSource::setCamAutoWhiteBalance(const bool val) const
+{
+	// Not implemented/possible(?)
+}
+
+int LeapFrameSource::getCamWhiteBalanceR() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void LeapFrameSource::setCamWhiteBalanceR(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+int LeapFrameSource::getCamWhiteBalanceG() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void LeapFrameSource::setCamWhiteBalanceG(const int val) const
+{
+	// Not implemented/possible(?)
+}
+
+int LeapFrameSource::getCamWhiteBalanceB() const
+{
+	// Not implemented/possible(?)
+	return 0;
+}
+
+void LeapFrameSource::setCamWhiteBalanceB(const int val) const
+{
+	// Not implemented/possible(?)
 }
