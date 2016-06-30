@@ -178,7 +178,7 @@ namespace Assets.Scripts.RealCamera
         {
             if (_prevGain != Gain || forceUpdate)
             {
-                CameraGain = 8;
+                CameraGain = Gain;
                 _prevGain = Gain;
             }
 
