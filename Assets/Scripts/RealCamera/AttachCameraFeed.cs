@@ -8,6 +8,9 @@ public class AttachCameraFeed : MonoBehaviour
     public Module VisionModule = Module.RawImage;
     public OutputType Output = OutputType.Left;
 
+    // automatically aligns and scales object 
+    public bool AutoAlign = true;
+
     private int _textureHandle;
 
     void Start()
@@ -24,6 +27,24 @@ public class AttachCameraFeed : MonoBehaviour
 
         var texturePtr = camTexture.GetNativeTexturePtr();
         _textureHandle = ImageProcessing.AddTexturePtr(VisionModule, texturePtr, Output);
+
+        if (AutoAlign)
+        {
+            var aspectRatio = new Vector2(imageWidth / imageHeight, -1);
+            transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
+
+            float xOffset = 0;
+            if (Output == OutputType.Left)
+            {
+                xOffset = -0.032f;
+            }
+            else if (Output == OutputType.Right)
+            {
+                xOffset = ImageProcessing.GetHMDRightGap().x - 0.040f;
+            }
+
+            transform.localPosition = new Vector3(xOffset, 0.0f, ImageProcessing.CameraFocalPoint + 0.02f);
+        }
     }
 
     void OnDestroy()
