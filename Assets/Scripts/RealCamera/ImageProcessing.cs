@@ -1,7 +1,6 @@
 using Assets.Code.Vision;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -82,6 +81,11 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern int GetCamFps();
 
+        [DllImport("ImageProcessing")]
+        private static extern float GetCamFocalPoint();
+
+        [DllImport("ImageProcessing")]
+        private static extern float GetHMDRightGap(int at);
 
         private delegate void DebugCallback(string message);
         [DllImport("ImageProcessing")]
@@ -216,6 +220,12 @@ namespace Assets.Scripts.RealCamera
         }
 
 
+        public static Vector3 GetHMDRightGap()
+        {
+            // taken from OVRVision
+            return new Vector3(GetHMDRightGap(0) * 0.001f, GetHMDRightGap(1) * 0.001f, GetHMDRightGap(2) * 0.001f);	// 1/10
+        }
+
         public static int CameraWidth
         {
             get { return GetCamWidth(); }
@@ -276,6 +286,15 @@ namespace Assets.Scripts.RealCamera
         {
             get { return GetCamWhiteBalanceB(); }
             set { SetCamWhiteBalanceB(value); }
+        }
+
+        public static float CameraFocalPoint
+        {
+            get
+            {
+                // taken from OVRVision
+                return GetCamFocalPoint() * 0.001f; // 1/100
+            }
         }
 
         #endregion

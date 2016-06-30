@@ -208,3 +208,27 @@ extern "C" UNITY_INTERFACE_EXPORT int GetCamFps()
 {
 	return frameProducer->getCamFps();
 }
+
+extern "C" UNITY_INTERFACE_EXPORT float GetHMDRightGap(const int at)
+{
+	if (auto ovrFrameProducer = dynamic_cast<OvrFrameProducer*>(frameProducer.get()))
+	{
+		return ovrFrameProducer->getHMDRightGap(at);
+	}
+	else
+	{
+		return 0.f;
+	}
+}
+
+extern "C" UNITY_INTERFACE_EXPORT float GetCamFocalPoint()
+{
+	if (auto ovrFrameProducer = dynamic_cast<OvrFrameProducer*>(frameProducer.get()))
+	{
+		return ovrFrameProducer->getCamFocalPoint();
+	}
+	else
+	{
+		return 0.f;
+	}
+}

@@ -205,4 +205,16 @@ int OvrFrameProducer::getCamFps() const
 {
 	return _ovrCamera->GetCamFramerate();
 }
+
+float OvrFrameProducer::getCamFocalPoint() const
+{
+	// get float point??
+	//ovGetFocalPoint() * 0.001f;	//1/100
+	return _ovrCamera->GetCamFocalPoint();
+}
+
+// ???
+float OvrFrameProducer::getHMDRightGap(const int at) const
+{
+	return _ovrCamera->GetHMDRightGap(at);
 }

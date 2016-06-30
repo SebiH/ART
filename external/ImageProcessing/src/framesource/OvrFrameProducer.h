@@ -55,5 +55,9 @@ namespace ImageProcessing
 		virtual void setCamWhiteBalanceB(const int val) const override;
 		virtual int getCamFps() const override;
 		virtual bool isOpen() const override;
+
+		// special OVRVision properties
+		float getCamFocalPoint() const;
+		float getHMDRightGap(const int at) const;
 	};
 }
