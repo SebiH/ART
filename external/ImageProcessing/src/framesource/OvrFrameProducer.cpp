@@ -153,55 +153,50 @@ bool OvrFrameProducer::isOpen() const
 
 int OvrFrameProducer::getCamBLC() const
 {
-	// Not implemented/possible(?)
-	return 0;
+	return _ovrCamera->GetCameraBLC();
 }
 
 void OvrFrameProducer::setCamBLC(const int val) const
 {
-	// Not implemented/possible(?)
+	_ovrCamera->SetCameraBLC(val);
 }
 
 bool OvrFrameProducer::getCamAutoWhiteBalance() const
 {
-	// Not implemented/possible(?)
-	return true;
+	return _ovrCamera->GetCameraWhiteBalanceAuto();
 }
 
 void OvrFrameProducer::setCamAutoWhiteBalance(const bool val) const
 {
-	// Not implemented/possible(?)
+	_ovrCamera->SetCameraWhiteBalanceAuto(val);
 }
 
 int OvrFrameProducer::getCamWhiteBalanceR() const
 {
-	// Not implemented/possible(?)
-	return 0;
+	return _ovrCamera->GetCameraWhiteBalanceR();
 }
 
 void OvrFrameProducer::setCamWhiteBalanceR(const int val) const
 {
-	// Not implemented/possible(?)
+	_ovrCamera->SetCameraWhiteBalanceR(val);
 }
 
 int OvrFrameProducer::getCamWhiteBalanceG() const
 {
-	// Not implemented/possible(?)
-	return 0;
+	return _ovrCamera->GetCameraWhiteBalanceG();
 }
 
 void OvrFrameProducer::setCamWhiteBalanceG(const int val) const
 {
-	// Not implemented/possible(?)
+	_ovrCamera->SetCameraWhiteBalanceG(val);
 }
 
 int OvrFrameProducer::getCamWhiteBalanceB() const
 {
-	// Not implemented/possible(?)
-	return 0;
+	return _ovrCamera->GetCameraWhiteBalanceB();
 }
 
 void OvrFrameProducer::setCamWhiteBalanceB(const int val) const
 {
-	// Not implemented/possible(?)
+	_ovrCamera->SetCameraWhiteBalanceB(val);
 }
