@@ -242,3 +242,9 @@ void LeapFrameSource::setCamWhiteBalanceB(const int val) const
 {
 	// Not implemented/possible(?)
 }
+
+int LeapFrameSource::getCamFps() const
+{
+	// Not implemented/possible(?)
+	return 30; // ?
+}

@@ -31,9 +31,9 @@ void InitializeImageProcessing()
 	if (!_isInitialized)
 	{
 		_isInitialized = true;
-		frameProducer = std::make_shared<OpenCVFrameProducer>();
+		//frameProducer = std::make_shared<OpenCVFrameProducer>();
 		//frameProducer = std::make_shared<LeapFrameSource>();
-		//frameProducer = std::make_shared<OvrFrameProducer>();
+		frameProducer = std::make_shared<OvrFrameProducer>();
 		g_moduleManager = std::make_unique<ModuleManager>(frameProducer);
 	}
 }
@@ -204,3 +204,7 @@ extern "C" UNITY_INTERFACE_EXPORT void SetCamWhiteBalanceB(const int val)
 	frameProducer->setCamWhiteBalanceB(val);
 }
 
+extern "C" UNITY_INTERFACE_EXPORT int GetCamFps()
+{
+	return frameProducer->getCamFps();
+}

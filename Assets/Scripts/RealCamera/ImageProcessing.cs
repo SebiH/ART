@@ -79,6 +79,10 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void SetCamWhiteBalanceB(int val);
 
+        [DllImport("ImageProcessing")]
+        private static extern int GetCamFps();
+
+
         private delegate void DebugCallback(string message);
         [DllImport("ImageProcessing")]
         private static extern void RegisterDebugCallback(DebugCallback callback);
@@ -220,6 +224,11 @@ namespace Assets.Scripts.RealCamera
         public static int CameraHeight
         {
             get { return GetCamHeight(); }
+        }
+
+        public static int CameraFps
+        {
+            get { return GetCamFps(); }
         }
 
         public static int CameraChannels

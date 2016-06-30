@@ -220,3 +220,9 @@ void OpenCVFrameProducer::setCamWhiteBalanceB(const int val) const
 {
 	// Not implemented/possible(?)
 }
+
+int OpenCVFrameProducer::getCamFps() const
+{
+	// Not implemented/possible(?)
+	return 30; // ?
+}

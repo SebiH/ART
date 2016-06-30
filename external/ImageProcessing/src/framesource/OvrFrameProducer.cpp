@@ -200,3 +200,9 @@ void OvrFrameProducer::setCamWhiteBalanceB(const int val) const
 {
 	_ovrCamera->SetCameraWhiteBalanceB(val);
 }
+
+int OvrFrameProducer::getCamFps() const
+{
+	// Not implemented/possible(?)
+	return 30; // ?
+}

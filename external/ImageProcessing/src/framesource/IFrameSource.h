@@ -32,6 +32,7 @@ namespace ImageProcessing
 		virtual void setCamWhiteBalanceG(const int val) const = 0;
 		virtual int getCamWhiteBalanceB() const = 0;
 		virtual void setCamWhiteBalanceB(const int val) const = 0;
+		virtual int getCamFps() const = 0;
 		virtual bool isOpen() const = 0;
 	};
 }
