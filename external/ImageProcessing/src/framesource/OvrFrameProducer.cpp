@@ -203,6 +203,6 @@ void OvrFrameProducer::setCamWhiteBalanceB(const int val) const
 
 int OvrFrameProducer::getCamFps() const
 {
-	// Not implemented/possible(?)
-	return 30; // ?
+	return _ovrCamera->GetCamFramerate();
+}
 }
