@@ -34,11 +34,11 @@ public class AttachCameraFeed : MonoBehaviour
             transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
 
             float xOffset = 0;
-            if (Output == OutputType.Left)
+            if (Output == OutputType.Right)
             {
                 xOffset = -0.032f;
             }
-            else if (Output == OutputType.Right)
+            else if (Output == OutputType.Left)
             {
                 xOffset = ImageProcessing.GetHMDRightGap().x - 0.040f;
             }
