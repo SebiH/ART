@@ -1,5 +1,7 @@
 #include "NullFrameSource.h"
 
+#include <opencv2/core.hpp>
+
 using namespace ImageProcessing;
 
 const int DUMMY_CHANNELS = 4;
@@ -7,7 +9,8 @@ const int DUMMY_CHANNELS = 4;
 NullFrameSource::NullFrameSource(int width, int height)
 	: dummyWidth(width),
 	  dummyHeight(height),
-	  dummyMemorySize(width * height * DUMMY_CHANNELS)
+	  dummyMemorySize(width * height * DUMMY_CHANNELS),
+	  _dummyInfo(width, height, DUMMY_CHANNELS, CV_8UC4)
 {
 	dummyMemory = std::unique_ptr<unsigned char[]>(new unsigned char[dummyMemorySize]);
 }
@@ -34,6 +37,8 @@ ImageInfo NullFrameSource::poll(long &frameId, unsigned char *bufferLeft, unsign
 	{
 		memcpy(bufferRight, dummyMemory.get(), dummyMemorySize);
 	}
+
+	return _dummyInfo;
 }
 
 

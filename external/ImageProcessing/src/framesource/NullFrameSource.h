@@ -13,6 +13,7 @@ namespace ImageProcessing
 		int dummyHeight;
 		std::size_t dummyMemorySize;
 		std::unique_ptr<unsigned char[]> dummyMemory;
+		ImageInfo _dummyInfo;
 
 	public:
 		NullFrameSource(const int width, const int height);
