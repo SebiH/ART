@@ -50,6 +50,11 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 	return module;
 }
 
+std::shared_ptr<IFrameSource> ImageProcessing::ModuleManager::getFrameSource() const
+{
+	return _frameProducer;
+}
+
 void ModuleManager::triggerTextureUpdate()
 {
 	for (auto pair : _createdModules)

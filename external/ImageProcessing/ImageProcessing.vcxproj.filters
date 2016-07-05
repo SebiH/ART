@@ -39,9 +39,6 @@
     <ClCompile Include="src\processingmodule\RoiModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\framesource\OvrFrameProducer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,6 +55,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\api\debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\CameraProperties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
