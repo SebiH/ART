@@ -63,6 +63,9 @@
     <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\framesource\NullFrameSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\util\ThreadedModule.h">
@@ -117,6 +120,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\api\debug.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\framesource\NullFrameSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
