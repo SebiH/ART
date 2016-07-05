@@ -10,31 +10,40 @@
 #include "..\framesource\OpenCVFrameProducer.h"
 #include "..\framesource\OvrFrameProducer.h"
 #include "..\framesource\LeapFrameSource.h"
+#include "..\framesource\NullFrameSource.h"
 #include "..\processingmodule\IProcessingModule.h"
 #include "..\processingmodule\RoiModule.h"
 #include "..\texturewriter\ITextureWriter.h"
 #include "..\texturewriter\OpenCvTextureWriter.h"
 #include "..\texturewriter\UnityDX11TextureWriter.h"
 #include "..\util\ThreadedModule.h"
+#include "..\util\UnityUtils.h"
 
 using namespace ImageProcessing;
 
+// TODO refactor!
+int _currentFrameSourceIdHack = -1;
+
+std::shared_ptr<IFrameSource> _frameSource;
+extern "C" UNITY_INTERFACE_EXPORT void SetFrameSource(int source);
 bool _isInitialized;
-std::shared_ptr<IFrameSource> frameProducer;
 std::unique_ptr<ModuleManager> g_moduleManager;
 
 int idCounter = 0;
 std::map<int, std::pair<std::shared_ptr<ThreadedModule>, std::shared_ptr<ITextureWriter>>> registeredTextureWriters;
 
+
 void InitializeImageProcessing()
 {
+	if (_frameSource.get() == nullptr)
+	{
+		SetFrameSource(_currentFrameSourceIdHack);
+	}
+
 	if (!_isInitialized)
 	{
 		_isInitialized = true;
-		//frameProducer = std::make_shared<OpenCVFrameProducer>();
-		//frameProducer = std::make_shared<LeapFrameSource>();
-		frameProducer = std::make_shared<OvrFrameProducer>();
-		g_moduleManager = std::make_unique<ModuleManager>(frameProducer);
+		g_moduleManager = std::make_unique<ModuleManager>(_frameSource);
 	}
 }
 
@@ -43,7 +52,9 @@ void ShutdownImageProcessing()
 	if (_isInitialized)
 	{
 		_isInitialized = false;
-		frameProducer->close();
+		_frameSource->close();
+		_frameSource.reset();
+		g_moduleManager.reset();
 	}
 }
 
@@ -51,6 +62,9 @@ void ShutdownImageProcessing()
 // Unnecessary within Unity!
 extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 {
+	// quick hack...
+	SetFrameSource(_currentFrameSourceIdHack);
+
 	InitializeImageProcessing();
 }
 
@@ -58,6 +72,52 @@ extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 extern "C" UNITY_INTERFACE_EXPORT void UpdateTextures()
 {
 	g_moduleManager->triggerTextureUpdate();
+}
+
+
+
+extern "C" UNITY_INTERFACE_EXPORT void SetFrameSource(int sourceId)
+{
+	// TODO: this was hacked together quickly, could definitely use something better!
+	if (_currentFrameSourceIdHack != sourceId || _frameSource.get() == nullptr)
+	{
+		_currentFrameSourceIdHack = sourceId;
+		bool restartImageProcessing = false;
+
+		if (_isInitialized)
+		{
+			restartImageProcessing = true;
+			ShutdownImageProcessing();
+		}
+	
+		switch (sourceId)
+		{
+		case 0:
+			DebugLog("Using OpenCVFrameSource");
+			_frameSource = std::make_shared<OpenCVFrameProducer>();
+			break;
+
+		case 1:
+			DebugLog("Using LeapFrameSource");
+			_frameSource = std::make_shared<LeapFrameSource>();
+			break;
+
+		case 2:
+			DebugLog("Using OVRFrameSource");
+			_frameSource = std::make_shared<OvrFrameProducer>();
+			break;
+
+		default:
+			DebugLog("Using NullFrameSource");
+			_frameSource = std::make_shared<NullFrameSource>(640, 480);
+			break;
+		}
+
+		if (restartImageProcessing)
+		{
+			InitializeImageProcessing();
+		}
+	}
 }
 
 
@@ -115,7 +175,3 @@ extern "C" UNITY_INTERFACE_EXPORT void ChangeRoi(const int moduleHandle, const i
 		roiModule->setRegion(cv::Rect(x, y, width, height));
 	}
 }
-
-
-// Camera properties
-

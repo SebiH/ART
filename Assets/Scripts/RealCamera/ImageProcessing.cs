@@ -94,6 +94,9 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void ChangeRoi(int moduleHandle, int x, int y, int width, int height);
 
+        [DllImport("ImageProcessing")]
+        private static extern void SetFrameSource(int sourceId);
+
         #endregion
 
         #region API
@@ -116,9 +119,10 @@ namespace Assets.Scripts.RealCamera
 
         #endregion
 
-
         IEnumerator Start()
         {
+            SetFrameSource(2);
+
             RegisterDebugCallback(new DebugCallback(DebugMethod));
             yield return StartCoroutine("CallPluginAtEndOfFrames");
         }
