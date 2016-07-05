@@ -66,7 +66,7 @@ namespace Assets.Scripts.Demo
 
             UpdateCameraProperties(false);
 
-            if (LeftTexturePtr != null && RightTexturePtr != null)
+            if (LeftTexturePtr.ToInt64() != 0 && RightTexturePtr.ToInt64() != 0)
             {
                 OvrPro.UpdateImage(LeftTexturePtr, RightTexturePtr);
             }
