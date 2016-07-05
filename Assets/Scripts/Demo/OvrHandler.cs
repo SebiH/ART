@@ -15,16 +15,29 @@ namespace Assets.Scripts.Demo
 
         public enum CameraMode
         {
-            OV_CAMVR_FULL = 3
+            //2560x1920 @15fps x2
+            OV_CAM5MP_FULL = 0,
+
+            //1920x1080 @30fps x2
+            OV_CAM5MP_FHD = 1,
+
+            //1280x960  @45fps x2
+            OV_CAMHD_FULL = 2,
+
+            //960x950   @60fps x2
+            OV_CAMVR_FULL = 3,
+
+            //1280x800  @60fps x2
+            OV_CAMVR_WIDE = 4,
+
+            //640x480   @90fps x2
+            OV_CAMVR_VGA = 5,
+
+            //320x240   @120fps x2
+            OV_CAMVR_QVGA = 6
         };
 
-        public CameraMode cameraMode = CameraMode.OV_CAMVR_FULL;
-
-
-        void Start()
-        {
-            Instance = this;
-        }
+        public CameraMode cameraMode = CameraMode.OV_CAMVR_WIDE;
 
         void Awake()
         {
