@@ -128,15 +128,20 @@ namespace Assets.Scripts.RealCamera
 
         #endregion
 
+        private bool _isRunning = false;
+
         void Awake()
         {
             RegisterDebugCallback(new DebugCallback(DebugMethod));
             SetFrameSource((int)FrameSource);
             StartImageProcessing();
+
+            _isRunning = true;
         }
 
         void OnDestroy()
         {
+            _isRunning = false;
             StopImageProcessing();
         }
 
@@ -157,13 +162,16 @@ namespace Assets.Scripts.RealCamera
                 // Wait until all frame rendering is done
                 yield return new WaitForEndOfFrame();
 
-                UpdateCameraProperties();
+                if (_isRunning)
+                {
+                    UpdateCameraProperties();
 
-                // Issue a plugin event with arbitrary integer identifier.
-                // The plugin can distinguish between different
-                // things it needs to do based on this ID.
-                // For our simple plugin, it does not matter which ID we pass here.
-                GL.IssuePluginEvent(GetRenderEventFunc(), 1);
+                    // Issue a plugin event with arbitrary integer identifier.
+                    // The plugin can distinguish between different
+                    // things it needs to do based on this ID.
+                    // For our simple plugin, it does not matter which ID we pass here.
+                    GL.IssuePluginEvent(GetRenderEventFunc(), 1);
+                }
             }
         }
 

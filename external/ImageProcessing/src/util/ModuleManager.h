@@ -24,5 +24,6 @@ namespace ImageProcessing
 
 		std::shared_ptr<IFrameSource> getFrameSource() const;
 		void triggerTextureUpdate();
+		void close();
 	};
 }

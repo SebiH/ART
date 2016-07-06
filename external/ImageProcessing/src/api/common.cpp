@@ -54,9 +54,10 @@ void ShutdownImageProcessing()
 	if (_isInitialized)
 	{
 		_isInitialized = false;
+		g_moduleManager->close();
 		_frameSource->close();
-		_frameSource.reset();
 		g_moduleManager.reset();
+		_frameSource.reset();
 	}
 	else
 	{
@@ -79,7 +80,10 @@ extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 // Do not use within Unity!
 extern "C" UNITY_INTERFACE_EXPORT void UpdateTextures()
 {
-	g_moduleManager->triggerTextureUpdate();
+	if (g_moduleManager.get() != nullptr)
+	{
+		g_moduleManager->triggerTextureUpdate();
+	}
 }
 
 

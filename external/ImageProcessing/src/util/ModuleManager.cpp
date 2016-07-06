@@ -67,3 +67,13 @@ bool ModuleManager::hasModule(const std::string &moduleName)
 {
 	return _createdModules.count(moduleName) > 0;
 }
+
+void ModuleManager::close()
+{
+	for (auto pair : _createdModules)
+	{
+		pair.second->stop();
+	}
+
+	_createdModules.clear();
+}
