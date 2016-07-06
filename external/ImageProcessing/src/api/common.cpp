@@ -21,11 +21,7 @@
 
 using namespace ImageProcessing;
 
-// TODO refactor!
-int _currentFrameSourceIdHack = -1;
-
 std::shared_ptr<IFrameSource> _frameSource;
-extern "C" UNITY_INTERFACE_EXPORT void SetFrameSource(int source);
 bool _isInitialized;
 std::unique_ptr<ModuleManager> g_moduleManager;
 
@@ -77,9 +73,6 @@ extern "C" UNITY_INTERFACE_EXPORT void StopImageProcessing()
 
 extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 {
-	// quick hack...
-	SetFrameSource(_currentFrameSourceIdHack);
-
 	InitializeImageProcessing();
 }
 
