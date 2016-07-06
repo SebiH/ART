@@ -46,10 +46,18 @@ namespace ImageProcessingUtil
         [DllImport("ImageProcessing")]
         private static extern void SetCamExposure(float val);
 
+
+        [DllImport("ImageProcessing")]
+        private static extern void SetProcessingMode(int mode);
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetProcessingMode();
+
+
         static void Main(string[] args)
         {
             // Test things without unity
-            //SetFrameSource(2);
+            SetFrameSource(4);
             StartImageProcessing();
             int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
             int handleRoi = RegisterOpenCVTextureWriter("ROI", "testWindow2");
@@ -69,14 +77,7 @@ namespace ImageProcessingUtil
 
                 if (keyPressed == 's')
                 {
-                    SetFrameSource(2);
-                    handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
-                    handleRoi = RegisterOpenCVTextureWriter("ROI", "testWindow2");
-                    currentX = 0;
-                    currentY = 0;
-                    currentWidth = GetCamWidth();
-                    currentHeight = GetCamHeight();
-                    ChangeRoi(-1, currentX, currentY, currentWidth, currentHeight);
+                    SetProcessingMode((GetProcessingMode() + 1) % 3);
                 }
 
                 if (keyPressed == 'r')
