@@ -97,6 +97,12 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void SetFrameSource(int sourceId);
 
+        [DllImport("ImageProcessing")]
+        private static extern void SetProcessingMode(int mode);
+
+        [DllImport("ImageProcessing")]
+        private static extern int GetProcessingMode();
+
         #endregion
 
         #region API
@@ -178,6 +184,17 @@ namespace Assets.Scripts.RealCamera
         public int WhiteBalanceB = 1738;
         private int _prevWhiteBalanceB;
 
+
+        public enum OvrProcessingMode
+        {
+            DemosaicRemap = 0,
+            Demosaic = 1,
+            None = 2
+        };
+
+        public OvrProcessingMode ProcessingMode;
+        private OvrProcessingMode _prevProcessingMode;
+
         private void UpdateCameraProperties(bool forceUpdate = false)
         {
             if (_prevGain != Gain || forceUpdate)
@@ -220,6 +237,12 @@ namespace Assets.Scripts.RealCamera
             {
                 CameraWhiteBalanceB = WhiteBalanceB;
                 _prevWhiteBalanceB = WhiteBalanceB;
+            }
+
+            if (_prevProcessingMode != ProcessingMode || forceUpdate)
+            {
+                CameraProcessingMode = ProcessingMode;
+                _prevProcessingMode = ProcessingMode;
             }
         }
 
@@ -299,6 +322,12 @@ namespace Assets.Scripts.RealCamera
                 // taken from OVRVision
                 return GetCamFocalPoint() * 0.001f; // 1/100
             }
+        }
+
+        public static OvrProcessingMode CameraProcessingMode
+        {
+            get { return (OvrProcessingMode)GetProcessingMode(); }
+            set { SetProcessingMode((int)value); }
         }
 
         #endregion
