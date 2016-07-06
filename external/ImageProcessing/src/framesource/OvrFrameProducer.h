@@ -28,7 +28,7 @@ namespace ImageProcessing
 		void run();
 
 	public:
-		OvrFrameProducer();
+		OvrFrameProducer(OVR::Camprop cameraMode);
 		~OvrFrameProducer();
 
 		virtual void close();
