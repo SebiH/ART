@@ -136,6 +136,8 @@ namespace Assets.Scripts.RealCamera
             SetFrameSource((int)FrameSource);
             StartImageProcessing();
 
+            LoadCurrentProperties();
+
             _isRunning = true;
         }
 
@@ -234,6 +236,20 @@ namespace Assets.Scripts.RealCamera
 
         public OvrProcessingMode ProcessingMode;
         private OvrProcessingMode _prevProcessingMode;
+
+        private void LoadCurrentProperties()
+        {
+            _prevGain = CameraGain;
+            _prevExposure = CameraExposure;
+            _prevBLC = CameraBLC;
+
+            _prevAutoWhiteBalance = CameraAutoWhiteBalance;
+            _prevWhiteBalanceR = CameraWhiteBalanceR;
+            _prevWhiteBalanceG = CameraWhiteBalanceG;
+            _prevWhiteBalanceB = CameraWhiteBalanceB;
+
+            _prevProcessingMode = CameraProcessingMode;
+        }
 
         private void UpdateCameraProperties(bool forceUpdate = false)
         {
