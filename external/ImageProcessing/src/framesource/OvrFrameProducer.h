@@ -13,6 +13,7 @@ namespace ImageProcessing
 	class OvrFrameProducer : public IFrameSource
 	{
 	private:
+		OVR::Camqt _processingMode;
 		std::unique_ptr<OVR::OvrvisionPro> _ovrCamera;
 		std::unique_ptr<unsigned char[]> _dataLeft, _dataRight;
 		std::size_t _imgBufferSize;
@@ -59,5 +60,7 @@ namespace ImageProcessing
 		// special OVRVision properties
 		float getCamFocalPoint() const;
 		float getHMDRightGap(const int at) const;
+		void setProcessingMode(const OVR::Camqt mode);
+		int getProcessingMode() const;
 	};
 }

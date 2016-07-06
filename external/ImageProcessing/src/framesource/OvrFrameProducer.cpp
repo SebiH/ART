@@ -7,7 +7,8 @@ using namespace ImageProcessing;
 OvrFrameProducer::OvrFrameProducer(OVR::Camprop cameraMode)
 	: _isRunning(ATOMIC_VAR_INIT(false)),
 	  _ovrCamera(std::unique_ptr<OVR::OvrvisionPro>(new OVR::OvrvisionPro())),
-	  _mutex()
+	  _mutex(),
+	 _processingMode(OVR::Camqt::OV_CAMQT_DMSRMP)
 {
 	auto openSuccess = _ovrCamera->Open(0, cameraMode);
 
@@ -82,7 +83,7 @@ void OvrFrameProducer::run()
 
 void OvrFrameProducer::query()
 {
-	_ovrCamera->PreStoreCamData(OVR::OV_CAMQT_DMS);
+	_ovrCamera->PreStoreCamData(_processingMode);
 
 	auto dataLeft = _ovrCamera->GetCamImageBGRA(OVR::Cameye::OV_CAMEYE_LEFT);
 	auto dataRight = _ovrCamera->GetCamImageBGRA(OVR::Cameye::OV_CAMEYE_RIGHT);
@@ -214,4 +215,16 @@ float OvrFrameProducer::getCamFocalPoint() const
 float OvrFrameProducer::getHMDRightGap(const int at) const
 {
 	return _ovrCamera->GetHMDRightGap(at);
+}
+
+
+void OvrFrameProducer::setProcessingMode(const OVR::Camqt mode)
+{
+	// TODO: should probably be locked?
+	_processingMode = mode;
+}
+
+int OvrFrameProducer::getProcessingMode() const
+{
+	return _processingMode;
 }

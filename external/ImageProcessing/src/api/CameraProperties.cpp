@@ -121,3 +121,42 @@ extern "C" UNITY_INTERFACE_EXPORT float GetCamFocalPoint()
 		return 0.f;
 	}
 }
+
+
+extern "C" UNITY_INTERFACE_EXPORT int GetProcessingMode()
+{
+	auto frameSource = g_moduleManager->getFrameSource();
+	if (auto ovrFrameProducer = dynamic_cast<ImageProcessing::OvrFrameProducer*>(frameSource.get()))
+	{
+		return static_cast<int>(ovrFrameProducer->getProcessingMode());
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void SetProcessingMode(int mode)
+{
+
+	auto frameSource = g_moduleManager->getFrameSource();
+	if (auto ovrFrameProducer = dynamic_cast<ImageProcessing::OvrFrameProducer*>(frameSource.get()))
+	{
+		switch (mode)
+		{
+		case 0:
+			ovrFrameProducer->setProcessingMode(OVR::Camqt::OV_CAMQT_DMSRMP);
+			break;
+
+		case 1:
+			ovrFrameProducer->setProcessingMode(OVR::Camqt::OV_CAMQT_DMS);
+			break;
+
+		case 2:
+		default:
+			ovrFrameProducer->setProcessingMode(OVR::Camqt::OV_CAMQT_NONE);
+			break;
+		}
+	}
+}
+
