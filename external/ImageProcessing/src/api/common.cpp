@@ -99,64 +99,75 @@ extern "C" UNITY_INTERFACE_EXPORT void SetFrameSource(int sourceId)
 		return;
 	}
 
-
-	// TODO: this was hacked together quickly, could definitely use something better!
-	switch (sourceId)
+	try
 	{
-	case 0:
-		DebugLog("Using OpenCVFrameSource");
-		_frameSource = std::make_shared<OpenCVFrameProducer>();
-		break;
 
-	case 1:
-		DebugLog("Using LeapFrameSource");
-		_frameSource = std::make_shared<LeapFrameSource>();
-		break;
+		// TODO: this was hacked together quickly, could definitely use something better!
+		switch (sourceId)
+		{
+		case 0:
+			DebugLog("Using OpenCVFrameSource");
+			_frameSource = std::make_shared<OpenCVFrameProducer>();
+			break;
 
-
-
-	case 2:
-		DebugLog("Using OVRFrameSource @ 2560x1920 @15fps");
-		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAM5MP_FULL);
-		break;
-
-	case 3:
-		DebugLog("Using OVRFrameSource @ 1920x1080 @ 30fps");
-		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAM5MP_FHD);
-		break;
-
-	case 4:
-		DebugLog("Using OVRFrameSource @ 1280x960 @ 45fps");
-		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMHD_FULL);
-		break;
-
-	case 5:
-		DebugLog("Using OVRFrameSource @ 960x950 @ 60fps");
-		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_FULL);
-		break;
-
-	case 6:
-		DebugLog("Using OVRFrameSource @ 1280x800 @ 60fps");
-		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_WIDE);
-		break;
-
-	case 7:
-		DebugLog("Using OVRFrameSource @ 640x480 @ 90fps");
-		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_VGA);
-		break;
-
-	case 8:
-		DebugLog("Using OVRFrameSource @ 320x240 @ 120fps");
-		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_QVGA);
-		break;
+		case 1:
+			DebugLog("Using LeapFrameSource");
+			_frameSource = std::make_shared<LeapFrameSource>();
+			break;
 
 
 
-	case -1:
-	default:
-		DebugLog("Using NullFrameSource");
+		case 2:
+			DebugLog("Using OVRFrameSource @ 2560x1920 @15fps");
+			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAM5MP_FULL);
+			break;
+
+		case 3:
+			DebugLog("Using OVRFrameSource @ 1920x1080 @ 30fps");
+			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAM5MP_FHD);
+			break;
+
+		case 4:
+			DebugLog("Using OVRFrameSource @ 1280x960 @ 45fps");
+			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMHD_FULL);
+			break;
+
+		case 5:
+			DebugLog("Using OVRFrameSource @ 960x950 @ 60fps");
+			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_FULL);
+			break;
+
+		case 6:
+			DebugLog("Using OVRFrameSource @ 1280x800 @ 60fps");
+			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_WIDE);
+			break;
+
+		case 7:
+			DebugLog("Using OVRFrameSource @ 640x480 @ 90fps");
+			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_VGA);
+			break;
+
+		case 8:
+			DebugLog("Using OVRFrameSource @ 320x240 @ 120fps");
+			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_QVGA);
+			break;
+
+
+
+		case -1:
+		default:
+			DebugLog("Using NullFrameSource");
+			_frameSource = std::make_shared<NullFrameSource>(640, 480);
+			break;
+		}
+	}
+	catch (std::exception e)
+	{
+		auto errorMessage = std::string("Error creating framesource: ") + e.what();
+		DebugLog(errorMessage.c_str());
+
+		DebugLog("Using NullFrameSource due to error");
 		_frameSource = std::make_shared<NullFrameSource>(640, 480);
-		break;
 	}
 }
 
