@@ -11,6 +11,9 @@ namespace ImageProcessingUtil
         private static extern void StartImageProcessing();
 
         [DllImport("ImageProcessing")]
+        private static extern void StopImageProcessing();
+
+        [DllImport("ImageProcessing")]
         private static extern int RegisterOpenCVTextureWriter(string modulename, string windowname);
 
         [DllImport("ImageProcessing")]
@@ -57,7 +60,7 @@ namespace ImageProcessingUtil
         static void Main(string[] args)
         {
             // Test things without unity
-            SetFrameSource(4);
+            SetFrameSource(-1);
             StartImageProcessing();
             int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
             int handleRoi = RegisterOpenCVTextureWriter("ROI", "testWindow2");
@@ -75,9 +78,15 @@ namespace ImageProcessingUtil
                 UpdateTextures();
                 keyPressed = (char)OpenCvWaitKey(5);
 
-                if (keyPressed == 's')
+                if (keyPressed == 'p')
                 {
                     SetProcessingMode((GetProcessingMode() + 1) % 3);
+                }
+
+                if (keyPressed == 's')
+                {
+                    StopImageProcessing();
+                    break;
                 }
 
                 if (keyPressed == 'r')
