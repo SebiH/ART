@@ -56,13 +56,13 @@ static void UNITY_INTERFACE_API OnGraphicsDeviceEvent(UnityGfxDeviceEventType ev
 	case kUnityGfxDeviceEventInitialize:
 	{
 		s_RendererType = s_Graphics->GetRenderer();
-		InitializeImageProcessing();
+		//InitializeImageProcessing();
 		break;
 	}
 	case kUnityGfxDeviceEventShutdown:
 	{
 		s_RendererType = kUnityGfxRendererNull;
-		ShutdownImageProcessing();
+		//ShutdownImageProcessing();
 		break;
 	}
 	case kUnityGfxDeviceEventBeforeReset:

@@ -14,6 +14,9 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern void StartImageProcessing();
 
+        [DllImport("ImageProcessing")]
+        private static extern void StopImageProcessing();
+
         // Deprecated for native rendering plugin
         //[DllImport("ImageProcessing")]
         //private static extern void UpdateTextures();
@@ -125,11 +128,20 @@ namespace Assets.Scripts.RealCamera
 
         #endregion
 
+        void Awake()
+        {
+            RegisterDebugCallback(new DebugCallback(DebugMethod));
+            SetFrameSource((int)FrameSource);
+            StartImageProcessing();
+        }
+
+        void OnDestroy()
+        {
+            StopImageProcessing();
+        }
+
         IEnumerator Start()
         {
-            SetFrameSource(2);
-
-            RegisterDebugCallback(new DebugCallback(DebugMethod));
             yield return StartCoroutine("CallPluginAtEndOfFrames");
         }
 
@@ -157,6 +169,8 @@ namespace Assets.Scripts.RealCamera
 
         #region Camera Properties
 
+
+
         [Range(1, 47)]
         public int Gain = 8;
         private int _prevGain;
@@ -183,6 +197,24 @@ namespace Assets.Scripts.RealCamera
         [Range(0, 4095)]
         public int WhiteBalanceB = 1738;
         private int _prevWhiteBalanceB;
+
+        public enum CameraSource
+        {
+            OpenCV = 0,
+            LeapMotion = 1,
+
+            Ovr2560x1920x15 = 2,
+            Ovr1920x1080x30 = 3,
+            Ovr1280x960x45 = 4,
+            Ovr960x950x60 = 5,
+            Ovr1280x800x60 = 6,
+            Ovr640x480x90 = 7,
+            Ovr320x240x120 = 8,
+
+            None = -1
+        }
+
+        public CameraSource FrameSource = CameraSource.None;
 
 
         public enum OvrProcessingMode

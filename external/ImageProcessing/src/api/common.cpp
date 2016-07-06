@@ -35,15 +35,21 @@ std::map<int, std::pair<std::shared_ptr<ThreadedModule>, std::shared_ptr<ITextur
 
 void InitializeImageProcessing()
 {
-	if (_frameSource.get() == nullptr)
-	{
-		SetFrameSource(_currentFrameSourceIdHack);
-	}
-
 	if (!_isInitialized)
 	{
-		_isInitialized = true;
-		g_moduleManager = std::make_unique<ModuleManager>(_frameSource);
+		if (_frameSource.get() != nullptr)
+		{
+			_isInitialized = true;
+			g_moduleManager = std::make_unique<ModuleManager>(_frameSource);
+		}
+		else
+		{
+			DebugLog("No Framesource set! Use SetFrameSource() first!");
+		}
+	}
+	else
+	{
+		DebugLog("ImageProcessing already started, cannot start ImageProcessing twice!");
 	}
 }
 
@@ -56,10 +62,19 @@ void ShutdownImageProcessing()
 		_frameSource.reset();
 		g_moduleManager.reset();
 	}
+	else
+	{
+		DebugLog("ImageProcessing already started, cannot start ImageProcessing twice!");
+	}
 }
 
 
-// Unnecessary within Unity!
+extern "C" UNITY_INTERFACE_EXPORT void StopImageProcessing()
+{
+	ShutdownImageProcessing();
+}
+
+
 extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
 {
 	// quick hack...
@@ -78,79 +93,70 @@ extern "C" UNITY_INTERFACE_EXPORT void UpdateTextures()
 
 extern "C" UNITY_INTERFACE_EXPORT void SetFrameSource(int sourceId)
 {
-	// TODO: this was hacked together quickly, could definitely use something better!
-	if (_currentFrameSourceIdHack != sourceId || _frameSource.get() == nullptr)
+	if (_isInitialized)
 	{
-		_currentFrameSourceIdHack = sourceId;
-		bool restartImageProcessing = false;
+		DebugLog("Cannot set framesource while ImageProcessing is running");
+		return;
+	}
 
-		if (_isInitialized)
-		{
-			restartImageProcessing = true;
-			ShutdownImageProcessing();
-		}
-	
-		switch (sourceId)
-		{
-		case 0:
-			DebugLog("Using OpenCVFrameSource");
-			_frameSource = std::make_shared<OpenCVFrameProducer>();
-			break;
 
-		case 1:
-			DebugLog("Using LeapFrameSource");
-			_frameSource = std::make_shared<LeapFrameSource>();
-			break;
+	// TODO: this was hacked together quickly, could definitely use something better!
+	switch (sourceId)
+	{
+	case 0:
+		DebugLog("Using OpenCVFrameSource");
+		_frameSource = std::make_shared<OpenCVFrameProducer>();
+		break;
+
+	case 1:
+		DebugLog("Using LeapFrameSource");
+		_frameSource = std::make_shared<LeapFrameSource>();
+		break;
 
 
 
-		case 2:
-			DebugLog("Using OVRFrameSource @ 2560x1920 @15fps");
-			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAM5MP_FULL);
-			break;
+	case 2:
+		DebugLog("Using OVRFrameSource @ 2560x1920 @15fps");
+		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAM5MP_FULL);
+		break;
 
-		case 3:
-			DebugLog("Using OVRFrameSource @ 1920x1080 @ 30fps");
-			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAM5MP_FHD);
-			break;
+	case 3:
+		DebugLog("Using OVRFrameSource @ 1920x1080 @ 30fps");
+		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAM5MP_FHD);
+		break;
 
-		case 4:
-			DebugLog("Using OVRFrameSource @ 1280x960 @ 45fps");
-			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMHD_FULL);
-			break;
+	case 4:
+		DebugLog("Using OVRFrameSource @ 1280x960 @ 45fps");
+		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMHD_FULL);
+		break;
 
-		case 5:
-			DebugLog("Using OVRFrameSource @ 960x950 @ 60fps");
-			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_FULL);
-			break;
+	case 5:
+		DebugLog("Using OVRFrameSource @ 960x950 @ 60fps");
+		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_FULL);
+		break;
 
-		case 6:
-			DebugLog("Using OVRFrameSource @ 1280x800 @ 60fps");
-			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_WIDE);
-			break;
+	case 6:
+		DebugLog("Using OVRFrameSource @ 1280x800 @ 60fps");
+		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_WIDE);
+		break;
 
-		case 7:
-			DebugLog("Using OVRFrameSource @ 640x480 @ 90fps");
-			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_VGA);
-			break;
+	case 7:
+		DebugLog("Using OVRFrameSource @ 640x480 @ 90fps");
+		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_VGA);
+		break;
 
-		case 8:
-			DebugLog("Using OVRFrameSource @ 320x240 @ 120fps");
-			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_QVGA);
-			break;
+	case 8:
+		DebugLog("Using OVRFrameSource @ 320x240 @ 120fps");
+		_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_QVGA);
+		break;
 
 
 
-		default:
-			DebugLog("Using NullFrameSource");
-			_frameSource = std::make_shared<NullFrameSource>(640, 480);
-			break;
-		}
-
-		if (restartImageProcessing)
-		{
-			InitializeImageProcessing();
-		}
+	case -1:
+	default:
+		DebugLog("Using NullFrameSource");
+		_frameSource = std::make_shared<NullFrameSource>(640, 480);
+		break;
 	}
 }
 
