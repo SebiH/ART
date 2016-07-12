@@ -33,7 +33,7 @@ namespace Assets.Scripts.Demo
 
             if (AutoAlign)
             {
-                var aspectRatio = new Vector2(imageWidth / imageHeight, -1);
+                var aspectRatio = new Vector2((float)(imageWidth) / (float)(imageHeight), -1);
                 transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
 
                 float xOffset = 0;
