@@ -23,12 +23,16 @@ public class CalibrateDisplay : MonoBehaviour
         if (!_isCalibrated)
         {
             var deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-            var isTriggerPressed = deviceIndex != -1 && SteamVR_Controller.Input(deviceIndex).GetPressDown(SteamVR_Controller.ButtonMask.Trigger);
+            var isTriggerPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPressDown(SteamVR_Controller.ButtonMask.Trigger);
             var isKeyPressed = Input.GetKeyDown(KeyCode.Space);
 
             if (isTriggerPressed || isKeyPressed)
             {
-                SteamVR_Controller.Input(deviceIndex).TriggerHapticPulse(1000);
+                if (deviceIndex != -1)
+                {
+                    SteamVR_Controller.Input(deviceIndex).TriggerHapticPulse(1000);
+                }
+
                 SetPoint(transform.position);
                 CalibratePoints();
                 
