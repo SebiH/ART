@@ -56,11 +56,18 @@ namespace ImageProcessingUtil
         [DllImport("ImageProcessing")]
         private static extern int GetProcessingMode();
 
+        private enum FrameSource
+        {
+            None = -1,
+            Ovr1280x960x45fps = 4,
+            Ovr1280x800x60fps = 6,
+            Ovr320x240x120fps = 8
+        }
 
         static void Main(string[] args)
         {
             // Test things without unity
-            SetFrameSource(-1);
+            SetFrameSource((int)FrameSource.Ovr1280x800x60fps);
             StartImageProcessing();
             int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
             int handleRoi = RegisterOpenCVTextureWriter("ROI", "testWindow2");
