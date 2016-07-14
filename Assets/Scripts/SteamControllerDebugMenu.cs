@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
-public class CalibrateDisplay : MonoBehaviour
+public class SteamControllerDebugMenu : MonoBehaviour
 {
     public GameObject _selectionCollider;
 
@@ -18,7 +17,6 @@ public class CalibrateDisplay : MonoBehaviour
     {
         _possibleSelectedObjects.Remove(other.gameObject);
     }
-
 
 
     void Start()
@@ -39,34 +37,15 @@ public class CalibrateDisplay : MonoBehaviour
                 SetSelectedObjects(_possibleSelectedObjects);
             }
 
-            var isTouchpadActive = device.GetTouchDown(EVRButtonId.k_EButton_Axis0);
+            var isTouchpadActive = device.GetTouchDown(SteamVR_Controller.ButtonMask.Axis0);
             if (isTouchpadActive)
             {
-                var axis1 = device.GetAxis(EVRAxisId.k_Axis1);
-            }
-        }
-
-
-        if (!_isCalibrated)
-        {
-            var deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-            var isTriggerPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPressDown(SteamVR_Controller.ButtonMask.Trigger);
-            var isKeyPressed = Input.GetKeyDown(KeyCode.Space);
-
-            if (isTriggerPressed || isKeyPressed)
-            {
-                if (deviceIndex != -1)
-                {
-                    SteamVR_Controller.Input(deviceIndex).TriggerHapticPulse(1000);
-                }
-
-                SetPoint(transform.position);
-                CalibratePoints();
-                
-                // for initial testing
-                var testObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                testObj.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-                testObj.transform.position = transform.position;
+                var axis0 = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
+                var axis1 = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis1);
+                var axis2 = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis2);
+                Debug.Log(axis0);
+                Debug.Log(axis1);
+                Debug.Log(axis2);
             }
         }
     }
