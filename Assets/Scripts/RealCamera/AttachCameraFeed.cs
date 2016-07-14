@@ -40,7 +40,7 @@ public class AttachCameraFeed : MonoBehaviour
             }
             else if (Output == OutputType.Left)
             {
-                xOffset = ImageProcessing.GetHMDRightGap().x - 0.040f;
+                xOffset = -0.032f; //ImageProcessing.GetHMDRightGap().x - 0.040f;
             }
 
             transform.localPosition = new Vector3(xOffset, 0.0f, ImageProcessing.CameraFocalPoint + 0.02f);
