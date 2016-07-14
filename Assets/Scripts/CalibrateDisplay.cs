@@ -12,6 +12,8 @@ public class CalibrateDisplay : MonoBehaviour
     private Vector3 _bottomLeftCorner;
     private Vector3 _bottomRightCorner;
 
+    public BarObjectsGraph _calibratedObject;
+
     void Start()
     {
         _isCalibrated = false;
@@ -22,9 +24,11 @@ public class CalibrateDisplay : MonoBehaviour
     {
         if (!_isCalibrated)
         {
-            var deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-            var isTriggerPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPressDown(SteamVR_Controller.ButtonMask.Trigger);
+            var deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+            var isTriggerPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPress(SteamVR_Controller.ButtonMask.Trigger);
             var isKeyPressed = Input.GetKeyDown(KeyCode.Space);
+
+            var isGripPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPressDown(SteamVR_Controller.ButtonMask.Grip);
 
             if (isTriggerPressed || isKeyPressed)
             {
@@ -33,13 +37,28 @@ public class CalibrateDisplay : MonoBehaviour
                     SteamVR_Controller.Input(deviceIndex).TriggerHapticPulse(1000);
                 }
 
-                SetPoint(transform.position);
-                CalibratePoints();
+                _calibratedObject.transform.position = transform.position - new Vector3(0, 0.02f, 0);
+
+                //SetPoint(transform.position);
+                //CalibratePoints();
                 
                 // for initial testing
-                var testObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                testObj.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
-                testObj.transform.position = transform.position;
+                //var testObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                //testObj.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+                //testObj.transform.position = transform.position;
+            }
+
+            if (isGripPressed)
+            {
+                _calibratedObject.RegenerateGraph();
+            }
+
+            var isTouchpadPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPress(SteamVR_Controller.ButtonMask.Touchpad);
+            if (isTouchpadPressed)
+            {
+                var axis0 = SteamVR_Controller.Input(deviceIndex).GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
+                var prevScale = _calibratedObject.transform.localScale;
+                _calibratedObject.transform.localScale = new Vector3(prevScale.x + axis0.x * 0.0005f, prevScale.y, prevScale.z + axis0.y * 0.0005f);
             }
         }
     }
@@ -47,35 +66,53 @@ public class CalibrateDisplay : MonoBehaviour
 
     private void SetPoint(Vector3 pos)
     {
-        var distThreshold = 0.1; // in meter
-        var nearbyPoints = _calibratedPoints.Where(@v => (@v - pos).sqrMagnitude <= distThreshold);
+        //var distThreshold = 0.1; // in meter
+        //var nearbyPoints = _calibratedPoints.Where(@v => (@v - pos).sqrMagnitude <= distThreshold);
 
-        if (nearbyPoints.Any())
+        //if (nearbyPoints.Any())
+        //{
+        //    // use mean of both points
+        //    // TODO: don't use only first point
+        //    pos = (pos + nearbyPoints.First()) / 2;
+        //}
+
+        //_calibratedPoints.Add(pos);
+
+        if (_topLeftCorner == null)
         {
-            // use mean of both points
-            // TODO: don't use only first point
-            pos = (pos + nearbyPoints.First()) / 2;
+            _topLeftCorner = pos;
         }
-
-        _calibratedPoints.Add(pos);
+        else if (_topRightCorner == null)
+        {
+            _topRightCorner = pos;
+        }
+        else if (_bottomLeftCorner == null)
+        {
+            _bottomLeftCorner = pos;
+        }
+        else if (_bottomRightCorner == null)
+        {
+            _bottomRightCorner = pos;
+            _isCalibrated = true;
+        }
     }
 
 
     private void CalibratePoints()
     {
-        if (_calibratedPoints.Count == 1)
-        {
-            // TODO: nyi
-        }
-        else if (_calibratedPoints.Count > 1)
-        {
-            // TODO: nyi
+        //if (_calibratedPoints.Count == 1)
+        //{
+        //    // TODO: nyi
+        //}
+        //else if (_calibratedPoints.Count > 1)
+        //{
+        //    // TODO: nyi
 
-            if (_calibratedPoints.Count == 4)
-            {
-                _isCalibrated = true;
-            }
-        }
+        //    if (_calibratedPoints.Count == 4)
+        //    {
+        //        _isCalibrated = true;
+        //    }
+        //}
        
     }
 }

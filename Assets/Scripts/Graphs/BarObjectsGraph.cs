@@ -21,7 +21,7 @@ public class BarObjectsGraph : MonoBehaviour
 	void Start ()
     {
         dataProvider = new RandomDataProvider();
-	}
+    }
 	
 
 	// Update is called once per frame
@@ -77,7 +77,7 @@ public class BarObjectsGraph : MonoBehaviour
                 {
                     bar.transform.parent = transform;
                     dataPoint.TargetHeight = data[x, y];
-                    dataPoint.SetPosition(x, y);
+                    dataPoint.SetPosition(2 * x, 2 * y);
                 }
 
                 ingameBars[x, y] = bar;
@@ -88,8 +88,10 @@ public class BarObjectsGraph : MonoBehaviour
     /**
      *  Reuses existing bars, if possible.
      */
-    private void RegenerateGraph()
+    public void RegenerateGraph()
     {
+        data = new RandomDataProvider().GetData();
+
         var isInitialised = (ingameBars != null);
         var hasSameDimensions = (isInitialised && ingameBars.GetLength(0) == data.GetLength(0) && ingameBars.GetLength(1) == data.GetLength(1));
 

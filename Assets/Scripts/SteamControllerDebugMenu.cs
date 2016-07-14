@@ -37,15 +37,10 @@ public class SteamControllerDebugMenu : MonoBehaviour
                 SetSelectedObjects(_possibleSelectedObjects);
             }
 
-            var isTouchpadActive = device.GetTouchDown(SteamVR_Controller.ButtonMask.Axis0);
+            var isTouchpadActive = device.GetTouch(SteamVR_Controller.ButtonMask.Axis0);
             if (isTouchpadActive)
             {
                 var axis0 = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
-                var axis1 = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis1);
-                var axis2 = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis2);
-                Debug.Log(axis0);
-                Debug.Log(axis1);
-                Debug.Log(axis2);
             }
         }
     }
