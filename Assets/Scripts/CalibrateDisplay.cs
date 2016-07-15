@@ -29,36 +29,67 @@ public class CalibrateDisplay : MonoBehaviour
             var isKeyPressed = Input.GetKeyDown(KeyCode.Space);
 
             var isGripPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPressDown(SteamVR_Controller.ButtonMask.Grip);
+            var isTouchpadPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPress(SteamVR_Controller.ButtonMask.Touchpad);
 
-            if (isTriggerPressed || isKeyPressed)
+            if (isGripPressed)
             {
-                if (deviceIndex != -1)
+                if (isTriggerPressed)
                 {
-                    SteamVR_Controller.Input(deviceIndex).TriggerHapticPulse(1000);
+                    _calibratedObject.ClearBars();
                 }
+                else
+                {
+                    _calibratedObject.RegenerateGraph();
+                }
+            }
 
-                _calibratedObject.transform.position = transform.position - new Vector3(0, 0.02f, 0);
+            if (isTriggerPressed)
+            {
+                //if (deviceIndex != -1)
+                //{
+                //    SteamVR_Controller.Input(deviceIndex).TriggerHapticPulse(1000);
+                //}
 
                 //SetPoint(transform.position);
                 //CalibratePoints();
-                
+
                 // for initial testing
                 //var testObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 //testObj.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
                 //testObj.transform.position = transform.position;
-            }
 
-            if (isGripPressed)
-            {
-                _calibratedObject.RegenerateGraph();
-            }
 
-            var isTouchpadPressed = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPress(SteamVR_Controller.ButtonMask.Touchpad);
-            if (isTouchpadPressed)
-            {
+
+
                 var axis0 = SteamVR_Controller.Input(deviceIndex).GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
-                var prevScale = _calibratedObject.transform.localScale;
-                _calibratedObject.transform.localScale = new Vector3(prevScale.x + axis0.x * 0.0005f, prevScale.y, prevScale.z + axis0.y * 0.0005f);
+                var prevRotation = _calibratedObject.transform.rotation.eulerAngles;
+
+                if (Mathf.Abs(axis0.x) > 0.2 || Mathf.Abs(axis0.y) > 0.2)
+                {
+                    _calibratedObject.transform.rotation = Quaternion.Euler(prevRotation.x + axis0.x, prevRotation.y + axis0.y, prevRotation.z);
+                }
+                else if (isTouchpadPressed)
+                {
+                    _calibratedObject.transform.position = transform.position - new Vector3(0, 0.08f, 0);
+                }
+            }
+            else
+            {
+
+                if (isTouchpadPressed)
+                {
+                    var axis0 = SteamVR_Controller.Input(deviceIndex).GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
+                    var prevScale = _calibratedObject.transform.localScale;
+
+                    if (Mathf.Abs(axis0.x) > 0.2 || Mathf.Abs(axis0.y) > 0.2)
+                    {
+                        _calibratedObject.transform.localScale = new Vector3(prevScale.x + axis0.x * 0.0005f, prevScale.y, prevScale.z + axis0.y * 0.0005f);
+                    }
+                    else
+                    {
+                        _calibratedObject.HighlightRandomData();
+                    }
+                }
             }
         }
     }

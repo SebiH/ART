@@ -48,10 +48,22 @@ public class BarObjectsGraph : MonoBehaviour
         }
 	}
 
-
-    private void GenerateGraph()
+    public void HighlightRandomData()
     {
-        // clean up previous bars
+        var startPoint = new Vector2(Random.Range(0, data.GetLength(0)), Random.Range(0, data.GetLength(1)));
+        var selectedRadius = Random.Range(1f, Mathf.Max(data.GetLength(0), data.GetLength(1)) / 2);
+
+        for (int x = 0; x < ingameBars.GetLength(0); x++)
+        {
+            for (int y = 0; y < ingameBars.GetLength(1); y++)
+            {
+                ingameBars[x, y].GetComponent<DataPoint>().IsHighlighted = ((new Vector2(x, y) - startPoint).magnitude < selectedRadius);
+            }
+        }
+    }
+
+    public void ClearBars()
+    {
         if (ingameBars != null)
         {
             foreach (var bar in ingameBars)
@@ -59,6 +71,13 @@ public class BarObjectsGraph : MonoBehaviour
                 Destroy(bar);
             }
         }
+
+        ingameBars = null;
+    }
+
+    private void GenerateGraph()
+    {
+        ClearBars();
 
         ingameBars = new GameObject[data.GetLength(0), data.GetLength(1)];
 
