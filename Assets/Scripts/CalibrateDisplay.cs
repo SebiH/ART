@@ -64,11 +64,12 @@ public class CalibrateDisplay : MonoBehaviour
                 var axis0 = SteamVR_Controller.Input(deviceIndex).GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
                 var prevRotation = _calibratedObject.transform.rotation.eulerAngles;
 
-                if (Mathf.Abs(axis0.x) > 0.2 || Mathf.Abs(axis0.y) > 0.2)
-                {
-                    _calibratedObject.transform.rotation = Quaternion.Euler(prevRotation.x + axis0.x, prevRotation.y + axis0.y, prevRotation.z);
-                }
-                else if (isTouchpadPressed)
+                //if (Mathf.Abs(axis0.x) > 0.2 || Mathf.Abs(axis0.y) > 0.2)
+                //{
+                //    _calibratedObject.transform.rotation = Quaternion.Euler(prevRotation.x + axis0.x, prevRotation.y + axis0.y, prevRotation.z);
+                //}
+                //else 
+                if (isTouchpadPressed)
                 {
                     _calibratedObject.transform.position = transform.position - new Vector3(0, 0.08f, 0);
                 }
@@ -81,14 +82,14 @@ public class CalibrateDisplay : MonoBehaviour
                     var axis0 = SteamVR_Controller.Input(deviceIndex).GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
                     var prevScale = _calibratedObject.transform.localScale;
 
-                    if (Mathf.Abs(axis0.x) > 0.2 || Mathf.Abs(axis0.y) > 0.2)
-                    {
+                    //if (Mathf.Abs(axis0.x) > 0.2 || Mathf.Abs(axis0.y) > 0.2)
+                    //{
                         _calibratedObject.transform.localScale = new Vector3(prevScale.x + axis0.x * 0.0005f, prevScale.y, prevScale.z + axis0.y * 0.0005f);
-                    }
-                    else
-                    {
-                        _calibratedObject.HighlightRandomData();
-                    }
+                    //}
+                    //else
+                    //{
+                    //    _calibratedObject.HighlightRandomData();
+                    //}
                 }
             }
         }
