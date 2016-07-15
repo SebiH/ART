@@ -36,7 +36,7 @@ namespace OptitrackManagement
         
         public OptiTrackRigidBody getRigidbody(string name)
         {
-            return _rigidBody.First(b => b.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase));
+            return _rigidBody.FirstOrDefault(b => b.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

@@ -43,10 +43,18 @@ namespace OptitrackManagement
             return true;
         }
 
+        bool _firstByteReceived = false;
+
         protected void ReceiveCallback(IAsyncResult ar)
         {
             try
             {
+                if (!_firstByteReceived)
+                {
+                    Debug.Log("[OptitrackSocket] Received first packet");
+                    _firstByteReceived = true;
+                }
+
                 //Debug.Log("[UDP multicast] Start ReceiveCallback");
                 // Retrieve the state object and the client socket 
                 // from the asynchronous state object.
@@ -82,6 +90,7 @@ namespace OptitrackManagement
             }
             catch (Exception e)
             {
+                Debug.Log("[OptitrackSocket] Encountered error");
                 Debug.LogError(e.ToString());
             }
 

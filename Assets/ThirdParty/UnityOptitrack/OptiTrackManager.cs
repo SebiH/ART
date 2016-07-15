@@ -113,11 +113,18 @@ public class OptiTrackManager : MonoBehaviour
 
     private Vector3 getPosition(OptiTrackRigidBody body)
     {
-        var pos = origin + body.position * scale;
-        pos.x = -pos.x; // not really sure if this is the best way to do it
-                        //pos.y = pos.y; // these may change depending on your configuration and calibration
-                        //pos.z = -pos.z;
-        return pos;
+        if (body != null)
+        {
+            var pos = origin + body.position * scale;
+            pos.x = -pos.x; // not really sure if this is the best way to do it
+                            //pos.y = pos.y; // these may change depending on your configuration and calibration
+                            //pos.z = -pos.z;
+            return pos;
+        }
+        else
+        {
+            return Vector3.zero;
+        }
     }
 
     public Quaternion getOrientation(string rigidbodyName)
@@ -151,16 +158,23 @@ public class OptiTrackManager : MonoBehaviour
 
     private Quaternion getOrientation(OptiTrackRigidBody body)
     {
-        Quaternion rot = body.orientation;
+        if (body != null)
+        {
+            Quaternion rot = body.orientation;
 
-        // change the handedness from motive
-        //rot = new Quaternion(rot.z, rot.y, rot.x, rot.w); // depending on calibration
+            // change the handedness from motive
+            //rot = new Quaternion(rot.z, rot.y, rot.x, rot.w); // depending on calibration
 
-        // Invert pitch and yaw
-        Vector3 euler = rot.eulerAngles;
-        rot.eulerAngles = new Vector3(euler.x, euler.y, euler.z); // these may change depending on your calibration
+            // Invert pitch and yaw
+            Vector3 euler = rot.eulerAngles;
+            rot.eulerAngles = new Vector3(euler.x, euler.y, euler.z); // these may change depending on your calibration
 
-        return rot;
+            return rot;
+        }
+        else
+        {
+            return Quaternion.identity;
+        }
     }
 
     public void DeInitialize()
