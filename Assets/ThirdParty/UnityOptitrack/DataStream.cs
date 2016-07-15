@@ -1,8 +1,10 @@
-/**
- * Adapted from johny3212
- * Written by Matt Oskamp
- */
 
+
+using System.Linq;
+/**
+* Adapted from johny3212
+* Written by Matt Oskamp
+*/
 namespace OptitrackManagement
 {
 
@@ -30,6 +32,11 @@ namespace OptitrackManagement
         public OptiTrackRigidBody getRigidbody(int index)
         {
             return _rigidBody[index];
+        }
+        
+        public OptiTrackRigidBody getRigidbody(string name)
+        {
+            return _rigidBody.First(b => b.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase));
         }
     }
 }

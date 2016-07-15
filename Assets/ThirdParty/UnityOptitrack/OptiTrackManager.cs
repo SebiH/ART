@@ -83,20 +83,54 @@ public class OptiTrackManager : MonoBehaviour
         }
     }
 
+    public Vector3 getPosition(string rigidbodyName)
+    {
+        if (_socket.IsInit())
+        {
+            DataStream networkData = _socket.GetDataStream();
+            var body = networkData.getRigidbody(rigidbodyName);
+            return getPosition(body);
+        }
+        else
+        {
+            return Vector3.zero;
+        }
+    }
+
     public Vector3 getPosition(int rigidbodyIndex)
     {
         if (_socket.IsInit())
         {
             DataStream networkData = _socket.GetDataStream();
-            Vector3 pos = origin + networkData.getRigidbody(rigidbodyIndex).position * scale;
-            pos.x = -pos.x; // not really sure if this is the best way to do it
-                            //pos.y = pos.y; // these may change depending on your configuration and calibration
-                            //pos.z = -pos.z;
-            return pos;
+            var body = networkData.getRigidbody(rigidbodyIndex);
+            return getPosition(body);
         }
         else
         {
             return Vector3.zero;
+        }
+    }
+
+    private Vector3 getPosition(OptiTrackRigidBody body)
+    {
+        var pos = origin + body.position * scale;
+        pos.x = -pos.x; // not really sure if this is the best way to do it
+                        //pos.y = pos.y; // these may change depending on your configuration and calibration
+                        //pos.z = -pos.z;
+        return pos;
+    }
+
+    public Quaternion getOrientation(string rigidbodyName)
+    {
+        if (_socket.IsInit())
+        {
+            DataStream networkData = _socket.GetDataStream();
+            var body = networkData.getRigidbody(rigidbodyName);
+            return getOrientation(body);
+        }
+        else
+        {
+            return Quaternion.identity;
         }
     }
 
@@ -106,16 +140,8 @@ public class OptiTrackManager : MonoBehaviour
         if (_socket.IsInit())
         {
             DataStream networkData = _socket.GetDataStream();
-            Quaternion rot = networkData.getRigidbody(rigidbodyIndex).orientation;
-
-            // change the handedness from motive
-            //rot = new Quaternion(rot.z, rot.y, rot.x, rot.w); // depending on calibration
-
-            // Invert pitch and yaw
-            Vector3 euler = rot.eulerAngles;
-            rot.eulerAngles = new Vector3(euler.x, -euler.y, euler.z); // these may change depending on your calibration
-
-            return rot;
+            var body = networkData.getRigidbody(rigidbodyIndex);
+            return getOrientation(body);
         }
         else
         {
@@ -123,14 +149,23 @@ public class OptiTrackManager : MonoBehaviour
         }
     }
 
+    private Quaternion getOrientation(OptiTrackRigidBody body)
+    {
+        Quaternion rot = body.orientation;
+
+        // change the handedness from motive
+        //rot = new Quaternion(rot.z, rot.y, rot.x, rot.w); // depending on calibration
+
+        // Invert pitch and yaw
+        Vector3 euler = rot.eulerAngles;
+        rot.eulerAngles = new Vector3(euler.x, euler.y, euler.z); // these may change depending on your calibration
+
+        return rot;
+    }
+
     public void DeInitialize()
     {
         _socket.Close();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
