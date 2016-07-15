@@ -117,7 +117,7 @@ public class OptiTrackManager : MonoBehaviour
         if (body != null)
         {
             var pos = origin + body.position * scale;
-            pos.x = -pos.x; // not really sure if this is the best way to do it
+            //pos.x = -pos.x; // not really sure if this is the best way to do it
                             //pos.y = pos.y; // these may change depending on your configuration and calibration
                             //pos.z = -pos.z;
             return pos;
@@ -167,8 +167,8 @@ public class OptiTrackManager : MonoBehaviour
             //rot = new Quaternion(rot.z, rot.y, rot.x, rot.w); // depending on calibration
 
             // Invert pitch and yaw
-            Vector3 euler = rot.eulerAngles;
-            rot.eulerAngles = new Vector3(euler.x, euler.y, euler.z); // these may change depending on your calibration
+            //Vector3 euler = rot.eulerAngles;
+            //rot = Quaternion.Euler(euler.x, -euler.y, euler.z); // these may change depending on your calibration
 
             return rot;
         }
