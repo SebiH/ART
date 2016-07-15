@@ -15,6 +15,7 @@ public class OptiTrackManager : MonoBehaviour
     public float scale = 20.0f;
 
     public string OptitrackIPAddress = "127.0.0.1";
+    public string LocalIpAddress = "127.0.0.1";
     public int OptitrackPort = 1511;
 
     // set this to wherever you want the center to be in your scene
@@ -64,7 +65,7 @@ public class OptiTrackManager : MonoBehaviour
                 throw new Exception("Unknown ConnectionType " + ConnectionType.ToString());
         }
 
-        _socket.Start(IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
+        _socket.Start(IPAddress.Parse(LocalIpAddress), IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
         Application.runInBackground = true;
     }
 
@@ -78,7 +79,7 @@ public class OptiTrackManager : MonoBehaviour
         }
         else
         {
-            _socket.Start(IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
+            _socket.Start(IPAddress.Parse(LocalIpAddress), IPAddress.Parse(OptitrackIPAddress), OptitrackPort);
             return getOptiTrackRigidBody(index);
         }
     }
@@ -177,7 +178,7 @@ public class OptiTrackManager : MonoBehaviour
         }
     }
 
-    public void DeInitialize()
+    void OnDestroy()
     {
         _socket.Close();
     }

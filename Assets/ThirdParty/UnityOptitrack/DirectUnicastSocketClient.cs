@@ -9,7 +9,7 @@ namespace OptitrackManagement
     {
         private Socket _client;
 
-        override public void Start(IPAddress ip, int port)
+        override public void Start(IPAddress localIp, IPAddress destinationIp, int port)
         {
             try
             {
@@ -20,11 +20,11 @@ namespace OptitrackManagement
                 _client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
                 //_client.Connect(ip, port);
-                _client.Bind(new IPEndPoint(IPAddress.Parse("192.168.178.76"), 1510));
+                _client.Bind(new IPEndPoint(localIp, 1510));
 
                 // natnet only starts streaming after receiving a PING packet
                 byte[] pingPacket = { 0, 0, 0, 0 };
-                _client.Connect(ip, port);
+                _client.Connect(destinationIp, port);
                 _client.Send(pingPacket);
 
                 _isInitRecieveStatus = Receive(_client);

@@ -14,8 +14,7 @@ namespace OptitrackManagement
         protected bool _isInitRecieveStatus = false;
         protected bool _isIsActiveThread = false;
 
-
-        abstract public void Start(IPAddress ipAddress, int port);
+        abstract public void Start(IPAddress localIpAddress, IPAddress destinationIpAddress, int destinationPort);
         abstract public void Close();
 
 
@@ -53,6 +52,10 @@ namespace OptitrackManagement
                 {
                     Debug.Log("[OptitrackSocket] Received first packet");
                     _firstByteReceived = true;
+                }
+                else
+                {
+                    Debug.Log("[OptitrackSocket] Received subsequent packet");
                 }
 
                 //Debug.Log("[UDP multicast] Start ReceiveCallback");

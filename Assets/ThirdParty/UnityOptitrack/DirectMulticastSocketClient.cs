@@ -19,7 +19,7 @@ namespace OptitrackManagement
         //private int _commandPort = 1510;
         //private string _multicastIPAddress = "239.255.42.99";
 
-        private void StartClient(IPAddress ip, int dataPort)
+        private void StartClient(IPAddress localIp, IPAddress destinationIp, int dataPort)
         {
             // Connect to a remote device.
             try
@@ -31,10 +31,10 @@ namespace OptitrackManagement
                 client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 //client.ExclusiveAddressUse = false;
 
-                IPEndPoint ipep = new IPEndPoint(IPAddress.Any, dataPort);
+                IPEndPoint ipep = new IPEndPoint(localIp, dataPort);
                 client.Bind(ipep);
 
-                client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(ip, IPAddress.Any));
+                client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, new MulticastOption(destinationIp, IPAddress.Any));
 
                 _isInitRecieveStatus = Receive(client);
                 _isIsActiveThread = _isInitRecieveStatus;
@@ -47,9 +47,9 @@ namespace OptitrackManagement
         }
 
 
-        override public void Start(IPAddress ip, int port)
+        override public void Start(IPAddress clientIp, IPAddress destinationIp, int port)
         {
-            StartClient(ip, port);
+            StartClient(clientIp, destinationIp, port);
         }
 
         override public void Close()
