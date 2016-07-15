@@ -53,10 +53,6 @@ namespace OptitrackManagement
                     Debug.Log("[OptitrackSocket] Received first packet");
                     _firstByteReceived = true;
                 }
-                else
-                {
-                    Debug.Log("[OptitrackSocket] Received subsequent packet");
-                }
 
                 //Debug.Log("[UDP multicast] Start ReceiveCallback");
                 // Retrieve the state object and the client socket 
@@ -143,6 +139,8 @@ namespace OptitrackManagement
 
                     Buffer.BlockCopy(b, offset, iData, 0, 4); offset += 4;
                     _strFrameLog += String.Format("{0}:" + strName + ": marker count : {1}\n", i, iData[0]);
+
+                    _dataStream._rigidBody[i].name = strName;
 
                     nBytes = iData[0] * 3 * 4;
                     Buffer.BlockCopy(b, offset, fData, 0, nBytes); offset += nBytes;
