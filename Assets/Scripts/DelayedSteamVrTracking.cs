@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
 
@@ -8,7 +9,7 @@ namespace Assets.Scripts
      *  Modified SteamVR_TrackedObject script.
      *  Changes:
      *  - Added option to turn off rotation/position tracking
-     *  - Added delay parameter (TODO)
+     *  - Added delay parameter
      *
      *  Would be best to inherit from SteamVR_TrackedObject, but relevant methods are private
      */
@@ -16,6 +17,30 @@ namespace Assets.Scripts
     {
         public bool TrackRotation = true;
         public bool TrackPosition = true;
+
+        [Range(0, 1)]
+        // Delay in ms
+        public float TrackingDelay = 0f;
+
+        private Stack<DelayedPose> _trackedPoses = new Stack<DelayedPose>();
+        
+        class DelayedPose
+        {
+            public float TimeOfPose;
+            public SteamVR_Utils.RigidTransform Pose;
+
+            public DelayedPose()
+            {
+                TimeOfPose = Time.time;
+            }
+
+            public DelayedPose(SteamVR_Utils.RigidTransform pose)
+                : this()
+            {
+                Pose = pose;
+            }
+        };
+
 
         public enum EIndex
         {
@@ -72,13 +97,17 @@ namespace Assets.Scripts
                 pose.pos.y *= origin.localScale.y;
                 pose.pos.z *= origin.localScale.z;
 
-                ApplyPose(pose);
+                StashPose(pose);
             }
             else
             {
-                transform.localPosition = pose.pos;
-                transform.localRotation = pose.rot;
+                StashPose(pose);
             }
+        }
+
+        private void StashPose(SteamVR_Utils.RigidTransform pose)
+        {
+            _trackedPoses.Push(new DelayedPose(pose));
         }
 
         private void ApplyPose(SteamVR_Utils.RigidTransform pose)
@@ -91,6 +120,25 @@ namespace Assets.Scripts
             if (TrackRotation)
             {
                 transform.rotation = pose.rot;
+            }
+        }
+
+
+        void FixedUpdate()
+        {
+            // Fetch newest applicable pose
+            var currentTime = Time.time;
+
+            DelayedPose pose = null;
+
+            while (_trackedPoses.Peek().TimeOfPose + TrackingDelay < currentTime)
+            {
+                pose = _trackedPoses.Pop();
+            }
+
+            if (pose != null)
+            {
+                ApplyPose(pose.Pose);
             }
         }
 
