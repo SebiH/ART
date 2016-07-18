@@ -18,7 +18,7 @@ namespace Assets.Scripts
         public bool TrackRotation = true;
         public bool TrackPosition = true;
 
-        [Range(0, 1)]
+        [Range(0, 0.2f)]
         // Delay in ms
         public float TrackingDelay = 0f;
 
