@@ -22,7 +22,7 @@ namespace Assets.Scripts
         // Delay in ms
         public float TrackingDelay = 0f;
 
-        private Stack<DelayedPose> _trackedPoses = new Stack<DelayedPose>();
+        private Queue<DelayedPose> _trackedPoses = new Queue<DelayedPose>();
         
         class DelayedPose
         {
@@ -107,7 +107,7 @@ namespace Assets.Scripts
 
         private void StashPose(SteamVR_Utils.RigidTransform pose)
         {
-            _trackedPoses.Push(new DelayedPose(pose));
+            _trackedPoses.Enqueue(new DelayedPose(pose));
         }
 
         private void ApplyPose(SteamVR_Utils.RigidTransform pose)
@@ -131,9 +131,9 @@ namespace Assets.Scripts
 
             DelayedPose pose = null;
 
-            while (_trackedPoses.Peek().TimeOfPose + TrackingDelay < currentTime)
+            while (_trackedPoses.Count > 0 && _trackedPoses.Peek().TimeOfPose + TrackingDelay < currentTime)
             {
-                pose = _trackedPoses.Pop();
+                pose = _trackedPoses.Dequeue();
             }
 
             if (pose != null)
