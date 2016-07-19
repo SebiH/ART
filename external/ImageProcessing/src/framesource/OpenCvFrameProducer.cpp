@@ -12,16 +12,17 @@ OpenCVFrameProducer::OpenCVFrameProducer()
 {
 	// set camSize manually to avoid gray image..
 	// settings for Logitech C310
-	int camWidth = 640;
-	int camHeight = 480;
-	int fps = 30;
+	//int camWidth = 640;
+	//int camHeight = 480;
+	//int fps = 30;
 	int exposure = -4;
 	int gain = 181;
 	int brightness = 128;
 	int contrast = 32;
 
-	_camera->set(cv::CAP_PROP_FRAME_WIDTH, camWidth);
-	_camera->set(cv::CAP_PROP_FRAME_HEIGHT, camHeight);
+	int camWidth = _camera->get(cv::CAP_PROP_FRAME_WIDTH);
+	int camHeight = _camera->get(cv::CAP_PROP_FRAME_HEIGHT);
+	int fps = _camera->get(cv::CAP_PROP_FPS);
 
 	_camera->set(cv::CAP_PROP_EXPOSURE, exposure);
 	_camera->set(cv::CAP_PROP_GAIN, gain);

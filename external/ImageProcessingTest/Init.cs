@@ -59,6 +59,7 @@ namespace ImageProcessingUtil
         private enum FrameSource
         {
             None = -1,
+            OpenCV = 0,
             Ovr1280x960x45fps = 4,
             Ovr1280x800x60fps = 6,
             Ovr320x240x120fps = 8
@@ -67,7 +68,7 @@ namespace ImageProcessingUtil
         static void Main(string[] args)
         {
             // Test things without unity
-            SetFrameSource((int)FrameSource.Ovr320x240x120fps);
+            SetFrameSource((int)FrameSource.OpenCV);
             StartImageProcessing();
             SetCamExposure(100);
             SetCamGain(1);
