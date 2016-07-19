@@ -20,6 +20,7 @@ public class OptiTrackManager : MonoBehaviour
 
     // set this to wherever you want the center to be in your scene
     public Vector3 origin = Vector3.zero;
+    public Vector3 orientation = Vector3.zero;
 
     private OptitrackSocket _socket = null;
 
@@ -116,10 +117,10 @@ public class OptiTrackManager : MonoBehaviour
     {
         if (body != null)
         {
-            var pos = origin + body.position * scale;
+            var pos = origin + (Quaternion.Euler(orientation) * body.position) * scale;
             //pos.x = -pos.x; // not really sure if this is the best way to do it
-                            //pos.y = pos.y; // these may change depending on your configuration and calibration
-                            //pos.z = -pos.z;
+            //pos.y = pos.y; // these may change depending on your configuration and calibration
+            pos.z = -pos.z;
             return pos;
         }
         else
@@ -167,8 +168,8 @@ public class OptiTrackManager : MonoBehaviour
             //rot = new Quaternion(rot.z, rot.y, rot.x, rot.w); // depending on calibration
 
             // Invert pitch and yaw
-            //Vector3 euler = rot.eulerAngles;
-            //rot = Quaternion.Euler(euler.x, -euler.y, euler.z); // these may change depending on your calibration
+            Vector3 euler = rot.eulerAngles;
+            rot = Quaternion.Euler(-euler.x, -euler.y, euler.z); // these may change depending on your calibration
 
             return rot;
         }
