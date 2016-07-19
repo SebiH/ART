@@ -21,6 +21,8 @@ public class BarObjectsGraph : MonoBehaviour
 	void Start ()
     {
         dataProvider = new RandomDataProvider();
+        data = dataProvider.GetData();
+        RegenerateGraph();
     }
 	
 
