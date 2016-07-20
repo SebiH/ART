@@ -22,6 +22,9 @@ namespace Assets.Scripts
         // Delay in ms
         public float TrackingDelay = 0f;
 
+        public Vector3 RotationOffset = Vector3.zero;
+
+
         private Queue<DelayedPose> _trackedPoses = new Queue<DelayedPose>();
         
         class DelayedPose
@@ -119,7 +122,7 @@ namespace Assets.Scripts
 
             if (TrackRotation)
             {
-                transform.rotation = pose.rot;
+                transform.rotation = Quaternion.Euler(pose.rot.eulerAngles + RotationOffset);
             }
         }
 
