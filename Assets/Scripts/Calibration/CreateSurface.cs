@@ -3,6 +3,9 @@ using System.Collections;
 
 public class CreateSurface : MonoBehaviour
 {
+    // Object containing LineRenderer to simulate where the surface will be placed
+    public GameObject Visualizer;
+
     private Vector3 _startPoint;
     private Vector3 _endPoint;
     private bool _isCreatingSurface = false;
@@ -40,22 +43,26 @@ public class CreateSurface : MonoBehaviour
     {
         _startPoint = position;
         _isCreatingSurface = true;
-        Debug.Log("Start surface");
     }
 
     private void UpdateSurfaceCreation(Vector3 position)
     {
         _endPoint = position;
-        DrawLines();
-        Debug.Log("Updating positions");
+        PreviewSurface();
     }
 
-    private void DrawLines()
+    private void PreviewSurface()
     {
-        var lineRenderer = GetComponent<LineRenderer>();
+        if (Visualizer == null)
+        {
+            Debug.LogWarning("Add Visualiser object for previewing surfaces!");
+            return;
+        }
+
+        var lineRenderer = Visualizer.GetComponent<LineRenderer>();
         if (lineRenderer == null)
         {
-            Debug.LogWarning("Add LineRenderer for creating surfaces!");
+            Debug.LogWarning("Add LineRenderer to Visualiser for previewing surfaces!");
             return;
         }
 
@@ -64,16 +71,30 @@ public class CreateSurface : MonoBehaviour
         var dist = bottomRight - topLeft;
         Vector3 topRight, bottomLeft;
 
+
         if (Mathf.Abs(dist.y) < 0.2f)
         {
+            // create horizontal (e.g. table) surface
             topRight = new Vector3(_endPoint.x, _startPoint.y, _startPoint.z);
             bottomLeft = new Vector3(_startPoint.x, _startPoint.y, _endPoint.z);
             bottomRight.y = _startPoint.y;
+
+            Visualizer.transform.position = _startPoint + new Vector3(dist.x / 2,  0, dist.z / 2);
+            Visualizer.transform.rotation = Quaternion.identity;
+            Visualizer.transform.localScale = new Vector3(dist.x, 0.03f, dist.z);
         }
         else
         {
+            // create vertical (e.g. display) surface
             topRight = new Vector3(_endPoint.x, _startPoint.y, _endPoint.z);
             bottomLeft = new Vector3(_startPoint.x, _endPoint.y, _startPoint.z);
+
+            var rotation = Vector2.Angle(new Vector2(0, 1), new Vector2(dist.x, dist.z));
+            if (dist.x < 0)
+                rotation = -rotation;
+            Visualizer.transform.rotation = Quaternion.Euler(0, rotation, 0);
+            Visualizer.transform.position = _startPoint + new Vector3(dist.x / 2,  dist.y / 2, dist.z / 2);
+            Visualizer.transform.localScale = new Vector3(0.03f, dist.y,  new Vector2(dist.z, dist.x).magnitude);
         }
 
         lineRenderer.SetPositions(new[] { topLeft, topRight, bottomRight, bottomLeft, topLeft });
