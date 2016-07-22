@@ -6,8 +6,11 @@ public class DebugMenuEntry : MonoBehaviour
 {
     public UnityEvent OnSelected;
     public UnityEvent OnDeselected;
+    public UnityEvent OnFocused;
+    public UnityEvent OnUnfocused;
 
     private bool _isSelected = false;
+    private bool _isFocused = false;
 
     void Awake()
     {
@@ -16,17 +19,17 @@ public class DebugMenuEntry : MonoBehaviour
 
     public void Focus()
     {
-        if (!_isSelected)
+        if (!_isSelected && !_isFocused)
         {
-            GetComponent<Renderer>().material.color = Color.yellow;
+            OnFocused.Invoke();
         }
     }
 
     public void Unfocus()
     {
-        if (!_isSelected)
+        if (!_isSelected && _isFocused)
         {
-            GetComponent<Renderer>().material.color = Color.white;
+            OnUnfocused.Invoke();
         }
     }
 
@@ -35,7 +38,7 @@ public class DebugMenuEntry : MonoBehaviour
         if (!_isSelected)
         {
             _isSelected = true;
-            GetComponent<Renderer>().material.color = Color.red;
+            _isFocused = false;
             OnSelected.Invoke();
         }
     }
@@ -45,7 +48,6 @@ public class DebugMenuEntry : MonoBehaviour
         if (_isSelected)
         {
             _isSelected = false;
-            GetComponent<Renderer>().material.color = Color.white;
             OnDeselected.Invoke();
         }
     }
