@@ -6,6 +6,10 @@ public class DebugMenu : MonoBehaviour
 {
     public static DebugMenu Instance;
 
+    public GameObject Controller;
+    public GameObject Selector;
+    public GameObject Tools;
+
     private List<DebugMenuEntry> _menuEntries = new List<DebugMenuEntry>();
     private DebugMenuEntry _focusedEntry;
     private DebugMenuEntry _selectedEntry;
@@ -14,6 +18,24 @@ public class DebugMenu : MonoBehaviour
         : base()
     {
         Instance = this;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject == Controller)
+        {
+            Tools.SetActive(false);
+            Selector.SetActive(true);
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject == Controller)
+        {
+            Tools.SetActive(true);
+            Selector.SetActive(false);
+        }
     }
 
     public void AddMenuEntry(DebugMenuEntry entry)
