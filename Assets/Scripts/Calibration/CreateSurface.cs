@@ -5,6 +5,7 @@ public class CreateSurface : MonoBehaviour
 {
     // Object containing LineRenderer to simulate where the surface will be placed
     public GameObject Visualizer;
+    public GameObject SurfacePrefab;
 
     private Vector3 _startPoint;
     private Vector3 _endPoint;
@@ -43,6 +44,11 @@ public class CreateSurface : MonoBehaviour
     {
         _startPoint = position;
         _isCreatingSurface = true;
+        
+        Visualizer.GetComponent<ParticleSystem>().Play();
+        var lineRenderer = Visualizer.GetComponent<LineRenderer>();
+        lineRenderer.enabled = true;
+        lineRenderer.SetPositions(new[] { transform.position, transform.position, transform.position, transform.position, transform.position, });
     }
 
     private void UpdateSurfaceCreation(Vector3 position)
@@ -53,18 +59,7 @@ public class CreateSurface : MonoBehaviour
 
     private void PreviewSurface()
     {
-        if (Visualizer == null)
-        {
-            Debug.LogWarning("Add Visualiser object for previewing surfaces!");
-            return;
-        }
-
         var lineRenderer = Visualizer.GetComponent<LineRenderer>();
-        if (lineRenderer == null)
-        {
-            Debug.LogWarning("Add LineRenderer to Visualiser for previewing surfaces!");
-            return;
-        }
 
         var topLeft = _startPoint;
         var bottomRight = _endPoint;
@@ -105,6 +100,11 @@ public class CreateSurface : MonoBehaviour
         if (_isCreatingSurface)
         {
             _isCreatingSurface = false;
+
+            Visualizer.GetComponent<ParticleSystem>().Stop();
+            Visualizer.GetComponent<LineRenderer>().enabled = false;
+            var createdSurface = Instantiate(SurfacePrefab, Visualizer.transform.position, Visualizer.transform.rotation) as GameObject;
+            createdSurface.transform.localScale = Visualizer.transform.localScale;
         }
     }
 
