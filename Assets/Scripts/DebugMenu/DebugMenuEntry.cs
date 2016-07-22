@@ -4,6 +4,8 @@ using UnityEngine.Events;
 
 public class DebugMenuEntry : MonoBehaviour
 {
+    public GameObject Visual;
+
     public UnityEvent OnSelected;
     public UnityEvent OnDeselected;
     public UnityEvent OnFocused;
@@ -21,7 +23,9 @@ public class DebugMenuEntry : MonoBehaviour
     {
         if (!_isSelected && !_isFocused)
         {
+            _isFocused = true;
             OnFocused.Invoke();
+            Visual.transform.localPosition = Vector3.up * 0.5f;
         }
     }
 
@@ -29,7 +33,9 @@ public class DebugMenuEntry : MonoBehaviour
     {
         if (!_isSelected && _isFocused)
         {
+            _isFocused = false;
             OnUnfocused.Invoke();
+            Visual.transform.localPosition = Vector3.zero;
         }
     }
 
@@ -40,6 +46,7 @@ public class DebugMenuEntry : MonoBehaviour
             _isSelected = true;
             _isFocused = false;
             OnSelected.Invoke();
+            Visual.transform.localPosition = Vector3.forward * 0.5f;
         }
     }
 
@@ -49,6 +56,7 @@ public class DebugMenuEntry : MonoBehaviour
         {
             _isSelected = false;
             OnDeselected.Invoke();
+            Visual.transform.localPosition = Vector3.zero;
         }
     }
 }
