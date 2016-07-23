@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InteractiveDisplay"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="350" Width="525"
+        MouseMove="Window_MouseMove" TouchMove="Window_TouchMove">
     <Grid>
-        
     </Grid>
 </Window>
