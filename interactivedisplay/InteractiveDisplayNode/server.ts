@@ -57,7 +57,7 @@ app.post('/click', function (req, res) {
     var height = 1080 * 1.8; // height as defined in index.html
 
     var x = req.body.x / width;
-    var y = req.body.y / height;
+    var y = 1 - req.body.y / height;
 
     // convert to proper format, aka. byte array of 2 floats
     var floatBuffer = new Buffer(2 * 4);
