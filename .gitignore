@@ -90,3 +90,17 @@ sysinfo.txt
 # Library folder, managed via other scripts
 /imageprocessing/ImageProcessing/thirdparty/libs/*
 /imageprocessing/ImageProcessing/thirdparty/dll/*
+
+# ==========
+# Node / JS
+# ==========
+
+# Generated files
+/interactivedisplay/InteractiveDisplayNode/*.js
+/interactivedisplay/InteractiveDisplayNode/*.js.map
+
+# NPM
+/interactivedisplay/InteractiveDisplayNode/node_modules
+
+# Visual Studio files
+.ntvs_analysis.dat

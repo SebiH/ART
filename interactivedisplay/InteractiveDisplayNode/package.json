@@ -1,0 +1,13 @@
+{
+  "name": "InteractiveDisplayNode",
+  "version": "0.0.0",
+  "description": "InteractiveDisplayNode",
+  "main": "app.js",
+  "author": {
+    "name": "test",
+    "email": ""
+  },
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
