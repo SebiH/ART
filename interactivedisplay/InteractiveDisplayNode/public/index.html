@@ -106,7 +106,9 @@
                     .style("fill", function (d) { return color(d.region); });
 
                 var click = function () {
-                    // TODO.
+                    var x = d3.select(this).attr('cx');
+                    var y = d3.select(this).attr('cy');
+                    jQuery.ajax('/click', { data: JSON.stringify({ x: x, y: y }), contentType: 'application/json', type: 'POST' });
                 };
 
                 // what to do when we mouse over a bubble
