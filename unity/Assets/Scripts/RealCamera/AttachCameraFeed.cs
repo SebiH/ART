@@ -44,7 +44,7 @@ public class AttachCameraFeed : MonoBehaviour
             {
                 xOffset = 0f;
             }
-            if (Output == OutputType.Right)
+            else if (Output == OutputType.Right)
             {
                 xOffset = -0.032f;
             }

@@ -47,6 +47,7 @@ public class InteractiveSurfaceClient : MonoBehaviour
             stream.Read(byteBuffer, 0, byteBuffer.Length);
             Buffer.BlockCopy(byteBuffer, 0, floatBuffer, 0, byteBuffer.Length);
             _currentPosition = new Vector2(floatBuffer[0], floatBuffer[1]);
+            Debug.Log(_currentPosition);
         }
     }
 
