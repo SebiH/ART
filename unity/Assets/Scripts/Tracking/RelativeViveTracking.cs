@@ -17,6 +17,7 @@ namespace Assets.Scripts
    {
         public EIndex relativeToIndex;
         public Vector3 RotationOffset = Vector3.zero;
+        public Transform AttachTo;
 
         public enum EIndex
         {
@@ -85,7 +86,10 @@ namespace Assets.Scripts
 
         private void ApplyPose(SteamVR_Utils.RigidTransform relPose, SteamVR_Utils.RigidTransform pose)
         {
-            transform.position = pose.pos - relPose.pos;
+            var newPos = pose.pos - relPose.pos;
+            //newPos.z = -newPos.z;
+            //newPos.x = -newPos.x;
+            transform.position = AttachTo.position + newPos;
             transform.rotation = Quaternion.Euler(pose.rot.eulerAngles + RotationOffset);
         }
 

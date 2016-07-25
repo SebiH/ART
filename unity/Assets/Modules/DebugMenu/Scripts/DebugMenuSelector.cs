@@ -15,7 +15,11 @@ public class DebugMenuSelector : MonoBehaviour
 
             if (menuEntry != null)
             {
-                if (Input.GetMouseButtonDown(0))
+                var isMouseDown = Input.GetMouseButtonDown(0);
+                var deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+                var isTriggerDown = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPressDown(SteamVR_Controller.ButtonMask.Trigger);
+
+                if (isMouseDown || isTriggerDown)
                 {
                     DebugMenu.Instance.SelectMenuEntry(hitObject);
                 }

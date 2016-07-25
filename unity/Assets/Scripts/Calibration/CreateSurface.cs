@@ -7,6 +7,8 @@ public class CreateSurface : MonoBehaviour
     public GameObject Visualizer;
     public GameObject SurfacePrefab;
 
+    public ParticleSystem ParticleHack;
+
     private Vector3 _startPoint;
     private Vector3 _endPoint;
     private bool _isCreatingSurface = false;
@@ -95,6 +97,8 @@ public class CreateSurface : MonoBehaviour
         lineRenderer.SetPositions(new[] { topLeft, topRight, bottomRight, bottomLeft, topLeft });
     }
 
+    private GameObject _prevCreatedSurface = null;
+
     private void StopSurfaceCreation(Vector3 position)
     {
         if (_isCreatingSurface)
@@ -102,9 +106,15 @@ public class CreateSurface : MonoBehaviour
             _isCreatingSurface = false;
 
             Visualizer.GetComponent<ParticleSystem>().Stop();
-            Visualizer.GetComponent<LineRenderer>().enabled = false;
+            //Visualizer.GetComponent<LineRenderer>().enabled = false;
             var createdSurface = Instantiate(SurfacePrefab, Visualizer.transform.position, Visualizer.transform.rotation) as GameObject;
             createdSurface.transform.localScale = Visualizer.transform.localScale;
+
+            if (_prevCreatedSurface != null)
+            {
+                Destroy(_prevCreatedSurface);
+            }
+            _prevCreatedSurface = createdSurface;
         }
     }
 

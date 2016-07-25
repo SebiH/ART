@@ -11,6 +11,8 @@ public class InteractiveSurfaceClient : MonoBehaviour
     public GameObject Screen;
     public GameObject Cursor;
 
+    private Vector2 DisplaySize;
+
     private TcpClient _client;
     private bool _isRunning;
     private Vector2 _currentPosition = Vector2.zero;
@@ -23,6 +25,13 @@ public class InteractiveSurfaceClient : MonoBehaviour
 
         Thread t = new Thread(new ThreadStart(ReceiveData));
         t.Start();
+
+        DisplaySize = transform.localScale;
+
+        var oldScale = transform.localScale;
+        transform.localScale = Vector3.one;
+        Cursor.transform.localScale = Vector3.one * 0.1f;
+        Screen.transform.localScale = oldScale;
     }
 
     private void ReceiveData()
@@ -43,7 +52,7 @@ public class InteractiveSurfaceClient : MonoBehaviour
 
     void Update()
     {
-        Cursor.transform.localPosition = new Vector3(_currentPosition.x - 0.5f, 0, _currentPosition.y - 0.5f);
+        Cursor.transform.localPosition = new Vector3((_currentPosition.x - 0.5f) * DisplaySize.x, 0, (_currentPosition.y - 0.5f) * DisplaySize.y);
     }
 
     void OnDestroy()

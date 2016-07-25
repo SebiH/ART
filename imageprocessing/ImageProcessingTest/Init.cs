@@ -68,10 +68,10 @@ namespace ImageProcessingUtil
         static void Main(string[] args)
         {
             // Test things without unity
-            SetFrameSource((int)FrameSource.OpenCV);
+            SetFrameSource((int)FrameSource.Ovr1280x800x60fps);
             StartImageProcessing();
-            SetCamExposure(100);
-            SetCamGain(1);
+            //SetCamExposure(100);
+            //SetCamGain(1);
             int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
             int handleRoi = RegisterOpenCVTextureWriter("ROI", "testWindow2");
 
