@@ -5,7 +5,7 @@ var clients = [];
 
 function sendToUnity(msg) {
 
-    console.log("Sending " + msg + " to all clients");
+    console.log("Sending " + msg.readFloatLE(0) + ', ' + msg.readFloatLE(4) + " to all clients");
     for (var client of clients)
     {
         try {
