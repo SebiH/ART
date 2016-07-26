@@ -68,18 +68,18 @@ namespace ImageProcessingUtil
         static void Main(string[] args)
         {
             // Test things without unity
-            SetFrameSource((int)FrameSource.Ovr1280x800x60fps);
+            SetFrameSource((int)FrameSource.OpenCV);
             StartImageProcessing();
             //SetCamExposure(100);
             //SetCamGain(1);
             int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
-            int handleRoi = RegisterOpenCVTextureWriter("ROI", "testWindow2");
+            int handleRoi = RegisterOpenCVTextureWriter("Contour", "testWindow2");
 
-            int currentX = 0;
-            int currentY = 0;
-            int currentWidth = GetCamWidth();
-            int currentHeight = GetCamHeight();
-            ChangeRoi(-1, currentX, currentY, currentWidth, currentHeight);
+            //int currentX = 0;
+            //int currentY = 0;
+            //int currentWidth = GetCamWidth();
+            //int currentHeight = GetCamHeight();
+            //ChangeRoi(-1, currentX, currentY, currentWidth, currentHeight);
 
             char keyPressed;
 
@@ -101,19 +101,19 @@ namespace ImageProcessingUtil
 
                 if (keyPressed == 'r')
                 {
-                    ChangeRoi(-1, currentX, currentY, currentWidth, currentHeight);
-                    currentX += 10;
-                    currentY += 10;
-                    currentWidth -= 20;
-                    currentHeight -= 20;
+                    //ChangeRoi(-1, currentX, currentY, currentWidth, currentHeight);
+                    //currentX += 10;
+                    //currentY += 10;
+                    //currentWidth -= 20;
+                    //currentHeight -= 20;
 
-                    if (currentWidth < 50 || currentHeight < 50)
-                    {
-                        currentX = 0;
-                        currentY = 0;
-                        currentWidth = GetCamWidth();
-                        currentHeight = GetCamHeight();
-                    }
+                    //if (currentWidth < 50 || currentHeight < 50)
+                    //{
+                    //    currentX = 0;
+                    //    currentY = 0;
+                    //    currentWidth = GetCamWidth();
+                    //    currentHeight = GetCamHeight();
+                    //}
                 }
 
                 if (keyPressed == 'x')
