@@ -116,6 +116,7 @@ public class CreateSurface : MonoBehaviour
             if (surfaceClient != null && !_isSurfaceHorizontal)
             {
                 surfaceClient.Cursor.transform.localRotation = Quaternion.Euler(0f, 0f, 270f);
+                surfaceClient.IsVertical = true;
             }
 
             if (_prevCreatedSurface != null)

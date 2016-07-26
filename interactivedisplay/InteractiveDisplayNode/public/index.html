@@ -57,6 +57,10 @@
     <div id="chart">
 
         <script type="text/javascript">
+            $("body").mousedown(function(e) {
+                jQuery.ajax('/click', { data: JSON.stringify({ x: e.pageX, y: e.pageY }), contentType: 'application/json', type: 'POST' });
+            });
+
             var circles;
             // set the stage
             var margin = { t: 30, r: 20, b: 20, l: 40 },
@@ -118,12 +122,12 @@
                   })
                     .style("fill", function (d) { return color(d.region); });
 
-                var click = function () {
-                    var circle = d3.select(this);
-                    var x = circle.attr('cx');
-                    var y = circle.attr('cy');
-                    jQuery.ajax('/click', { data: JSON.stringify({ x: x, y: y }), contentType: 'application/json', type: 'POST' });
-
+                var click = function (e) {
+                    // var circle = d3.select(this);
+                    // var x = circle.attr('cx');
+                    // var y = circle.attr('cy');
+                    // jQuery.ajax('/click', { data: JSON.stringify({ x: x, y: y }), contentType: 'application/json', type: 'POST' });
+                    // console.log(e);
                 };
 
                 // what to do when we mouse over a bubble

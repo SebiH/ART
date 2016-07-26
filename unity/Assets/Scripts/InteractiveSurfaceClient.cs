@@ -14,6 +14,8 @@ public class InteractiveSurfaceClient : MonoBehaviour
     public GameObject Cursor;
     public DataPoint Bar;
 
+    public bool IsVertical = false;
+
     private Vector2 DisplaySize;
 
     private TcpClient _client;
@@ -30,11 +32,18 @@ public class InteractiveSurfaceClient : MonoBehaviour
         Thread t = new Thread(new ThreadStart(ReceiveData));
         t.Start();
 
-        DisplaySize = new Vector2(transform.localScale.x, transform.localScale.z);
+        if (IsVertical)
+        {
+            DisplaySize = new Vector2(transform.localScale.z, transform.localScale.y);
+        }
+        else
+        {
+            DisplaySize = new Vector2(transform.localScale.x, transform.localScale.z);
+        }
 
         var oldScale = transform.localScale;
         transform.localScale = Vector3.one;
-        Cursor.transform.localScale = Vector3.one * 0.1f;
+        Cursor.transform.localScale = Vector3.one * 0.04f;
         Screen.transform.localScale = oldScale;
     }
 
@@ -60,7 +69,16 @@ public class InteractiveSurfaceClient : MonoBehaviour
         if (_hasNewPosition)
         {
             _hasNewPosition = false;
-            Cursor.transform.localPosition = new Vector3((_currentPosition.x - 0.5f) * DisplaySize.x, 0, (_currentPosition.y - 0.5f) * DisplaySize.y);
+
+            if (IsVertical)
+            {
+                Cursor.transform.localPosition = new Vector3(0, (_currentPosition.y - 0.5f) * DisplaySize.y, (_currentPosition.x - 0.5f) * DisplaySize.x);
+            }
+            else
+            {
+                Cursor.transform.localPosition = new Vector3((_currentPosition.x - 0.5f) * DisplaySize.x, 0, (_currentPosition.y - 0.5f) * DisplaySize.y);
+            }
+
             Bar.Height = 0f;
             Bar.TargetHeight = UnityEngine.Random.value * 2.5f;
         }
