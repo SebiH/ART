@@ -7,7 +7,7 @@ public class BarDataPoint : DataPoint
     {
         var currPos = transform.localPosition;
         transform.localPosition = new Vector3(currPos.x, height / 2, currPos.z);
-        transform.localScale = new Vector3(1, height, 1);
+        transform.localScale = new Vector3(transform.localScale.x, height, transform.localScale.z);
     }
 
 

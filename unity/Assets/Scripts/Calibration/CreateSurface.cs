@@ -7,8 +7,6 @@ public class CreateSurface : MonoBehaviour
     public GameObject Visualizer;
     public GameObject SurfacePrefab;
 
-    public ParticleSystem ParticleHack;
-
     private Vector3 _startPoint;
     private Vector3 _endPoint;
     private bool _isCreatingSurface = false;

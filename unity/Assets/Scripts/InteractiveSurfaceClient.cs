@@ -1,4 +1,6 @@
+using Assets.Code.Graph;
 using System;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
 using UnityEngine;
@@ -10,12 +12,14 @@ public class InteractiveSurfaceClient : MonoBehaviour
 
     public GameObject Screen;
     public GameObject Cursor;
+    public DataPoint Bar;
 
     private Vector2 DisplaySize;
 
     private TcpClient _client;
     private bool _isRunning;
     private Vector2 _currentPosition = Vector2.zero;
+    private bool _hasNewPosition;
 
     void Start()
     {
@@ -26,7 +30,7 @@ public class InteractiveSurfaceClient : MonoBehaviour
         Thread t = new Thread(new ThreadStart(ReceiveData));
         t.Start();
 
-        DisplaySize = transform.localScale;
+        DisplaySize = new Vector2(transform.localScale.x, transform.localScale.z);
 
         var oldScale = transform.localScale;
         transform.localScale = Vector3.one;
@@ -47,13 +51,19 @@ public class InteractiveSurfaceClient : MonoBehaviour
             stream.Read(byteBuffer, 0, byteBuffer.Length);
             Buffer.BlockCopy(byteBuffer, 0, floatBuffer, 0, byteBuffer.Length);
             _currentPosition = new Vector2(floatBuffer[0], floatBuffer[1]);
-            Debug.Log(_currentPosition);
+            _hasNewPosition = true;
         }
     }
 
     void Update()
     {
-        Cursor.transform.localPosition = new Vector3((_currentPosition.x - 0.5f) * DisplaySize.x, 0, (_currentPosition.y - 0.5f) * DisplaySize.y);
+        if (_hasNewPosition)
+        {
+            _hasNewPosition = false;
+            Cursor.transform.localPosition = new Vector3((_currentPosition.x - 0.5f) * DisplaySize.x, 0, (_currentPosition.y - 0.5f) * DisplaySize.y);
+            Bar.Height = 0f;
+            Bar.TargetHeight = UnityEngine.Random.value * 2.5f;
+        }
     }
 
     void OnDestroy()
