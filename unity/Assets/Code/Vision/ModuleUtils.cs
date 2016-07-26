@@ -9,6 +9,7 @@ namespace Assets.Code.Vision
     {
         private static readonly String MODULE_RAW_IMAGE = "RawImage";
         private static readonly String MODULE_ROI = "ROI";
+        private static readonly String MODULE_CONTOUR = "Contour";
 
         public static string ModuleToString(Module m)
         {
@@ -19,6 +20,9 @@ namespace Assets.Code.Vision
 
                 case Module.RegionOfInterest:
                     return MODULE_ROI;
+
+                case Module.Contours:
+                    return MODULE_CONTOUR;
 
                 default:
                     throw new Exception("Unknown module " + m.ToString());

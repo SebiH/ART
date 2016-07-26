@@ -6,6 +6,7 @@ namespace Assets.Code.Vision
     public enum Module
     {
         RawImage,
-        RegionOfInterest
+        RegionOfInterest,
+        Contours
     }
 }

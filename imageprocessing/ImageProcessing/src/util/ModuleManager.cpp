@@ -4,6 +4,7 @@
 
 #include "../processingmodule/RawImageModule.h"
 #include "../processingmodule/RoiModule.h"
+#include "../processingmodule/ContourModule.h"
 
 using namespace ImageProcessing;
 
@@ -36,6 +37,10 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 		else if (moduleName == "ROI")
 		{
 			processingModule = std::make_unique<RoiModule>(cv::Rect(0, 0, _frameProducer->getFrameWidth(), _frameProducer->getFrameHeight()));
+		}
+		else if (moduleName == "Contour")
+		{
+			processingModule = std::make_unique<ContourModule>();
 		}
 		else // unknown module
 		{
