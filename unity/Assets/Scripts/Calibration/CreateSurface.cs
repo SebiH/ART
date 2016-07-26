@@ -10,6 +10,7 @@ public class CreateSurface : MonoBehaviour
     private Vector3 _startPoint;
     private Vector3 _endPoint;
     private bool _isCreatingSurface = false;
+    private bool _isSurfaceHorizontal;
 
     void Update()
     {
@@ -77,6 +78,7 @@ public class CreateSurface : MonoBehaviour
             Visualizer.transform.position = _startPoint + new Vector3(dist.x / 2,  0, dist.z / 2);
             Visualizer.transform.rotation = Quaternion.identity;
             Visualizer.transform.localScale = new Vector3(dist.x, 0.03f, dist.z);
+            _isSurfaceHorizontal = true;
         }
         else
         {
@@ -90,6 +92,7 @@ public class CreateSurface : MonoBehaviour
             Visualizer.transform.rotation = Quaternion.Euler(0, rotation, 0);
             Visualizer.transform.position = _startPoint + new Vector3(dist.x / 2,  dist.y / 2, dist.z / 2);
             Visualizer.transform.localScale = new Vector3(0.03f, dist.y,  new Vector2(dist.z, dist.x).magnitude);
+            _isSurfaceHorizontal = false;
         }
 
         lineRenderer.SetPositions(new[] { topLeft, topRight, bottomRight, bottomLeft, topLeft });
@@ -107,6 +110,13 @@ public class CreateSurface : MonoBehaviour
             //Visualizer.GetComponent<LineRenderer>().enabled = false;
             var createdSurface = Instantiate(SurfacePrefab, Visualizer.transform.position, Visualizer.transform.rotation) as GameObject;
             createdSurface.transform.localScale = Visualizer.transform.localScale;
+
+            // haaaaack
+            var surfaceClient = createdSurface.GetComponent<InteractiveSurfaceClient>();
+            if (surfaceClient != null && !_isSurfaceHorizontal)
+            {
+                surfaceClient.Cursor.transform.localRotation = Quaternion.Euler(0f, 0f, 270f);
+            }
 
             if (_prevCreatedSurface != null)
             {

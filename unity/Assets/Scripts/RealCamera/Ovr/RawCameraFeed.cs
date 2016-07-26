@@ -37,14 +37,14 @@ namespace Assets.Scripts.Demo
                 transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
 
                 float xOffset = 0;
-                if (Output == OutputType.Right)
-                {
-                    xOffset = -0.032f;
-                }
-                else if (Output == OutputType.Left)
-                {
-                    xOffset = ovrWrapper.OvrPro.HMDCameraRightGap().x - 0.040f;
-                }
+                //if (Output == OutputType.Right)
+                //{
+                //    xOffset = -0.032f;
+                //}
+                //else if (Output == OutputType.Left)
+                //{
+                //    xOffset = ovrWrapper.OvrPro.HMDCameraRightGap().x - 0.040f;
+                //}
 
                 transform.localPosition = new Vector3(xOffset, 0.0f, ovrWrapper.OvrPro.GetFloatPoint() + 0.02f);
             }
