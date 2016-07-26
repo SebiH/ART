@@ -24,10 +24,14 @@ OpenCVFrameProducer::OpenCVFrameProducer()
 	int camHeight = _camera->get(cv::CAP_PROP_FRAME_HEIGHT);
 	int fps = _camera->get(cv::CAP_PROP_FPS);
 
-	_camera->set(cv::CAP_PROP_EXPOSURE, exposure);
-	_camera->set(cv::CAP_PROP_GAIN, gain);
-	_camera->set(cv::CAP_PROP_BRIGHTNESS, brightness);
-	_camera->set(cv::CAP_PROP_CONTRAST, contrast);
+	// camWidth is sometimes empty?? try default values
+	camWidth = (camWidth == 0) ? 640 : camWidth;
+	camHeight = (camHeight == 0) ? 480 : camHeight;
+
+	//_camera->set(cv::CAP_PROP_EXPOSURE, exposure);
+	//_camera->set(cv::CAP_PROP_GAIN, gain);
+	//_camera->set(cv::CAP_PROP_BRIGHTNESS, brightness);
+	//_camera->set(cv::CAP_PROP_CONTRAST, contrast);
 
 	if (!_camera->open(0))
 	{
@@ -35,6 +39,7 @@ OpenCVFrameProducer::OpenCVFrameProducer()
 	}
 
 	int camDepth = 4; // enforce 4 channels by converting to RGBA later on
+
 
 	_imgBufferSize = camWidth * camHeight * camDepth;
 	_imgInfo = ImageInfo(camWidth, camHeight, camDepth, CV_8UC4);
