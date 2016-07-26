@@ -16,7 +16,9 @@ namespace Assets.Scripts
     public class RelativeViveTracking : MonoBehaviour
    {
         public EIndex relativeToIndex;
-        public Vector3 RotationOffset = Vector3.zero;
+        public GameObject RotationAnchor;
+        public Vector3 RotationAxis = Vector3.up;
+        public float RotateBy;
         public Transform AttachTo;
 
         public enum EIndex
@@ -87,10 +89,9 @@ namespace Assets.Scripts
         private void ApplyPose(SteamVR_Utils.RigidTransform relPose, SteamVR_Utils.RigidTransform pose)
         {
             var newPos = pose.pos - relPose.pos;
-            //newPos.z = -newPos.z;
-            //newPos.x = -newPos.x;
             transform.position = AttachTo.position + newPos;
-            transform.rotation = Quaternion.Euler(pose.rot.eulerAngles + RotationOffset);
+            transform.rotation = Quaternion.Euler(pose.rot.eulerAngles);
+            transform.RotateAround(RotationAnchor.transform.position, RotationAxis, RotateBy);
         }
 
 

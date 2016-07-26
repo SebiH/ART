@@ -251,7 +251,7 @@ namespace Assets.Scripts.RealCamera
             _prevProcessingMode = CameraProcessingMode;
         }
 
-        private void UpdateCameraProperties(bool forceUpdate = false)
+        public void UpdateCameraProperties(bool forceUpdate = false)
         {
             if (_prevGain != Gain || forceUpdate)
             {
