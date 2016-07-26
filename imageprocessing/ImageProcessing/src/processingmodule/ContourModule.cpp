@@ -16,12 +16,14 @@ ContourModule::~ContourModule()
 
 void ContourModule::FindContours(cv::Mat &src, cv::Mat &dst)
 {
-	cv::Mat preprocessedImg;
-	cv::cvtColor(src, preprocessedImg, CV_BGR2GRAY);
+	cv::Mat preprocessedImg, edges;
+	cv::cvtColor(src, preprocessedImg, CV_BGRA2GRAY);
 	//cv::GaussianBlur(preprocessedImg, preprocessedImg, cv::Size(5, 5), 2, 2);
 	// TODO: make adjustable via runtime
-	cv::Canny(preprocessedImg, dst, 70, 110);
+	cv::Canny(preprocessedImg, edges, 70, 110);
 
+	// convert to colour for unity
+	cv::cvtColor(edges, dst, CV_GRAY2BGRA);
 }
 
 std::vector<ProcessingOutput> ContourModule::processImage(unsigned char *rawDataLeft, unsigned char *rawDataRight, const ImageInfo &info)
