@@ -53,6 +53,10 @@ namespace OptitrackManagement
                     Debug.Log("[OptitrackSocket] Received first packet");
                     _firstByteReceived = true;
                 }
+                else
+                {
+                    Debug.Log("Received subsequent packet");
+                }
 
                 //Debug.Log("[UDP multicast] Start ReceiveCallback");
                 // Retrieve the state object and the client socket 

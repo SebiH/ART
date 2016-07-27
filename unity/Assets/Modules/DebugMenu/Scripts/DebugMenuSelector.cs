@@ -8,7 +8,7 @@ public class DebugMenuSelector : MonoBehaviour
         Vector3 fwd = transform.TransformDirection(Vector3.forward);
         RaycastHit hit;
 
-        if (Physics.Raycast(transform.position, fwd, out hit, 3f))
+        if (Physics.Raycast(transform.position, fwd, out hit, 5f))
         {
             var hitObject = hit.transform.gameObject;
             var menuEntry = hitObject.GetComponent<DebugMenuEntry>();
@@ -17,7 +17,7 @@ public class DebugMenuSelector : MonoBehaviour
             {
                 var isMouseDown = Input.GetMouseButtonDown(0);
                 var deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-                var isTriggerDown = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPressDown(SteamVR_Controller.ButtonMask.Trigger);
+                var isTriggerDown = (deviceIndex != -1) && SteamVR_Controller.Input(deviceIndex).GetPress(SteamVR_Controller.ButtonMask.Trigger);
 
                 if (isMouseDown || isTriggerDown)
                 {

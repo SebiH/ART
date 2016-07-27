@@ -7,6 +7,8 @@ public class CreateSurface : MonoBehaviour
     public GameObject Visualizer;
     public GameObject SurfacePrefab;
 
+    public bool LimitDimensions = true;
+
     private Vector3 _startPoint;
     private Vector3 _endPoint;
     private bool _isCreatingSurface = false;
@@ -62,22 +64,30 @@ public class CreateSurface : MonoBehaviour
     {
         var lineRenderer = Visualizer.GetComponent<LineRenderer>();
 
+        if (LimitDimensions)
+        {
+            lineRenderer.enabled = false;
+        }
+
         var topLeft = _startPoint;
         var bottomRight = _endPoint;
         var dist = bottomRight - topLeft;
         Vector3 topRight, bottomLeft;
 
 
-        if (Mathf.Abs(dist.y) < 0.2f)
+        if (Mathf.Abs(dist.y) < 0.2f || !LimitDimensions)
         {
             // create horizontal (e.g. table) surface
             topRight = new Vector3(_endPoint.x, _startPoint.y, _startPoint.z);
             bottomLeft = new Vector3(_startPoint.x, _startPoint.y, _endPoint.z);
             bottomRight.y = _startPoint.y;
 
-            Visualizer.transform.position = _startPoint + new Vector3(dist.x / 2,  0, dist.z / 2);
+            var height = LimitDimensions ? 0.03f : dist.y;
+
+            Visualizer.transform.position = _startPoint + new Vector3(dist.x / 2f,  height / 2f, dist.z / 2f);
             Visualizer.transform.rotation = Quaternion.identity;
-            Visualizer.transform.localScale = new Vector3(dist.x, 0.03f, dist.z);
+
+            Visualizer.transform.localScale = new Vector3(dist.x, height, dist.z);
             _isSurfaceHorizontal = true;
         }
         else
