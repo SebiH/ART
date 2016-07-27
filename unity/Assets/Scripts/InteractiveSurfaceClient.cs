@@ -80,7 +80,7 @@ public class InteractiveSurfaceClient : MonoBehaviour
             }
 
             Bar.Height = 0f;
-            Bar.TargetHeight = UnityEngine.Random.value * 2.5f;
+            Bar.TargetHeight = UnityEngine.Random.value * 7.5f;
         }
     }
 
