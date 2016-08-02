@@ -77,7 +77,7 @@ void OvrFrameProducer::run()
 	{
 		// TODO: if isNextFrameAvailable
 		query();
-		Sleep(desiredFramerate * 1000);
+		//Sleep(desiredFramerate * 1000);
 	}
 }
 
