@@ -9,7 +9,7 @@ void DebugLog(const char* str)
 #if UNITY_WIN
 	OutputDebugStringA(str);
 #else
-	printf("%s", str);
+	printf("%s\n", str);
 #endif
 
 	// just defer to working function, until above code works in unity
