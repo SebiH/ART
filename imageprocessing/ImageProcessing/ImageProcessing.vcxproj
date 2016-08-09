@@ -72,18 +72,18 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>%opencv_dir%\..\..\include\;%ovrvision_dir%\include\;%leap_dir%\include\;3rdparty\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\thirdparty\include\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>%opencv_dir%\lib\;%ovrvision_dir%\bin\x64\;%leap_dir%\lib\x64\;.\3rdparty\include\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\thirdparty\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ovrvision\ovrvision64.lib;leapmotion\Leap.lib;opencv\opencv_world310d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>Modules.def</ModuleDefinitionFile>
       <SubSystem>Windows</SubSystem>
@@ -139,9 +139,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Modules.def" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="resources\dummy_image_default.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
