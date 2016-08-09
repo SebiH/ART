@@ -62,13 +62,15 @@ namespace ImageProcessingUtil
             OpenCV = 0,
             Ovr1280x960x45fps = 4,
             Ovr1280x800x60fps = 6,
-            Ovr320x240x120fps = 8
+            Ovr640x480x90fps = 7,
+            Ovr320x240x120fps = 8,
+            DefaultDummy = 9
         }
 
         static void Main(string[] args)
         {
             // Test things without unity
-            SetFrameSource((int)FrameSource.Ovr1280x800x60fps);
+            SetFrameSource((int)FrameSource.DefaultDummy);
             StartImageProcessing();
             //SetCamExposure(100);
             //SetCamGain(1);

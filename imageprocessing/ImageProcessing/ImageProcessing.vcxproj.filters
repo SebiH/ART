@@ -69,6 +69,9 @@
     <ClCompile Include="src\processingmodule\ContourModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\framesource\DummyFrameSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\util\ThreadedModule.h">
@@ -131,10 +134,18 @@
     <ClInclude Include="src\processingmodule\ContourModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\framesource\DummyFrameSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Modules.def">
       <Filter>Source Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\dummy_image_default.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

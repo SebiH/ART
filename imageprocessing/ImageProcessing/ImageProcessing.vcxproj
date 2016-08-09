@@ -97,6 +97,7 @@
     <ClCompile Include="src\api\CameraProperties.cpp" />
     <ClCompile Include="src\api\common.cpp" />
     <ClCompile Include="src\api\debug.cpp" />
+    <ClCompile Include="src\framesource\DummyFrameSource.cpp" />
     <ClCompile Include="src\framesource\LeapFrameSource.cpp" />
     <ClCompile Include="src\framesource\NullFrameSource.cpp" />
     <ClCompile Include="src\processingmodule\ContourModule.cpp" />
@@ -116,6 +117,7 @@
   <ItemGroup>
     <ClInclude Include="src\api\common.h" />
     <ClInclude Include="src\api\debug.h" />
+    <ClInclude Include="src\framesource\DummyFrameSource.h" />
     <ClInclude Include="src\framesource\IFrameSource.h" />
     <ClInclude Include="src\framesource\LeapFrameSource.h" />
     <ClInclude Include="src\framesource\NullFrameSource.h" />
@@ -137,6 +139,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Modules.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\dummy_image_default.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

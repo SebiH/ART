@@ -11,6 +11,7 @@
 #include "..\framesource\OvrFrameProducer.h"
 #include "..\framesource\LeapFrameSource.h"
 #include "..\framesource\NullFrameSource.h"
+#include "..\framesource\DummyFrameSource.h"
 #include "..\processingmodule\IProcessingModule.h"
 #include "..\processingmodule\RoiModule.h"
 #include "..\texturewriter\ITextureWriter.h"
@@ -149,7 +150,10 @@ extern "C" UNITY_INTERFACE_EXPORT void SetFrameSource(int sourceId)
 			_frameSource = std::make_shared<OvrFrameProducer>(OVR::Camprop::OV_CAMVR_QVGA);
 			break;
 
-
+		case 9:
+			DebugLog("Using default DummyImageSource");
+			_frameSource = std::make_shared<DummyFrameSource>();
+			break;
 
 		case -1:
 		default:
