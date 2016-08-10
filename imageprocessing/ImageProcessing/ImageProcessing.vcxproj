@@ -106,6 +106,8 @@
     <ClCompile Include="src\processingmodule\RoiModule.cpp" />
     <ClCompile Include="src\api\RenderingPlugin.cpp" />
     <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp" />
+    <ClCompile Include="src\tools\ArToolkitCameraCalibration.cpp" />
+    <ClCompile Include="src\tools\ArToolkitStereoCalibration.cpp" />
     <ClCompile Include="src\util\ModuleManager.cpp" />
     <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp" />
     <ClCompile Include="src\framesource\OvrFrameProducer.cpp" />
@@ -124,6 +126,9 @@
     <ClInclude Include="src\framesource\NullFrameSource.h" />
     <ClInclude Include="src\processingmodule\ARToolkitModule.h" />
     <ClInclude Include="src\processingmodule\ContourModule.h" />
+    <ClInclude Include="src\tools\ArToolkitCameraCalibration.h" />
+    <ClInclude Include="src\tools\ArToolkitStereoCalibration.h" />
+    <ClInclude Include="src\tools\CalibrationSettings.h" />
     <ClInclude Include="src\util\PerformanceDebugging.h" />
     <ClInclude Include="src\util\ImageInfo.h" />
     <ClInclude Include="src\processingmodule\RawImageModule.h" />
