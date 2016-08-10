@@ -84,7 +84,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>.\thirdparty\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ovrvision\ovrvision64.lib;leapmotion\Leap.lib;opencv\opencv_world310d.lib;artoolkit5\AR.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ovrvision\ovrvision64.lib;leapmotion\Leap.lib;opencv\opencv_world310.lib;artoolkit5\AR.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>Modules.def</ModuleDefinitionFile>
       <SubSystem>Windows</SubSystem>
     </Link>
