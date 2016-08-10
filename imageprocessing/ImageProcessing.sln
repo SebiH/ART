@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageProcessing", "ImageProcessing\ImageProcessing.vcxproj", "{876C14A4-B1B3-49EC-81C6-CB3829ABCC3C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageProcessingTest", "ImageProcessingTest\ImageProcessingTest.csproj", "{351F4A28-96D4-4651-855D-CD8D66ABC3F7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{876C14A4-B1B3-49EC-81C6-CB3829ABCC3C} = {876C14A4-B1B3-49EC-81C6-CB3829ABCC3C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
