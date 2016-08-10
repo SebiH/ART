@@ -20,6 +20,7 @@ ThreadedModule::~ThreadedModule()
 
 void ThreadedModule::start()
 {
+	_isRunning = true;
 	_thread = std::thread(&ThreadedModule::run, this);
 }
 
