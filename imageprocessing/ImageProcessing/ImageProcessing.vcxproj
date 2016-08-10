@@ -122,6 +122,7 @@
     <ClInclude Include="src\framesource\LeapFrameSource.h" />
     <ClInclude Include="src\framesource\NullFrameSource.h" />
     <ClInclude Include="src\processingmodule\ContourModule.h" />
+    <ClInclude Include="src\util\PerformanceDebugging.h" />
     <ClInclude Include="src\util\ImageInfo.h" />
     <ClInclude Include="src\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\processingmodule\RoiModule.h" />
