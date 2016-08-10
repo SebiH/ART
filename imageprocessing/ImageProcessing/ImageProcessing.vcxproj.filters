@@ -72,6 +72,9 @@
     <ClCompile Include="src\framesource\DummyFrameSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\processingmodule\ARToolkitModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\util\ThreadedModule.h">
@@ -138,6 +141,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\util\PerformanceDebugging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\processingmodule\ARToolkitModule.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
