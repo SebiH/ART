@@ -97,6 +97,9 @@
       <AdditionalLibraryDirectories>.\thirdparty\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ovrvision\ovrvision64.lib;opencv\opencv_world310d.lib;artoolkit5\AR.lib;artoolkit5\AR2.lib;artoolkit5\ARgsub.lib;artoolkit5\ARICP.lib;artoolkit5\ARUtil.lib;artoolkit5\ARvideo.lib;artoolkit5\glut64.lib;artoolkit5\glut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)thirdparty\dll\*.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -127,6 +130,9 @@
       <AdditionalLibraryDirectories>.\thirdparty\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>ovrvision\ovrvision64.lib;opencv\opencv_world310.lib;artoolkit5\AR.lib;artoolkit5\AR2.lib;artoolkit5\ARgsub.lib;artoolkit5\ARICP.lib;artoolkit5\ARUtil.lib;artoolkit5\ARvideo.lib;artoolkit5\glut64.lib;artoolkit5\glut32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(ProjectDir)thirdparty\dll\*.dll $(OutDir)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\init.cpp" />
