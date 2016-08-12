@@ -348,6 +348,9 @@ static void cleanup(void)
 		cwd = NULL;
 	}
 
+	ovrCamera->Close();
+	delete ovrCamera;
+
 	exit(0);
 }
 
