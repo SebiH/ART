@@ -58,11 +58,12 @@
 #  include <sys/param.h> // MAXPATHLEN
 #  include <unistd.h> // getcwd
 #endif
-#ifndef __APPLE__
+#ifdef __APPLE__
+#  include <OpenGL/gl.h>
+#  include "opencv2/calib3d/calib3d_c.h"
+#elif defined(__linux) || defined(_WIN32)
 #  include <GL/gl.h>
 #  include "opencv2/calib3d/calib3d.hpp"
-#else
-#  include <OpenGL/gl.h>
 #endif
 #include <opencv/cv.h>
 #include <AR/ar.h>
@@ -78,12 +79,12 @@
 #define      SAVE_FILENAME                 "camera_para.dat"
 #define      SCREEN_SIZE_MARGIN             0.1
 
-
+static AR2VideoParamT      *gVid = NULL;
 static ARGViewportHandle   *vp;
 static AR_PIXEL_FORMAT      pixFormat;
 static int                  xsize;
 static int                  ysize;
-static ARImageProcInfo     *arIPI = NULL;
+static ARUint8             *imageLumaCopy = NULL;
 static IplImage            *calibImage = NULL;
 static int                  chessboardCornerNumX = 0;
 static int                  chessboardCornerNumY = 0;
@@ -112,28 +113,31 @@ int calibCamera(int argc, char *argv[])
 	init(argc, argv);
 	argSetDispFunc(mainLoop, 1);
 	argSetKeyFunc(keyEvent);
-	arVideoCapStart();
+	ar2VideoCapStart(gVid);
 	argMainLoop();
 	return 0;
 }
 
 static void mainLoop(void)
 {
-	ARUint8        *dataPtr;
+	AR2VideoBufferT *buff;
 	int             cornerCount;
 	char            buf[256];
 	int             i;
 
-	if ((dataPtr = arVideoGetImage()) == NULL) {
+	buff = ar2VideoGetImage(gVid);
+	if (!buff || !buff->fillFlag) {
 		arUtilSleep(2);
 		return;
 	}
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	argDrawMode2D(vp);
-	argDrawImage(dataPtr);
+	argDrawImage(buff->buff);
 
-	// Convert to grayscale, results will go to arIPI->image, which also provides the backing for calibImage.
-	arImageProcLuma(arIPI, dataPtr);
+	// Copy the luma-only image into the backing for calibImage.
+	//memcpy(imageLumaCopy, buff->buffLuma, xsize*ysize);
+	memcpy(imageLumaCopy, buff->buff, xsize*ysize);
 
 	cornerFlag = cvFindChessboardCorners(calibImage, cvSize(chessboardCornerNumY, chessboardCornerNumX),
 		corners, &cornerCount, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
@@ -181,7 +185,7 @@ static void init(int argc, char *argv[])
 	patternWidth = 0.0f;
 
 	arMalloc(cwd, char, MAXPATHLEN);
-	if (!getcwd(cwd, MAXPATHLEN)) ARLOGe("Unable to read current working directory.\n");
+	if (!_getcwd(cwd, MAXPATHLEN)) ARLOGe("Unable to read current working directory.\n");
 	else ARLOG("Current working directory is '%s'\n", cwd);
 
 	i = 1; // argv[0] is name of app, so start at 1.
@@ -237,10 +241,10 @@ static void init(int argc, char *argv[])
 	ARLOG("CALIB_IMAGE_NUM = %d\n", calibImageNum);
 	ARLOG("Video parameter: %s\n", vconf);
 
-	if (arVideoOpen(vconf) < 0) exit(0);
-	if (arVideoGetSize(&xsize, &ysize) < 0) exit(0);
+	if (!(gVid = ar2VideoOpen(vconf))) exit(0);
+	if (ar2VideoGetSize(gVid, &xsize, &ysize) < 0) exit(0);
 	ARLOG("Image size (x,y) = (%d,%d)\n", xsize, ysize);
-	if ((pixFormat = arVideoGetPixelFormat()) == AR_PIXEL_FORMAT_INVALID) exit(0);
+	if ((pixFormat = ar2VideoGetPixelFormat(gVid)) == AR_PIXEL_FORMAT_INVALID) exit(0);
 
 	screenWidth = glutGet(GLUT_SCREEN_WIDTH);
 	screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
@@ -269,16 +273,12 @@ static void init(int argc, char *argv[])
 	argViewportSetDistortionMode(vp, AR_GL_DISTORTION_COMPENSATE_DISABLE);
 	argViewportSetDispMode(vp, AR_GL_DISP_MODE_FIT_TO_VIEWPORT_KEEP_ASPECT_RATIO);
 
-	// Set up the grayscale image.
-	arIPI = arImageProcInit(xsize, ysize, pixFormat, 1); // 1 -> always copy, since we need OpenCV to be able to wrap the memory.
-	if (!arIPI) {
-		ARLOGe("Error initialising image processing.\n");
-		exit(-1);
-	}
+	// Set up the grayscale image. We must always copy, since we need OpenCV to be able to wrap the memory.
+	arMalloc(imageLumaCopy, ARUint8, xsize*ysize);
 	calibImage = cvCreateImageHeader(cvSize(xsize, ysize), IPL_DEPTH_8U, 1);
-	cvSetData(calibImage, arIPI->image, xsize); // Last parameter is rowBytes.
+	cvSetData(calibImage, imageLumaCopy, xsize); // Last parameter is rowBytes.
 
-												// Allocate space for results.
+												 // Allocate space for results.
 	arMalloc(corners, CvPoint2D32f, chessboardCornerNumX*chessboardCornerNumY);
 	arMalloc(cornerSet, CvPoint2D32f, chessboardCornerNumX*chessboardCornerNumY*calibImageNum);
 }
@@ -287,10 +287,7 @@ static void cleanup(void)
 {
 	// Clean up the grayscale image.
 	cvReleaseImageHeader(&calibImage);
-	if (arIPI) {
-		arImageProcFinal(arIPI);
-		arIPI = NULL;
-	}
+	free(imageLumaCopy);
 
 	// Free space for results.
 	if (corners) {
@@ -302,8 +299,8 @@ static void cleanup(void)
 		cornerSet = NULL;
 	}
 
-	arVideoCapStop();
-	arVideoClose();
+	ar2VideoCapStop(gVid);
+	ar2VideoClose(gVid);
 	argCleanup();
 
 	if (cwd) {
@@ -495,7 +492,7 @@ static void saveParam(ARParam *param)
 
 	arMalloc(name, char, MAXPATHLEN);
 	arMalloc(cwd, char, MAXPATHLEN);
-	if (!getcwd(cwd, MAXPATHLEN)) ARLOGe("Unable to read current working directory.\n");
+	if (!_getcwd(cwd, MAXPATHLEN)) ARLOGe("Unable to read current working directory.\n");
 
 	nameOK = 0;
 	ARLOG("Filename[%s]: ", SAVE_FILENAME);
