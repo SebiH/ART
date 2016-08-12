@@ -71,10 +71,13 @@
 #include <AR/video.h>
 #include <AR/arImageProc.h>
 
+#include <ovrvision/ovrvision_pro.h>
+#include <opencv2/imgproc.hpp>
+
 
 #define      CHESSBOARD_CORNER_NUM_X        7
 #define      CHESSBOARD_CORNER_NUM_Y        5
-#define      CHESSBOARD_PATTERN_WIDTH      30.0
+#define      CHESSBOARD_PATTERN_WIDTH      24.0
 #define      CALIB_IMAGE_NUM               10
 #define      SAVE_FILENAME                 "camera_para.dat"
 #define      SCREEN_SIZE_MARGIN             0.1
@@ -95,6 +98,10 @@ static int                  cornerFlag = 0;
 static CvPoint2D32f        *corners = NULL;
 static CvPoint2D32f        *cornerSet = NULL;
 static char         *cwd = NULL;
+
+static int					eye = 0; // 0 - left; 1 - right
+static OVR::OvrvisionPro	*ovrCamera;
+static OVR::Cameye			camEye = OVR::Cameye::OV_CAMEYE_LEFT;
 
 static void          init(int argc, char *argv[]);
 static void          usage(char *com);
@@ -120,24 +127,33 @@ int calibCamera(int argc, char *argv[])
 
 static void mainLoop(void)
 {
-	AR2VideoBufferT *buff;
+	//AR2VideoBufferT *buff;
+	unsigned char *buff;
 	int             cornerCount;
 	char            buf[256];
 	int             i;
 
-	buff = ar2VideoGetImage(gVid);
-	if (!buff || !buff->fillFlag) {
-		arUtilSleep(2);
-		return;
-	}
+	//buff = ar2VideoGetImage(gVid);
+	//if (!buff || !buff->fillFlag) {
+	//	arUtilSleep(2);
+	//	return;
+	//}
+	ovrCamera->PreStoreCamData(OVR::Camqt::OV_CAMQT_DMSRMP);
+	buff = ovrCamera->GetCamImageBGRA(camEye);
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	argDrawMode2D(vp);
-	argDrawImage(buff->buff);
+	argDrawImage(buff);
 
 	// Copy the luma-only image into the backing for calibImage.
 	//memcpy(imageLumaCopy, buff->buffLuma, xsize*ysize);
-	memcpy(imageLumaCopy, buff->buff, xsize*ysize);
+	cv::Mat src = cv::Mat(ysize, xsize, CV_8UC4);
+	cv::Mat gray = cv::Mat(ysize, xsize, CV_8UC1);
+	src.data = buff;
+	cv::cvtColor(src, gray, CV_BGRA2GRAY);
+	gray.copyTo(src);
+
+	memcpy(imageLumaCopy, src.data, xsize*ysize);
 
 	cornerFlag = cvFindChessboardCorners(calibImage, cvSize(chessboardCornerNumY, chessboardCornerNumX),
 		corners, &cornerCount, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
@@ -166,7 +182,9 @@ static void usage(char *com)
 	ARLOG("  -cornerx=n: specify the number of corners on chessboard in X direction.\n");
 	ARLOG("  -cornery=n: specify the number of corners on chessboard in Y direction.\n");
 	ARLOG("  -imagenum=n: specify the number of images captured for calibration.\n");
-	ARLOG("  -pattwidth=n: specify the square width in the chessbaord.\n");
+	ARLOG("  -pattwidth=n: specify the square width in the chessboard.\n");
+	ARLOG("  -eye=0|1: specify which camera image to use; left = 0, right = 1 (Default 0)\n");
+	ARLOG("  -quality=0-8: Determines width/height of camera. See OVR::CamProp for values\n");
 	ARLOG("  -h -help --help: show this message\n");
 	exit(0);
 }
@@ -177,7 +195,8 @@ static void init(int argc, char *argv[])
 	char           *vconf = NULL;
 	int             i;
 	int             gotTwoPartOption;
-	int             screenWidth, screenHeight, screenMargin;
+	int             screenWidth, screenHeight, screenMargin, quality;
+	OVR::Camprop	camProp = OVR::Camprop::OV_CAMHD_FULL;
 
 	chessboardCornerNumX = 0;
 	chessboardCornerNumY = 0;
@@ -224,6 +243,16 @@ static void init(int argc, char *argv[])
 				if (sscanf(&(argv[i][11]), "%f", &patternWidth) != 1) usage(argv[0]);
 				if (patternWidth <= 0) usage(argv[0]);
 			}
+			else if (strncmp(argv[i], "-eye=", 5) == 0) {
+				if (sscanf(&argv[i][5], "%f", &eye) != 1) usage(argv[0]);
+				if (eye < 0 || eye > 1) usage(argv[0]);
+				camEye = (eye == 0) ? OVR::Cameye::OV_CAMEYE_LEFT : OVR::Cameye::OV_CAMEYE_RIGHT;
+			}
+			else if (strncmp(argv[i], "-quality=", 9) == 0) {
+				if (sscanf(&argv[i][0], "%f", &quality) != 1) usage(argv[0]);
+				if (quality < 0 || quality > 8) usage(argv[0]);
+				camProp = static_cast<OVR::Camprop>(quality);
+			}
 			else {
 				ARLOGe("Error: invalid command line argument '%s'.\n", argv[i]);
 				usage(argv[0]);
@@ -241,10 +270,21 @@ static void init(int argc, char *argv[])
 	ARLOG("CALIB_IMAGE_NUM = %d\n", calibImageNum);
 	ARLOG("Video parameter: %s\n", vconf);
 
-	if (!(gVid = ar2VideoOpen(vconf))) exit(0);
-	if (ar2VideoGetSize(gVid, &xsize, &ysize) < 0) exit(0);
-	ARLOG("Image size (x,y) = (%d,%d)\n", xsize, ysize);
-	if ((pixFormat = ar2VideoGetPixelFormat(gVid)) == AR_PIXEL_FORMAT_INVALID) exit(0);
+	ovrCamera = new OVR::OvrvisionPro();
+	auto openSuccess = ovrCamera->Open(0, camProp, 0);
+	if (!openSuccess) {
+		ARLOG("Unable to open camera");
+		exit(0);
+	}
+
+	xsize = ovrCamera->GetCamWidth();
+	ysize = ovrCamera->GetCamHeight();
+	pixFormat = AR_PIXEL_FORMAT_BGRA;
+
+	//if (!(gVid = ar2VideoOpen(vconf))) exit(0);
+	//if (ar2VideoGetSize(gVid, &xsize, &ysize) < 0) exit(0);
+	//ARLOG("Image size (x,y) = (%d,%d)\n", xsize, ysize);
+	//if ((pixFormat = ar2VideoGetPixelFormat(gVid)) == AR_PIXEL_FORMAT_INVALID) exit(0);
 
 	screenWidth = glutGet(GLUT_SCREEN_WIDTH);
 	screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
@@ -278,7 +318,7 @@ static void init(int argc, char *argv[])
 	calibImage = cvCreateImageHeader(cvSize(xsize, ysize), IPL_DEPTH_8U, 1);
 	cvSetData(calibImage, imageLumaCopy, xsize); // Last parameter is rowBytes.
 
-												 // Allocate space for results.
+	// Allocate space for results.
 	arMalloc(corners, CvPoint2D32f, chessboardCornerNumX*chessboardCornerNumY);
 	arMalloc(cornerSet, CvPoint2D32f, chessboardCornerNumX*chessboardCornerNumY*calibImageNum);
 }
