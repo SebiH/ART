@@ -72,6 +72,9 @@
 #include <AR/icpCalib.h>
 #include <AR/icp.h>
 
+#include <ovrvision/ovrvision_pro.h>
+#include <opencv2/imgproc.hpp>
+
 #define          CHESSBOARD_CORNER_NUM_X        7
 #define          CHESSBOARD_CORNER_NUM_Y        5
 #define          CHESSBOARD_PATTERN_WIDTH      30.0
@@ -102,9 +105,10 @@ static ARParam              paramL;
 static ARParam              paramR;
 static ARGViewportHandle   *vpL;
 static ARGViewportHandle   *vpR;
-static AR2VideoBufferT *gVideoBuffL = NULL;
-static AR2VideoBufferT *gVideoBuffR = NULL;
+//static AR2VideoBufferT *gVideoBuffL = NULL;
+//static AR2VideoBufferT *gVideoBuffR = NULL;
 
+static OVR::OvrvisionPro	*ovrCamera;
 
 static void          usage(char *com);
 static void          init(int argc, char *argv[]);
@@ -142,6 +146,7 @@ static void usage(char *com)
 	ARLOG("  -cparaR=<camera parameter file for the Right camera>\n");
 	ARLOG("  --vconfL <video parameter for the Left camera>\n");
 	ARLOG("  --vconfR <video parameter for the Right camera>\n");
+	ARLOG("  -quality=0-8: Determines width/height of camera. See OVR::CamProp for values\n");
 	ARLOG("  -h -help --help: show this message\n");
 	exit(0);
 }
@@ -154,6 +159,9 @@ static void init(int argc, char *argv[])
 	char              *cparaR = NULL;
 	char               cparaLDefault[] = "../share/artoolkit-utils/Data/cparaL.dat";
 	char               cparaRDefault[] = "../share/artoolkit-utils/Data/cparaR.dat";
+
+	int quality;
+	OVR::Camprop camProp = OVR::Camprop::OV_CAMHD_FULL;
 
 	ARParam            wparam;
 	ARGViewport        viewport;
@@ -224,6 +232,11 @@ static void init(int argc, char *argv[])
 			else if (strncmp(argv[i], "-cparaR=", 8) == 0) {
 				cparaR = &(argv[i][8]);
 			}
+			else if (strncmp(argv[i], "-quality=", 9) == 0) {
+				if (sscanf(&argv[i][0], "%f", &quality) != 1) usage(argv[0]);
+				if (quality < 0 || quality > 8) usage(argv[0]);
+				camProp = static_cast<OVR::Camprop>(quality);
+			}
 			else {
 				ARLOGe("Error: invalid command line argument '%s'.\n", argv[i]);
 				usage(argv[0]);
@@ -247,18 +260,36 @@ static void init(int argc, char *argv[])
 	ARLOG("Camera parameter Left : %s\n", cparaL);
 	ARLOG("Camera parameter Right: %s\n", cparaR);
 
-	if ((vidL = ar2VideoOpen(vconfL)) == NULL) {
-		ARLOGe("Cannot found the first camera.\n");
+	//if ((vidL = ar2VideoOpen(vconfL)) == NULL) {
+	//	ARLOGe("Cannot found the first camera.\n");
+	//	exit(0);
+	//}
+	//if ((vidR = ar2VideoOpen(vconfR)) == NULL) {
+	//	ARLOGe("Cannot found the second camera.\n");
+	//	exit(0);
+	//}
+
+	ovrCamera = new OVR::OvrvisionPro();
+
+	auto openSuccess = ovrCamera->Open(0, camProp, 0);
+
+	if (!openSuccess) {
+		ARLOG("Unable to open camera\n");
 		exit(0);
 	}
-	if ((vidR = ar2VideoOpen(vconfR)) == NULL) {
-		ARLOGe("Cannot found the second camera.\n");
-		exit(0);
-	}
-	if (ar2VideoGetSize(vidL, &xsizeL, &ysizeL) < 0) exit(0);
-	if (ar2VideoGetSize(vidR, &xsizeR, &ysizeR) < 0) exit(0);
-	if ((pixFormatL = ar2VideoGetPixelFormat(vidL)) < 0) exit(0);
-	if ((pixFormatR = ar2VideoGetPixelFormat(vidR)) < 0) exit(0);
+
+	ovrCamera->SetCameraSyncMode(true);
+
+	//if (ar2VideoGetSize(vidL, &xsizeL, &ysizeL) < 0) exit(0);
+	//if (ar2VideoGetSize(vidR, &xsizeR, &ysizeR) < 0) exit(0);
+
+	xsizeL = xsizeR = ovrCamera->GetCamWidth();
+	ysizeL = ysizeR = ovrCamera->GetCamHeight();
+
+	//if ((pixFormatL = ar2VideoGetPixelFormat(vidL)) < 0) exit(0);
+	//if ((pixFormatR = ar2VideoGetPixelFormat(vidR)) < 0) exit(0);
+	pixFormatL = pixFormatR = AR_PIXEL_FORMAT_BGRA;
+
 	ARLOG("Image size for the left camera  = (%d,%d)\n", xsizeL, ysizeL);
 	ARLOG("Image size for the right camera = (%d,%d)\n", xsizeR, ysizeR);
 
@@ -399,8 +430,10 @@ static void  keyEvent(unsigned char key, int x, int y)
 
 static void mainLoop(void)
 {
-	AR2VideoBufferT *videoBuffL;
-	AR2VideoBufferT *videoBuffR;
+	//AR2VideoBufferT *videoBuffL;
+	//AR2VideoBufferT *videoBuffR;
+	unsigned char *buffLeft = 0;
+	unsigned char *buffRight = 0;
 	ARUint8         *dataPtrL;
 	ARUint8         *dataPtrR;
 	int              cornerFlagL;
@@ -410,28 +443,31 @@ static void mainLoop(void)
 	char             buf[256];
 	int              i;
 
+	ovrCamera->PreStoreCamData(OVR::Camqt::OV_CAMQT_DMSRMP);
+	buffLeft = ovrCamera->GetCamImageBGRA(OVR::Cameye::OV_CAMEYE_LEFT);
+	buffRight = ovrCamera->GetCamImageBGRA(OVR::Cameye::OV_CAMEYE_RIGHT);
 
-	if ((videoBuffL = ar2VideoGetImage(vidL))) {
-		gVideoBuffL = videoBuffL;
-	}
-	if ((videoBuffR = ar2VideoGetImage(vidR))) {
-		gVideoBuffR = videoBuffR;
-	}
+	//if ((videoBuffL = ar2VideoGetImage(vidL))) {
+	//	gVideoBuffL = videoBuffL;
+	//}
+	//if ((videoBuffR = ar2VideoGetImage(vidR))) {
+	//	gVideoBuffR = videoBuffR;
+	//}
 
-	if (gVideoBuffL && gVideoBuffR) {
+	if (buffLeft && buffRight) {
 
 		// Warn about significant time differences.
-		i = ((int)gVideoBuffR->time_sec - (int)gVideoBuffL->time_sec) * 1000
-			+ ((int)gVideoBuffR->time_usec - (int)gVideoBuffL->time_usec) / 1000;
-		if (i > 20) {
-			ARLOG("Time diff = %d[msec]\n", i);
-		}
-		else if (i < -20) {
-			ARLOG("Time diff = %d[msec]\n", i);
-		}
+		//i = ((int)gVideoBuffR->time_sec - (int)gVideoBuffL->time_sec) * 1000
+		//	+ ((int)gVideoBuffR->time_usec - (int)gVideoBuffL->time_usec) / 1000;
+		//if (i > 20) {
+		//	ARLOG("Time diff = %d[msec]\n", i);
+		//}
+		//else if (i < -20) {
+		//	ARLOG("Time diff = %d[msec]\n", i);
+		//}
 
-		dataPtrL = gVideoBuffL->buff;
-		dataPtrR = gVideoBuffR->buff;
+		dataPtrL = buffLeft;
+		dataPtrR = buffRight;
 		glClear(GL_COLOR_BUFFER_BIT);
 		argDrawMode2D(vpL);
 		argDrawImage(dataPtrL);
@@ -486,7 +522,7 @@ static void mainLoop(void)
 
 		argSwapBuffers();
 
-		gVideoBuffL = gVideoBuffR = NULL;
+		//gVideoBuffL = gVideoBuffR = NULL;
 
 	}
 	else arUtilSleep(2);
