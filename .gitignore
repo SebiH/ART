@@ -91,6 +91,12 @@ sysinfo.txt
 /imageprocessing/ImageProcessing/thirdparty/libs/*
 /imageprocessing/ImageProcessing/thirdparty/dll/*
 
+/imageprocessing/Tools/thirdparty/libs/*
+/imageprocessing/Tools/thirdparty/dll/*
+
+# Output directory for imageprocessing tools
+/imageprocessing/bin/
+
 # ==========
 # Node / JS
 # ==========
