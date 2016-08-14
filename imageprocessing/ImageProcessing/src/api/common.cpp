@@ -162,7 +162,7 @@ extern "C" UNITY_INTERFACE_EXPORT void SetFrameSource(int sourceId)
 			break;
 		}
 	}
-	catch (std::exception e)
+	catch (const std::exception &e)
 	{
 		auto errorMessage = std::string("Error creating framesource: ") + e.what();
 		DebugLog(errorMessage.c_str());

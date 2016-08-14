@@ -35,7 +35,7 @@ OpenCVFrameProducer::OpenCVFrameProducer()
 
 	if (!_camera->open(0))
 	{
-		throw new std::exception("Unable to open camera");
+		throw std::exception("Unable to open camera");
 	}
 
 	int camDepth = 4; // enforce 4 channels by converting to RGBA later on
