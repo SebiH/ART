@@ -23,36 +23,50 @@ std::vector<ProcessingOutput> ARToolkitModule::processImage(unsigned char *rawDa
 		isInitialized = true;
 	}
 
-	int arMarkerResult = arDetectMarker(arHandle, rawDataLeft);
 	// TODO: if arMarkerResult < 0 ... errorhandling
+	int arMarkerResult = arDetectMarker(arHandle, rawDataLeft);
 	int arMarkerNum = arGetMarkerNum(arHandle);
 
 	ProcessingOutput outputLeft;
 	ProcessingOutput outputRight;
+	bool detectedMarker = false;
 
 	if (arMarkerNum > 0)
 	{
 		auto markerInfo = arGetMarker(arHandle);
 
-		cv::Mat imgLeft = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataLeft);
-		cv::circle(imgLeft, cv::Point(markerInfo->pos[0], markerInfo->pos[1]), 5, cv::Scalar(0, 0, 255, 1.0), 3);
-
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < arMarkerNum; i++)
 		{
-			auto cornerPos = cv::Point(markerInfo->vertex[i][0], markerInfo->vertex[i][1]);
-			cv::circle(imgLeft, cornerPos, 3, cv::Scalar(255, 0, 0, 1.0), 3);
+			if (markerInfo[i].id == patt_id && markerInfo[i].cf > 0.7)
+			{
+				double patt_width = 80.0;
+				ARdouble patt_trans[3][4];
+				auto err = arGetTransMatSquare(ar3DHandle, &(markerInfo[i]), patt_width, patt_trans);
+
+				cv::Mat imgLeft = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataLeft);
+				cv::circle(imgLeft, cv::Point(markerInfo[i].pos[0], markerInfo[i].pos[1]), 5, cv::Scalar(0, 0, 255, 1.0), 3);
+
+				for (int i = 0; i < 4; i++)
+				{
+					auto cornerPos = cv::Point(markerInfo[i].vertex[i][0], markerInfo[i].vertex[i][1]);
+					cv::circle(imgLeft, cornerPos, 3, cv::Scalar(255, 0, 0, 1.0), 3);
+				}
+
+				// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
+				// TODO: verify?
+				auto memSize = imgLeft.size().width * imgLeft.size().height * imgLeft.channels();
+
+				outputLeft.type = ProcessingOutput::Type::left;
+				outputLeft.data = std::unique_ptr<unsigned char[]>(new unsigned char[memSize]);
+				outputLeft.img = imgLeft;
+				memcpy(outputLeft.data.get(), imgLeft.data, memSize);
+
+				detectedMarker = true;
+			}
 		}
-
-		// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
-		// TODO: verify?
-		auto memSize = imgLeft.size().width * imgLeft.size().height * imgLeft.channels();
-
-		outputLeft.type = ProcessingOutput::Type::left;
-		outputLeft.data = std::unique_ptr<unsigned char[]>(new unsigned char[memSize]);
-		outputLeft.img = imgLeft;
-		memcpy(outputLeft.data.get(), imgLeft.data, memSize);
 	}
-	else
+
+	if (!detectedMarker)
 	{
 		outputLeft.type = ProcessingOutput::Type::left;
 		outputLeft.data = std::unique_ptr<unsigned char[]>(new unsigned char[info.bufferSize]);
