@@ -5,6 +5,7 @@
 #include "../processingmodule/RawImageModule.h"
 #include "../processingmodule/RoiModule.h"
 #include "../processingmodule/ContourModule.h"
+#include "../processingmodule/ARToolkitModule.h"
 
 using namespace ImageProcessing;
 
@@ -41,6 +42,10 @@ std::shared_ptr<ThreadedModule> ModuleManager::getOrCreateModule(const std::stri
 		else if (moduleName == "Contour")
 		{
 			processingModule = std::make_unique<ContourModule>();
+		}
+		else if (moduleName == "ARToolkit")
+		{
+			processingModule = std::make_unique<ARToolkitModule>();
 		}
 		else // unknown module
 		{

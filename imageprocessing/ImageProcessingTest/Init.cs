@@ -70,12 +70,13 @@ namespace ImageProcessingUtil
         static void Main(string[] args)
         {
             // Test things without unity
-            SetFrameSource((int)FrameSource.DefaultDummy);
+            SetFrameSource((int)FrameSource.Ovr640x480x90fps);
             StartImageProcessing();
             //SetCamExposure(100);
             //SetCamGain(1);
             int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
-            int handleRoi = RegisterOpenCVTextureWriter("Contour", "testWindow2");
+            //int handleRoi = RegisterOpenCVTextureWriter("Contour", "testWindow2");
+            int handleRoi = RegisterOpenCVTextureWriter("ARToolkit", "testWindow2");
 
             //int currentX = 0;
             //int currentY = 0;
