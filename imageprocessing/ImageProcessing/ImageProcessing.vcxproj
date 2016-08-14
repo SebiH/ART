@@ -100,6 +100,7 @@
     <ClCompile Include="src\framesource\DummyFrameSource.cpp" />
     <ClCompile Include="src\framesource\LeapFrameSource.cpp" />
     <ClCompile Include="src\framesource\NullFrameSource.cpp" />
+    <ClCompile Include="src\processingmodule\ARMarkerSquare.cpp" />
     <ClCompile Include="src\processingmodule\ARToolkitModule.cpp" />
     <ClCompile Include="src\processingmodule\ContourModule.cpp" />
     <ClCompile Include="src\processingmodule\RawImageModule.cpp" />
@@ -122,6 +123,7 @@
     <ClInclude Include="src\framesource\IFrameSource.h" />
     <ClInclude Include="src\framesource\LeapFrameSource.h" />
     <ClInclude Include="src\framesource\NullFrameSource.h" />
+    <ClInclude Include="src\processingmodule\ARMarkerSquare.h" />
     <ClInclude Include="src\processingmodule\ARToolkitModule.h" />
     <ClInclude Include="src\processingmodule\ContourModule.h" />
     <ClInclude Include="src\util\PerformanceDebugging.h" />

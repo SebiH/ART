@@ -75,6 +75,9 @@
     <ClCompile Include="src\processingmodule\ARToolkitModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\processingmodule\ARMarkerSquare.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\util\ThreadedModule.h">
@@ -144,6 +147,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\processingmodule\ARToolkitModule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\processingmodule\ARMarkerSquare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

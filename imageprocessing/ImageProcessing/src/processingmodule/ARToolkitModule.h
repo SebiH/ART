@@ -3,6 +3,7 @@
 #include <AR/ar.h>
 
 #include "IProcessingModule.h"
+#include "ARMarkerSquare.h"
 
 namespace ImageProcessing
 {
@@ -11,12 +12,27 @@ namespace ImageProcessing
 	private:
 		bool isInitialized = false;
 
-		int patt_id;
-		ARParam cparam;
-		ARParamLT *cparamLT_p;
-		ARHandle *arHandle;
-		ARPattHandle *arPattHandle;
-		AR3DHandle *ar3DHandle;
+		// Markers
+		ARMarkerSquare *markersSquare = nullptr;
+		int markersSquareCount = 0;
+
+		// Marker detection
+		ARHandle		*gARHandleL = nullptr;
+		ARHandle		*gARHandleR = nullptr;
+		long			 gCallCountMarkerDetect = 0;
+		ARPattHandle	*gARPattHandle = nullptr;
+		int           gARPattDetectionMode;
+
+		// Transformation matrix retrieval
+		AR3DHandle	*gAR3DHandleL = nullptr;
+		AR3DHandle	*gAR3DHandleR = nullptr;
+		AR3DStereoHandle	*gAR3DStereoHandle = nullptr;
+		ARdouble      transL2R[3][4];
+		ARdouble      transR2L[3][4];;
+
+		// Drawing.
+		ARParamLT *gCparamLTL = nullptr;
+		ARParamLT *gCparamLTR = nullptr;
 
 	public:
 		ARToolkitModule();
@@ -25,6 +41,7 @@ namespace ImageProcessing
 
 	private:
 		void initialize(int sizeX, int sizeY);
+		bool setupCamera(std::string filename, int sizeX, int sizeY, ARParamLT **cparamLT_p);
 		void cleanup();
 	};
 
