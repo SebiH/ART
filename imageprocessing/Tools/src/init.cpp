@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 	{
 		calibCamera(argc - 1, argv + 1);
 	}
-	else if (argc >= 2 && std::string(argv[1]) == std::string("calibCamera"))
+	else if (argc >= 2 && std::string(argv[1]) == std::string("calibStereo"))
 	{
 		calibStereo(argc - 1, argv + 1);
 	}
