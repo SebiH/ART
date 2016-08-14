@@ -3,15 +3,15 @@
 
 #include <stdio.h>
 
-void DebugLog(const char* str)
+void DebugLog(const std::string &msg)
 {
 	// TODO: doesn't work, but is used in Unity's demo. odd.
 #if UNITY_WIN
-	OutputDebugStringA(str);
+	OutputDebugStringA(str.c_str());
 #else
-	printf("%s\n", str);
+	printf("%s\n", msg.c_str());
 #endif
 
 	// just defer to working function, until above code works in unity
-	LogToUnity(str);
+	LogToUnity(msg.c_str());
 }

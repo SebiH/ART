@@ -2,4 +2,4 @@
 
 #include <string>
 
-void DebugLog(const char* str);
+void DebugLog(const std::string &msg);
