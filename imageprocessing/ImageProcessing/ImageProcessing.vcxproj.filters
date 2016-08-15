@@ -21,9 +21,6 @@
     <ClCompile Include="src\stereo_detection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\stereo_calibration.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -111,7 +111,6 @@
     <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp" />
     <ClCompile Include="src\framesource\OvrFrameProducer.cpp" />
     <ClCompile Include="src\util\ThreadedModule.cpp" />
-    <ClCompile Include="src\stereo_calibration.cpp" />
     <ClCompile Include="src\stereo_detection.cpp" />
     <ClCompile Include="src\texturewriter\UnityDX11TextureWriter.cpp" />
     <ClCompile Include="src\util\UnityUtils.cpp" />
