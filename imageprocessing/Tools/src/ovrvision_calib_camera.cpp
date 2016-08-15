@@ -244,7 +244,7 @@ static void init(int argc, char *argv[])
 				if (patternWidth <= 0) usage(argv[0]);
 			}
 			else if (strncmp(argv[i], "-eye=", 5) == 0) {
-				if (sscanf(&argv[i][5], "%f", &eye) != 1) usage(argv[0]);
+				if (sscanf(&argv[i][5], "%d", &eye) != 1) usage(argv[0]);
 				if (eye < 0 || eye > 1) usage(argv[0]);
 				camEye = (eye == 0) ? OVR::Cameye::OV_CAMEYE_LEFT : OVR::Cameye::OV_CAMEYE_RIGHT;
 			}
