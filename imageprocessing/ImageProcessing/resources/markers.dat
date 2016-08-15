@@ -15,9 +15,10 @@
 
 hiro.patt
 SINGLE
-80.0
+22.5
+FILTER 5.0
 
 kanji.patt
 SINGLE
-80.0
+22.5
 FILTER 15.0
