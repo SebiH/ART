@@ -34,10 +34,18 @@ namespace ImageProcessing
 		ARParamLT *gCparamLTL = nullptr;
 		ARParamLT *gCparamLTR = nullptr;
 
+		// TODO: refactor (quickly hacked together)
+		bool newMarkerMatrix = false;
+		double *markerMatrix;
+
 	public:
 		ARToolkitModule();
 		~ARToolkitModule();
 		virtual std::vector<ProcessingOutput> processImage(unsigned char *rawDataLeft, unsigned char *rawDataRight, const ImageInfo &info) override;
+		
+		// TODO: refactor (quickly hacked together!)
+		bool hasNewMarkerDetected() const;
+		double* getNewMarkerMatrix() const;
 
 	private:
 		void initialize(int sizeX, int sizeY);

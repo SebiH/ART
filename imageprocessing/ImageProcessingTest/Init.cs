@@ -70,7 +70,7 @@ namespace ImageProcessingUtil
         static void Main(string[] args)
         {
             // Test things without unity
-            SetFrameSource((int)FrameSource.Ovr640x480x90fps);
+            SetFrameSource((int)FrameSource.Ovr1280x960x45fps);
             StartImageProcessing();
             //SetCamExposure(100);
             //SetCamGain(1);
