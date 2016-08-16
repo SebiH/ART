@@ -14,6 +14,7 @@
 #include "..\framesource\DummyFrameSource.h"
 #include "..\processingmodule\IProcessingModule.h"
 #include "..\processingmodule\RoiModule.h"
+#include "..\processingmodule\ARToolkitModule.h"
 #include "..\texturewriter\ITextureWriter.h"
 #include "..\texturewriter\OpenCvTextureWriter.h"
 #include "..\texturewriter\UnityDX11TextureWriter.h"
@@ -225,5 +226,49 @@ extern "C" UNITY_INTERFACE_EXPORT void ChangeRoi(const int moduleHandle, const i
 		IProcessingModule *module = g_moduleManager->getOrCreateModule("ROI")->getProcessingModule();
 		auto roiModule = static_cast<RoiModule*>(module);
 		roiModule->setRegion(cv::Rect(x, y, width, height));
+	}
+}
+
+
+extern "C" UNITY_INTERFACE_EXPORT bool HasNewPose()
+{
+	auto arModuleName = std::string("ARToolkit");
+	if (g_moduleManager->hasModule(arModuleName))
+	{
+		auto module = g_moduleManager->getOrCreateModule(arModuleName)->getProcessingModule();
+		auto arModule = static_cast<ARToolkitModule*>(module);
+		return arModule->hasNewMarkerDetected();
+	}
+	else
+	{
+		return false;
+	}
+}
+
+// TODO: refactor, quickly hacked together!
+static double *tempPose = nullptr;
+
+// returns 4x4 matrix -> double[12], columns first
+extern "C" UNITY_INTERFACE_EXPORT double* GetPose()
+{
+	auto arModuleName = std::string("ARToolkit");
+	if (g_moduleManager->hasModule(arModuleName))
+	{
+		auto module = g_moduleManager->getOrCreateModule(arModuleName)->getProcessingModule();
+		auto arModule = static_cast<ARToolkitModule*>(module);
+
+		if (tempPose != nullptr)
+		{
+			delete[] tempPose;
+		}
+
+		tempPose = new double[12];
+		memcpy(tempPose, arModule->getNewMarkerMatrix(), 12 * sizeof(double));
+
+		return tempPose;
+	}
+	else
+	{
+		return nullptr;
 	}
 }

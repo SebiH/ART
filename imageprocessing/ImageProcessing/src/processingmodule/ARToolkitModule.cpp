@@ -328,9 +328,15 @@ std::vector<ProcessingOutput> ARToolkitModule::processImage(unsigned char *rawDa
 	return output;
 }
 
-bool ARToolkitModule::hasNewMarkerDetected() const
+bool ARToolkitModule::hasNewMarkerDetected()
 {
-	return newMarkerMatrix;
+	if (newMarkerMatrix)
+	{
+		newMarkerMatrix = false;
+		return true;
+	}
+
+	return false;
 }
 
 double* ARToolkitModule::getNewMarkerMatrix() const

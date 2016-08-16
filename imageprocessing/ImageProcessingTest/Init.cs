@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 
 namespace ImageProcessingUtil
@@ -56,6 +57,12 @@ namespace ImageProcessingUtil
         [DllImport("ImageProcessing")]
         private static extern int GetProcessingMode();
 
+        [DllImport("ImageProcessing")]
+        private static extern bool HasNewPose();
+
+        [DllImport("ImageProcessing")]
+        private static extern IntPtr GetPose();
+
         private enum FrameSource
         {
             None = -1,
@@ -94,6 +101,18 @@ namespace ImageProcessingUtil
                 if (keyPressed == 'p')
                 {
                     SetProcessingMode((GetProcessingMode() + 1) % 3);
+                }
+
+                if (HasNewPose())
+                {
+                    double[] poseMatrix = new double[16];
+
+                    fixed (void* posePtr = poseMatrix)
+                    {
+
+                    }
+
+                    var pose = GetPose(new IntPtr(poseMatrix));
                 }
 
                 if (keyPressed == 's')

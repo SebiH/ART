@@ -44,7 +44,7 @@ namespace ImageProcessing
 		virtual std::vector<ProcessingOutput> processImage(unsigned char *rawDataLeft, unsigned char *rawDataRight, const ImageInfo &info) override;
 		
 		// TODO: refactor (quickly hacked together!)
-		bool hasNewMarkerDetected() const;
+		bool hasNewMarkerDetected();
 		double* getNewMarkerMatrix() const;
 
 	private:
