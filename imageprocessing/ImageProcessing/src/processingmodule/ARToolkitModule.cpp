@@ -9,7 +9,7 @@ using namespace ImageProcessing;
 
 ARToolkitModule::ARToolkitModule()
 {
-	markerMatrix = new double[12];
+	markerMatrix = new double[16]; // 4x4 matrix
 }
 
 ARToolkitModule::~ARToolkitModule()
@@ -167,62 +167,6 @@ std::vector<ProcessingOutput> ARToolkitModule::processImage(unsigned char *rawDa
 
 		if (markersSquare[i].valid)
 		{
-
-			if (markerNumL == 1)
-			{
-				isLeftInit = true;
-				cv::Mat imgLeft = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataLeft);
-				cv::circle(imgLeft, cv::Point(markerInfoL[0].pos[0], markerInfoL[0].pos[1]), 5, cv::Scalar(0, 0, 255, 1.0), 3);
-
-				for (int j = 0; j < 4; j++)
-				{
-					auto cornerPos = cv::Point(markersSquare[i].marker_coord[j][0], markersSquare[i].marker_coord[j][1]);
-					cv::circle(imgLeft, cornerPos, 3, cv::Scalar(255, 0, 0, 1.0), 3);
-				}
-
-				// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
-				// TODO: verify?
-				auto memSize = imgLeft.size().width * imgLeft.size().height * imgLeft.channels();
-
-				outputLeft.type = ProcessingOutput::Type::left;
-				outputLeft.data = std::unique_ptr<unsigned char[]>(new unsigned char[memSize]);
-				outputLeft.img = imgLeft;
-				memcpy(outputLeft.data.get(), imgLeft.data, memSize);
-			}
-
-
-			if (markerNumR == 1)
-			{
-				isRightInit = true;
-				cv::Mat imgRight = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataRight);
-				cv::circle(imgRight, cv::Point(markerInfoR[0].pos[0], markerInfoR[0].pos[1]), 5, cv::Scalar(0, 0, 255, 1.0), 3);
-
-				// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
-				// TODO: verify?
-				auto memSize = imgRight.size().width * imgRight.size().height * imgRight.channels();
-
-				outputRight.type = ProcessingOutput::Type::right;
-				outputRight.data = std::unique_ptr<unsigned char[]>(new unsigned char[memSize]);
-				outputRight.img = imgRight;
-				memcpy(outputRight.data.get(), imgRight.data, memSize);
-			}
-
-			newMarkerMatrix = true;
-			markerMatrix[0] = markersSquare[i].trans[0][0];
-			markerMatrix[1] = markersSquare[i].trans[0][1];
-			markerMatrix[2] = markersSquare[i].trans[0][2];
-			markerMatrix[3] = markersSquare[i].trans[0][3];
-
-			markerMatrix[4] = markersSquare[i].trans[1][0];
-			markerMatrix[5] = markersSquare[i].trans[1][1];
-			markerMatrix[6] = markersSquare[i].trans[1][2];
-			markerMatrix[7] = markersSquare[i].trans[1][3];
-
-			markerMatrix[8] = markersSquare[i].trans[2][0];
-			markerMatrix[9] = markersSquare[i].trans[2][1];
-			markerMatrix[10] = markersSquare[i].trans[2][2];
-			markerMatrix[11] = markersSquare[i].trans[2][3];
-
 			// Filter the pose estimate.
 			if (markersSquare[i].ftmi)
 			{
@@ -245,13 +189,22 @@ std::vector<ProcessingOutput> ARToolkitModule::processImage(unsigned char *rawDa
 			arglCameraViewRH((const ARdouble(*)[4])markersSquare[i].trans, markersSquare[i].pose.T, 1.0f /*VIEW_SCALEFACTOR*/);
 			arUtilMatMul((const ARdouble(*)[4])transL2R, (const ARdouble(*)[4])markersSquare[i].trans, transR);
 			arglCameraViewRH((const ARdouble(*)[4])transR, poseR.T, 1.0f /*VIEW_SCALEFACTOR*/);
+
+
+			newMarkerMatrix = true;
+			for (int j = 0; j < 16; j++)
+			{
+				markerMatrix[j] = markersSquare[i].pose.T[j];
+			}
+
 			//// Tell any dependent objects about the update.
 			//for (j = 0; j < viewCount; j++) {
 			//	VirtualEnvironment2HandleARMarkerWasUpdated(views[j].ve2, i, (views[j].viewEye == VIEW_RIGHTEYE ? poseR : markersSquare[i].pose));
 			//}
 
 		}
-		else {
+		else
+		{
 
 			if (markersSquare[i].validPrev) {
 				// Marker has ceased to be visible, tell any dependent objects.
@@ -263,12 +216,102 @@ std::vector<ProcessingOutput> ARToolkitModule::processImage(unsigned char *rawDa
 	}
 
 
+
+	if (markerNumL > 0)
+	{
+		isLeftInit = true;
+		cv::Mat imgLeft = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataLeft);
+		cv::circle(imgLeft, cv::Point(markerInfoL[0].pos[0], markerInfoL[0].pos[1]), 5, cv::Scalar(0, 0, 255, 1.0), 3);
+
+		for (int j = 0; j < 4; j++)
+		{
+			auto cornerPos = cv::Point(markerInfoL[0].vertex[j][0], markerInfoL[0].vertex[j][1]);
+			cv::circle(imgLeft, cornerPos, 3, cv::Scalar(255, 0, 0, 1.0), 3);
+		}
+
+		for (int i = 0; i < markersSquareCount; i++)
+		{
+			std::string text;
+
+			if (markersSquare[i].valid)
+			{
+				text = std::string("Marker ") + std::to_string(i) + std::string(" VALID");
+			}
+			else
+			{
+				text = std::string("Marker ") + std::to_string(i) + std::string(" invalid");
+			}
+
+			cv::putText(imgLeft, text, cv::Point(0, 100*(i+1)), cv::FONT_HERSHEY_PLAIN, 3, cv::Scalar(0, 0, 255, 1.0), 2);
+		}
+
+		// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
+		// TODO: verify?
+		auto memSize = imgLeft.size().width * imgLeft.size().height * imgLeft.channels();
+
+		outputLeft.type = ProcessingOutput::Type::left;
+		outputLeft.data = std::unique_ptr<unsigned char[]>(new unsigned char[memSize]);
+		outputLeft.img = imgLeft;
+		memcpy(outputLeft.data.get(), imgLeft.data, memSize);
+	}
+
+
+	if (markerNumR > 0)
+	{
+		isRightInit = true;
+		cv::Mat imgRight = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataRight);
+		cv::circle(imgRight, cv::Point(markerInfoR[0].pos[0], markerInfoR[0].pos[1]), 5, cv::Scalar(0, 0, 255, 1.0), 3);
+
+		for (int j = 0; j < 4; j++)
+		{
+			auto cornerPos = cv::Point(markerInfoR[0].vertex[j][0], markerInfoR[0].vertex[j][1]);
+			cv::circle(imgRight, cornerPos, 3, cv::Scalar(255, 0, 0, 1.0), 3);
+		}
+
+
+		// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
+		// TODO: verify?
+		auto memSize = imgRight.size().width * imgRight.size().height * imgRight.channels();
+
+
+		outputRight.type = ProcessingOutput::Type::right;
+		outputRight.data = std::unique_ptr<unsigned char[]>(new unsigned char[memSize]);
+		outputRight.img = imgRight;
+		memcpy(outputRight.data.get(), imgRight.data, memSize);
+	}
+
+
+
+
+
+
 	if (!isLeftInit)
 	{
+		cv::Mat imgLeft = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataLeft);
+
+		for (int i = 0; i < markersSquareCount; i++)
+		{
+			std::string text;
+
+			if (markersSquare[i].valid)
+			{
+				text = std::string("Marker ") + std::to_string(i) + std::string(" VALID");
+			}
+			else
+			{
+				text = std::string("Marker ") + std::to_string(i) + std::string(" invalid");
+			}
+
+			cv::putText(imgLeft, text, cv::Point(0, 100*(i+1)), cv::FONT_HERSHEY_PLAIN, 3, cv::Scalar(0, 0, 255, 1.0), 2);
+		}
+
+
+		auto memSize = imgLeft.size().width * imgLeft.size().height * imgLeft.channels();
+
 		outputLeft.type = ProcessingOutput::Type::left;
-		outputLeft.data = std::unique_ptr<unsigned char[]>(new unsigned char[info.bufferSize]);
-		memcpy(outputLeft.data.get(), rawDataLeft, info.bufferSize);
-		outputLeft.img = cv::Mat(cv::Size(info.width, info.height), info.type, outputLeft.data.get());
+		outputLeft.data = std::unique_ptr<unsigned char[]>(new unsigned char[memSize]);
+		outputLeft.img = imgLeft;
+		memcpy(outputLeft.data.get(), imgLeft.data, memSize);
 	}
 
 	if (!isRightInit)
