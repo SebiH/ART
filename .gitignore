@@ -96,6 +96,8 @@ sysinfo.txt
 /imageprocessing/Tools/thirdparty/dll_vc12_32/*
 /imageprocessing/Tools/thirdparty/dll_vc14_64/*
 
+/optitrack/lib/*
+
 # Output directory for imageprocessing tools
 /imageprocessing/bin/
 
