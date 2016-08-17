@@ -83,7 +83,7 @@ namespace ImageProcessingUtil
             //SetCamGain(1);
             int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
             //int handleRoi = RegisterOpenCVTextureWriter("Contour", "testWindow2");
-            int handleRoi = RegisterOpenCVTextureWriter("ARToolkit", "testWindow2");
+            //int handleRoi = RegisterOpenCVTextureWriter("ARToolkit", "testWindow2");
 
             //int currentX = 0;
             //int currentY = 0;
@@ -103,17 +103,17 @@ namespace ImageProcessingUtil
                     SetProcessingMode((GetProcessingMode() + 1) % 3);
                 }
 
-                if (HasNewPose())
-                {
-                    double[] poseMatrix = new double[16];
+                //if (HasNewPose())
+                //{
+                //    //double[] poseMatrix = new double[16];
 
-                    fixed (void* posePtr = poseMatrix)
-                    {
+                //    //fixed (void* posePtr = poseMatrix)
+                //    //{
 
-                    }
+                //    //}
 
-                    var pose = GetPose(new IntPtr(poseMatrix));
-                }
+                //    //var pose = GetPose(new IntPtr(poseMatrix));
+                //}
 
                 if (keyPressed == 's')
                 {
