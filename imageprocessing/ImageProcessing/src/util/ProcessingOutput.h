@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdlib>
 #include <memory>
 #include <utility>
 #include <opencv2/core.hpp>
@@ -15,12 +16,16 @@ namespace ImageProcessing
 			combined =2
 		};
 
+		int id;
 		Type type;
 		std::unique_ptr<unsigned char[]> data;
 		cv::Mat img;
 
-
-		ProcessingOutput() {}
+		ProcessingOutput()
+		{
+			// TODO: count up ids or something?
+			id = rand();
+		}
 
 		// hide copy constructors due to unique_ptr member
 		ProcessingOutput(ProcessingOutput const &) = delete;
@@ -28,7 +33,8 @@ namespace ImageProcessing
 
 		// .. but define a move operator instead
 		ProcessingOutput(ProcessingOutput &&other)
-			: type(other.type),
+			: id(other.id),
+			  type(other.type),
 			  img(other.img),
 			  data(std::move(other.data))
 		{}
@@ -37,6 +43,7 @@ namespace ImageProcessing
 		{
 			if (this != &other)
 			{
+				id = other.id;
 				type = other.type;
 				img = other.img;
 				data = std::move(other.data);

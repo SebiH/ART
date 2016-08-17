@@ -161,9 +161,6 @@ namespace Assets.Scripts.RealCamera
         {
             while (true)
             {
-                // Wait until all frame rendering is done
-                yield return new WaitForEndOfFrame();
-
                 if (_isRunning)
                 {
                     UpdateCameraProperties();
@@ -174,6 +171,9 @@ namespace Assets.Scripts.RealCamera
                     // For our simple plugin, it does not matter which ID we pass here.
                     GL.IssuePluginEvent(GetRenderEventFunc(), 1);
                 }
+
+                // Wait until all frame rendering is done
+                yield return new WaitForEndOfFrame();
             }
         }
 

@@ -18,8 +18,12 @@ void UnityDX11TextureWriter::writeTexture(const std::vector<ProcessingOutput> &p
 {
 	for (auto const &processedImg : processedImages)
 	{
-		if (processedImg.type == _type)
+		if (processedImg.type == _type && processedImg.id != prevOutputId)
 		{
+			prevOutputId = processedImg.id;
+
+			// TODO: see OVRvision pro; minor differences?
+
 			// TODO: avoid a copy here, use shared_ptr instead to keep memory until next frame is requested by unity?
 			auto memSize = processedImg.img.size().width * processedImg.img.size().height * processedImg.img.channels();
 			_tempData = std::unique_ptr<unsigned char[]>(new unsigned char[memSize]);

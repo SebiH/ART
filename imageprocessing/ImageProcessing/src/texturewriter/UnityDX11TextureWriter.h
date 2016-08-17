@@ -11,6 +11,7 @@ namespace ImageProcessing
 		void* _texturePtr;
 		ProcessingOutput::Type _type;
 		std::unique_ptr<unsigned char[]> _tempData;
+		int prevOutputId;
 
 	public:
 		UnityDX11TextureWriter(void* texturePtr, ProcessingOutput::Type type);

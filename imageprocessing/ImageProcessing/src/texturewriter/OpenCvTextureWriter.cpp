@@ -25,6 +25,18 @@ void OpenCvTextureWriter::writeTexture(const std::vector<ProcessingOutput> &proc
 	int maxHeight = 0;
 	int matType = -1;
 
+	if (processedImages.size() > 0)
+	{
+		if (processedImages[0].id == prevOutputId)
+		{
+			return;
+		}
+		else
+		{
+			prevOutputId = processedImages[0].id;
+		}
+	}
+
 	for (auto const &processedImg : processedImages)
 	{
 		matType = processedImg.img.type();

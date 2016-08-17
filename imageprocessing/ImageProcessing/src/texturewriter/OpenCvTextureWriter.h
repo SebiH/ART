@@ -10,6 +10,7 @@ namespace ImageProcessing
 	{
 	private:
 		std::string _windowName;
+		int prevOutputId;
 
 	public:
 		OpenCvTextureWriter(std::string windowName);
