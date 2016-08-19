@@ -160,6 +160,7 @@ int _tmain(int argc, _TCHAR* argv[])
                 printf("RigidBody ID : %d\n", pRB->ID);
                 printf("RigidBody Parent ID : %d\n", pRB->parentID);
                 printf("Parent Offset : %3.2f,%3.2f,%3.2f\n", pRB->offsetx, pRB->offsety, pRB->offsetz);
+				gBoneNames[pRB->ID] = pRB->szName;
             }
             else if(pDataDefs->arrDataDescriptions[i].type == Descriptor_Skeleton)
             {
@@ -381,6 +382,7 @@ void SendFrameToUnity(sFrameOfMocapData *data, void *pUserData)
             rigidBodies->LinkEndChild( rb );  
 
             rb->SetAttribute      ("ID"  , rbData.ID);
+			rb->SetAttribute      ("Name", gBoneNames[LOWORD(rbData.ID)].c_str());
             rb->SetDoubleAttribute("x"   , rbData.x);
             rb->SetDoubleAttribute("y"   , rbData.y);
             rb->SetDoubleAttribute("z"   , rbData.z);
