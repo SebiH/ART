@@ -81,7 +81,7 @@ public class Body : MonoBehaviour {
 			if(bone==null)
 			{
 				bone = GameObject.CreatePrimitive(PrimitiveType.Cube);
-				Vector3 scale = new Vector3(0.1f,0.1f,0.1f);
+				Vector3 scale = new Vector3(0.01f,0.01f,0.01f);
 				bone.transform.localScale = scale;
 				bone.name = objectName;
 			}		
@@ -90,6 +90,8 @@ public class Body : MonoBehaviour {
 			
 			bone.transform.position = position;
 			bone.transform.rotation = orientation;
+
+
 		}
 
         //== rigid bodies ==--
@@ -141,6 +143,40 @@ public class Body : MonoBehaviour {
 
             bone.transform.position = position;
             bone.transform.rotation = orientation;
+
+
+            for (var j = 0; j < rbList[index].ChildNodes.Count; j++)
+            {
+                var marker = rbList[index].ChildNodes[j];
+
+                int mID = System.Convert.ToInt32(marker.Attributes["ID"].InnerText);
+                float mx = (float)System.Convert.ToDouble(marker.Attributes["x"].InnerText);
+                float my = (float)System.Convert.ToDouble(marker.Attributes["y"].InnerText);
+                float mz = (float)System.Convert.ToDouble(marker.Attributes["z"].InnerText);
+
+                mz = -mz;
+
+                Vector3 mPosition = new Vector3(mx, my, mz);
+                Quaternion mOrientation = Quaternion.identity;
+
+                string markerName = objectName + "Marker" + j.ToString();
+
+                GameObject markerObj;
+
+                markerObj = GameObject.Find(markerName);
+
+                if (markerObj == null)
+                {
+                    markerObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    Vector3 scale = new Vector3(0.1f, 0.1f, 0.1f);
+                    markerObj.transform.parent = bone.transform;
+                    markerObj.transform.localScale = scale;
+                    markerObj.name = markerName;
+                }
+
+                markerObj.transform.position = mPosition;
+                markerObj.transform.rotation = mOrientation;
+            }
         }
 	}
 	
