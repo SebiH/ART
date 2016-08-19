@@ -360,10 +360,10 @@ void SendFrameToUnity(sFrameOfMocapData *data, void *pUserData)
 					auto marker = new TiXmlElement("Marker");
 					bone->LinkEndChild(marker);
 
-					marker->SetAttribute("ID", rbData.MarkerIDs[i]);
-					marker->SetDoubleAttribute("x", rbData.Markers[i][0]);
-					marker->SetDoubleAttribute("y", rbData.Markers[i][1]);
-					marker->SetDoubleAttribute("z", rbData.Markers[i][2]);
+					marker->SetAttribute("ID", rbData.MarkerIDs[j]);
+					marker->SetDoubleAttribute("x", rbData.Markers[j][0]);
+					marker->SetDoubleAttribute("y", rbData.Markers[j][1]);
+					marker->SetDoubleAttribute("z", rbData.Markers[j][2]);
 				}
             }
         }
