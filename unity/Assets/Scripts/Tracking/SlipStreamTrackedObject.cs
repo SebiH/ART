@@ -82,7 +82,7 @@ public class SlipStreamTrackedObject : MonoBehaviour
                         Vector3 mPosition = new Vector3(mx, my, mz);
                         Quaternion mOrientation = Quaternion.identity;
 
-                        string markerName = String.Format("Marker%d_%d", rbID, mID);
+                        string markerName = String.Format("Marker{0}_{1}", rbID, mID);
 
                         GameObject markerObj;
 
@@ -91,7 +91,7 @@ public class SlipStreamTrackedObject : MonoBehaviour
                         if (markerObj == null)
                         {
                             markerObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            Vector3 scale = new Vector3(0.1f, 0.1f, 0.1f);
+                            Vector3 scale = new Vector3(0.01f, 0.01f, 0.01f);
                             markerObj.transform.parent = transform;
                             markerObj.transform.localScale = scale;
                             markerObj.name = markerName;
