@@ -36,6 +36,8 @@ public delegate void PacketReceivedHandler(object sender, string PacketData);
 
 public class SlipStream : MonoBehaviour
 {
+    public static SlipStream Instance;
+
 	public string IP = "127.0.0.1";
 	public int Port  = 16000;
 	
@@ -48,8 +50,10 @@ public class SlipStream : MonoBehaviour
 	private int        mPreviousSubPacketIndex = 0;
 	private const int  kMaxSubPacketSize       = 1400;
 	
-	void Start()
+	void Awake()
 	{
+        Instance = this;
+
 		mReceiveBuffer = new byte[kMaxSubPacketSize];
 		mPacket        = System.String.Empty;
 		
@@ -107,7 +111,8 @@ public class SlipStream : MonoBehaviour
 			}
 		}
 		catch(System.Exception ex)
-		{}
+		{
+        }
 	}
  
 	void Update()
