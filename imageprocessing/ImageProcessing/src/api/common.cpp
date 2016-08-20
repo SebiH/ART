@@ -245,11 +245,7 @@ extern "C" UNITY_INTERFACE_EXPORT bool HasNewPose()
 	}
 }
 
-// TODO: refactor, quickly hacked together!
-static double *tempPose = nullptr;
-
-// returns 4x4 matrix -> double[12], columns first
-extern "C" UNITY_INTERFACE_EXPORT double* GetPose()
+extern "C" UNITY_INTERFACE_EXPORT double GetPose(int index)
 {
 	auto arModuleName = std::string("ARToolkit");
 	if (g_moduleManager->hasModule(arModuleName))
@@ -257,18 +253,6 @@ extern "C" UNITY_INTERFACE_EXPORT double* GetPose()
 		auto module = g_moduleManager->getOrCreateModule(arModuleName)->getProcessingModule();
 		auto arModule = static_cast<ARToolkitModule*>(module);
 
-		if (tempPose != nullptr)
-		{
-			delete[] tempPose;
-		}
-
-		tempPose = new double[12];
-		memcpy(tempPose, arModule->getNewMarkerMatrix(), 12 * sizeof(double));
-
-		return tempPose;
-	}
-	else
-	{
-		return nullptr;
+		return arModule->getNewMarkerMatrix()[index];
 	}
 }

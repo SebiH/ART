@@ -61,7 +61,7 @@ namespace ImageProcessingUtil
         private static extern bool HasNewPose();
 
         [DllImport("ImageProcessing")]
-        private static extern IntPtr GetPose();
+        private static extern double GetPose(int index);
 
         private enum FrameSource
         {
@@ -81,9 +81,10 @@ namespace ImageProcessingUtil
             StartImageProcessing();
             //SetCamExposure(100);
             //SetCamGain(1);
-            int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
+            //int handleRaw = RegisterOpenCVTextureWriter("RawImage", "testWindow1");
             //int handleRoi = RegisterOpenCVTextureWriter("Contour", "testWindow2");
-            //int handleRoi = RegisterOpenCVTextureWriter("ARToolkit", "testWindow2");
+            int handleRoi = RegisterOpenCVTextureWriter("ARToolkit", "testWindow2");
+            int handleRaw = -1;
 
             //int currentX = 0;
             //int currentY = 0;
@@ -103,17 +104,15 @@ namespace ImageProcessingUtil
                     SetProcessingMode((GetProcessingMode() + 1) % 3);
                 }
 
-                //if (HasNewPose())
-                //{
-                //    //double[] poseMatrix = new double[16];
+                if (HasNewPose())
+                {
+                    double[] poseMatrix = new double[16];
 
-                //    //fixed (void* posePtr = poseMatrix)
-                //    //{
-
-                //    //}
-
-                //    //var pose = GetPose(new IntPtr(poseMatrix));
-                //}
+                    for (int i = 0; i < 16; i++)
+                    {
+                        poseMatrix[i] = GetPose(i);
+                    }
+                }
 
                 if (keyPressed == 's')
                 {
