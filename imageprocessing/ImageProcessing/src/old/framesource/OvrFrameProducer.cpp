@@ -10,6 +10,7 @@ OvrFrameProducer::OvrFrameProducer(OVR::Camprop cameraMode)
 	  _mutex(),
 	 _processingMode(OVR::Camqt::OV_CAMQT_DMSRMP)
 {
+	_ovrCamera->SetCameraSyncMode(true);
 	auto openSuccess = _ovrCamera->Open(0, cameraMode);
 
 	if (!openSuccess)
