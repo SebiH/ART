@@ -106,6 +106,13 @@ namespace Assets.Scripts.RealCamera
         [DllImport("ImageProcessing")]
         private static extern int GetProcessingMode();
 
+        [DllImport("ImageProcessing")]
+        public static extern bool HasNewPose();
+
+        [DllImport("ImageProcessing")]
+        public static extern double GetPose(int index);
+
+
         #endregion
 
         #region API

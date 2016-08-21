@@ -7,6 +7,7 @@ namespace Assets.Code.Vision
     {
         RawImage,
         RegionOfInterest,
-        Contours
+        Contours,
+        ARToolkit
     }
 }
