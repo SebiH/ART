@@ -13,16 +13,17 @@ public class PoseTest : MonoBehaviour
     {
         if (ImageProcessing.HasNewPose())
         {
-            var poseMatrix = new Matrix4x4();
-            for (int row = 0; row < 4; row++)
+            var poseMatrix = new double[3, 4];
+            for (int row = 0; row < 3; row++)
             {
                 for (int col = 0; col < 4; col++)
                 {
                     poseMatrix[row, col] = (float)ImageProcessing.GetPose(row * 4 + col);
                 }
             }
-            SetTransformFromMatrix(transform, ref poseMatrix);
+            //SetTransformFromMatrix(transform, ref poseMatrix);
             Debug.Log("New Pose!");
+            transform.position = new Vector3((float)poseMatrix[0, 3]/100f, -(float)poseMatrix[1, 3]/100f, (float)poseMatrix[2, 3]/100f);
         }
 
     }

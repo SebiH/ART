@@ -9,7 +9,7 @@ using namespace ImageProcessing;
 
 ARToolkitModule::ARToolkitModule()
 {
-	markerMatrix = new double[16]; // 4x4 matrix
+	markerMatrix = new double[12]; // 3x4 matrix
 }
 
 ARToolkitModule::~ARToolkitModule()
@@ -78,147 +78,147 @@ std::vector<ProcessingOutput> ARToolkitModule::processImage(unsigned char *rawDa
 	bool isLeftInit = false;
 	bool isRightInit = false;
 
-	for (int i = 0; i < markersSquareCount; i++)
-	{
-		markersSquare[i].validPrev = markersSquare[i].valid;
-		markersSquare[i].valid = FALSE;
+	//for (int i = 0; i < markersSquareCount; i++)
+	//{
+	//	markersSquare[i].validPrev = markersSquare[i].valid;
+	//	markersSquare[i].valid = FALSE;
 
-		// Check through the marker_info array for highest confidence
-		// visible marker matching our preferred pattern.
-		kL = kR = -1;
-		if (markersSquare[i].patt_type == AR_PATTERN_TYPE_TEMPLATE) {
-			for (int j = 0; j < markerNumL; j++) {
-				if (markersSquare[i].patt_id == markerInfoL[j].idPatt) {
-					if (kL == -1) {
-						if (markerInfoL[j].cfPatt >= markersSquare[i].matchingThreshold) kL = j; // First marker detected.
-					}
-					else if (markerInfoL[j].cfPatt > markerInfoL[kL].cfPatt) kL = j; // Higher confidence marker detected.
-				}
-			}
-			if (kL != -1) {
-				markerInfoL[kL].id = markerInfoL[kL].idPatt;
-				markerInfoL[kL].cf = markerInfoL[kL].cfPatt;
-				markerInfoL[kL].dir = markerInfoL[kL].dirPatt;
-			}
-			for (int j = 0; j < markerNumR; j++) {
-				if (markersSquare[i].patt_id == markerInfoR[j].idPatt) {
-					if (kR == -1) {
-						if (markerInfoR[j].cfPatt >= markersSquare[i].matchingThreshold) kR = j; // First marker detected.
-					}
-					else if (markerInfoR[j].cfPatt > markerInfoR[kR].cfPatt) kR = j; // Higher confidence marker detected.
-				}
-			}
-			if (kR != -1) {
-				markerInfoR[kR].id = markerInfoR[kR].idPatt;
-				markerInfoR[kR].cf = markerInfoR[kR].cfPatt;
-				markerInfoR[kR].dir = markerInfoR[kR].dirPatt;
-			}
-		}
-		else {
-			for (int j = 0; j < markerNumL; j++) {
-				if (markersSquare[i].patt_id == markerInfoL[j].idMatrix) {
-					if (kL == -1) {
-						if (markerInfoL[j].cfMatrix >= markersSquare[i].matchingThreshold) kL = j; // First marker detected.
-					}
-					else if (markerInfoL[j].cfMatrix > markerInfoL[kL].cfMatrix) kL = j; // Higher confidence marker detected.
-				}
-			}
-			if (kL != -1) {
-				markerInfoL[kL].id = markerInfoL[kL].idMatrix;
-				markerInfoL[kL].cf = markerInfoL[kL].cfMatrix;
-				markerInfoL[kL].dir = markerInfoL[kL].dirMatrix;
-			}
-			for (int j = 0; j < markerNumR; j++) {
-				if (markersSquare[i].patt_id == markerInfoR[j].idMatrix) {
-					if (kR == -1) {
-						if (markerInfoR[j].cfMatrix >= markersSquare[i].matchingThreshold) kR = j; // First marker detected.
-					}
-					else if (markerInfoR[j].cfMatrix > markerInfoR[kR].cfMatrix) kR = j; // Higher confidence marker detected.
-				}
-			}
-			if (kR != -1) {
-				markerInfoR[kR].id = markerInfoR[kR].idMatrix;
-				markerInfoR[kR].cf = markerInfoR[kR].cfMatrix;
-				markerInfoR[kR].dir = markerInfoR[kR].dirMatrix;
-			}
-		}
+	//	// Check through the marker_info array for highest confidence
+	//	// visible marker matching our preferred pattern.
+	//	kL = kR = -1;
+	//	if (markersSquare[i].patt_type == AR_PATTERN_TYPE_TEMPLATE) {
+	//		for (int j = 0; j < markerNumL; j++) {
+	//			if (markersSquare[i].patt_id == markerInfoL[j].idPatt) {
+	//				if (kL == -1) {
+	//					if (markerInfoL[j].cfPatt >= markersSquare[i].matchingThreshold) kL = j; // First marker detected.
+	//				}
+	//				else if (markerInfoL[j].cfPatt > markerInfoL[kL].cfPatt) kL = j; // Higher confidence marker detected.
+	//			}
+	//		}
+	//		if (kL != -1) {
+	//			markerInfoL[kL].id = markerInfoL[kL].idPatt;
+	//			markerInfoL[kL].cf = markerInfoL[kL].cfPatt;
+	//			markerInfoL[kL].dir = markerInfoL[kL].dirPatt;
+	//		}
+	//		for (int j = 0; j < markerNumR; j++) {
+	//			if (markersSquare[i].patt_id == markerInfoR[j].idPatt) {
+	//				if (kR == -1) {
+	//					if (markerInfoR[j].cfPatt >= markersSquare[i].matchingThreshold) kR = j; // First marker detected.
+	//				}
+	//				else if (markerInfoR[j].cfPatt > markerInfoR[kR].cfPatt) kR = j; // Higher confidence marker detected.
+	//			}
+	//		}
+	//		if (kR != -1) {
+	//			markerInfoR[kR].id = markerInfoR[kR].idPatt;
+	//			markerInfoR[kR].cf = markerInfoR[kR].cfPatt;
+	//			markerInfoR[kR].dir = markerInfoR[kR].dirPatt;
+	//		}
+	//	}
+	//	else {
+	//		for (int j = 0; j < markerNumL; j++) {
+	//			if (markersSquare[i].patt_id == markerInfoL[j].idMatrix) {
+	//				if (kL == -1) {
+	//					if (markerInfoL[j].cfMatrix >= markersSquare[i].matchingThreshold) kL = j; // First marker detected.
+	//				}
+	//				else if (markerInfoL[j].cfMatrix > markerInfoL[kL].cfMatrix) kL = j; // Higher confidence marker detected.
+	//			}
+	//		}
+	//		if (kL != -1) {
+	//			markerInfoL[kL].id = markerInfoL[kL].idMatrix;
+	//			markerInfoL[kL].cf = markerInfoL[kL].cfMatrix;
+	//			markerInfoL[kL].dir = markerInfoL[kL].dirMatrix;
+	//		}
+	//		for (int j = 0; j < markerNumR; j++) {
+	//			if (markersSquare[i].patt_id == markerInfoR[j].idMatrix) {
+	//				if (kR == -1) {
+	//					if (markerInfoR[j].cfMatrix >= markersSquare[i].matchingThreshold) kR = j; // First marker detected.
+	//				}
+	//				else if (markerInfoR[j].cfMatrix > markerInfoR[kR].cfMatrix) kR = j; // Higher confidence marker detected.
+	//			}
+	//		}
+	//		if (kR != -1) {
+	//			markerInfoR[kR].id = markerInfoR[kR].idMatrix;
+	//			markerInfoR[kR].cf = markerInfoR[kR].cfMatrix;
+	//			markerInfoR[kR].dir = markerInfoR[kR].dirMatrix;
+	//		}
+	//	}
 
-		if (kL != -1 || kR != -1) {
+	//	if (kL != -1 || kR != -1) {
 
-			if (kL != -1 && kR != -1) {
-				auto err = arGetStereoMatchingErrorSquare(gAR3DStereoHandle, &markerInfoL[kL], &markerInfoR[kR]);
-				//ARLOG("stereo err = %f\n", err);
-				if (err > 16.0) {
-					//ARLOG("Stereo matching error: %d %d.\n", markerInfoL[kL].area, markerInfoR[kR].area);
-					if (markerInfoL[kL].area > markerInfoR[kR].area) kR = -1;
-					else                                              kL = -1;
-				}
-			}
+	//		if (kL != -1 && kR != -1) {
+	//			auto err = arGetStereoMatchingErrorSquare(gAR3DStereoHandle, &markerInfoL[kL], &markerInfoR[kR]);
+	//			//ARLOG("stereo err = %f\n", err);
+	//			if (err > 16.0) {
+	//				//ARLOG("Stereo matching error: %d %d.\n", markerInfoL[kL].area, markerInfoR[kR].area);
+	//				if (markerInfoL[kL].area > markerInfoR[kR].area) kR = -1;
+	//				else                                              kL = -1;
+	//			}
+	//		}
 
-			auto err = arGetTransMatSquareStereo(gAR3DStereoHandle, (kL == -1 ? NULL : &markerInfoL[kL]), (kR == -1 ? NULL : &markerInfoR[kR]), markersSquare[i].marker_width, markersSquare[i].trans);
+	//		auto err = arGetTransMatSquareStereo(gAR3DStereoHandle, (kL == -1 ? NULL : &markerInfoL[kL]), (kR == -1 ? NULL : &markerInfoR[kR]), markersSquare[i].marker_width, markersSquare[i].trans);
 
-			if (err < 10.0) markersSquare[i].valid = TRUE;
+	//		if (err < 10.0) markersSquare[i].valid = TRUE;
 
-			//if (kL == -1)      ARLOG("[%2d] right:      err = %f\n", i, err);
-			//else if (kR == -1) ARLOG("[%2d] left:       err = %f\n", i, err);
-			//else               ARLOG("[%2d] left+right: err = %f\n", i, err);
+	//		//if (kL == -1)      ARLOG("[%2d] right:      err = %f\n", i, err);
+	//		//else if (kR == -1) ARLOG("[%2d] left:       err = %f\n", i, err);
+	//		//else               ARLOG("[%2d] left+right: err = %f\n", i, err);
 
-		}
+	//	}
 
-		if (markersSquare[i].valid)
-		{
-			// Filter the pose estimate.
-			if (markersSquare[i].ftmi)
-			{
-				if (arFilterTransMat(markersSquare[i].ftmi, markersSquare[i].trans, !markersSquare[i].validPrev) < 0)
-				{
-					DebugLog("Could not filter transform");
-					//ARLOGe("arFilterTransMat error with marker %d.\n", i);
-				}
-			}
+	//	if (markersSquare[i].valid)
+	//	{
+	//		// Filter the pose estimate.
+	//		if (markersSquare[i].ftmi)
+	//		{
+	//			if (arFilterTransMat(markersSquare[i].ftmi, markersSquare[i].trans, !markersSquare[i].validPrev) < 0)
+	//			{
+	//				DebugLog("Could not filter transform");
+	//				//ARLOGe("arFilterTransMat error with marker %d.\n", i);
+	//			}
+	//		}
 
-			if (!markersSquare[i].validPrev)
-			{
-				// Marker has become visible, tell any dependent objects.
-				//for (j = 0; j < viewCount; j++) {
-				//	VirtualEnvironment2HandleARMarkerAppeared(views[j].ve2, i);
-				//}
-			}
+	//		if (!markersSquare[i].validPrev)
+	//		{
+	//			// Marker has become visible, tell any dependent objects.
+	//			//for (j = 0; j < viewCount; j++) {
+	//			//	VirtualEnvironment2HandleARMarkerAppeared(views[j].ve2, i);
+	//			//}
+	//		}
 
-			// We have a new pose, so set that.
-			arglCameraViewRH((const ARdouble(*)[4])markersSquare[i].trans, markersSquare[i].pose.T, 1.0f /*VIEW_SCALEFACTOR*/);
-			arUtilMatMul((const ARdouble(*)[4])transL2R, (const ARdouble(*)[4])markersSquare[i].trans, transR);
-			arglCameraViewRH((const ARdouble(*)[4])transR, poseR.T, 1.0f /*VIEW_SCALEFACTOR*/);
+	//		// We have a new pose, so set that.
+	//		arglCameraViewRH((const ARdouble(*)[4])markersSquare[i].trans, markersSquare[i].pose.T, 1.0f /*VIEW_SCALEFACTOR*/);
+	//		arUtilMatMul((const ARdouble(*)[4])transL2R, (const ARdouble(*)[4])markersSquare[i].trans, transR);
+	//		arglCameraViewRH((const ARdouble(*)[4])transR, poseR.T, 1.0f /*VIEW_SCALEFACTOR*/);
 
 
-			newMarkerMatrix = true;
-			for (int j = 0; j < 16; j++)
-			{
-				markerMatrix[j] = markersSquare[i].pose.T[j];
-			}
+	//		newMarkerMatrix = true;
+	//		for (int j = 0; j < 16; j++)
+	//		{
+	//			markerMatrix[j] = markersSquare[i].pose.T[j];
+	//		}
 
-			//// Tell any dependent objects about the update.
-			//for (j = 0; j < viewCount; j++) {
-			//	VirtualEnvironment2HandleARMarkerWasUpdated(views[j].ve2, i, (views[j].viewEye == VIEW_RIGHTEYE ? poseR : markersSquare[i].pose));
-			//}
+	//		//// Tell any dependent objects about the update.
+	//		//for (j = 0; j < viewCount; j++) {
+	//		//	VirtualEnvironment2HandleARMarkerWasUpdated(views[j].ve2, i, (views[j].viewEye == VIEW_RIGHTEYE ? poseR : markersSquare[i].pose));
+	//		//}
 
-		}
-		else
-		{
+	//	}
+	//	else
+	//	{
 
-			if (markersSquare[i].validPrev) {
-				// Marker has ceased to be visible, tell any dependent objects.
-				//for (j = 0; j < viewCount; j++) {
-				//	VirtualEnvironment2HandleARMarkerDisappeared(views[j].ve2, i);
-				//}
-			}
-		}
-	}
-
+	//		if (markersSquare[i].validPrev) {
+	//			// Marker has ceased to be visible, tell any dependent objects.
+	//			//for (j = 0; j < viewCount; j++) {
+	//			//	VirtualEnvironment2HandleARMarkerDisappeared(views[j].ve2, i);
+	//			//}
+	//		}
+	//	}
+	//}
 
 
 	if (markerNumL > 0)
 	{
+
 		isLeftInit = true;
 		cv::Mat imgLeft = cv::Mat(cv::Size(info.width, info.height), info.type, rawDataLeft);
 		cv::circle(imgLeft, cv::Point(markerInfoL[0].pos[0], markerInfoL[0].pos[1]), 5, cv::Scalar(0, 0, 255, 1.0), 3);
@@ -229,21 +229,40 @@ std::vector<ProcessingOutput> ARToolkitModule::processImage(unsigned char *rawDa
 			cv::circle(imgLeft, cornerPos, 3, cv::Scalar(255, 0, 0, 1.0), 3);
 		}
 
-		for (int i = 0; i < markersSquareCount; i++)
+		//for (int i = 0; i < markersSquareCount; i++)
+		//{
+		//	std::string text;
+
+		//	if (markersSquare[i].valid)
+		//	{
+		//		text = std::string("Marker ") + std::to_string(i) + std::string(" VALID");
+		//	}
+		//	else
+		//	{
+		//		text = std::string("Marker ") + std::to_string(i) + std::string(" invalid");
+		//	}
+
+		//	cv::putText(imgLeft, text, cv::Point(0, 100*(i+1)), cv::FONT_HERSHEY_PLAIN, 3, cv::Scalar(0, 0, 255, 1.0), 2);
+		//}
+
+
+		newMarkerMatrix = true;
+		ARdouble		gPatt_trans[3][4];
+		arGetTransMatSquare(gAR3DHandleL, &(markerInfoL[0]), 22.5, gPatt_trans);
+		for (int i = 0; i < 3; i++)
 		{
-			std::string text;
-
-			if (markersSquare[i].valid)
+			std::string matrixText;
+			for (int j = 0; j < 4; j++)
 			{
-				text = std::string("Marker ") + std::to_string(i) + std::string(" VALID");
-			}
-			else
-			{
-				text = std::string("Marker ") + std::to_string(i) + std::string(" invalid");
+				markerMatrix[i * 4 + j] = gPatt_trans[i][j];
+				matrixText += std::to_string(gPatt_trans[i][j]) + std::string(" ");
 			}
 
-			cv::putText(imgLeft, text, cv::Point(0, 100*(i+1)), cv::FONT_HERSHEY_PLAIN, 3, cv::Scalar(0, 0, 255, 1.0), 2);
+			cv::putText(imgLeft, matrixText, cv::Point(0, 100 * (i + 1)), cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(255, 0, 0, 255), 1);
 		}
+
+
+
 
 		// copy data to separate arrays, since underlying data will be destroyed once cv::Mat is out of scope
 		// TODO: verify?

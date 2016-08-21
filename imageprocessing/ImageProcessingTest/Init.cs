@@ -97,7 +97,7 @@ namespace ImageProcessingUtil
             do
             {
                 UpdateTextures();
-                keyPressed = (char)OpenCvWaitKey(5);
+                keyPressed = (char)OpenCvWaitKey(50);
 
                 if (keyPressed == 'p')
                 {
@@ -106,9 +106,9 @@ namespace ImageProcessingUtil
 
                 if (HasNewPose())
                 {
-                    double[] poseMatrix = new double[16];
+                    double[] poseMatrix = new double[12];
 
-                    for (int i = 0; i < 16; i++)
+                    for (int i = 0; i < poseMatrix.Length; i++)
                     {
                         poseMatrix[i] = GetPose(i);
                     }
