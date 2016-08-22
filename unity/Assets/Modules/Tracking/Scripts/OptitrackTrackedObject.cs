@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Xml;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Track object through SlipStream (NatNet's local server that streams via XML to Unity)
 /// </summary>
-public class SlipStreamTrackedObject : MonoBehaviour
+public class OptitrackTrackedObject : MonoBehaviour
 {
     // Name in OptiTrack
     public string TrackedName = "";
@@ -18,7 +18,7 @@ public class SlipStreamTrackedObject : MonoBehaviour
 
 	void Start ()
     {
-        SlipStream.Instance.PacketNotification += new PacketReceivedHandler(OnPacketReceived);
+        OptitrackListener.Instance.PacketNotification += new PacketReceivedHandler(OnPacketReceived);
 	}
 
     void OnPacketReceived(object sender, string Packet)

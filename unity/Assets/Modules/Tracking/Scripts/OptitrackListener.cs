@@ -1,6 +1,6 @@
 
 //=============================================================================----
-// Copyright © NaturalPoint, Inc. All Rights Reserved.
+// Copyright ï¿½ NaturalPoint, Inc. All Rights Reserved.
 // 
 // This software is provided by the copyright holders and contributors "as is" and
 // any express or implied warranties, including, but not limited to, the implied
@@ -34,9 +34,9 @@ using System.Net.Sockets;
 
 public delegate void PacketReceivedHandler(object sender, string PacketData);
 
-public class SlipStream : MonoBehaviour
+public class OptitrackListener : MonoBehaviour
 {
-    public static SlipStream Instance;
+    public static OptitrackListener Instance;
 
 	public string IP = "127.0.0.1";
 	public int Port  = 16000;
