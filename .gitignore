@@ -75,17 +75,8 @@ sysinfo.txt
 *.nlp
 
 # Files for debugging unmanaged .dll in unity
-*.exp.meta
-*.ilk.meta
-*.pdb.meta
-*.lib.meta
-*.iobj.meta
-*.ipdb.meta
-*.nlp.meta
-/unity/Assets/Plugins/x86_64/mscorlib.dll
-/unity/Assets/Plugins/x86_64/mscorlib.dll.meta
-/unity/Assets/Plugins/x86_64/Leap.dll
-/unity/Assets/Plugins/x86_64/Leap.dll.meta
+/unity/Assets/Plugins/generated/*.dll
+/unity/Assets/Plugins/generated/*.meta
 
 # Library folder, managed via other scripts
 /imageprocessing/ImageProcessing/thirdparty/libs/*
