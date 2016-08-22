@@ -33,7 +33,7 @@ public class ConnectedPointGraph : MonoBehaviour
     // https://stackoverflow.com/questions/5817490/implementing-box-mueller-random-number-generator-in-c-sharp
     private float NextGaussianDouble()
     {
-        float U, u, v, S;
+        float u, v, S;
 
         do
         {

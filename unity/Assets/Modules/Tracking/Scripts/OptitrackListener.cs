@@ -110,8 +110,9 @@ public class OptitrackListener : MonoBehaviour
 				maxSubPacketProcess--;
 			}
 		}
-		catch(System.Exception ex)
+		catch(Exception)
 		{
+            // ignore
         }
 	}
  

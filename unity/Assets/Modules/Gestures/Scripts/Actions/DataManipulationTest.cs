@@ -4,7 +4,6 @@ using Assets.Scripts.Gestures;
 
 public class DataManipulationTest : MonoBehaviour
 {
-    private bool _gestureActive = false;
     private Vector3 _gesturePrevPos;
     public GameObject ScaleObject;
 
@@ -15,7 +14,6 @@ public class DataManipulationTest : MonoBehaviour
 
         if ((gesturePos - (transform.position + new Vector3(0, transform.localScale.y, 0))).magnitude < 0.1f)
         {
-            _gestureActive = true;
             _gesturePrevPos = gesturePos;
         }
     }
@@ -38,6 +36,5 @@ public class DataManipulationTest : MonoBehaviour
 
     public void OnGestureStop(GestureEventArgs e)
     {
-        _gestureActive = false;
     }
 }

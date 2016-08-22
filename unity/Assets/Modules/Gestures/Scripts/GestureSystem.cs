@@ -80,11 +80,12 @@ namespace Assets.Scripts.GestureControl
             {
                 try
                 {
-                    var triggered = gesture.CheckConditions();
+                    //var triggered = gesture.CheckConditions();
+                    gesture.CheckConditions();
                 }
                 catch (Exception e)
                 {
-                    // ?
+                    Debug.Log(e.Message);
                 }
 
                 //if (triggered)
