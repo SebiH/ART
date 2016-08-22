@@ -15,19 +15,16 @@
 //#include <Unity/IUnityGraphicsD3D12.h>
 #endif
 
-#include "common.h"
-
-
 // ------------------------------------------
 // Rendering Events
 // ------------------------------------------
 
 static void UNITY_INTERFACE_API OnRenderEvent(int eventID)
 {
-	if (g_moduleManager.get() != nullptr)
-	{
-		g_moduleManager->triggerTextureUpdate();
-	}
+	//if (g_moduleManager.get() != nullptr)
+	//{
+	//	g_moduleManager->triggerTextureUpdate();
+	//}
 }
 
 

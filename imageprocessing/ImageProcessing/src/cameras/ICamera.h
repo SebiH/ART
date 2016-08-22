@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ImageMetaData.h"
+#include "cameras/ImageMetaData.h"
 
 namespace ImageProcessing
 {

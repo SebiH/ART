@@ -72,7 +72,10 @@
     <ClCompile Include="src\old\api\debug.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\old\api\RenderingPlugin.cpp">
+    <ClCompile Include="src\api\camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\RenderingPlugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -146,16 +149,22 @@
     <ClInclude Include="src\old\api\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\old\api\RenderingPlugin.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\cameras\ICamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\processors\IProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ImageMetaData.h">
+    <ClInclude Include="src\api\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\ImageMetaData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\FrameData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\api\RenderingPlugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

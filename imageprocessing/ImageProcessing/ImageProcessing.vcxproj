@@ -92,6 +92,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\api\camera.cpp" />
     <ClCompile Include="src\old\api\CameraProperties.cpp" />
     <ClCompile Include="src\old\api\common.cpp" />
     <ClCompile Include="src\old\api\debug.cpp" />
@@ -103,7 +104,7 @@
     <ClCompile Include="src\old\processingmodule\ContourModule.cpp" />
     <ClCompile Include="src\old\processingmodule\RawImageModule.cpp" />
     <ClCompile Include="src\old\processingmodule\RoiModule.cpp" />
-    <ClCompile Include="src\old\api\RenderingPlugin.cpp" />
+    <ClCompile Include="src\api\RenderingPlugin.cpp" />
     <ClCompile Include="src\old\texturewriter\OpenCvTextureWriter.cpp" />
     <ClCompile Include="src\old\util\ModuleManager.cpp" />
     <ClCompile Include="src\old\framesource\OpenCvFrameProducer.cpp" />
@@ -114,10 +115,12 @@
     <ClCompile Include="src\old\util\UnityUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\api\camera.h" />
+    <ClInclude Include="src\cameras\FrameData.h" />
     <ClInclude Include="src\old\api\common.h" />
     <ClInclude Include="src\old\api\debug.h" />
     <ClInclude Include="src\cameras\ICamera.h" />
-    <ClInclude Include="src\ImageMetaData.h" />
+    <ClInclude Include="src\cameras\ImageMetaData.h" />
     <ClInclude Include="src\processors\IProcessor.h" />
     <ClInclude Include="src\old\framesource\DummyFrameSource.h" />
     <ClInclude Include="src\old\framesource\IFrameSource.h" />
@@ -131,7 +134,7 @@
     <ClInclude Include="src\old\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\old\processingmodule\RoiModule.h" />
     <ClInclude Include="src\old\util\ProcessingOutput.h" />
-    <ClInclude Include="src\old\api\RenderingPlugin.h" />
+    <ClInclude Include="src\api\RenderingPlugin.h" />
     <ClInclude Include="src\old\texturewriter\UnityDX11TextureWriter.h" />
     <ClInclude Include="src\old\texturewriter\OpenCvTextureWriter.h" />
     <ClInclude Include="src\old\util\ModuleManager.h" />
