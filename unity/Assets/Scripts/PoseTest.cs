@@ -13,19 +13,33 @@ public class PoseTest : MonoBehaviour
     {
         if (ImageProcessing.HasNewPose())
         {
-            var poseMatrix = new double[3, 4];
+            var transformMatrix = new Matrix4x4();
+            transformMatrix.m33 = 1;
+
             for (int row = 0; row < 3; row++)
             {
                 for (int col = 0; col < 4; col++)
                 {
-                    poseMatrix[row, col] = (float)ImageProcessing.GetPose(row * 4 + col);
+                    transformMatrix[row, col] = (float)ImageProcessing.GetPose(row * 4 + col);
                 }
             }
-            //SetTransformFromMatrix(transform, ref poseMatrix);
-            Debug.Log("New Pose!");
-            transform.position = new Vector3((float)poseMatrix[0, 3]/100f, -(float)poseMatrix[1, 3]/100f, (float)poseMatrix[2, 3]/100f);
-        }
 
+            var pos = ExtractTranslationFromMatrix(ref transformMatrix);
+            // ARToolkit cm -> Unity m
+            pos = pos / 100f;
+            // invert to match camera
+            pos.y = -pos.y;
+
+            transform.position = pos;
+            transform.localScale = ExtractScaleFromMatrix(ref transformMatrix);
+
+            var eulerRot = ExtractRotationFromMatrix(ref transformMatrix).eulerAngles;
+            eulerRot.x = -eulerRot.x;
+            //eulerRot.y = -eulerRot.y;
+            eulerRot.z = -eulerRot.z;
+
+            transform.rotation = Quaternion.Euler(eulerRot);
+        }
     }
 
 
