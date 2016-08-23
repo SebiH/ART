@@ -1,4 +1,4 @@
-#include "RenderingPlugin.h"
+#include "api/unity_plugin.h"
 #include <Unity/IUnityGraphics.h>
 
 #if SUPPORT_D3D9
