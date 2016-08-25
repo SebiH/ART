@@ -19,7 +19,8 @@ namespace ImageProcessing
 		{
 
 		}
-
+		
+		virtual ~Event() { }
 
 		void Call(EventType arg)
 		{

@@ -11,6 +11,9 @@ namespace ImageProcessing
 		int FrameHeight;
 		int FrameDepth;
 
+	public:
+		virtual ~FrameMetaData() { }
+
 		std::size_t GetBufferSize() const
 		{
 			return FrameWidth * FrameHeight * FrameDepth;

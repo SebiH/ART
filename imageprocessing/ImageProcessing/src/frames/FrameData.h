@@ -6,9 +6,13 @@ namespace ImageProcessing
 {
 	template<class ExtraDataType> class FrameData
 	{
+	public:
 		// ??? unnecessary because frame will be written into pipeline buffer?
 		std::unique_ptr<unsigned char*> ImageDataRight;
 		std::unique_ptr<unsigned char*> ImageDataLeft;
 		//std::unique_ptr<ExtraDataType*> MetaData;
+
+
+		virtual ~FrameData() { }
 	};
 }
