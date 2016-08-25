@@ -1,16 +1,16 @@
 #pragma once
 
-#include "cameras\FrameMetaData.h"
+#include "frames/FrameSize.h"
 
 namespace ImageProcessing
 {
-	class ICameraSource
+	class CameraSourceInterface
 	{
 	public:
-		virtual ~ICameraSource() {}
+		virtual ~CameraSourceInterface() {}
 
-		virtual void GrabFrame(unsigned char *leftBuffer, unsigned char *rightBuffer) = 0;
-		virtual ImageProcessing::FrameMetaData GetFrameMetaData() const = 0;
+		virtual void GrabFrame(unsigned char *left_buffer, unsigned char *right_buffer) = 0;
+		virtual FrameSize GetFrameMetaData() const = 0;
 
 		virtual void Open() = 0;
 		virtual void Close() = 0;

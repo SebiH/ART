@@ -1,16 +1,15 @@
-#include "cameras\ActiveCamera.h"
+#include "cameras/ActiveCamera.h"
 
 #include <algorithm>
-
 #include "utils/Logger.h"
 
 using namespace ImageProcessing;
 
 ActiveCamera::ActiveCamera()
-	: _camSourceMutex(),
-	  _frameDataMutex(),
-	  _frameIdMutex(),
-	  _frameNotifier()
+	: cam_source_mutex_(),
+	  frame_data_mutex_(),
+	  frame_id_mutex_(),
+	  frame_notifier_()
 {
 
 }
@@ -20,88 +19,85 @@ ActiveCamera::~ActiveCamera()
 }
 
 
-void ActiveCamera::ResizeBuffers(const FrameMetaData &newData)
+void ActiveCamera::ResizeBuffers(const FrameMetaData &new_data)
 {
-	auto bufferSize = newData.GetBufferSize();
-	_frameDataLeft = std::make_unique<unsigned char[]>(bufferSize);
-	_frameDataRight = std::make_unique<unsigned char[]>(bufferSize);
+	auto buffer_size = new_data.GetBufferSize();
+	frame_data_left_ = std::make_unique<unsigned char[]>(buffer_size);
+	frame_data_right_ = std::make_unique<unsigned char[]>(buffer_size);
 }
 
 void ActiveCamera::FetchFrame()
 {
 	// Use copy (instead of member) to avoid lock over whole FetchFrame operation
-	auto cameraSrc = GetSource();
+	auto cam_src = GetSource();
 
-	if (cameraSrc.get() == nullptr || !cameraSrc->IsOpen())
+	if (cam_src.get() == nullptr || !cam_src->IsOpen())
 	{
 		return;
 	}
 
 	try
 	{
-		cameraSrc->GrabFrame(_frameDataLeft.get(), _frameDataRight.get());
+		cam_src->GrabFrame(frame_data_left_.get(), frame_data_right_.get());
 	}
 	catch (const std::exception &e)
 	{
 		DebugLog(std::string("Could not grab new frame: ") + e.what());
 	}
-
-
 }
 
 
 
-void ActiveCamera::SetSource(const std::shared_ptr<ICameraSource> &cam)
+void ActiveCamera::SetSource(const std::shared_ptr<CameraSourceInterface> &cam)
 {
-	std::unique_lock<std::mutex> lock(_camSourceMutex);
-	_cameraSource = cam;
+	std::unique_lock<std::mutex> lock(cam_source_mutex_);
+	camera_source_ = cam;
 
 	if (cam.get() != nullptr)
 	{
-		auto newFrameData = cam->GetFrameMetaData();
+		auto new_frame_data = cam->GetFrameMetaData();
 
-		if (_currentFrameMetaData != newFrameData)
+		if (current_frame_metadata_ != new_frame_data)
 		{
 			// fire OnSourceChanged events, resize buffers, re-process FrameMetaData
-			_currentFrameMetaData = newFrameData;
-			ResizeBuffers(newFrameData);
+			current_frame_metadata_ = new_frame_data;
+			ResizeBuffers(new_frame_data);
 		}
 	}
 
 }
 
-std::shared_ptr<ICameraSource> ActiveCamera::GetSource()
+std::shared_ptr<CameraSourceInterface> ActiveCamera::GetSource()
 {
-	std::unique_lock<std::mutex> lock(_camSourceMutex);
-	return _cameraSource;
+	std::unique_lock<std::mutex> lock(cam_source_mutex_);
+	return camera_source_;
 }
 
 
-void ActiveCamera::WaitForNewFrame(int consumerFrameId)
+void ActiveCamera::WaitForNewFrame(int consumer_frame_id)
 {
-	std::unique_lock<std::mutex> lock(_frameIdMutex);
-	_frameNotifier.wait(lock, [&]() { return _frameCounter > consumerFrameId; });
+	std::unique_lock<std::mutex> lock(frame_id_mutex_);
+	frame_notifier_.wait(lock, [&]() { return frame_counter_ > consumer_frame_id; });
 }
 
-void ActiveCamera::WriteFrame(unsigned char *leftBuffer, unsigned char *rightBuffer)
+int ActiveCamera::WriteFrame(unsigned char *left_buffer, unsigned char *right_buffer)
 {
-	std::unique_lock<std::mutex> lock(_frameDataMutex);
+	std::unique_lock<std::mutex> lock(frame_data_mutex_);
 
-	if (leftBuffer != nullptr)
+	if (left_buffer != nullptr)
 	{
-		std::memcpy(leftBuffer, _frameDataLeft.get(), 0);
+		std::memcpy(left_buffer, frame_data_left_.get(), 0);
 	}
 
-	if (rightBuffer != nullptr)
+	if (right_buffer != nullptr)
 	{
-		std::memcpy(rightBuffer, _frameDataRight.get(), 0);
+		std::memcpy(right_buffer, frame_data_right_.get(), 0);
 	}
 }
-
 
 
 FrameMetaData ActiveCamera::GetCurrentFrameData()
 {
-	std::unique_lock<std::mutex> lock(_frameDataMutex);
-	return _currentFrameMetaData;
+	std::unique_lock<std::mutex> lock(frame_data_mutex_);
+	return current_frame_metadata_;
 }

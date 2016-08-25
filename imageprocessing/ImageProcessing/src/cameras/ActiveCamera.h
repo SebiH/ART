@@ -6,9 +6,10 @@
 #include <mutex>
 #include <vector>
 
-#include "cameras/ICameraSource.h"
+#include "cameras/CameraSourceInterface.h"
 #include "cameras/FrameMetaData.h"
 #include "utils/Event.h"
+#include "utils/UIDGenerator.h"
 
 namespace ImageProcessing
 {
@@ -16,29 +17,29 @@ namespace ImageProcessing
 	{
 		// singleton
 	private:
-		static ActiveCamera* s_instance;
+		static ActiveCamera* s_instance_;
 
 	public:
 		static ActiveCamera * Instance()
 		{
-			if (!s_instance)
+			if (!s_instance_)
 			{
-				s_instance = new ActiveCamera();
+				s_instance_ = new ActiveCamera();
 			}
-			return s_instance;
+			return s_instance_;
 		}
 
 	private:
-		std::mutex _camSourceMutex;
-		std::mutex _frameDataMutex;
-		std::mutex _frameIdMutex;
+		std::mutex cam_source_mutex_;
+		std::mutex frame_data_mutex_;
+		std::mutex frame_id_mutex_;
 
-		std::condition_variable _frameNotifier;
-		std::shared_ptr<ICameraSource> _cameraSource;
+		std::condition_variable frame_notifier_;
+		std::shared_ptr<CameraSourceInterface> camera_source_;
 
-		std::atomic<int> _frameCounter = -1;
-		std::unique_ptr<unsigned char[]> _frameDataLeft, _frameDataRight;
-		FrameMetaData _currentFrameMetaData;
+		std::unique_ptr<UIDGenerator> frame_uid_generator;
+		std::unique_ptr<unsigned char[]> frame_data_left_, frame_data_right_;
+		FrameMetaData current_frame_metadata_;
 
 	public:
 		Event<const FrameMetaData&> OnImageMetaDataChanged;
@@ -48,15 +49,15 @@ namespace ImageProcessing
 		~ActiveCamera();
 
 	private:
-		void ResizeBuffers(const FrameMetaData &newData);
+		void ResizeBuffers(const FrameMetaData &new_data);
 		void FetchFrame();
 
 	public:
-		void SetSource(const std::shared_ptr<ICameraSource> &cam);
-		std::shared_ptr<ICameraSource> GetSource();
+		void SetSource(const std::shared_ptr<CameraSourceInterface> &cam);
+		std::shared_ptr<CameraSourceInterface> GetSource();
 
-		void WaitForNewFrame(int currentFrameId);
-		void WriteFrame(unsigned char *leftBuffer, unsigned char *rightBuffer);
+		void WaitForNewFrame(int current_frame_id);
+		int WriteFrame(unsigned char *left_buffer, unsigned char *right_buffer);
 		FrameMetaData GetCurrentFrameData();
 	};
 }

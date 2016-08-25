@@ -1,45 +1,46 @@
 #include <memory>
-#include <ovrvision\ovrvision_pro.h>
-#include <Unity\IUnityInterface.h>
+#include <ovrvision/ovrvision_pro.h>
+#include <Unity/IUnityInterface.h>
 
-#include "cameras\ActiveCamera.h"
-#include "cameras\ICameraSource.h"
-#include "cameras\OvrvisionCameraSource.h"
+#include "cameras/ActiveCamera.h"
+#include "cameras/CameraSourceInterface.h"
+#include "cameras/OvrvisionCameraSource.h"
 
-static void SetCamera(std::shared_ptr<ImageProcessing::ICameraSource> &newCamera)
+static void SetCamera(std::shared_ptr<ImageProcessing::CameraSourceInterface> &new_camera)
 {
-	auto activeCamera = ImageProcessing::ActiveCamera::Instance();
-	auto camSrc = activeCamera->GetSource();
+	auto active_camera = ImageProcessing::ActiveCamera::Instance();
+	auto cam_src = active_camera->GetSource();
 
 	// auto close old cam (if exists)
-	if (camSrc.get() != nullptr && camSrc->IsOpen())
+	if (cam_src.get() != nullptr && cam_src->IsOpen())
 	{
-		camSrc->Close();
+		cam_src->Close();
 	}
 
 	// auto open
-	if (!newCamera->IsOpen())
+	if (!new_camera->IsOpen())
 	{
-		newCamera->Open();
+		new_camera->Open();
 	}
 
 	// transfer ownership
-	activeCamera->SetSource(std::move(newCamera));
+	active_camera->SetSource(std::move(new_camera));
 }
 
 
-extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int resolution, const int processingMode)
+extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int resolution, const int processing_mode)
 {
-	auto cameraResolution = static_cast<OVR::Camprop>(resolution);
-	auto cameraMode = static_cast<OVR::Camqt>(processingMode);
+	auto cam_resolution = static_cast<OVR::Camprop>(resolution);
+	auto cam_mode = static_cast<OVR::Camqt>(processing_mode);
 
 	try
 	{
-		std::shared_ptr<ImageProcessing::ICameraSource> ovrSource = std::make_shared<ImageProcessing::OvrvisionCameraSource>(cameraResolution, cameraMode);
-		SetCamera(ovrSource);
+		std::shared_ptr<ImageProcessing::CameraSourceInterface> ovr_source = std::make_shared<ImageProcessing::OvrvisionCameraSource>(cam_resolution, cam_mode);
+		SetCamera(ovr_source);
 	}
 	catch (const std::exception &e)
 	{
+		// TODO.
 	}
 }
 

@@ -1,18 +1,20 @@
 #pragma once
 
 #include <memory>
+#include "utils/UID.h"
+#include "frames/FrameSize.h"
 
 namespace ImageProcessing
 {
-	template<class ExtraDataType> class FrameData
+	class FrameData
 	{
 	public:
-		// ??? unnecessary because frame will be written into pipeline buffer?
-		std::unique_ptr<unsigned char*> ImageDataRight;
-		std::unique_ptr<unsigned char*> ImageDataLeft;
-		//std::unique_ptr<ExtraDataType*> MetaData;
+		const UID id;
+		const std::shared_ptr<unsigned char[]> buffer_left;
+		const std::shared_ptr<unsigned char[]> buffer_right;
+		const FrameSize size;
 
-
-		virtual ~FrameData() { }
+		FrameData(UID id, std::shared_ptr<unsigned char[]> buffer_left, std::shared_ptr<unsigned char[]> buffer_right);
+		virtual ~FrameData();
 	};
 }

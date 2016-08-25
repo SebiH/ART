@@ -14,8 +14,8 @@ namespace ImageProcessing
 
 	public:
 		Event()
-			: _mutex(),
-			  _handlers()
+			: mutex_(),
+			  handlers_()
 		{
 
 		}
@@ -24,8 +24,8 @@ namespace ImageProcessing
 
 		void Call(EventType arg)
 		{
-			std::unique_lock<std::mutex> lock(_mutex);
-			for (auto handler : _handlers)
+			std::unique_lock<std::mutex> lock(mutex_);
+			for (auto handler : handlers_)
 			{
 				handler(arg);
 			}
@@ -39,21 +39,21 @@ namespace ImageProcessing
 
 		Event& operator += (EventHandler handler)
 		{
-			std::unique_lock<std::mutex> lock(_mutex);
-			_handlers.push_back(handler);
+			std::unique_lock<std::mutex> lock(mutex_);
+			handlers_.push_back(handler);
 			return *this;
 		}
 
 
 		Event& operator -= (EventHandler handler)
 		{
-			std::unique_lock<std::mutex> lock(_mutex);
-			_handlers.erase(std::remove(_handlers.begin(), _handlers.end(),  handler), _handlers.end());
+			std::unique_lock<std::mutex> lock(mutex_);
+			handlers_.erase(std::remove(handlers_.begin(), handlers_.end(),  handler), handlers_.end());
 		}
 
 
 	private:
-		std::vector<EventHandler> _handlers;
-		std::mutex _mutex;
+		std::vector<EventHandler> handlers_;
+		std::mutex mutex_;
 	};
 }

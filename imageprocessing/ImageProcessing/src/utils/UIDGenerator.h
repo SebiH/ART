@@ -1,11 +1,10 @@
 #pragma once
 
 #include <atomic>
+#include "utils/UID.h"
 
 namespace ImageProcessing
 {
-	typedef int UID;
-
 	class UIDGenerator
 	{
 		// Singleton

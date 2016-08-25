@@ -1,7 +1,7 @@
 #include <Unity/IUnityInterface.h>
 
 #include "cameras/ActiveCamera.h"
-#include "cameras/ICameraSource.h"
+#include "cameras/CameraSourceInterface.h"
 
 #include "cameras/OvrvisionCameraSource.h" // for a few special camera properties
 
@@ -97,10 +97,10 @@ extern "C" UNITY_INTERFACE_EXPORT int GetCamFps()
 
 extern "C" UNITY_INTERFACE_EXPORT float GetHMDRightGap(const int at)
 {
-	auto camSource = ImageProcessing::ActiveCamera::Instance()->GetSource();
-	if (auto ovrSource = dynamic_cast<ImageProcessing::OvrvisionCameraSource*>(camSource.get()))
+	auto cam_source = ImageProcessing::ActiveCamera::Instance()->GetSource();
+	if (auto ovr_source = dynamic_cast<ImageProcessing::OvrvisionCameraSource*>(cam_source.get()))
 	{
-		return ovrSource->GetHMDRightGap(at);
+		return ovr_source->GetHMDRightGap(at);
 	}
 	else
 	{
@@ -110,10 +110,10 @@ extern "C" UNITY_INTERFACE_EXPORT float GetHMDRightGap(const int at)
 
 extern "C" UNITY_INTERFACE_EXPORT float GetCamFocalPoint()
 {
-	auto camSource = ImageProcessing::ActiveCamera::Instance()->GetSource();
-	if (auto ovrSource = dynamic_cast<ImageProcessing::OvrvisionCameraSource*>(camSource.get()))
+	auto cam_source = ImageProcessing::ActiveCamera::Instance()->GetSource();
+	if (auto ovr_source = dynamic_cast<ImageProcessing::OvrvisionCameraSource*>(cam_source.get()))
 	{
-		return ovrSource->GetCamFocalPoint();
+		return ovr_source->GetCamFocalPoint();
 	}
 	else
 	{
@@ -124,10 +124,10 @@ extern "C" UNITY_INTERFACE_EXPORT float GetCamFocalPoint()
 
 extern "C" UNITY_INTERFACE_EXPORT int GetProcessingMode()
 {
-	auto camSource = ImageProcessing::ActiveCamera::Instance()->GetSource();
-	if (auto ovrSource = dynamic_cast<ImageProcessing::OvrvisionCameraSource*>(camSource.get()))
+	auto cam_source = ImageProcessing::ActiveCamera::Instance()->GetSource();
+	if (auto ovr_source = dynamic_cast<ImageProcessing::OvrvisionCameraSource*>(cam_source.get()))
 	{
-		return static_cast<int>(ovrSource->GetProcessingMode());
+		return static_cast<int>(ovr_source->GetProcessingMode());
 	}
 	else
 	{
@@ -137,22 +137,22 @@ extern "C" UNITY_INTERFACE_EXPORT int GetProcessingMode()
 
 extern "C" UNITY_INTERFACE_EXPORT void SetProcessingMode(int mode)
 {
-	auto camSource = ImageProcessing::ActiveCamera::Instance()->GetSource();
-	if (auto ovrSource = dynamic_cast<ImageProcessing::OvrvisionCameraSource*>(camSource.get()))
+	auto cam_source = ImageProcessing::ActiveCamera::Instance()->GetSource();
+	if (auto ovr_source = dynamic_cast<ImageProcessing::OvrvisionCameraSource*>(cam_source.get()))
 	{
 		switch (mode)
 		{
 		case 0:
-			ovrSource->SetProcessingMode(OVR::Camqt::OV_CAMQT_DMSRMP);
+			ovr_source->SetProcessingMode(OVR::Camqt::OV_CAMQT_DMSRMP);
 			break;
 
 		case 1:
-			ovrSource->SetProcessingMode(OVR::Camqt::OV_CAMQT_DMS);
+			ovr_source->SetProcessingMode(OVR::Camqt::OV_CAMQT_DMS);
 			break;
 
 		case 2:
 		default:
-			ovrSource->SetProcessingMode(OVR::Camqt::OV_CAMQT_NONE);
+			ovr_source->SetProcessingMode(OVR::Camqt::OV_CAMQT_NONE);
 			break;
 		}
 	}

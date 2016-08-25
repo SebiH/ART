@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <ovrvision\ovrvision_pro.h>
+#include <ovrvision/ovrvision_pro.h>
 #include "cameras/ICameraSource.h"
 
 namespace ImageProcessing
