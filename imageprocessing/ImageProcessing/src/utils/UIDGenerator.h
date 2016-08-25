@@ -10,30 +10,31 @@ namespace ImageProcessing
 	{
 		// Singleton
 	private:
-		static UIDGenerator *s_instance;
+		static UIDGenerator *s_instance_;
 
 	public:
 		static UIDGenerator * Instance()
 		{
-			if (!s_instance)
+			if (!s_instance_)
 			{
-				s_instance = new UIDGenerator();
+				s_instance_ = new UIDGenerator();
 			}
 
-			return s_instance;
+			return s_instance_;
 		}
 
 	private:
-		UIDGenerator() : _idCounter(0) { }
+		UIDGenerator() : id_counter_(0) { }
 		virtual ~UIDGenerator() { }
 
 
 	private:
-		std::atomic<UID> _idCounter;
+		std::atomic<UID> id_counter_;
 		
+	public:
 		const UID GetUID()
 		{
-			auto uid = ++_idCounter;
+			auto uid = ++id_counter_;
 			return uid;
 		}
 	};
