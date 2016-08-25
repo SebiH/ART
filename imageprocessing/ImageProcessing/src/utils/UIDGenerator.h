@@ -1,13 +1,13 @@
 #pragma once
 
-#include <mutex>
+#include <atomic>
 
 namespace ImageProcessing
 {
+	typedef int UID;
+
 	class UIDGenerator
 	{
-		typedef int UID;
-
 		// Singleton
 	private:
 		static UIDGenerator *s_instance;
@@ -24,19 +24,17 @@ namespace ImageProcessing
 		}
 
 	private:
-		UIDGenerator() : _counterMutex(), _idCounter(0) { }
+		UIDGenerator() : _idCounter(0) { }
 		virtual ~UIDGenerator() { }
 
 
 	private:
-		std::mutex _counterMutex;
-		UID _idCounter;
+		std::atomic<UID> _idCounter;
 		
 		const UID GetUID()
 		{
-			std::unique_lock<std::mutex> lock(_counterMutex);
-			++_idCounter;
-			return _idCounter;
+			auto uid = ++_idCounter;
+			return uid;
 		}
 	};
 }
