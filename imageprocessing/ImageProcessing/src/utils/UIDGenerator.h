@@ -23,7 +23,7 @@ namespace ImageProcessing
 			return s_instance_;
 		}
 
-	private:
+	public:
 		UIDGenerator() : id_counter_(0) { }
 		virtual ~UIDGenerator() { }
 
