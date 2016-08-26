@@ -16,5 +16,6 @@ extern "C" UNITY_INTERFACE_EXPORT void DestroyPipeline(int uid)
 	if (pipeline.get())
 	{
 		pipeline->Stop();
+		ImageProcessing::PipelineManager::Instance()->RemovePipeline(pipeline->Id());
 	}
 }
