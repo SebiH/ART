@@ -1,17 +1,28 @@
 #pragma once
 
-#include "cameras/ICameraSource.h"
+#include <string>
+#include <opencv2/core.hpp>
+#include "cameras/CameraSourceInterface.h"
 
 namespace ImageProcessing
 {
-	class DummyCameraSource : public ICameraSource
+	class DummyCameraSource : public CameraSourceInterface
 	{
-		virtual ImageProcessing::ImageMetaData GetCurrentFrame() override;
+	private:
+		cv::Mat img_;
 
-		virtual bool IsOpen() const override;
+
+	public:
+		DummyCameraSource(std::string filename);
+		~DummyCameraSource();
+
+
+		virtual void PrepareNextFrame() override;
+		virtual void GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer) override;
+
 		virtual void Open() override;
 		virtual void Close() override;
-
+		virtual bool IsOpen() const override;
 
 		/*
 		 * Camera properties
