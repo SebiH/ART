@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <mutex>
 #include <functional>
 #include <vector>
@@ -48,7 +49,10 @@ namespace ImageProcessing
 		Event& operator -= (EventHandler handler)
 		{
 			std::unique_lock<std::mutex> lock(mutex_);
-			handlers_.erase(std::remove(handlers_.begin(), handlers_.end(),  handler), handlers_.end());
+			handlers_.erase(std::remove_if(handlers_.begin(), handlers_.end(), [handler](const EventHandler &v_handler) {
+				return handler.target<void(EventType)>() == v_handler.target<void(EventType)>();
+			}), handlers_.end());
+			return *this;
 		}
 
 

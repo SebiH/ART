@@ -19,7 +19,7 @@ UnityTextureOutput::~UnityTextureOutput()
 }
 
 
-void UnityTextureOutput::Write(const FrameData &frame)
+void UnityTextureOutput::Write(const FrameData &frame) noexcept
 {
 	// TODO: move this bit into constructor, if possible?
 	ID3D11Texture2D* d3dtex = (ID3D11Texture2D*)texture_ptr_;

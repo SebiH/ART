@@ -35,10 +35,10 @@ void ThreadedPipeline::ResizeBuffers(const FrameSize &new_size)
 	{
 		std::unique_lock<std::mutex> lock(buffer_mutex_);
 
-		back_buffer_left_ = std::make_shared<unsigned char[]>(buffer_size);
-		back_buffer_right_ = std::make_shared<unsigned char[]>(buffer_size);
-		front_buffer_left_ = std::make_shared<unsigned char[]>(buffer_size);
-		front_buffer_right_ = std::make_shared<unsigned char[]>(buffer_size);
+		back_buffer_left_ = std::shared_ptr<unsigned char>(new unsigned char[buffer_size], std::default_delete<unsigned char[]>());
+		back_buffer_right_ = std::shared_ptr<unsigned char>(new unsigned char[buffer_size], std::default_delete<unsigned char[]>());
+		front_buffer_left_ = std::shared_ptr<unsigned char>(new unsigned char[buffer_size], std::default_delete<unsigned char[]>());
+		front_buffer_right_ = std::shared_ptr<unsigned char>(new unsigned char[buffer_size], std::default_delete<unsigned char[]>());
 
 		current_framesize_ = new_size;
 	}
@@ -150,8 +150,8 @@ std::shared_ptr<Processor> ThreadedPipeline::GetProcessor(UID processor_id)
 
 void ThreadedPipeline::RemoveProcessor(UID processor_id)
 {
-	processors_.erase(std::remove_if(processors_.begin(), processors_.end(), [processor_id](const Processor &processor) {
-		return processor.Id() == processor_id;
+	processors_.erase(std::remove_if(processors_.begin(), processors_.end(), [processor_id](const std::shared_ptr<Processor> &processor) {
+		return processor->Id() == processor_id;
 	}), processors_.end());
 }
 
@@ -180,7 +180,7 @@ std::shared_ptr<Output> ThreadedPipeline::GetOutput(UID output_id)
 
 void ThreadedPipeline::RemoveOutput(UID output_id)
 {
-	outputs_.erase(std::remove_if(outputs_.begin(), outputs_.end(), [output_id](const Output &output) {
-		return output.Id() == output_id;
+	outputs_.erase(std::remove_if(outputs_.begin(), outputs_.end(), [output_id](const std::shared_ptr<Output> &output) {
+		return output->Id() == output_id;
 	}), outputs_.end());
 }

@@ -25,10 +25,10 @@ namespace ImageProcessing
 		std::thread thread_;
 
 		std::mutex buffer_mutex_;
-		std::shared_ptr<unsigned char[]> back_buffer_left_;
-		std::shared_ptr<unsigned char[]> back_buffer_right_;
-		std::shared_ptr<unsigned char[]> front_buffer_left_;
-		std::shared_ptr<unsigned char[]> front_buffer_right_;
+		std::shared_ptr<unsigned char> back_buffer_left_;
+		std::shared_ptr<unsigned char> back_buffer_right_;
+		std::shared_ptr<unsigned char> front_buffer_left_;
+		std::shared_ptr<unsigned char> front_buffer_right_;
 
 		UIDGenerator frame_uid_generator;
 		FrameSize current_framesize_;

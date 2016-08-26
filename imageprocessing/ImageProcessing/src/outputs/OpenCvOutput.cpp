@@ -25,7 +25,7 @@ void OpenCvOutput::RegisterResult(const FrameData &result)
 	Write(result);
 }
 
-void OpenCvOutput::Write(const FrameData &result)
+void OpenCvOutput::Write(const FrameData &result) noexcept
 {
 	int totalWidth = 0;
 	int maxHeight = 0;

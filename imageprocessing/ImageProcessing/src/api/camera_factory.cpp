@@ -24,7 +24,7 @@ static void SetCamera(std::shared_ptr<ImageProcessing::CameraSourceInterface> &n
 	}
 
 	// transfer ownership
-	active_camera->SetSource(std::move(new_camera));
+	active_camera->SetActiveSource(std::move(new_camera));
 }
 
 
