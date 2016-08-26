@@ -10,7 +10,8 @@ using namespace ImageProcessing;
 
 ThreadedPipeline::ThreadedPipeline()
 	: id_(UIDGenerator::Instance()->GetUID()),
-	  buffer_mutex_()
+	  buffer_mutex_(),
+	  is_running_(false)
 {
 	framesize_changed_handler_ = [&](const FrameSize &new_size) { ResizeBuffers(new_size); };
 	ActiveCamera::Instance()->on_framesize_changed += framesize_changed_handler_;
@@ -22,6 +23,7 @@ ThreadedPipeline::ThreadedPipeline()
 ThreadedPipeline::~ThreadedPipeline()
 {
 	ActiveCamera::Instance()->on_framesize_changed -= framesize_changed_handler_;
+	Stop();
 }
 
 
@@ -67,8 +69,11 @@ void ThreadedPipeline::SwitchBuffers()
 
 void ThreadedPipeline::Start()
 {
-	is_running_ = true;
-	thread_ = std::thread(&ThreadedPipeline::Run, this);
+	if (is_running_)
+	{
+		is_running_ = true;
+		thread_ = std::thread(&ThreadedPipeline::Run, this);
+	}
 }
 
 
@@ -81,7 +86,7 @@ void ThreadedPipeline::Stop()
 	}
 	catch (const std::exception &e)
 	{
-		DebugLog(std::string("Could not stop thread: ") + e.what());
+		DebugLog(std::string("Could not stop pipeline thread: ") + e.what());
 	}
 }
 
