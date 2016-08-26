@@ -35,6 +35,12 @@ void ActiveCamera::Stop()
 {
 	try
 	{
+		auto cam_src = GetSource();
+		if (cam_src.get() != nullptr && cam_src->IsOpen())
+		{
+			cam_src->Close();
+		}
+
 		is_running_ = false;
 		thread_.join();
 	}
