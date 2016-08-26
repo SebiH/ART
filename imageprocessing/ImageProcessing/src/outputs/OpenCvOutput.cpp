@@ -27,11 +27,7 @@ void OpenCvOutput::RegisterResult(const FrameData &result)
 
 void OpenCvOutput::Write(const FrameData &result) noexcept
 {
-	int totalWidth = 0;
-	int maxHeight = 0;
-	int matType = -1;
-
-	cv::Mat merged(cv::Size(result.size.width * 2, result.size.height), matType);
+	cv::Mat merged(cv::Size(result.size.width * 2, result.size.height), CV_8UC4);
 
 	cv::Mat left(merged, cv::Rect(cv::Point(0, 0), cv::Size(result.size.width, result.size.height)));
 	cv::Mat right(merged, cv::Rect(cv::Point(result.size.width, 0), cv::Size(result.size.width, result.size.height)));

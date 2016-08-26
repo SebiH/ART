@@ -5,6 +5,7 @@
 #include "cameras/ActiveCamera.h"
 #include "cameras/CameraSourceInterface.h"
 #include "cameras/OvrvisionCameraSource.h"
+#include "utils/Logger.h"
 
 static void SetCamera(std::shared_ptr<ImageProcessing::CameraSourceInterface> &new_camera)
 {
@@ -40,7 +41,7 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int resolution, const 
 	}
 	catch (const std::exception &e)
 	{
-		// TODO.
+		DebugLog(std::string("Unable to set OVR Camera: ") + e.what());
 	}
 }
 

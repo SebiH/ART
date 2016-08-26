@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <mutex>
-#include <functional>
 #include <vector>
 
 namespace ImageProcessing

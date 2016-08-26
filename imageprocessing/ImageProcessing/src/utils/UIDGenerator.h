@@ -24,7 +24,7 @@ namespace ImageProcessing
 		std::atomic<UID> id_counter_;
 		
 	public:
-		const UID GetUID()
+		UID GetUID()
 		{
 			auto uid = ++id_counter_;
 			return uid;

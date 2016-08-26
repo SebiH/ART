@@ -6,9 +6,11 @@
 
 extern "C" UNITY_INTERFACE_EXPORT int AddOpenCVOutput(int pipeline_id)
 {
+	// TODO
+
 	// find pipeline
 	// create opencv output
 	// add opencv output to pipeline
-	// return pipeline id
-	return 0;
+	// return processor id
+	return pipeline_id;
 }
