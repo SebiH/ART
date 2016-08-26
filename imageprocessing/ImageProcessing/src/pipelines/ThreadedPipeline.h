@@ -51,6 +51,8 @@ namespace ImageProcessing
 		std::shared_ptr<Output> GetOutput(UID output_id);
 		void RemoveOutput(UID output_id);
 
+		void FlushOutputs();
+
 	private:
 		void Run();
 

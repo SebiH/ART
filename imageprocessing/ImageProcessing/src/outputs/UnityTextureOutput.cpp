@@ -5,7 +5,7 @@
 using namespace ImageProcessing;
 
 
-UnityTextureOutput::UnityTextureOutput(void *texture_ptr, Eye eye)
+UnityTextureOutput::UnityTextureOutput(Eye eye, void *texture_ptr)
 	: texture_ptr_(texture_ptr),
 	  eye_(eye)
 {

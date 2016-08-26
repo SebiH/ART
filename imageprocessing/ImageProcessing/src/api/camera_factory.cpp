@@ -4,8 +4,21 @@
 
 #include "cameras/ActiveCamera.h"
 #include "cameras/CameraSourceInterface.h"
+#include "cameras/DummyCameraSource.h"
 #include "cameras/OvrvisionCameraSource.h"
 #include "utils/Logger.h"
+
+
+extern "C" UNITY_INTERFACE_EXPORT void StartImageProcessing()
+{
+	ImageProcessing::ActiveCamera::Instance()->Start();
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void StopImageProcessing()
+{
+	ImageProcessing::ActiveCamera::Instance()->Stop();
+}
+
 
 static void SetCamera(std::shared_ptr<ImageProcessing::CameraSourceInterface> &new_camera)
 {
@@ -29,7 +42,7 @@ static void SetCamera(std::shared_ptr<ImageProcessing::CameraSourceInterface> &n
 }
 
 
-extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int resolution, const int processing_mode)
+extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int /* OVR::Camprop */ resolution, const int /* OVR::Camqt */ processing_mode)
 {
 	auto cam_resolution = static_cast<OVR::Camprop>(resolution);
 	auto cam_mode = static_cast<OVR::Camqt>(processing_mode);
@@ -45,4 +58,17 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int resolution, const 
 	}
 }
 
+
+extern "C" UNITY_INTERFACE_EXPORT void SetDummyCamera(const std::string filepath)
+{
+	try
+	{
+		std::shared_ptr<ImageProcessing::CameraSourceInterface> dummy_source = std::make_shared<ImageProcessing::DummyCameraSource>(filepath);
+		SetCamera(dummy_source);
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to set dummy source: ") + e.what());
+	}
+}
 

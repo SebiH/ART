@@ -184,3 +184,12 @@ void ThreadedPipeline::RemoveOutput(UID output_id)
 		return output->Id() == output_id;
 	}), outputs_.end());
 }
+
+
+void ThreadedPipeline::FlushOutputs()
+{
+	for (auto output : outputs_)
+	{
+		output->WriteResult();
+	}
+}

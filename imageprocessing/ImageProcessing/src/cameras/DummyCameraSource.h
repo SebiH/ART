@@ -32,6 +32,7 @@ namespace ImageProcessing
 		virtual int GetFrameChannels() const override;
 		virtual int GetCamExposure() const override;
 		virtual void SetCamExposure(const int val) const override;
+		virtual void SetCamExposurePerSec(const float val) const override;
 		virtual int GetCamGain() const override;
 		virtual void SetCamGain(const int val) const override;
 		virtual int GetCamBLC() const override;

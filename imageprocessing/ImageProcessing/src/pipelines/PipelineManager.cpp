@@ -44,3 +44,9 @@ void PipelineManager::RemovePipeline(UID pipeline_id)
 		return pipeline->Id() == pipeline_id;
 	}), pipelines_.end());
 }
+
+
+const std::vector<std::shared_ptr<ThreadedPipeline>> * PipelineManager::GetPipelines() const
+{
+	return &pipelines_;
+}

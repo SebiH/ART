@@ -126,3 +126,7 @@ int DummyCameraSource::GetCamFps() const
 {
 	return 1;
 }
+
+void ImageProcessing::DummyCameraSource::SetCamExposurePerSec(const float val) const
+{
+}

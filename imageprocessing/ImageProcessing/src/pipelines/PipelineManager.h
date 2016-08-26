@@ -26,5 +26,7 @@ namespace ImageProcessing
 		std::shared_ptr<ThreadedPipeline> CreatePipeline();
 		std::shared_ptr<ThreadedPipeline> GetPipeline(UID pipeline_id);
 		void RemovePipeline(UID pipeline_id);
+
+		const std::vector<std::shared_ptr<ThreadedPipeline>> * GetPipelines() const;
 	};
 }

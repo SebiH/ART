@@ -9,8 +9,8 @@ namespace ImageProcessing
 	{
 	public:
 		enum Eye {
-			LEFT,
-			RIGHT
+			LEFT = 0,
+			RIGHT = 1
 		};
 
 
@@ -20,7 +20,7 @@ namespace ImageProcessing
 
 	public:
 
-		UnityTextureOutput(void *texture_ptr, Eye eye);
+		UnityTextureOutput(Eye eye, void *texture_ptr);
 		virtual ~UnityTextureOutput();
 
 	protected:
