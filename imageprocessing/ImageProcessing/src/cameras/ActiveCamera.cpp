@@ -103,7 +103,7 @@ void ActiveCamera::SetActiveSource(const std::shared_ptr<CameraSourceInterface> 
 			current_framesize_ = FrameSize(cam->GetFrameWidth(), cam->GetFrameHeight(), cam->GetFrameChannels());
 		}
 
-		auto buffer_size = current_framesize_.GetBufferSize();
+		auto buffer_size = current_framesize_.BufferSize();
 		framebuffer_left_ = std::make_unique<unsigned char[]>(buffer_size);
 		framebuffer_right_ = std::make_unique<unsigned char[]>(buffer_size);
 	}
@@ -131,7 +131,7 @@ int ActiveCamera::WriteFrame(FrameData &frame)
 		std::unique_lock<std::mutex> lock(frame_data_mutex_);
 
 		frame.size = current_framesize_;
-		auto buffer_size = frame.size.GetBufferSize();
+		auto buffer_size = frame.size.BufferSize();
 
 		std::memcpy(frame.buffer_left.get(), framebuffer_left_.get(), buffer_size);
 		std::memcpy(frame.buffer_right.get(), framebuffer_right_.get(), buffer_size);

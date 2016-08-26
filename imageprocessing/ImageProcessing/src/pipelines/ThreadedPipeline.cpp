@@ -30,7 +30,7 @@ ThreadedPipeline::~ThreadedPipeline()
 
 void ThreadedPipeline::ResizeBuffers(const FrameSize &new_size)
 {
-	auto buffer_size = new_size.GetBufferSize();
+	auto buffer_size = new_size.BufferSize();
 
 	{
 		std::unique_lock<std::mutex> lock(buffer_mutex_);
