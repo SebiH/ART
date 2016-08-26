@@ -105,6 +105,9 @@
     <ClCompile Include="src\outputs\UnityTextureOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\outputs\OpenCvOutput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\old\processingmodule\ARMarkerSquare.h">
@@ -219,6 +222,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\outputs\UnityTextureOutput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\outputs\OpenCvOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

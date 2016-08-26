@@ -117,6 +117,7 @@
     <ClCompile Include="src\old\framesource\OpenCvFrameProducer.cpp" />
     <ClCompile Include="src\old\framesource\OvrFrameProducer.cpp" />
     <ClCompile Include="src\old\util\ThreadedModule.cpp" />
+    <ClCompile Include="src\outputs\OpenCvOutput.cpp" />
     <ClCompile Include="src\outputs\UnityTextureOutput.cpp" />
     <ClCompile Include="src\processors\_stereo_detection.cpp" />
     <ClCompile Include="src\old\texturewriter\UnityDX11TextureWriter.cpp" />
@@ -132,6 +133,7 @@
     <ClInclude Include="src\frames\PoseFrameData.h" />
     <ClInclude Include="src\old\api\common.h" />
     <ClInclude Include="src\cameras\CameraSourceInterface.h" />
+    <ClInclude Include="src\outputs\OpenCvOutput.h" />
     <ClInclude Include="src\outputs\Output.h" />
     <ClInclude Include="src\outputs\UnityTextureOutput.h" />
     <ClInclude Include="src\pipelines\PipelineManager.h" />
