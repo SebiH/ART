@@ -40,8 +40,21 @@ extern "C" UNITY_INTERFACE_EXPORT int RegisterUnityPointer(int pipeline_id, int 
 	}
 	catch (const std::exception &e)
 	{
-		DebugLog(std::string("Unable to add opencv output: ") + e.what());
+		DebugLog(std::string("Unable to add unity output: ") + e.what());
 	}
 
 	return -1;
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void RemoveOutput(int pipeline_id, int output_id)
+{
+	try
+	{
+		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
+		pipeline->RemoveOutput(output_id);
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to remove output: ") + e.what());
+	}
 }
