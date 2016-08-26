@@ -8,18 +8,11 @@ namespace ImageProcessing
 	class UIDGenerator
 	{
 		// Singleton
-	private:
-		static UIDGenerator *s_instance_;
-
 	public:
 		static UIDGenerator * Instance()
 		{
-			if (!s_instance_)
-			{
-				s_instance_ = new UIDGenerator();
-			}
-
-			return s_instance_;
+			static UIDGenerator *instance = new UIDGenerator();
+			return instance;
 		}
 
 	public:

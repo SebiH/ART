@@ -9,18 +9,11 @@ namespace ImageProcessing
 	class PipelineManager
 	{
 		// singleton
-	private:
-		static PipelineManager * s_instance_;
-
 	public:
 		static PipelineManager * Instance()
 		{
-			if (!s_instance_)
-			{
-				s_instance_ = new PipelineManager();
-			}
-
-			return s_instance_;
+			static PipelineManager *instance = new PipelineManager();
+			return instance;
 		}
 
 	private:

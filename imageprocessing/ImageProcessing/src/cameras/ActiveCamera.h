@@ -18,17 +18,11 @@ namespace ImageProcessing
 	class ActiveCamera
 	{
 		// singleton
-	private:
-		static ActiveCamera* s_instance_;
-
 	public:
 		static ActiveCamera * Instance()
 		{
-			if (!s_instance_)
-			{
-				s_instance_ = new ActiveCamera();
-			}
-			return s_instance_;
+			static ActiveCamera *instance = new ActiveCamera();
+			return instance;
 		}
 
 	private:
