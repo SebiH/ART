@@ -98,6 +98,7 @@
     <ClCompile Include="src\api\pipeline.cpp" />
     <ClCompile Include="src\api\processor_factory.cpp" />
     <ClCompile Include="src\cameras\ActiveCamera.cpp" />
+    <ClCompile Include="src\cameras\DummyCameraSource.cpp" />
     <ClCompile Include="src\cameras\OvrvisionCameraSource.cpp" />
     <ClCompile Include="src\old\api\CameraProperties.cpp" />
     <ClCompile Include="src\old\api\common.cpp" />
@@ -116,7 +117,7 @@
     <ClCompile Include="src\old\framesource\OpenCvFrameProducer.cpp" />
     <ClCompile Include="src\old\framesource\OvrFrameProducer.cpp" />
     <ClCompile Include="src\old\util\ThreadedModule.cpp" />
-    <ClCompile Include="src\old\stereo_detection.cpp" />
+    <ClCompile Include="src\processors\_stereo_detection.cpp" />
     <ClCompile Include="src\old\texturewriter\UnityDX11TextureWriter.cpp" />
     <ClCompile Include="src\pipelines\ThreadedPipeline.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
