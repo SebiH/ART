@@ -10,13 +10,49 @@ ActiveCamera::ActiveCamera()
 	  frame_data_mutex_(),
 	  frame_id_mutex_(),
 	  frame_notifier_(),
-      frame_counter_(ATOMIC_VAR_INIT(1))
+      frame_counter_(ATOMIC_VAR_INIT(1)),
+	  is_running_(false)
 {
 }
 
 ActiveCamera::~ActiveCamera()
 {
+	Stop();
 }
+
+
+void ActiveCamera::Start()
+{
+	if (!is_running_)
+	{
+		is_running_ = true;
+		thread_ = std::thread(&ActiveCamera::Run, this);
+	}
+}
+
+
+void ActiveCamera::Stop()
+{
+	try
+	{
+		is_running_ = false;
+		thread_.join();
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Could not stop camera thread: ") + e.what());
+	}
+}
+
+
+void ActiveCamera::Run()
+{
+	while (is_running_)
+	{
+		FetchNewFrame();
+	}
+}
+
 
 
 void ActiveCamera::FetchNewFrame()
@@ -31,7 +67,14 @@ void ActiveCamera::FetchNewFrame()
 
 	try
 	{
-		cam_src->GrabFrame(framebuffer_left_.get(), framebuffer_right_.get());
+		cam_src->PrepareNextFrame();
+
+		{
+			std::unique_lock<std::mutex> frame_data_mutex;
+			cam_src->GrabFrame(framebuffer_left_.get(), framebuffer_right_.get());
+		}
+
+		frame_counter_++;
 	}
 	catch (const std::exception &e)
 	{

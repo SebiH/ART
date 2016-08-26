@@ -4,6 +4,7 @@
 #include <condition_variable>
 #include <memory>
 #include <mutex>
+#include <thread>
 #include <vector>
 
 #include "cameras/CameraSourceInterface.h"
@@ -35,6 +36,9 @@ namespace ImageProcessing
 		std::mutex frame_data_mutex_;
 		std::mutex frame_id_mutex_;
 
+		std::thread thread_;
+		bool is_running_;
+
 		std::atomic<int> frame_counter_;
 		std::condition_variable frame_notifier_;
 		std::shared_ptr<CameraSourceInterface> camera_source_;
@@ -46,6 +50,7 @@ namespace ImageProcessing
 		ActiveCamera();
 		~ActiveCamera();
 
+		void Run();
 
 	public:
 		// Camera should be open (or will be opened) so that frame size can be determined
@@ -59,5 +64,8 @@ namespace ImageProcessing
 
 		Event<const FrameSize&> on_framesize_changed;
 		FrameSize GetFrameSize() const;
+
+		void Start();
+		void Stop();
 	};
 }
