@@ -22,13 +22,13 @@ namespace ImageProcessing
 
 		UID Id() const { return id_; }
 
-		void RegisterResult(const FrameData &result)
+		virtual void RegisterResult(const FrameData &result)
 		{
 			std::unique_lock<std::mutex> lock(result_mutex_);
 			current_result_ = result;
 		}
 
-		void WriteResult()
+		virtual void WriteResult()
 		{
 			std::unique_lock<std::mutex> lock(result_mutex_);
 			if (current_result_.id > last_written_frameid && current_result_.is_valid)
