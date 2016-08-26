@@ -19,6 +19,7 @@ namespace ImageProcessing
 		virtual int GetFrameChannels() const = 0;
 		virtual int GetCamExposure() const = 0;
 		virtual void SetCamExposure(const int val) const = 0;
+		virtual void SetCamExposurePerSec(const float val) const = 0;
 		virtual int GetCamGain() const = 0;
 		virtual void SetCamGain(const int val) const = 0;
 		virtual int GetCamBLC() const = 0;

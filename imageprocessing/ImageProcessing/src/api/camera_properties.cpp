@@ -40,6 +40,11 @@ extern "C" UNITY_INTERFACE_EXPORT void SetCamExposure(const int val)
 	ImageProcessing::ActiveCamera::Instance()->GetSource()->SetCamExposure(val);
 }
 
+extern "C" UNITY_INTERFACE_EXPORT void SetCamExposurePerSec(const float val)
+{
+	ImageProcessing::ActiveCamera::Instance()->GetSource()->SetCamExposurePerSec(val);
+}
+
 extern "C" UNITY_INTERFACE_EXPORT int GetCamBLC()
 {
 	return ImageProcessing::ActiveCamera::Instance()->GetSource()->GetCamBLC();
