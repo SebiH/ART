@@ -69,7 +69,7 @@ void ThreadedPipeline::SwitchBuffers()
 
 void ThreadedPipeline::Start()
 {
-	if (is_running_)
+	if (!is_running_)
 	{
 		is_running_ = true;
 		thread_ = std::thread(&ThreadedPipeline::Run, this);
