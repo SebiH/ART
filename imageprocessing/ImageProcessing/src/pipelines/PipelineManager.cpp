@@ -38,7 +38,7 @@ std::shared_ptr<ThreadedPipeline> PipelineManager::GetPipeline(UID pipeline_id)
 
 void PipelineManager::RemovePipeline(UID pipeline_id)
 {
-	pipelines_.erase(std::remove_if(pipelines_.begin(), pipelines_.end(), [pipeline_id](const ThreadedPipeline &pipeline) {
-		return pipeline.Id() == pipeline_id;
+	pipelines_.erase(std::remove_if(pipelines_.begin(), pipelines_.end(), [pipeline_id](const std::shared_ptr<ThreadedPipeline> &pipeline) {
+		return pipeline->Id() == pipeline_id;
 	}), pipelines_.end());
 }
