@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 #include "pipelines/ThreadedPipeline.h"
 
 namespace ImageProcessing
@@ -26,6 +27,7 @@ namespace ImageProcessing
 		PipelineManager();
 		virtual ~PipelineManager();
 
+		std::vector<std::shared_ptr<ThreadedPipeline>> pipelines_;
 
 	public:
 		std::shared_ptr<ThreadedPipeline> CreatePipeline();

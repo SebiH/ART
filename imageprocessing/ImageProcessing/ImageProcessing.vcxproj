@@ -104,6 +104,7 @@
     <ClCompile Include="src\api\unity_plugin.cpp" />
     <ClCompile Include="src\outputs\OpenCvOutput.cpp" />
     <ClCompile Include="src\outputs\UnityTextureOutput.cpp" />
+    <ClCompile Include="src\pipelines\PipelineManager.cpp" />
     <ClCompile Include="src\processors\_stereo_detection.cpp" />
     <ClCompile Include="src\pipelines\ThreadedPipeline.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
