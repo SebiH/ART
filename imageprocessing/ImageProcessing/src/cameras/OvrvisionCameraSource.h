@@ -2,25 +2,27 @@
 
 #include <memory>
 #include <ovrvision/ovrvision_pro.h>
-#include "cameras/ICameraSource.h"
+#include "cameras/CameraSourceInterface.h"
 
 namespace ImageProcessing
 {
-	class OvrvisionCameraSource : public ICameraSource
+	class OvrvisionCameraSource : public CameraSourceInterface
 	{
 	private:
-
+		std::unique_ptr<OVR::OvrvisionPro> ovr_camera_;
+		OVR::Camprop quality_;
+		OVR::Camqt process_mode_;
 
 	public:
-		OvrvisionCameraSource(OVR::Camprop quality, OVR::Camqt processMode);
+		OvrvisionCameraSource(OVR::Camprop quality, OVR::Camqt process_mode);
 		~OvrvisionCameraSource();
 
-		virtual ImageProcessing::ImageMetaData GetCurrentFrame() override;
+		virtual void PrepareNextFrame() override;
+		virtual void GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer) override;
 
-		virtual bool IsOpen() const override;
 		virtual void Open() override;
 		virtual void Close() override;
-
+		virtual bool IsOpen() const override;
 
 		/*
 		 * Ovrvision specific properties
@@ -31,13 +33,14 @@ namespace ImageProcessing
 		int GetProcessingMode() const;
 
 		/*
-		 * Camera properties
-		 */
+		* Camera properties
+		*/
 		virtual int GetFrameWidth() const override;
 		virtual int GetFrameHeight() const override;
 		virtual int GetFrameChannels() const override;
 		virtual int GetCamExposure() const override;
 		virtual void SetCamExposure(const int val) const override;
+		virtual void SetCamExposurePerSec(const float val) const override;
 		virtual int GetCamGain() const override;
 		virtual void SetCamGain(const int val) const override;
 		virtual int GetCamBLC() const override;
