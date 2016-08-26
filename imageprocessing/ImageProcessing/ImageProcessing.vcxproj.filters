@@ -63,6 +63,9 @@
     <ClCompile Include="src\pipelines\PipelineManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\outputs\JsonOutput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h">
@@ -95,9 +98,6 @@
     <ClInclude Include="src\frames\FrameData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\frames\PoseFrameData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\outputs\Output.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -120,6 +120,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\debugging\MeasurePerformance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\outputs\JsonOutput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\frames\JsonFrameData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

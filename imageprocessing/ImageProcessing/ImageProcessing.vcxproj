@@ -102,6 +102,7 @@
     <ClCompile Include="src\cameras\OvrvisionCameraSource.cpp" />
     <ClCompile Include="src\api\logging.cpp" />
     <ClCompile Include="src\api\unity_plugin.cpp" />
+    <ClCompile Include="src\outputs\JsonOutput.cpp" />
     <ClCompile Include="src\outputs\OpenCvOutput.cpp" />
     <ClCompile Include="src\outputs\UnityTextureOutput.cpp" />
     <ClCompile Include="src\pipelines\PipelineManager.cpp" />
@@ -116,8 +117,9 @@
     <ClInclude Include="src\frames\FrameData.h" />
     <ClInclude Include="src\cameras\OvrvisionCameraSource.h" />
     <ClInclude Include="src\frames\FrameSize.h" />
-    <ClInclude Include="src\frames\PoseFrameData.h" />
+    <ClInclude Include="src\frames\JsonFrameData.h" />
     <ClInclude Include="src\cameras\CameraSourceInterface.h" />
+    <ClInclude Include="src\outputs\JsonOutput.h" />
     <ClInclude Include="src\outputs\OpenCvOutput.h" />
     <ClInclude Include="src\outputs\Output.h" />
     <ClInclude Include="src\outputs\UnityTextureOutput.h" />

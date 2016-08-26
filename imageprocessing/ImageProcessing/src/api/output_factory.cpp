@@ -6,6 +6,7 @@
 #include "outputs/Output.h"
 #include "outputs/OpenCvOutput.h"
 #include "outputs/UnityTextureOutput.h"
+#include "outputs/JsonOutput.h"
 #include "pipelines/PipelineManager.h"
 #include "utils/Logger.h"
 
@@ -52,6 +53,25 @@ extern "C" UNITY_INTERFACE_EXPORT int RegisterUnityPointer(const int pipeline_id
 
 	return -1;
 }
+
+
+extern "C" UNITY_INTERFACE_EXPORT int AddJsonOutput(int pipeline_id, JsonOutput::JsonCallback callback)
+{
+	try
+	{
+		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
+		std::shared_ptr<Output> json_output = std::make_shared<JsonOutput>(callback);
+		pipeline->AddOutput(json_output);
+		return json_output->Id();
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to add json output: ") + e.what());
+	}
+
+	return -1;
+}
+
 
 extern "C" UNITY_INTERFACE_EXPORT void RemoveOutput(const int pipeline_id, const int output_id)
 {

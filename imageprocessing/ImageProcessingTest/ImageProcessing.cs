@@ -114,6 +114,11 @@ namespace ImageProcessingTest
         [DllImport("ImageProcessing")]
         public static extern int RegisterUnityPointer(int pipeline_id, int eye, IntPtr texture_ptr);
 
+        public delegate void JsonCallback(string payload);
+
+        [DllImport("ImageProcessing")]
+        public static extern int AddJsonOutput(int pipeline_id, JsonCallback callback);
+
         [DllImport("ImageProcessing")]
         public static extern int RemoveOutput(int pipeline_id, int output_id);
 
