@@ -7,11 +7,17 @@ namespace ImageProcessing
 	class FrameSize
 	{
 	public:
-		const int frame_width;
-		const int frame_height;
-		const int frame_depth;
+		int frame_width;
+		int frame_height;
+		int frame_depth;
 
 	public:
+		FrameSize()
+			: FrameSize(0, 0, 0)
+		{
+
+		}
+
 		FrameSize(const int frame_width, const int frame_height, const int frame_depth)
 			: frame_width(frame_width),
 			  frame_height(frame_height),
@@ -41,6 +47,5 @@ namespace ImageProcessing
 				frame_depth == other.frame_depth
 				);
 		}
-
 	};
 }

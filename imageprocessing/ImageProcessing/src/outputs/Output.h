@@ -1,5 +1,7 @@
 #pragma once
 
+#include <mutex>
+#include "frames/FrameData.h"
 #include "utils/UID.h"
 #include "utils/UIDGenerator.h"
 
@@ -9,11 +11,34 @@ namespace ImageProcessing
 	{
 	private:
 		const UID id_;
+		FrameData current_result_;
+		UID last_written_frameid;
+		std::mutex result_mutex_;
 
 	public:
-		Output() : id_(UIDGenerator::Instance()->GetUID()) { }
+		Output() : id_(UIDGenerator::Instance()->GetUID()), result_mutex_(), last_written_frameid(-1) { }
 		virtual ~Output() { }
 
+
 		UID Id() const { return id_; }
+
+		void RegisterResult(const FrameData &result)
+		{
+			std::unique_lock<std::mutex> lock(result_mutex_);
+			current_result_ = result;
+		}
+
+		void WriteResult()
+		{
+			std::unique_lock<std::mutex> lock(result_mutex_);
+			if (current_result_.id > last_written_frameid && current_result_.is_valid)
+			{
+				Write(current_result_);
+				last_written_frameid = current_result_.id;
+			}
+		}
+
+	protected:
+		virtual void Write(const FrameData &result) noexcept = 0;
 	};
 }

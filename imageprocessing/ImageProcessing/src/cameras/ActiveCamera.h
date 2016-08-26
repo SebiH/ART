@@ -7,9 +7,10 @@
 #include <vector>
 
 #include "cameras/CameraSourceInterface.h"
-#include "cameras/FrameMetaData.h"
-#include "utils/Event.h"
+#include "frames/FrameData.h"
+#include "frames/FrameSize.h"
 #include "utils/UIDGenerator.h"
+#include "utils/Event.h"
 
 namespace ImageProcessing
 {
@@ -34,30 +35,29 @@ namespace ImageProcessing
 		std::mutex frame_data_mutex_;
 		std::mutex frame_id_mutex_;
 
+		std::atomic<int> frame_counter_;
 		std::condition_variable frame_notifier_;
 		std::shared_ptr<CameraSourceInterface> camera_source_;
+		FrameSize current_framesize_;
 
-		std::unique_ptr<UIDGenerator> frame_uid_generator;
-		std::unique_ptr<unsigned char[]> frame_data_left_, frame_data_right_;
-		FrameMetaData current_frame_metadata_;
-
-	public:
-		Event<const FrameMetaData&> OnImageMetaDataChanged;
+		std::unique_ptr<unsigned char[]> framebuffer_left_, framebuffer_right_;
 
 	private:
 		ActiveCamera();
 		~ActiveCamera();
 
-	private:
-		void ResizeBuffers(const FrameMetaData &new_data);
-		void FetchFrame();
 
 	public:
-		void SetSource(const std::shared_ptr<CameraSourceInterface> &cam);
+		// Camera should be open (or will be opened) so that frame size can be determined
+		void SetActiveSource(const std::shared_ptr<CameraSourceInterface> &cam);
 		std::shared_ptr<CameraSourceInterface> GetSource();
 
 		void WaitForNewFrame(int current_frame_id);
-		int WriteFrame(unsigned char *left_buffer, unsigned char *right_buffer);
-		FrameMetaData GetCurrentFrameData();
+		int WriteFrame(FrameData &frame);
+
+		void FetchNewFrame();
+
+		Event<const FrameSize&> on_framesize_changed;
+		FrameSize GetFrameSize() const;
 	};
 }

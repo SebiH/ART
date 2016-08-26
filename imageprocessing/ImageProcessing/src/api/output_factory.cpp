@@ -2,7 +2,7 @@
 #include <Unity/IUnityInterface.h>
 
 #include "outputs/Output.h"
-#include "PipelineManager.h"
+#include "pipelines/PipelineManager.h"
 
 extern "C" UNITY_INTERFACE_EXPORT int AddOpenCVOutput(int pipeline_id)
 {

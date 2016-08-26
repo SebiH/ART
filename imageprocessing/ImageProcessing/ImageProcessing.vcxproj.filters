@@ -72,9 +72,6 @@
     <ClCompile Include="src\utils\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\api\debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\api\camera_factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -85,6 +82,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\cameras\ActiveCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\output_factory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\processor_factory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pipelines\ThreadedPipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\api\logging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,13 +164,7 @@
     <ClInclude Include="src\old\api\common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\processors\IProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\cameras\ActiveCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cameras\ICameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cameras\DummyCameraSource.h">
@@ -173,16 +179,37 @@
     <ClInclude Include="src\api\unity_plugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Pipeline.h">
+    <ClInclude Include="src\utils\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\utils\Event.h">
+    <ClInclude Include="src\utils\UIDGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\UID.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\CameraSourceInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\frames\FrameData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\cameras\FrameMetaData.h">
+    <ClInclude Include="src\frames\PoseFrameData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\outputs\Output.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\processors\Processor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\frames\FrameSize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pipelines\PipelineManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pipelines\ThreadedPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,5 @@
 #include <Unity/IUnityInterface.h>
-#include "PipelineManager.h"
+#include "pipelines/PipelineManager.h"
 
 
 extern "C" UNITY_INTERFACE_EXPORT int CreatePipeline()

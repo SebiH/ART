@@ -94,11 +94,14 @@
   <ItemGroup>
     <ClCompile Include="src\api\camera_factory.cpp" />
     <ClCompile Include="src\api\camera_properties.cpp" />
+    <ClCompile Include="src\api\output_factory.cpp" />
+    <ClCompile Include="src\api\pipeline.cpp" />
+    <ClCompile Include="src\api\processor_factory.cpp" />
     <ClCompile Include="src\cameras\ActiveCamera.cpp" />
     <ClCompile Include="src\cameras\OvrvisionCameraSource.cpp" />
     <ClCompile Include="src\old\api\CameraProperties.cpp" />
     <ClCompile Include="src\old\api\common.cpp" />
-    <ClCompile Include="src\api\debug.cpp" />
+    <ClCompile Include="src\api\logging.cpp" />
     <ClCompile Include="src\old\framesource\DummyFrameSource.cpp" />
     <ClCompile Include="src\old\framesource\LeapFrameSource.cpp" />
     <ClCompile Include="src\old\framesource\NullFrameSource.cpp" />
@@ -115,18 +118,22 @@
     <ClCompile Include="src\old\util\ThreadedModule.cpp" />
     <ClCompile Include="src\old\stereo_detection.cpp" />
     <ClCompile Include="src\old\texturewriter\UnityDX11TextureWriter.cpp" />
+    <ClCompile Include="src\pipelines\ThreadedPipeline.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h" />
-    <ClInclude Include="src\cameras\FrameMetaData.h" />
     <ClInclude Include="src\cameras\DummyCameraSource.h" />
     <ClInclude Include="src\frames\FrameData.h" />
     <ClInclude Include="src\cameras\OvrvisionCameraSource.h" />
+    <ClInclude Include="src\frames\FrameSize.h" />
+    <ClInclude Include="src\frames\PoseFrameData.h" />
     <ClInclude Include="src\old\api\common.h" />
-    <ClInclude Include="src\cameras\ICameraSource.h" />
-    <ClInclude Include="src\Pipeline.h" />
-    <ClInclude Include="src\processors\IProcessor.h" />
+    <ClInclude Include="src\cameras\CameraSourceInterface.h" />
+    <ClInclude Include="src\outputs\Output.h" />
+    <ClInclude Include="src\pipelines\PipelineManager.h" />
+    <ClInclude Include="src\pipelines\ThreadedPipeline.h" />
+    <ClInclude Include="src\processors\Processor.h" />
     <ClInclude Include="src\old\framesource\DummyFrameSource.h" />
     <ClInclude Include="src\old\framesource\IFrameSource.h" />
     <ClInclude Include="src\old\framesource\LeapFrameSource.h" />
@@ -150,6 +157,8 @@
     <ClInclude Include="src\old\util\ThreadedModule.h" />
     <ClInclude Include="src\utils\Event.h" />
     <ClInclude Include="src\utils\Logger.h" />
+    <ClInclude Include="src\utils\UID.h" />
+    <ClInclude Include="src\utils\UIDGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Modules.def" />

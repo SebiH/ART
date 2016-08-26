@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "ThreadedPipeline.h"
+#include "pipelines/ThreadedPipeline.h"
 
 namespace ImageProcessing
 {

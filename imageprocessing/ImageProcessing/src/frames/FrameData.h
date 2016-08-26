@@ -9,12 +9,21 @@ namespace ImageProcessing
 	class FrameData
 	{
 	public:
-		const UID id;
-		const std::shared_ptr<unsigned char[]> buffer_left;
-		const std::shared_ptr<unsigned char[]> buffer_right;
-		const FrameSize size;
+		UID id;
+		std::shared_ptr<unsigned char[]> buffer_left;
+		std::shared_ptr<unsigned char[]> buffer_right;
+		FrameSize size;
+		bool is_valid;
 
-		FrameData(UID id, std::shared_ptr<unsigned char[]> buffer_left, std::shared_ptr<unsigned char[]> buffer_right);
-		virtual ~FrameData();
+		FrameData() : is_valid(false) {}
+
+		FrameData(const UID id, const std::shared_ptr<unsigned char[]> &buffer_left, const std::shared_ptr<unsigned char[]> &buffer_right, const FrameSize &size)
+			: id(id),
+			  buffer_left(buffer_left),
+			  buffer_right(buffer_right),
+			  size(size),
+			  is_valid(true) { }
+
+		virtual ~FrameData() { };
 	};
 }

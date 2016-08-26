@@ -1,7 +1,5 @@
 #pragma once
 
-#include "frames/FrameSize.h"
-
 namespace ImageProcessing
 {
 	class CameraSourceInterface
@@ -10,7 +8,6 @@ namespace ImageProcessing
 		virtual ~CameraSourceInterface() {}
 
 		virtual void GrabFrame(unsigned char *left_buffer, unsigned char *right_buffer) = 0;
-		virtual FrameSize GetFrameMetaData() const = 0;
 
 		virtual void Open() = 0;
 		virtual void Close() = 0;
