@@ -23,6 +23,9 @@ sysinfo.txt
 # NuGet
 /[Pp]ackages/
 
+# Visual Studio
+*/.vs/*
+
 # ==========
 # c++ / clr
 # ==========
