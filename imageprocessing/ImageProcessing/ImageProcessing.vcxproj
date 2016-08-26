@@ -127,6 +127,7 @@
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h" />
     <ClInclude Include="src\cameras\DummyCameraSource.h" />
+    <ClInclude Include="src\debugging\MeasurePerformance.h" />
     <ClInclude Include="src\frames\FrameData.h" />
     <ClInclude Include="src\cameras\OvrvisionCameraSource.h" />
     <ClInclude Include="src\frames\FrameSize.h" />
@@ -146,7 +147,6 @@
     <ClInclude Include="src\old\processingmodule\ARMarkerSquare.h" />
     <ClInclude Include="src\old\processingmodule\ARToolkitModule.h" />
     <ClInclude Include="src\old\processingmodule\ContourModule.h" />
-    <ClInclude Include="src\old\util\PerformanceDebugging.h" />
     <ClInclude Include="src\old\util\ImageInfo.h" />
     <ClInclude Include="src\old\processingmodule\RawImageModule.h" />
     <ClInclude Include="src\old\processingmodule\RoiModule.h" />
