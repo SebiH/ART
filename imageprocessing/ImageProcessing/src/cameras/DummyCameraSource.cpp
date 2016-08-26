@@ -26,7 +26,7 @@ void DummyCameraSource::PrepareNextFrame()
 
 void DummyCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
 {
-	auto buffer_size = img_.channels() * img_.size().width & img_.size().height;
+	auto buffer_size = img_.channels() * img_.size().width * img_.size().height;
 	memcpy(left_buffer, img_.data, buffer_size);
 	memcpy(right_buffer, img_.data, buffer_size);
 }
