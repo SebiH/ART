@@ -58,8 +58,9 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int /* OVR::Camprop */
 	}
 }
 
+#include <opencv2/highgui.hpp>
 
-extern "C" UNITY_INTERFACE_EXPORT void SetDummyCamera(const std::string filepath)
+extern "C" UNITY_INTERFACE_EXPORT void SetDummyCamera(const char *filepath)
 {
 	try
 	{

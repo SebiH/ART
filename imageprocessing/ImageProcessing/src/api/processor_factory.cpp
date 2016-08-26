@@ -5,7 +5,7 @@
 #include "pipelines/PipelineManager.h"
 
 
-extern "C" UNITY_INTERFACE_EXPORT int AddArToolkitProcessor(int pipeline_id)
+extern "C" UNITY_INTERFACE_EXPORT int AddArToolkitProcessor(const int pipeline_id)
 {
 	// TODO.
 	return pipeline_id;

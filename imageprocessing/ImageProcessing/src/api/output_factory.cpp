@@ -1,6 +1,7 @@
 #include <string>
 #include <memory>
 #include <Unity/IUnityInterface.h>
+#include <opencv2/highgui.hpp>
 
 #include "outputs/Output.h"
 #include "outputs/OpenCvOutput.h"
@@ -10,7 +11,7 @@
 
 using namespace ImageProcessing;
 
-extern "C" UNITY_INTERFACE_EXPORT int AddOpenCVOutput(int pipeline_id, std::string windowname)
+extern "C" UNITY_INTERFACE_EXPORT int AddOpenCvOutput(const int pipeline_id, const char *windowname)
 {
 	try
 	{
@@ -27,7 +28,13 @@ extern "C" UNITY_INTERFACE_EXPORT int AddOpenCVOutput(int pipeline_id, std::stri
 	return -1;
 }
 
-extern "C" UNITY_INTERFACE_EXPORT int RegisterUnityPointer(int pipeline_id, int eye, unsigned char *texture_ptr)
+extern "C" UNITY_INTERFACE_EXPORT int OpenCvWaitKey(const int delay)
+{
+	return cv::waitKey(delay);
+}
+
+
+extern "C" UNITY_INTERFACE_EXPORT int RegisterUnityPointer(const int pipeline_id, const int eye, unsigned char *texture_ptr)
 {
 	try
 	{
@@ -46,7 +53,7 @@ extern "C" UNITY_INTERFACE_EXPORT int RegisterUnityPointer(int pipeline_id, int 
 	return -1;
 }
 
-extern "C" UNITY_INTERFACE_EXPORT void RemoveOutput(int pipeline_id, int output_id)
+extern "C" UNITY_INTERFACE_EXPORT void RemoveOutput(const int pipeline_id, const int output_id)
 {
 	try
 	{

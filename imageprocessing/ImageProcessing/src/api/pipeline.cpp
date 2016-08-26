@@ -9,7 +9,7 @@ extern "C" UNITY_INTERFACE_EXPORT int CreatePipeline()
 	return pipeline->Id();
 }
 
-extern "C" UNITY_INTERFACE_EXPORT void RemovePipeline(int uid)
+extern "C" UNITY_INTERFACE_EXPORT void RemovePipeline(const int uid)
 {
 	auto pipeline = ImageProcessing::PipelineManager::Instance()->GetPipeline(uid);
 
