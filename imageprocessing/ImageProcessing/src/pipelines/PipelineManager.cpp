@@ -19,6 +19,8 @@ PipelineManager::~PipelineManager()
 std::shared_ptr<ThreadedPipeline> PipelineManager::CreatePipeline()
 {
 	auto pipeline = std::make_shared<ThreadedPipeline>();
+	pipelines_.push_back(pipeline);
+	return pipeline;
 }
 
 
