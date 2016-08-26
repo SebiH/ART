@@ -7,6 +7,7 @@ namespace ImageProcessing
 	public:
 		virtual ~CameraSourceInterface() {}
 
+		virtual void PrepareNextFrame() = 0;
 		virtual void GrabFrame(unsigned char *left_buffer, unsigned char *right_buffer) = 0;
 
 		virtual void Open() = 0;
