@@ -44,24 +44,30 @@ namespace Assets.Modules.Vision.CameraSources
 
         #region Camera Properties
 
+        [Range(1, 47)]
         public int Gain = 8;
         private int _prevGain;
 
+        [Range(0, 32767)]
         public int Exposure = 12960;
         private int _prevExposure;
 
+        [Range(0, 1023)]
         public int BLC = 32;
         private int _prevBLC;
 
         public bool AutoWhiteBalance = true;
         private bool _prevAutoWhiteBalance;
 
+        [Range(0, 4095)]
         public int WhiteBalanceR = 1474;
         private int _prevWhiteBalanceR;
 
+        [Range(0, 4095)]
         public int WhiteBalanceG = 1024;
         private int _prevWhiteBalanceG;
 
+        [Range(0, 4095)]
         public int WhiteBalanceB = 1738;
         private int _prevWhiteBalanceB;
 
