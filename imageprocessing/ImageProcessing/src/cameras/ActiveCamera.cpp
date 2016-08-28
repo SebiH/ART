@@ -6,7 +6,7 @@
 using namespace ImageProcessing;
 
 ActiveCamera::ActiveCamera()
-	: frame_counter_(ATOMIC_VAR_INIT(1))
+	: frame_counter_(ATOMIC_VAR_INIT(-1))
 {
 }
 
@@ -61,8 +61,10 @@ void ActiveCamera::FetchNewFrame()
 	// Use copy (instead of member) to avoid lock over whole FetchFrame operation
 	auto cam_src = GetSource();
 
-	if (cam_src.get() == nullptr || !cam_src->IsOpen())
+	if (!cam_src || !cam_src->IsOpen())
 	{
+		// TODO: not optimal..
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		return;
 	}
 
@@ -71,11 +73,19 @@ void ActiveCamera::FetchNewFrame()
 		cam_src->PrepareNextFrame();
 
 		{
-			std::unique_lock<std::mutex> frame_data_mutex;
+			std::unique_lock<std::mutex> frame_lock(frame_data_mutex_);
+			std::unique_lock<std::mutex> cam_lock(cam_source_mutex_);
+
+			if (cam_src != camera_source_)
+			{
+				throw std::exception("Camera source has changed!");
+			}
+
 			cam_src->GrabFrame(framebuffer_left_.get(), framebuffer_right_.get());
 		}
 
 		frame_counter_++;
+		frame_notifier_.notify_all();
 	}
 	catch (const std::exception &e)
 	{
@@ -87,22 +97,19 @@ void ActiveCamera::FetchNewFrame()
 
 void ActiveCamera::SetActiveSource(const std::shared_ptr<CameraSourceInterface> &cam)
 {
-	{
-		std::unique_lock<std::mutex> lock(cam_source_mutex_);
-		camera_source_ = cam;
-	}
+	std::unique_lock<std::mutex> cam_lock(cam_source_mutex_);
+	std::unique_lock<std::mutex> frame_lock(frame_data_mutex_);
+	camera_source_ = cam;
 
-	if (cam.get() != nullptr)
+	if (cam)
 	{
 		if (!cam->IsOpen())
 		{
 			cam->Open();
 		}
 
-		{
-			std::unique_lock<std::mutex> lock(frame_data_mutex_);
-			current_framesize_ = FrameSize(cam->GetFrameWidth(), cam->GetFrameHeight(), cam->GetFrameChannels());
-		}
+		current_framesize_ = FrameSize(cam->GetFrameWidth(), cam->GetFrameHeight(), cam->GetFrameChannels());
+		on_framesize_changed(current_framesize_);
 
 		auto buffer_size = current_framesize_.BufferSize();
 		framebuffer_left_ = std::make_unique<unsigned char[]>(buffer_size);

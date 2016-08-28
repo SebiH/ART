@@ -32,6 +32,7 @@ void OpenCvOutput::Write(const FrameData &result) noexcept
 	if (result.size.depth == 1)      { cv_type = CV_8UC1; }
 	else if (result.size.depth == 3) { cv_type = CV_8UC3; }
 	else if (result.size.depth == 4) { cv_type = CV_8UC4; }
+	else { return; } // unknown depth
 
 	cv::Mat merged(cv::Size(result.size.width * 2, result.size.height), cv_type);
 

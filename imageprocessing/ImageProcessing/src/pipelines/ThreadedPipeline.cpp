@@ -95,14 +95,14 @@ void ThreadedPipeline::Run()
 
 	while (is_running_)
 	{
+		// wait for new frame - Buffer resize events should happen before creating a frame with inappropriately sized buffers
+		camera->WaitForNewFrame(current_frame_id);
+
 		// create frame with back buffer
 		// TODO: (micro optimization) create both frames outside of loop, reuse memory,
 		//		  alternate frames instead of buffers. Might need some consideration if
 		//        Processors return/alter framedata?
 		auto frame = CreateFrame();
-
-		// Grab new frame
-		camera->WaitForNewFrame(current_frame_id);
 		camera->WriteFrame(frame);
 
 		// pass frame into all processing modules

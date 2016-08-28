@@ -26,7 +26,7 @@ void EmptyCameraSource::Close()
 
 bool EmptyCameraSource::IsOpen() const
 {
-	return true;
+	return false;
 }
 
 int EmptyCameraSource::GetFrameWidth() const
