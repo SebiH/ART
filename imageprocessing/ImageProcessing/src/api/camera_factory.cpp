@@ -4,6 +4,7 @@
 
 #include "cameras/ActiveCamera.h"
 #include "cameras/CameraSourceInterface.h"
+#include "cameras/EmptyCameraSource.h"
 #include "cameras/DummyCameraSource.h"
 #include "cameras/OvrvisionCameraSource.h"
 #include "utils/Logger.h"
@@ -58,8 +59,6 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int /* OVR::Camprop */
 	}
 }
 
-#include <opencv2/highgui.hpp>
-
 extern "C" UNITY_INTERFACE_EXPORT void SetDummyCamera(const char *filepath)
 {
 	try
@@ -71,5 +70,12 @@ extern "C" UNITY_INTERFACE_EXPORT void SetDummyCamera(const char *filepath)
 	{
 		DebugLog(std::string("Unable to set dummy source: ") + e.what());
 	}
+}
+
+
+extern "C" UNITY_INTERFACE_EXPORT void SetEmptyCamera()
+{
+	std::shared_ptr<ImageProcessing::CameraSourceInterface> empty_source = std::make_shared<ImageProcessing::EmptyCameraSource>();
+	SetCamera(empty_source);
 }
 

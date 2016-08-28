@@ -66,6 +66,9 @@
     <ClCompile Include="src\outputs\JsonOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\cameras\EmptyCameraSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h">
@@ -126,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\frames\JsonFrameData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\EmptyCameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
