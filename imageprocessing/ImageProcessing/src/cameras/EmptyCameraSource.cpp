@@ -12,8 +12,9 @@ void EmptyCameraSource::PrepareNextFrame()
 
 void EmptyCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
 {
-	*left_buffer = 0;
-	*right_buffer = 0;
+	auto buffer_size = GetFrameWidth() * GetFrameHeight() * GetFrameChannels();
+	std::memset(left_buffer, 0, buffer_size);
+	std::memset(right_buffer, 0, buffer_size);
 }
 
 void EmptyCameraSource::Open()
@@ -31,17 +32,17 @@ bool EmptyCameraSource::IsOpen() const
 
 int EmptyCameraSource::GetFrameWidth() const
 {
-	return 1;
+	return 640;
 }
 
 int EmptyCameraSource::GetFrameHeight() const
 {
-	return 1;
+	return 480;
 }
 
 int EmptyCameraSource::GetFrameChannels() const
 {
-	return 1;
+	return 3;
 }
 
 int EmptyCameraSource::GetCamExposure() const

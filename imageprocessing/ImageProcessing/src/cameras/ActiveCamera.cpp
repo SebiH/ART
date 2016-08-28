@@ -73,8 +73,7 @@ void ActiveCamera::FetchNewFrame()
 		cam_src->PrepareNextFrame();
 
 		{
-			std::unique_lock<std::mutex> frame_lock(frame_data_mutex_);
-			std::unique_lock<std::mutex> cam_lock(cam_source_mutex_);
+			std::unique_lock<std::mutex> frame_lock(mutex_);
 
 			if (cam_src != camera_source_)
 			{
@@ -97,8 +96,7 @@ void ActiveCamera::FetchNewFrame()
 
 void ActiveCamera::SetActiveSource(const std::shared_ptr<CameraSourceInterface> &cam)
 {
-	std::unique_lock<std::mutex> cam_lock(cam_source_mutex_);
-	std::unique_lock<std::mutex> frame_lock(frame_data_mutex_);
+	std::unique_lock<std::mutex> lock(mutex_);
 	camera_source_ = cam;
 
 	if (cam)
@@ -120,7 +118,7 @@ void ActiveCamera::SetActiveSource(const std::shared_ptr<CameraSourceInterface> 
 
 std::shared_ptr<CameraSourceInterface> ActiveCamera::GetSource()
 {
-	std::unique_lock<std::mutex> lock(cam_source_mutex_);
+	std::unique_lock<std::mutex> lock(mutex_);
 	return camera_source_;
 }
 
@@ -137,12 +135,18 @@ void ActiveCamera::WaitForNewFrame(int consumer_frame_id)
 	}
 }
 
-int ActiveCamera::WriteFrame(FrameData &frame)
+int ActiveCamera::WriteFrame(FrameData &frame, const FrameSize &size)
 {
 	auto current_framecounter = frame_counter_.load();
 
 	{
-		std::unique_lock<std::mutex> lock(frame_data_mutex_);
+		std::unique_lock<std::mutex> lock(mutex_);
+
+		if (size != current_framesize_)
+		{
+			// TODO: workaround for nasty threading issues
+			throw std::exception("Unable to write frame; mismatching frame sizes");
+		}
 
 		frame.size = current_framesize_;
 		auto buffer_size = frame.size.BufferSize();

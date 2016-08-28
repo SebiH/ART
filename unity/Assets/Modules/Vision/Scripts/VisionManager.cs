@@ -60,9 +60,6 @@ namespace Assets.Modules.Vision
             _isRunning = false;
             ImageProcessing.StopImageProcessing();
             CamSource.Stop();
-
-            // TODO: workaround since camera shouldn't be stopped
-            ImageProcessing.SetEmptyCamera();
         }
 
         IEnumerator Start()

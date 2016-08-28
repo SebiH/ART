@@ -26,8 +26,7 @@ namespace ImageProcessing
 		}
 
 	private:
-		std::mutex cam_source_mutex_;
-		std::mutex frame_data_mutex_;
+		std::mutex mutex_;
 		std::mutex frame_id_mutex_;
 
 		std::thread thread_;
@@ -52,7 +51,7 @@ namespace ImageProcessing
 		std::shared_ptr<CameraSourceInterface> GetSource();
 
 		void WaitForNewFrame(int current_frame_id);
-		int WriteFrame(FrameData &frame);
+		int WriteFrame(FrameData &frame, const FrameSize &size);
 
 		void FetchNewFrame();
 

@@ -110,8 +110,17 @@ void ThreadedPipeline::Run()
 		// TODO: (micro optimization) create both frames outside of loop, reuse memory,
 		//		  alternate frames instead of buffers. Might need some consideration if
 		//        Processors return/alter framedata?
+
 		auto frame = CreateFrame();
-		camera->WriteFrame(frame);
+		try
+		{
+			camera->WriteFrame(frame, current_framesize_);
+		}
+		catch (const std::exception &e)
+		{
+			DebugLog(std::string("Unable to write: ") + e.what());
+			continue;
+		}
 
 		{
 			std::unique_lock<std::mutex> lock(list_mutex_);
