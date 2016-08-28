@@ -6,6 +6,7 @@ namespace ImageProcessingTest
         static void Main(string[] args)
         {
             //ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
+            ImageProcessing.SetOvrCamera(2, 0);
             ImageProcessing.StartImageProcessing();
 
             int pipeline = ImageProcessing.CreatePipeline();
@@ -20,17 +21,14 @@ namespace ImageProcessingTest
 
                 if (keyPressed == 's')
                 {
-                    counter = (counter + 1) % 3;
+                    counter = (counter + 1) % 2;
 
                     switch (counter)
                     {
                         case 0:
-                            ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
+                            ImageProcessing.SetOvrCamera(2, 0);
                             break;
                         case 1:
-                            ImageProcessing.SetDummyCamera("C:/code/resources/dummy2.jpg");
-                            break;
-                        case 2:
                             ImageProcessing.SetDummyCamera("C:/code/resources/dummy3.jpg");
                             break;
                     }
