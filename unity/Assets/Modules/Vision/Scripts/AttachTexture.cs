@@ -25,7 +25,9 @@ namespace Assets.Modules.Vision
             var imageWidth = cam.SourceWidth;
             var imageHeight = cam.SourceHeight;
 
-            var camTexture = new Texture2D(imageWidth, imageHeight, TextureFormat.BGRA32, false);
+            TextureFormat txFormat = (cam.SourceChannels == 4) ? TextureFormat.BGRA32 : TextureFormat.RGB24;
+
+            var camTexture = new Texture2D(imageWidth, imageHeight, txFormat, false);
             camTexture.wrapMode = TextureWrapMode.Clamp;
 
             GetComponent<Renderer>().materials[0].SetTexture("_MainTex", camTexture);

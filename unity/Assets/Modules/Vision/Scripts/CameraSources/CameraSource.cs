@@ -14,7 +14,7 @@ namespace Assets.Modules.Vision.CameraSources
                 try
                 {
                     _isRunning = true;
-                    Init();
+                    InitCamera();
 
                     LoadCurrentProperties();
                     UpdateCameraProperties(true);
@@ -26,7 +26,7 @@ namespace Assets.Modules.Vision.CameraSources
             }
         }
 
-        public abstract void Init();
+        public abstract void InitCamera();
 
         public virtual void Stop()
         {

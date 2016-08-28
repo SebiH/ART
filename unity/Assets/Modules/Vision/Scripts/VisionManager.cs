@@ -12,23 +12,6 @@ namespace Assets.Modules.Vision
         public event CameraSourceChangedHandler CameraSourceChanged;
 
         private bool _isRunning = false;
-        //private CameraSource _camSource;
-        //public CameraSource CamSource
-        //{
-        //    get { return _camSource; }
-        //    set
-        //    {
-        //        var prevCamera = _camSource;
-        //        _camSource = value;
-
-        //        if (_isRunning && CameraSourceChanged != null)
-        //        {
-        //            prevCamera.Stop();
-        //            _camSource.Start();
-        //            CameraSourceChanged(_camSource);
-        //        }
-        //    }
-        //}
 
 
         private CameraSource _prevCamSource;
@@ -65,7 +48,7 @@ namespace Assets.Modules.Vision
                 CamSource.Start();
                 _prevCamSource = CamSource;
 
-                if (CamSource != null)
+                if (CameraSourceChanged != null)
                 {
                     CameraSourceChanged(CamSource);
                 }
@@ -94,14 +77,8 @@ namespace Assets.Modules.Vision
             {
                 if (_isRunning)
                 {
-                    // Issue a plugin event with arbitrary integer identifier.
-                    // The plugin can distinguish between different
-                    // things it needs to do based on this ID.
-                    // For our simple plugin, it does not matter which ID we pass here.
                     GL.IssuePluginEvent(ImageProcessing.GetRenderEventFunc(), 1);
                 }
-
-                // Wait until all frame rendering is done
                 yield return new WaitForEndOfFrame();
             }
 

@@ -9,7 +9,6 @@ namespace Assets.Modules.Vision.CameraSources
     {
         public enum Quality
         {
-            // TODO: look up ovr::prop
             Q2560x1920x15 = 0,
             Q1920x1080x30 = 1,
             Q1280x960x45 = 2,
@@ -27,46 +26,29 @@ namespace Assets.Modules.Vision.CameraSources
         }
 
 
-        public Quality _camQuality = Quality.Q1280x960x45;
-        public Quality CamQuality
-        {
-            get { return _camQuality; }
-            set
-            {
-                if (_camQuality != value)
-                {
-                    _camQuality = value;
+        private Quality _prevCamQuality;
+        public Quality CamQuality = Quality.Q1280x960x45;
 
-                    if (_isRunning)
-                    {
-                        Init();
-                    }
-                }
-            }
+
+        private ProcessingMode _prevCamMode;
+        public ProcessingMode CamMode = ProcessingMode.DemosaicRemap; 
+
+        public override void InitCamera()
+        {
+            _prevCamQuality = CamQuality;
+            _prevCamMode = CamMode;
+            ImageProcessing.SetOvrCamera((int)CamQuality, (int)CamMode);
         }
 
-
-        public ProcessingMode _camMode = ProcessingMode.DemosaicRemap;
-        public ProcessingMode CamMode
+        void Update()
         {
-            get { return _camMode; }
-            set
+            bool hasModeChanged = (_prevCamMode != CamMode);
+            bool hasQualityChanged = (_prevCamQuality != CamQuality);
+
+            if (hasModeChanged || hasQualityChanged)
             {
-                if (_camMode != value)
-                {
-                    _camMode = value;
-
-                    if (_isRunning)
-                    {
-                        Init();
-                    }
-                }
+                InitCamera();
             }
-        }
-
-        public override void Init()
-        {
-            ImageProcessing.SetOvrCamera((int)_camQuality, (int)_camMode);
         }
     }
 }

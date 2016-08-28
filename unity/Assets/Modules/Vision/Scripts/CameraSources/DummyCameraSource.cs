@@ -9,25 +9,7 @@ namespace Assets.Modules.Vision.CameraSources
         private string _prevSourcePath = "";
         public string SourcePath = "";
 
-        //private string _sourcePath = "";
-        //public string SourcePath
-        //{
-        //    get { return _sourcePath; }
-        //    set
-        //    {
-        //        if (_sourcePath != value)
-        //        {
-        //            _sourcePath = value;
-
-        //            if (_isRunning)
-        //            {
-        //                Init();
-        //            }
-        //        }
-        //    }
-        //}
-
-        public override void Init()
+        public override void InitCamera()
         {
             if (File.Exists(SourcePath))
             {
@@ -43,7 +25,8 @@ namespace Assets.Modules.Vision.CameraSources
         {
             if (_isRunning && SourcePath != _prevSourcePath)
             {
-                Init();
+                _prevSourcePath = SourcePath;
+                InitCamera();
             }
         }
     }
