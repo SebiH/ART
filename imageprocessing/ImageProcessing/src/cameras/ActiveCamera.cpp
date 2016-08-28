@@ -128,7 +128,13 @@ std::shared_ptr<CameraSourceInterface> ActiveCamera::GetSource()
 void ActiveCamera::WaitForNewFrame(int consumer_frame_id)
 {
 	std::unique_lock<std::mutex> lock(frame_id_mutex_);
-	frame_notifier_.wait(lock, [&]() { return frame_counter_ > consumer_frame_id; });
+	// TODO: timing out not optimal, but currently necessary to join thread for StopImageProcessing() if no source is set
+	auto success = frame_notifier_.wait_for(lock, std::chrono::seconds(2), [&]() { return frame_counter_ > consumer_frame_id; });
+
+	if (!success)
+	{
+		throw std::exception("Waited too long");
+	}
 }
 
 int ActiveCamera::WriteFrame(FrameData &frame)

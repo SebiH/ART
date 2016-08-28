@@ -78,6 +78,12 @@ extern "C" UNITY_INTERFACE_EXPORT void RemoveOutput(const int pipeline_id, const
 	try
 	{
 		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
+		
+		if (!pipeline)
+		{
+			throw std::exception("No output with this id");
+		}
+
 		pipeline->RemoveOutput(output_id);
 	}
 	catch (const std::exception &e)

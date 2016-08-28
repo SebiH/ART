@@ -18,6 +18,7 @@ namespace ImageProcessing
 	{
 	private:
 		const UID id_;
+		std::mutex list_mutex_;
 		std::vector<std::shared_ptr<Processor>> processors_;
 		std::vector<std::shared_ptr<Output>> outputs_;
 
