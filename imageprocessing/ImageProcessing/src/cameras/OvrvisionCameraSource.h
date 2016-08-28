@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <mutex>
 #include <ovrvision/ovrvision_pro.h>
 #include "cameras/CameraSourceInterface.h"
 
@@ -9,6 +10,7 @@ namespace ImageProcessing
 	class OvrvisionCameraSource : public CameraSourceInterface
 	{
 	private:
+		std::mutex mutex_;
 		std::unique_ptr<OVR::OvrvisionPro> ovr_camera_;
 		OVR::Camprop quality_;
 		OVR::Camqt process_mode_;
