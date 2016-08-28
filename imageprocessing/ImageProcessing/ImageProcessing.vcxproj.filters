@@ -15,138 +15,123 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\util\ThreadedModule.cpp">
+    <ClCompile Include="src\cameras\OvrvisionCameraSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\stereo_detection.cpp">
+    <ClCompile Include="src\utils\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\texturewriter\OpenCvTextureWriter.cpp">
+    <ClCompile Include="src\api\camera_factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\texturewriter\UnityDX11TextureWriter.cpp">
+    <ClCompile Include="src\api\unity_plugin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\processingmodule\RawImageModule.cpp">
+    <ClCompile Include="src\api\camera_properties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\util\ModuleManager.cpp">
+    <ClCompile Include="src\cameras\ActiveCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\processingmodule\RoiModule.cpp">
+    <ClCompile Include="src\api\output_factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\framesource\OvrFrameProducer.cpp">
+    <ClCompile Include="src\api\pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\framesource\LeapFrameSource.cpp">
+    <ClCompile Include="src\api\processor_factory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\util\UnityUtils.cpp">
+    <ClCompile Include="src\pipelines\ThreadedPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\api\RenderingPlugin.cpp">
+    <ClCompile Include="src\api\logging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\api\common.cpp">
+    <ClCompile Include="src\cameras\DummyCameraSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\api\debug.cpp">
+    <ClCompile Include="src\processors\_stereo_detection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\api\CameraProperties.cpp">
+    <ClCompile Include="src\outputs\UnityTextureOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\framesource\OpenCvFrameProducer.cpp">
+    <ClCompile Include="src\outputs\OpenCvOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\framesource\NullFrameSource.cpp">
+    <ClCompile Include="src\pipelines\PipelineManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\processingmodule\ContourModule.cpp">
+    <ClCompile Include="src\outputs\JsonOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\framesource\DummyFrameSource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\processingmodule\ARToolkitModule.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\processingmodule\ARMarkerSquare.cpp">
+    <ClCompile Include="src\cameras\EmptyCameraSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\util\ThreadedModule.h">
+    <ClInclude Include="src\cameras\ActiveCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\processingmodule\IProcessingModule.h">
+    <ClInclude Include="src\cameras\DummyCameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\texturewriter\ITextureWriter.h">
+    <ClInclude Include="src\cameras\OvrvisionCameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\texturewriter\OpenCvTextureWriter.h">
+    <ClInclude Include="src\utils\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\texturewriter\UnityDX11TextureWriter.h">
+    <ClInclude Include="src\api\unity_plugin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\processingmodule\RawImageModule.h">
+    <ClInclude Include="src\utils\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\util\ModuleManager.h">
+    <ClInclude Include="src\utils\UIDGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\processingmodule\RoiModule.h">
+    <ClInclude Include="src\utils\UID.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\framesource\IFrameSource.h">
+    <ClInclude Include="src\cameras\CameraSourceInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\framesource\OpenCVFrameProducer.h">
+    <ClInclude Include="src\frames\FrameData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\framesource\OvrFrameProducer.h">
+    <ClInclude Include="src\outputs\Output.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\framesource\LeapFrameSource.h">
+    <ClInclude Include="src\processors\Processor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\util\UnityUtils.h">
+    <ClInclude Include="src\frames\FrameSize.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\RenderingPlugin.h">
+    <ClInclude Include="src\pipelines\PipelineManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\util\ImageInfo.h">
+    <ClInclude Include="src\pipelines\ThreadedPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\util\ProcessingOutput.h">
+    <ClInclude Include="src\outputs\UnityTextureOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\common.h">
+    <ClInclude Include="src\outputs\OpenCvOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\api\debug.h">
+    <ClInclude Include="src\debugging\MeasurePerformance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\framesource\NullFrameSource.h">
+    <ClInclude Include="src\outputs\JsonOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\processingmodule\ContourModule.h">
+    <ClInclude Include="src\frames\JsonFrameData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\framesource\DummyFrameSource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\util\PerformanceDebugging.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\processingmodule\ARToolkitModule.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\processingmodule\ARMarkerSquare.h">
+    <ClInclude Include="src\cameras\EmptyCameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
