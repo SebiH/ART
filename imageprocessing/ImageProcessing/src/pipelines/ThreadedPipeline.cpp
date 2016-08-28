@@ -9,9 +9,7 @@
 using namespace ImageProcessing;
 
 ThreadedPipeline::ThreadedPipeline()
-	: id_(UIDGenerator::Instance()->GetUID()),
-	  buffer_mutex_(),
-	  is_running_(false)
+	: id_(UIDGenerator::Instance()->GetUID())
 {
 	framesize_changed_handler_ = [&](const FrameSize &new_size) { ResizeBuffers(new_size); };
 	ActiveCamera::Instance()->on_framesize_changed += framesize_changed_handler_;

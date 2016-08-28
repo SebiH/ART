@@ -31,7 +31,7 @@ namespace ImageProcessing
 		std::mutex frame_id_mutex_;
 
 		std::thread thread_;
-		bool is_running_;
+		bool is_running_ = false;
 
 		std::atomic<int> frame_counter_;
 		std::condition_variable frame_notifier_;

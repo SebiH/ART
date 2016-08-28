@@ -6,12 +6,7 @@
 using namespace ImageProcessing;
 
 ActiveCamera::ActiveCamera()
-	: cam_source_mutex_(),
-	  frame_data_mutex_(),
-	  frame_id_mutex_(),
-	  frame_notifier_(),
-      frame_counter_(ATOMIC_VAR_INIT(1)),
-	  is_running_(false)
+	: frame_counter_(ATOMIC_VAR_INIT(1))
 {
 }
 

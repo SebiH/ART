@@ -21,8 +21,8 @@ namespace ImageProcessing
 		std::vector<std::shared_ptr<Processor>> processors_;
 		std::vector<std::shared_ptr<Output>> outputs_;
 
-		bool is_running_;
 		std::thread thread_;
+		bool is_running_ = false;
 
 		std::mutex buffer_mutex_;
 		std::shared_ptr<unsigned char> back_buffer_left_;
