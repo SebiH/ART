@@ -1,15 +1,29 @@
 #include <memory>
 #include <Unity/IUnityInterface.h>
 
-#include "processors/Processor.h"
 #include "pipelines/PipelineManager.h"
+#include "processors/Processor.h"
+#include "processors/ArToolkitProcessor.h"
+#include "utils/Logger.h"
 
 using namespace ImageProcessing;
 
 extern "C" UNITY_INTERFACE_EXPORT int AddArToolkitProcessor(const int pipeline_id)
 {
-	// TODO.
-	return pipeline_id;
+	try
+	{
+		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
+
+		std::shared_ptr<Processor> artoolkit_processor = std::make_shared<ArToolkitProcessor>();
+		pipeline->AddProcessor(artoolkit_processor);
+		return artoolkit_processor->Id();
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to add ARToolkitProcessor: ") + e.what());
+	}
+
+	return -1;
 }
 
 

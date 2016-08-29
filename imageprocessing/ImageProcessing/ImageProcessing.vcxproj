@@ -108,6 +108,8 @@
     <ClCompile Include="src\outputs\OpenCvOutput.cpp" />
     <ClCompile Include="src\outputs\UnityTextureOutput.cpp" />
     <ClCompile Include="src\pipelines\PipelineManager.cpp" />
+    <ClCompile Include="src\processors\ARMarkerSquare.cpp" />
+    <ClCompile Include="src\processors\ArToolkitProcessor.cpp" />
     <ClCompile Include="src\processors\_stereo_detection.cpp" />
     <ClCompile Include="src\pipelines\ThreadedPipeline.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
@@ -128,6 +130,8 @@
     <ClInclude Include="src\outputs\UnityTextureOutput.h" />
     <ClInclude Include="src\pipelines\PipelineManager.h" />
     <ClInclude Include="src\pipelines\ThreadedPipeline.h" />
+    <ClInclude Include="src\processors\ARMarkerSquare.h" />
+    <ClInclude Include="src\processors\ArToolkitProcessor.h" />
     <ClInclude Include="src\processors\Processor.h" />
     <ClInclude Include="src\api\unity_plugin.h" />
     <ClInclude Include="src\utils\Event.h" />

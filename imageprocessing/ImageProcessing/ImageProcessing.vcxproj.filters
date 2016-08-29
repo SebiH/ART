@@ -69,6 +69,12 @@
     <ClCompile Include="src\cameras\EmptyCameraSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\processors\ArToolkitProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\processors\ARMarkerSquare.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\frames\JsonFrameData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -135,6 +141,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cameras\EmptyCameraSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\processors\ArToolkitProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\processors\ARMarkerSquare.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
