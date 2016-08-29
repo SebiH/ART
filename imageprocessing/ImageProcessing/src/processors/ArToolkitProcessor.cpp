@@ -179,11 +179,52 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 
 			newMarkerMatrix = true;
-			for (int j = 0; j < 16; j++)
-			{
-				pose[j] = markersSquare[i].pose.T[j];
-			}
 
+			pose = {
+
+				{"m00", markersSquare[i].pose.T[0]},
+				{"m10", markersSquare[i].pose.T[1]},
+				{"m20", markersSquare[i].pose.T[2]},
+				{"m30", markersSquare[i].pose.T[3]},
+
+				{"m01", markersSquare[i].pose.T[4]},
+				{"m11", markersSquare[i].pose.T[5]},
+				{"m21", markersSquare[i].pose.T[6]},
+				{"m31", markersSquare[i].pose.T[7]},
+
+				{"m02", markersSquare[i].pose.T[8]},
+				{"m12", markersSquare[i].pose.T[9]},
+				{"m22", markersSquare[i].pose.T[10]},
+				{"m32", markersSquare[i].pose.T[11]},
+
+				{"m03", markersSquare[i].pose.T[12]},
+				{"m13", markersSquare[i].pose.T[13]},
+				{"m23", markersSquare[i].pose.T[14]},
+				{"m33", markersSquare[i].pose.T[15]}
+			};
+
+			/*
+				{"m00", markersSquare[i].pose.T[0]},
+				{"m01", markersSquare[i].pose.T[1]},
+				{"m02", markersSquare[i].pose.T[2]},
+				{"m03", markersSquare[i].pose.T[3]},
+
+				{"m10", markersSquare[i].pose.T[4]},
+				{"m11", markersSquare[i].pose.T[5]},
+				{"m12", markersSquare[i].pose.T[6]},
+				{"m13", markersSquare[i].pose.T[7]},
+
+				{"m20", markersSquare[i].pose.T[8]},
+				{"m21", markersSquare[i].pose.T[9]},
+				{"m22", markersSquare[i].pose.T[10]},
+				{"m23", markersSquare[i].pose.T[11]},
+
+				{"m30", markersSquare[i].pose.T[12]},
+				{"m31", markersSquare[i].pose.T[13]},
+				{"m32", markersSquare[i].pose.T[14]},
+				{"m33", markersSquare[i].pose.T[15]}
+	
+			*/
 		}
 	}
 
@@ -226,6 +267,14 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 
 
+	ARdouble		gPatt_trans[3][4];
+	arGetTransMatSquare(gAR3DHandleL, &(markerInfoL[0]), 22.5, gPatt_trans);
+
+	//for (int j = 0; j < 4; j++)
+	//{
+	//	markerMatrix[i * 4 + j] = gPatt_trans[i][j];
+	//	matrixText += std::to_string(gPatt_trans[i][j]) + std::string(" ");
+	//}
 
 
 	if (newMarkerMatrix)
