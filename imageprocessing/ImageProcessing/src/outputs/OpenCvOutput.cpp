@@ -8,12 +8,12 @@ using namespace ImageProcessing;
 OpenCvOutput::OpenCvOutput(std::string windowname)
 	: windowname_(windowname)
 {
-	cv::namedWindow(windowname);
+	//cv::namedWindow(windowname);
 }
 
 OpenCvOutput::~OpenCvOutput()
 {
-	cv::destroyWindow(windowname_);
+	//cv::destroyWindow(windowname_);
 }
 
 
@@ -45,4 +45,5 @@ void OpenCvOutput::Write(const FrameData *result) noexcept
 	rightSrc.copyTo(right);
 
 	cv::imshow(windowname_, merged);
+	cv::waitKey(5);
 }
