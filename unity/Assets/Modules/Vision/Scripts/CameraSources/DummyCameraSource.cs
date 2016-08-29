@@ -21,8 +21,10 @@ namespace Assets.Modules.Vision.CameraSources
             }
         }
 
-        void Update()
+        protected override void Update()
         {
+            base.Update();
+
             if (_isRunning && SourcePath != _prevSourcePath)
             {
                 _prevSourcePath = SourcePath;

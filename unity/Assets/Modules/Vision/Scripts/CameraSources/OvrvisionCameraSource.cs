@@ -40,8 +40,10 @@ namespace Assets.Modules.Vision.CameraSources
             ImageProcessing.SetOvrCamera((int)CamQuality, (int)CamMode);
         }
 
-        void Update()
+        protected override void Update()
         {
+            base.Update();
+
             bool hasModeChanged = (_prevCamMode != CamMode);
             bool hasQualityChanged = (_prevCamQuality != CamQuality);
 

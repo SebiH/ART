@@ -33,7 +33,7 @@ namespace Assets.Modules.Vision.CameraSources
             _isRunning = false;
         }
 
-        void Update()
+        protected virtual void Update()
         {
             if (_isRunning)
             {
