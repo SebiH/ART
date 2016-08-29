@@ -10,6 +10,7 @@ namespace ImageProcessing
 	{
 	private:
 		cv::Mat img_;
+		bool is_first_image_ = true;
 
 
 	public:

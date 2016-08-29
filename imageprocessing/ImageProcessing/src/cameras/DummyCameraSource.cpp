@@ -20,7 +20,14 @@ DummyCameraSource::~DummyCameraSource()
 
 void DummyCameraSource::PrepareNextFrame()
 {
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	if (!is_first_image_)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	}
+	else
+	{
+		is_first_image_ = false;
+	}
 }
 
 
