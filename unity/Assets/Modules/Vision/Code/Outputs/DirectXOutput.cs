@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Assets.Modules.Vision.Outputs
 {
-    class DirectXOutput : IOutput
+    public class DirectXOutput : IOutput
     {
         public enum Eye
         {

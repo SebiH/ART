@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Assets.Modules.Vision
 {
-    class AttachTexture : MonoBehaviour
+    public class AttachTexture : MonoBehaviour
     {
         public Pipeline ProcessingPipeline;
-        public DirectXOutput.Eye Eye;
+        public DirectXOutput.Eye Eye = DirectXOutput.Eye.Left;
 
         public bool AutoAlign = true;
 
