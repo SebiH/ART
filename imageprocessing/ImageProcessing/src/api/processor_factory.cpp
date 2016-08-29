@@ -8,13 +8,13 @@
 
 using namespace ImageProcessing;
 
-extern "C" UNITY_INTERFACE_EXPORT int AddArToolkitProcessor(const int pipeline_id)
+extern "C" UNITY_INTERFACE_EXPORT int AddArToolkitProcessor(const int pipeline_id, const char *json_config)
 {
 	try
 	{
 		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
 
-		std::shared_ptr<Processor> artoolkit_processor = std::make_shared<ArToolkitProcessor>();
+		std::shared_ptr<Processor> artoolkit_processor = std::make_shared<ArToolkitProcessor>(std::string(json_config));
 		pipeline->AddProcessor(artoolkit_processor);
 		return artoolkit_processor->Id();
 	}

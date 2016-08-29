@@ -1,48 +1,79 @@
 #pragma once
 
+#include <vector>
 #include <AR/ar.h>
+#include <AR/arFilterTransMat.h>
+#include <json/json.hpp>
 #include "processors/Processor.h"
-#include "processors/ARMarkerSquare.h"
+#include "frames/FrameSize.h"
 
 namespace ImageProcessing
 {
-	typedef struct {
-		ARdouble T[16]; // Position and orientation, column-major order. (position(x,y,z) = {T[12], T[13], T[14]}
-	} ARPose;
-
 	class ArToolkitProcessor : public Processor
 	{
 	private:
-		bool is_initialized_;
-		// Markers
-		// Marker detection
-		ARMarkerSquare *markersSquare = nullptr;
-		int markersSquareCount = 0;
-		ARHandle		*gARHandleL = nullptr;
-		ARHandle		*gARHandleR = nullptr;
-		long			 gCallCountMarkerDetect = 0;
-		ARPattHandle	*gARPattHandle = nullptr;
-		int           gARPattDetectionMode;
+		struct Marker
+		{
+			bool initialized = false;
 
-		// Transformation matrix retrieval
-		AR3DHandle	*gAR3DHandleL = nullptr;
-		AR3DHandle	*gAR3DHandleR = nullptr;
-		AR3DStereoHandle	*gAR3DStereoHandle = nullptr;
-		ARdouble      transL2R[3][4];
-		ARdouble      transR2L[3][4];;
+			double size;
+			std::string pattern_path;
+			std::string type;
+			bool filter;
 
-		// Drawing.
-		ARParamLT *gCparamLTL = nullptr;
-		ARParamLT *gCparamLTR = nullptr;
+			int pattern_id;
+			double filter_cutoff_freq;
+			double filter_sample_rate;
 
+			ARFilterTransMatInfo *ftmi;
+		};
+		std::vector<Marker> markers_;
+
+	private:
+		FrameSize initialized_size_;
+		bool is_first_initialization_ = true;
+
+		std::string calib_path_left_;
+		std::string calib_path_right_;
+
+		ARPattHandle *ar_pattern_handle_ = nullptr;
+		ARParamLT *c_param_lt_l_ = nullptr;
+		ARParamLT *c_param_lt_r_ = nullptr;
+		ARHandle *ar_handle_l_ = nullptr;
+		ARHandle *ar_handle_r_ = nullptr;
+
+		AR3DHandle *ar_3d_handle_l_ = nullptr;
+		AR3DHandle *ar_3d_handle_r_ = nullptr;
 
 	public:
+		/*
+		 * Configuration example:
+
+		{
+			"config": {
+				"calibration_left": "absolute/path/to/calib/file",
+				"calibration_right": "absolute/path/to/calib/file"
+			},
+			"markers": [
+				{
+					"size": 5.5, // in mm
+					"pattern_path": "absolute/path/to/file.patt",
+					"type": "SINGLE", // SINGLE, MULTI (unsupported), NFT (unsupported)
+					"filter": 5.0 // cuttoff frequency for pose estimation (?) (optional)
+				},
+				{ .. other markers .. }
+			]
+		}
+
+		 */
+		ArToolkitProcessor(std::string config);
 		virtual ~ArToolkitProcessor();
 		virtual std::shared_ptr<const FrameData> Process(const std::shared_ptr<const FrameData> &frame) override;
 
 	private:
-		void Initialize(int sizeX, int sizeY);
-		bool SetupCamera(std::string filename, int sizeX, int sizeY, ARParamLT **cparamLT_p);
+		void Initialize(const int sizeX, const int sizeY, const int depth);
+		bool SetupCamera(const std::string filename, const int sizeX, const int sizeY, ARParamLT **cparamLT_p);
+		void SetupMarker(nlohmann::json &json_marker);
 		void Cleanup();
 	};
 }

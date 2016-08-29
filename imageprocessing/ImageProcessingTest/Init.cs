@@ -7,19 +7,43 @@ namespace ImageProcessingTest
     {
         static void JsonMsg(string msg)
         {
-            Debug.WriteLine(msg);
+            //Debug.WriteLine(msg);
         }
 
         static void Main(string[] args)
         {
-            //ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
-            ImageProcessing.SetOvrCamera(2, 0);
+            ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
+            //ImageProcessing.SetOvrCamera(2, 0);
             ImageProcessing.StartImageProcessing();
 
             int pipeline = ImageProcessing.CreatePipeline();
             int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
             int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
-            int processor = ImageProcessing.AddArToolkitProcessor(pipeline);
+            int processor = ImageProcessing.AddArToolkitProcessor(pipeline, @"
+
+
+		{
+			""config"": {
+				""calibration_left"": ""C:/code/resources/calib_ovrvision_left.dat"",
+				""calibration_right"": ""C:/code/resources/calib_ovrvision_right.dat""
+			},
+			""markers"": [
+				{
+					""size"": 5.5,
+					""pattern_path"": ""C:/code/resources/kanji.patt"",
+					""type"": ""SINGLE"",
+					""filter"": 5.0
+				},
+				{
+					""size"": 5.5,
+					""pattern_path"": ""C:/code/resources/hiro.patt"",
+					""type"": ""SINGLE"",
+					""filter"": 5.0
+				}
+			]
+		}
+
+");
 
             char keyPressed;
             int counter = 0;
@@ -35,7 +59,8 @@ namespace ImageProcessingTest
                     switch (counter)
                     {
                         case 0:
-                            ImageProcessing.SetOvrCamera(2, 0);
+                            //ImageProcessing.SetOvrCamera(2, 0);
+                            ImageProcessing.SetDummyCamera("C:/code/resources/dummy2.jpg");
                             break;
                         case 1:
                             ImageProcessing.SetDummyCamera("C:/code/resources/dummy3.jpg");
@@ -43,7 +68,7 @@ namespace ImageProcessingTest
                     }
                 }
 
-                if (keyPressed == 'q')
+                if (keyPressed == 'q' || counter++ > 10)
                 {
                     ImageProcessing.RemoveProcessor(pipeline, processor);
                     ImageProcessing.RemoveOutput(pipeline, output);

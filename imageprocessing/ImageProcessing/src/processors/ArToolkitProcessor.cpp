@@ -3,7 +3,6 @@
 #include <vector>
 #include <opencv2/imgproc.hpp>
 #include <AR/param.h>
-#include <json/json.hpp>
 
 #include "frames/JsonFrameData.h"
 #include "utils/Logger.h"
@@ -11,275 +10,173 @@
 using namespace ImageProcessing;
 using json = nlohmann::json;
 
+ArToolkitProcessor::ArToolkitProcessor(std::string config)
+	: initialized_size_(-1, -1, -1)
+{
+	auto json_config = json::parse(config);
+
+	calib_path_left_ = json_config["config"]["calibration_left"].get<std::string>();
+	calib_path_right_ = json_config["config"]["calibration_right"].get<std::string>();
+
+	for (auto &json_marker : json_config["markers"])
+	{
+		SetupMarker(json_marker);
+	}
+}
+
 ArToolkitProcessor::~ArToolkitProcessor()
 {
 	Cleanup();
 }
 
 
-static void arglCameraViewRH(const ARdouble para[3][4], ARdouble m_modelview[16], const ARdouble scale)
-{
-	m_modelview[0 + 0 * 4] = para[0][0]; // R1C1
-	m_modelview[0 + 1 * 4] = para[0][1]; // R1C2
-	m_modelview[0 + 2 * 4] = para[0][2];
-	m_modelview[0 + 3 * 4] = para[0][3];
-	m_modelview[1 + 0 * 4] = -para[1][0]; // R2
-	m_modelview[1 + 1 * 4] = -para[1][1];
-	m_modelview[1 + 2 * 4] = -para[1][2];
-	m_modelview[1 + 3 * 4] = -para[1][3];
-	m_modelview[2 + 0 * 4] = -para[2][0]; // R3
-	m_modelview[2 + 1 * 4] = -para[2][1];
-	m_modelview[2 + 2 * 4] = -para[2][2];
-	m_modelview[2 + 3 * 4] = -para[2][3];
-	m_modelview[3 + 0 * 4] = 0.0;
-	m_modelview[3 + 1 * 4] = 0.0;
-	m_modelview[3 + 2 * 4] = 0.0;
-	m_modelview[3 + 3 * 4] = 1.0;
-	if (scale != 0.0)
-	{
-		m_modelview[12] *= scale;
-		m_modelview[13] *= scale;
-		m_modelview[14] *= scale;
-	}
-}
-
-
 std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_ptr<const FrameData> &frame)
 {
-	ARdouble transR[3][4];
-	ARPose poseR;
-
-	if (!is_initialized_)
+	if (initialized_size_ != frame->size)
 	{
-		Initialize(frame->size.width, frame->size.height);
-		is_initialized_ = true;
+		if (!is_first_initialization_)
+		{
+			Cleanup();
+		}
+
+		try
+		{
+			Initialize(frame->size.width, frame->size.height, frame->size.depth);
+			is_first_initialization_ = false;
+			initialized_size_ = frame->size;
+		}
+		catch (const std::exception &e)
+		{
+			DebugLog(std::string("Could not initialize ARToolkit: ") + e.what());
+		}
 	}
 
 	// Detect the markers in the video frame.
-	if (arDetectMarker(gARHandleL, frame->buffer_left.get()) < 0 || arDetectMarker(gARHandleR, frame->buffer_right.get()) < 0)
+	if (arDetectMarker(ar_handle_l_, frame->buffer_left.get()) < 0 || arDetectMarker(ar_handle_r_, frame->buffer_right.get()) < 0)
 	{
 		DebugLog("Error detecting markers");
-		throw std::exception("Error detecting markers");
+		return frame;
 	}
 
 	// Get detected markers
-	auto markerInfoL = arGetMarker(gARHandleL);
-	auto markerInfoR = arGetMarker(gARHandleR);
-	auto markerNumL = arGetMarkerNum(gARHandleL);
-	auto markerNumR = arGetMarkerNum(gARHandleR);
+	auto marker_info_l = arGetMarker(ar_handle_l_);
+	auto marker_info_r = arGetMarker(ar_handle_r_);
+	auto marker_num_l = arGetMarkerNum(ar_handle_l_);
+	auto marker_num_r = arGetMarkerNum(ar_handle_r_);
 
-	int kL, kR;
+	//		pose = {
 
-	bool newMarkerMatrix = false;
-	json pose;
+	//			{"m00", markersSquare[i].pose.T[0]},
+	//			{"m10", markersSquare[i].pose.T[1]},
+	//			{"m20", markersSquare[i].pose.T[2]},
+	//			{"m30", markersSquare[i].pose.T[3]},
 
-	for (int i = 0; i < markersSquareCount; i++)
+	//			{"m01", markersSquare[i].pose.T[4]},
+	//			{"m11", markersSquare[i].pose.T[5]},
+	//			{"m21", markersSquare[i].pose.T[6]},
+	//			{"m31", markersSquare[i].pose.T[7]},
+
+	//			{"m02", markersSquare[i].pose.T[8]},
+	//			{"m12", markersSquare[i].pose.T[9]},
+	//			{"m22", markersSquare[i].pose.T[10]},
+	//			{"m32", markersSquare[i].pose.T[11]},
+
+	//			{"m03", markersSquare[i].pose.T[12]},
+	//			{"m13", markersSquare[i].pose.T[13]},
+	//			{"m23", markersSquare[i].pose.T[14]},
+	//			{"m33", markersSquare[i].pose.T[15]}
+	//		};
+
+	//		/*
+	//			{"m00", markersSquare[i].pose.T[0]},
+	//			{"m01", markersSquare[i].pose.T[1]},
+	//			{"m02", markersSquare[i].pose.T[2]},
+	//			{"m03", markersSquare[i].pose.T[3]},
+
+	//			{"m10", markersSquare[i].pose.T[4]},
+	//			{"m11", markersSquare[i].pose.T[5]},
+	//			{"m12", markersSquare[i].pose.T[6]},
+	//			{"m13", markersSquare[i].pose.T[7]},
+
+	//			{"m20", markersSquare[i].pose.T[8]},
+	//			{"m21", markersSquare[i].pose.T[9]},
+	//			{"m22", markersSquare[i].pose.T[10]},
+	//			{"m23", markersSquare[i].pose.T[11]},
+
+	//			{"m30", markersSquare[i].pose.T[12]},
+	//			{"m31", markersSquare[i].pose.T[13]},
+	//			{"m32", markersSquare[i].pose.T[14]},
+	//			{"m33", markersSquare[i].pose.T[15]}
+	//
+	//		*/
+	//	}
+	//}
+
+
+	bool marker_detected = false;
+	json payload;
+
+	if (marker_num_l > 0)
 	{
-		markersSquare[i].validPrev = markersSquare[i].valid;
-		markersSquare[i].valid = FALSE;
+		ARdouble transform_matrix[3][4];
+		arGetTransMatSquare(ar_3d_handle_l_, &(marker_info_l[0]), 4.4, transform_matrix);
 
-		// Check through the marker_info array for highest confidence
-		// visible marker matching our preferred pattern.
-		kL = kR = -1;
-		if (markersSquare[i].patt_type == AR_PATTERN_TYPE_TEMPLATE) {
-			for (int j = 0; j < markerNumL; j++) {
-				if (markersSquare[i].patt_id == markerInfoL[j].idPatt) {
-					if (kL == -1) {
-						if (markerInfoL[j].cfPatt >= markersSquare[i].matchingThreshold) kL = j; // First marker detected.
-					}
-					else if (markerInfoL[j].cfPatt > markerInfoL[kL].cfPatt) kL = j; // Higher confidence marker detected.
-				}
+		json pose {
+			{ "transform_matrix",
+				{"m00", transform_matrix[0][0]},
+				{"m01", transform_matrix[0][1]},
+				{"m02", transform_matrix[0][2]},
+				{"m03", transform_matrix[0][3]},
+
+				{"m10", transform_matrix[1][0]},
+				{"m11", transform_matrix[1][1]},
+				{"m12", transform_matrix[1][2]},
+				{"m13", transform_matrix[1][3]},
+
+				{"m20", transform_matrix[2][0]},
+				{"m21", transform_matrix[2][1]},
+				{"m22", transform_matrix[2][2]},
+				{"m23", transform_matrix[2][3]}
 			}
-			if (kL != -1) {
-				markerInfoL[kL].id = markerInfoL[kL].idPatt;
-				markerInfoL[kL].cf = markerInfoL[kL].cfPatt;
-				markerInfoL[kL].dir = markerInfoL[kL].dirPatt;
-			}
-			for (int j = 0; j < markerNumR; j++) {
-				if (markersSquare[i].patt_id == markerInfoR[j].idPatt) {
-					if (kR == -1) {
-						if (markerInfoR[j].cfPatt >= markersSquare[i].matchingThreshold) kR = j; // First marker detected.
-					}
-					else if (markerInfoR[j].cfPatt > markerInfoR[kR].cfPatt) kR = j; // Higher confidence marker detected.
-				}
-			}
-			if (kR != -1) {
-				markerInfoR[kR].id = markerInfoR[kR].idPatt;
-				markerInfoR[kR].cf = markerInfoR[kR].cfPatt;
-				markerInfoR[kR].dir = markerInfoR[kR].dirPatt;
-			}
-		}
-		else {
-			for (int j = 0; j < markerNumL; j++) {
-				if (markersSquare[i].patt_id == markerInfoL[j].idMatrix) {
-					if (kL == -1) {
-						if (markerInfoL[j].cfMatrix >= markersSquare[i].matchingThreshold) kL = j; // First marker detected.
-					}
-					else if (markerInfoL[j].cfMatrix > markerInfoL[kL].cfMatrix) kL = j; // Higher confidence marker detected.
-				}
-			}
-			if (kL != -1) {
-				markerInfoL[kL].id = markerInfoL[kL].idMatrix;
-				markerInfoL[kL].cf = markerInfoL[kL].cfMatrix;
-				markerInfoL[kL].dir = markerInfoL[kL].dirMatrix;
-			}
-			for (int j = 0; j < markerNumR; j++) {
-				if (markersSquare[i].patt_id == markerInfoR[j].idMatrix) {
-					if (kR == -1) {
-						if (markerInfoR[j].cfMatrix >= markersSquare[i].matchingThreshold) kR = j; // First marker detected.
-					}
-					else if (markerInfoR[j].cfMatrix > markerInfoR[kR].cfMatrix) kR = j; // Higher confidence marker detected.
-				}
-			}
-			if (kR != -1) {
-				markerInfoR[kR].id = markerInfoR[kR].idMatrix;
-				markerInfoR[kR].cf = markerInfoR[kR].cfMatrix;
-				markerInfoR[kR].dir = markerInfoR[kR].dirMatrix;
-			}
-		}
+		};
 
-		if (kL != -1 || kR != -1) {
-
-			if (kL != -1 && kR != -1) {
-				auto err = arGetStereoMatchingErrorSquare(gAR3DStereoHandle, &markerInfoL[kL], &markerInfoR[kR]);
-				//ARLOG("stereo err = %f\n", err);
-				if (err > 16.0) {
-					//ARLOG("Stereo matching error: %d %d.\n", markerInfoL[kL].area, markerInfoR[kR].area);
-					if (markerInfoL[kL].area > markerInfoR[kR].area) kR = -1;
-					else                                              kL = -1;
-				}
-			}
-
-			auto err = arGetTransMatSquareStereo(gAR3DStereoHandle, (kL == -1 ? NULL : &markerInfoL[kL]), (kR == -1 ? NULL : &markerInfoR[kR]), markersSquare[i].marker_width, markersSquare[i].trans);
-
-			if (err < 10.0) markersSquare[i].valid = TRUE;
-
-			//if (kL == -1)      ARLOG("[%2d] right:      err = %f\n", i, err);
-			//else if (kR == -1) ARLOG("[%2d] left:       err = %f\n", i, err);
-			//else               ARLOG("[%2d] left+right: err = %f\n", i, err);
-
-		}
-
-		if (markersSquare[i].valid)
-		{
-			// Filter the pose estimate.
-			if (markersSquare[i].ftmi)
-			{
-				if (arFilterTransMat(markersSquare[i].ftmi, markersSquare[i].trans, !markersSquare[i].validPrev) < 0)
-				{
-					DebugLog("Could not filter transform");
-					//ARLOGe("arFilterTransMat error with marker %d.\n", i);
-				}
-			}
-
-			// We have a new pose, so set that.
-			arglCameraViewRH((const ARdouble(*)[4])markersSquare[i].trans, markersSquare[i].pose.T, 1.0f /*VIEW_SCALEFACTOR*/);
-			arUtilMatMul((const ARdouble(*)[4])transL2R, (const ARdouble(*)[4])markersSquare[i].trans, transR);
-			arglCameraViewRH((const ARdouble(*)[4])transR, poseR.T, 1.0f /*VIEW_SCALEFACTOR*/);
-
-
-			newMarkerMatrix = true;
-
-			pose = {
-
-				{"m00", markersSquare[i].pose.T[0]},
-				{"m10", markersSquare[i].pose.T[1]},
-				{"m20", markersSquare[i].pose.T[2]},
-				{"m30", markersSquare[i].pose.T[3]},
-
-				{"m01", markersSquare[i].pose.T[4]},
-				{"m11", markersSquare[i].pose.T[5]},
-				{"m21", markersSquare[i].pose.T[6]},
-				{"m31", markersSquare[i].pose.T[7]},
-
-				{"m02", markersSquare[i].pose.T[8]},
-				{"m12", markersSquare[i].pose.T[9]},
-				{"m22", markersSquare[i].pose.T[10]},
-				{"m32", markersSquare[i].pose.T[11]},
-
-				{"m03", markersSquare[i].pose.T[12]},
-				{"m13", markersSquare[i].pose.T[13]},
-				{"m23", markersSquare[i].pose.T[14]},
-				{"m33", markersSquare[i].pose.T[15]}
-			};
-
-			/*
-				{"m00", markersSquare[i].pose.T[0]},
-				{"m01", markersSquare[i].pose.T[1]},
-				{"m02", markersSquare[i].pose.T[2]},
-				{"m03", markersSquare[i].pose.T[3]},
-
-				{"m10", markersSquare[i].pose.T[4]},
-				{"m11", markersSquare[i].pose.T[5]},
-				{"m12", markersSquare[i].pose.T[6]},
-				{"m13", markersSquare[i].pose.T[7]},
-
-				{"m20", markersSquare[i].pose.T[8]},
-				{"m21", markersSquare[i].pose.T[9]},
-				{"m22", markersSquare[i].pose.T[10]},
-				{"m23", markersSquare[i].pose.T[11]},
-
-				{"m30", markersSquare[i].pose.T[12]},
-				{"m31", markersSquare[i].pose.T[13]},
-				{"m32", markersSquare[i].pose.T[14]},
-				{"m33", markersSquare[i].pose.T[15]}
-	
-			*/
-		}
+		payload["pose_left"] = pose;
+		marker_detected = true;
 	}
 
 
-	//int type;
-	//if (frame.size.depth == 3)
-	//{
-	//	type = CV_16UC3;
-	//}
-	//else
-	//{
-	//	type = CV_16UC4;
-	//}
-
-	//if (markerNumL > 0)
-	//{
-
-	//	cv::Mat imgLeft = cv::Mat(cv::Size(frame.size.width, frame.size.height), type, frame.buffer_left.get());
-	//	cv::circle(imgLeft, cv::Point(markerInfoL[0].pos[0], markerInfoL[0].pos[1]), 5, cv::Scalar(0, 0, 255, 255), 1);
-
-	//	for (int j = 0; j < 4; j++)
-	//	{
-	//		auto cornerPos = cv::Point(markerInfoL[0].vertex[j][0], markerInfoL[0].vertex[j][1]);
-	//		cv::circle(imgLeft, cornerPos, 3, cv::Scalar(255, 0, 0, 255), 1);
-	//	}
-	//}
-
-
-	//if (markerNumR > 0)
-	//{
-	//	cv::Mat imgRight = cv::Mat(cv::Size(frame.size.width, frame.size.height), type, frame.buffer_right.get());
-	//	cv::circle(imgRight, cv::Point(markerInfoR[0].pos[0], markerInfoR[0].pos[1]), 5, cv::Scalar(0, 0, 255, 255), 1);
-
-	//	for (int j = 0; j < 4; j++)
-	//	{
-	//		auto cornerPos = cv::Point(markerInfoR[0].vertex[j][0], markerInfoR[0].vertex[j][1]);
-	//		cv::circle(imgRight, cornerPos, 3, cv::Scalar(255, 0, 0, 255), 1);
-	//	}
-	//}
-
-
-
-	ARdouble		gPatt_trans[3][4];
-	arGetTransMatSquare(gAR3DHandleL, &(markerInfoL[0]), 22.5, gPatt_trans);
-
-	//for (int j = 0; j < 4; j++)
-	//{
-	//	markerMatrix[i * 4 + j] = gPatt_trans[i][j];
-	//	matrixText += std::to_string(gPatt_trans[i][j]) + std::string(" ");
-	//}
-
-
-	if (newMarkerMatrix)
+	if (marker_num_r > 0)
 	{
-		return std::make_shared<const JsonFrameData>(frame.get(), pose);
+		ARdouble transform_matrix[3][4];
+		arGetTransMatSquare(ar_3d_handle_r_, &(marker_info_r[0]), 4.4, transform_matrix);
+
+		json pose {
+			{ "transform_matrix",
+				{"m00", transform_matrix[0][0]},
+				{"m01", transform_matrix[0][1]},
+				{"m02", transform_matrix[0][2]},
+				{"m03", transform_matrix[0][3]},
+
+				{"m10", transform_matrix[1][0]},
+				{"m11", transform_matrix[1][1]},
+				{"m12", transform_matrix[1][2]},
+				{"m13", transform_matrix[1][3]},
+
+				{"m20", transform_matrix[2][0]},
+				{"m21", transform_matrix[2][1]},
+				{"m22", transform_matrix[2][2]},
+				{"m23", transform_matrix[2][3]}
+			}
+		};
+
+		payload["pose_right"] = pose;
+		marker_detected = true;
+	}
+
+
+	if (marker_detected)
+	{
+		return std::make_shared<const JsonFrameData>(frame.get(), payload);
 	}
 	else
 	{
@@ -287,83 +184,98 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 	}
 }
 
-void ArToolkitProcessor::Initialize(int sizeX, int sizeY)
+void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int depth)
 {
+	// TODO: reinitialization might break things!
 	// Cameras
-	if (!SetupCamera("C:/code/resources/calib_ovrvision_left.dat", sizeX, sizeY, &gCparamLTL))
+	if (!SetupCamera(calib_path_left_, sizeX, sizeY, &c_param_lt_l_))
 	{
 		throw std::exception("Unable to setup left camera");
 	}
 
-	if (!SetupCamera("C:/code/resources/calib_ovrvision_right.dat", sizeX, sizeY, &gCparamLTR))
+	if (!SetupCamera(calib_path_right_, sizeX, sizeY, &c_param_lt_r_))
 	{
 		throw std::exception("Unable to setup right camera");
 	}
 
+	if (ar_pattern_handle_ != nullptr)
+	{
+		// already initialized this part
+		return;
+	}
 
-
-	// Init AR.
-	gARPattHandle = arPattCreateHandle();
-	if (!gARPattHandle) {
+	ar_pattern_handle_ = arPattCreateHandle();
+	if (!ar_pattern_handle_)
+	{
 		DebugLog("Error creating pattern handle.");
 		throw std::exception("Error - See log.");
 	}
 
-	gARHandleL = arCreateHandle(gCparamLTL);
-	gARHandleR = arCreateHandle(gCparamLTR);
-	if (!gARHandleL || !gARHandleR) {
+	ar_handle_l_ = arCreateHandle(c_param_lt_l_);
+	ar_handle_r_ = arCreateHandle(c_param_lt_r_);
+	if (!ar_handle_l_ || !ar_handle_r_)
+	{
 		DebugLog("Error creating AR handle.");
 		throw std::exception("Error - See log.");
 	}
-	arPattAttach(gARHandleL, gARPattHandle);
-	arPattAttach(gARHandleR, gARPattHandle);
 
-	if (arSetPixelFormat(gARHandleL, AR_PIXEL_FORMAT_BGRA) < 0 || arSetPixelFormat(gARHandleR, AR_PIXEL_FORMAT_BGRA) < 0) {
+
+	arPattAttach(ar_handle_l_, ar_pattern_handle_);
+	arPattAttach(ar_handle_r_, ar_pattern_handle_);
+
+	AR_PIXEL_FORMAT format;
+
+	if (depth == 1) { format = AR_PIXEL_FORMAT_MONO; } // TODO: might not be correct?
+	if (depth == 3) { format = AR_PIXEL_FORMAT_BGR; }
+	else { format = AR_PIXEL_FORMAT_BGRA; }
+
+	if (arSetPixelFormat(ar_handle_l_, format) < 0 || arSetPixelFormat(ar_handle_r_, format) < 0)
+	{
 		DebugLog("Error setting pixel format.");
 		throw std::exception("Error - See log.");
 	}
 
-	gAR3DHandleL = ar3DCreateHandle(&gCparamLTL->param);
-	gAR3DHandleR = ar3DCreateHandle(&gCparamLTR->param);
-	if (!gAR3DHandleL || !gAR3DHandleR) {
+	ar_3d_handle_l_ = ar3DCreateHandle(&c_param_lt_l_->param);
+	ar_3d_handle_r_ = ar3DCreateHandle(&c_param_lt_r_->param);
+	if (!ar_3d_handle_l_ || !ar_3d_handle_r_)
+	{
 		DebugLog("Error creating 3D handle.");
 		throw std::exception("Error - See log.");
 	}
 
-	if (arParamLoadExt("C:/code/resources/calib_ovrvision_stereo.dat", transL2R) < 0) {
-		DebugLog("Error: arParamLoadExt.");
-		throw std::exception("Error - See log.");
-	}
-	arUtilMatInv((const ARdouble(*)[4])transL2R, transR2L);
-	arParamDispExt(transL2R);
-	gAR3DStereoHandle = ar3DStereoCreateHandle(&(gCparamLTL->param), &(gCparamLTR->param), AR_TRANS_MAT_IDENTITY, transL2R);
-	if (!gAR3DStereoHandle) {
-		DebugLog("Error: ar3DCreateHandle.");
-		throw std::exception("Error - See log.");
-	}
-
-	//
 	// Markers setup.
-	//
 
-	// Load marker(s).
-	newMarkers("C:/code/resources/markers.dat", gARPattHandle, &markersSquare, &markersSquareCount, &gARPattDetectionMode);
+	//newMarkers("C:/code/resources/markers.dat", gARPattHandle, &markersSquare, &markersSquareCount, &gARPattDetectionMode);
+	for (auto &marker : markers_)
+	{
+		if (marker.initialized)
+		{
+			arPattFree(ar_pattern_handle_, marker.pattern_id);
+		}
+
+		marker.pattern_id = arPattLoad(ar_pattern_handle_, marker.pattern_path.c_str());
+
+		if (marker.pattern_id < 0)
+		{
+			throw std::exception((std::string("Unable to load marker pattern ") + marker.pattern_path).c_str());
+		}
+
+		marker.initialized = true;
+	}
+	
 
 	//
 	// Other ARToolKit setup.
 	//
 
-	arSetMarkerExtractionMode(gARHandleL, AR_USE_TRACKING_HISTORY_V2);
-	arSetMarkerExtractionMode(gARHandleR, AR_USE_TRACKING_HISTORY_V2);
-	//arSetMarkerExtractionMode(gARHandleL, AR_NOUSE_TRACKING_HISTORY);
-	//arSetMarkerExtractionMode(gARHandleR, AR_NOUSE_TRACKING_HISTORY);
-	//arSetLabelingThreshMode(gARHandleL, AR_LABELING_THRESH_MODE_MANUAL); // Uncomment to force manual thresholding.
-	//arSetLabelingThreshMode(gARHandleR, AR_LABELING_THRESH_MODE_MANUAL); // Uncomment to force manual thresholding.
+	arSetMarkerExtractionMode(ar_handle_l_, AR_USE_TRACKING_HISTORY_V2);
+	arSetMarkerExtractionMode(ar_handle_r_, AR_USE_TRACKING_HISTORY_V2);
 
 	// Set the pattern detection mode (template (pictorial) vs. matrix (barcode) based on
 	// the marker types as defined in the marker config. file.
-	arSetPatternDetectionMode(gARHandleL, gARPattDetectionMode); // Default = AR_TEMPLATE_MATCHING_COLOR
-	arSetPatternDetectionMode(gARHandleR, gARPattDetectionMode); // Default = AR_TEMPLATE_MATCHING_COLOR
+	arSetPatternDetectionMode(ar_handle_l_, AR_TEMPLATE_MATCHING_COLOR);
+	arSetPatternDetectionMode(ar_handle_r_, AR_TEMPLATE_MATCHING_COLOR);
+	// or: AR_MATRIX_CODE_DETECTION AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX
 
 	// Other application-wide marker options. Once set, these apply to all markers in use in the application.
 	// If you are using standard ARToolKit picture (template) markers, leave commented to use the defaults.
@@ -377,7 +289,7 @@ void ArToolkitProcessor::Initialize(int sizeX, int sizeY)
 	//arSetMatrixCodeType(gARHandleR, AR_MATRIX_CODE_3x3); // Default = AR_MATRIX_CODE_3x3
 }
 
-bool ArToolkitProcessor::SetupCamera(std::string filename, int sizeX, int sizeY, ARParamLT ** cparamLT_p)
+bool ArToolkitProcessor::SetupCamera(const std::string filename, const int sizeX, const int sizeY, ARParamLT ** cparamLT_p)
 {
 	ARParam cparam;
 
@@ -387,11 +299,13 @@ bool ArToolkitProcessor::SetupCamera(std::string filename, int sizeX, int sizeY,
 		return false;
 	}
 
-	if (cparam.xsize != sizeX || cparam.ysize != sizeY) {
+	if (cparam.xsize != sizeX || cparam.ysize != sizeY)
+	{
 		arParamChangeSize(&cparam, sizeX, sizeY, &cparam);
 	}
 
-	if ((*cparamLT_p = arParamLTCreate(&cparam, AR_PARAM_LT_DEFAULT_OFFSET)) == NULL) {
+	if ((*cparamLT_p = arParamLTCreate(&cparam, AR_PARAM_LT_DEFAULT_OFFSET)) == NULL)
+	{
 		DebugLog("Unable to create ParamLT");
 		return false;
 	}
@@ -401,14 +315,50 @@ bool ArToolkitProcessor::SetupCamera(std::string filename, int sizeX, int sizeY,
 
 void ArToolkitProcessor::Cleanup()
 {
-	arPattDetach(gARHandleL);
-	arPattDetach(gARHandleR);
-	arPattDeleteHandle(gARPattHandle);
-	ar3DStereoDeleteHandle(&gAR3DStereoHandle);
-	ar3DDeleteHandle(&gAR3DHandleL);
-	ar3DDeleteHandle(&gAR3DHandleR);
-	arDeleteHandle(gARHandleL);
-	arDeleteHandle(gARHandleR);
-	arParamLTFree(&gCparamLTL);
-	arParamLTFree(&gCparamLTR);
+	for (auto &marker : markers_)
+	{
+		if (marker.initialized)
+		{
+			arPattFree(ar_pattern_handle_, marker.pattern_id);
+		}
+
+		if (marker.filter)
+		{
+			arFilterTransMatFinal(marker.ftmi);
+		}
+	}
+
+	arPattDetach(ar_handle_l_);
+	arPattDetach(ar_handle_r_);
+	arPattDeleteHandle(ar_pattern_handle_);
+	ar3DDeleteHandle(&ar_3d_handle_l_);
+	ar3DDeleteHandle(&ar_3d_handle_r_);
+	arDeleteHandle(ar_handle_l_);
+	arDeleteHandle(ar_handle_r_);
+	arParamLTFree(&c_param_lt_l_);
+	arParamLTFree(&c_param_lt_r_);
+}
+
+
+void ArToolkitProcessor::SetupMarker(json &json_marker)
+{
+	Marker marker;
+
+	marker.pattern_path = json_marker["pattern_path"].get<std::string>();
+	marker.size = json_marker["size"].get<double>();
+	marker.type = json_marker["type"].get<std::string>();
+
+	if (json_marker.count("filter") > 0)
+	{
+		marker.filter = true; 
+		marker.filter_cutoff_freq = json_marker["filter"].get<double>();
+		marker.filter_sample_rate = AR_FILTER_TRANS_MAT_SAMPLE_RATE_DEFAULT;
+		marker.ftmi = arFilterTransMatInit(marker.filter_sample_rate, marker.filter_cutoff_freq);
+	}
+	else
+	{
+		marker.filter = false;
+	}
+
+	markers_.push_back(marker);
 }

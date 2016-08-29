@@ -140,7 +140,7 @@ namespace Assets.Modules.Vision
         #region processor_factory
 
         [DllImport("ImageProcessing")]
-        public static extern int AddArToolkitProcessor(int pipeline_id);
+        public static extern int AddArToolkitProcessor(int pipeline_id, string json_config);
 
         [DllImport("ImageProcessing")]
         public static extern int RemoveProcessor(int pipeline_id, int processor_id);
