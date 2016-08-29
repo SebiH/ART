@@ -7,5 +7,7 @@ namespace Assets.Modules.Vision.Processors
 {
     public interface IProcessor
     {
+        void Register(int pipelineId);
+        void Deregister(int pipelineId);
     }
 }

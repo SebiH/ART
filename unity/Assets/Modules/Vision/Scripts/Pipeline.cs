@@ -25,11 +25,13 @@ namespace Assets.Modules.Vision
         public void AddProcessor(IProcessor processor)
         {
             _processors.Add(processor);
-
+            processor.Register(_id);
         }
 
         public void RemoveProcessor(IProcessor processor)
         {
+            _processors.Remove(processor);
+            processor.Deregister(_id);
         }
 
         public void AddOutput(IOutput output)
