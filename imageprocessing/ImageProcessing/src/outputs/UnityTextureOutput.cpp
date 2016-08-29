@@ -19,7 +19,7 @@ UnityTextureOutput::~UnityTextureOutput()
 }
 
 
-void UnityTextureOutput::Write(const FrameData &frame) noexcept
+void UnityTextureOutput::Write(const FrameData *frame) noexcept
 {
 	// TODO: move this bit into constructor, if possible?
 	ID3D11Texture2D* d3dtex = (ID3D11Texture2D*)texture_ptr_;
@@ -32,8 +32,8 @@ void UnityTextureOutput::Write(const FrameData &frame) noexcept
 	D3D11_TEXTURE2D_DESC desc;
 	d3dtex->GetDesc(&desc);
 
-	auto linelength = frame.size.width * frame.size.depth;
-	auto buffer = (eye_ == Eye::LEFT) ? frame.buffer_left.get() : frame.buffer_right.get();
+	auto linelength = frame->size.width * frame->size.depth;
+	auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
 
 	// TODO: https://gamedev.stackexchange.com/questions/60668/how-to-use-updatesubresource-and-map-unmap ?
 	ctx->UpdateSubresource(d3dtex, 0, NULL, buffer, linelength, 0);

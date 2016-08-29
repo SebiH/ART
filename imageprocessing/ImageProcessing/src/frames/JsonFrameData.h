@@ -1,7 +1,8 @@
 #pragma once
 
-#include "frames/FrameData.h"
 #include <string>
+#include <json/json.hpp>
+#include "frames/FrameData.h"
 
 namespace ImageProcessing
 {
@@ -10,6 +11,7 @@ namespace ImageProcessing
 	public: 
 		std::string json;
 
+		JsonFrameData(const FrameData *parent, nlohmann::json json_data);
 		virtual ~JsonFrameData() { };
 	};
 }

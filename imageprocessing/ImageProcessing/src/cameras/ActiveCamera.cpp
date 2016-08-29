@@ -135,24 +135,23 @@ void ActiveCamera::WaitForNewFrame(int consumer_frame_id)
 	}
 }
 
-int ActiveCamera::WriteFrame(FrameData &frame, const FrameSize &size)
+int ActiveCamera::WriteFrame(const FrameData *frame)
 {
 	auto current_framecounter = frame_counter_.load();
 
 	{
 		std::unique_lock<std::mutex> lock(mutex_);
 
-		if (size != current_framesize_)
+		if (frame->size != current_framesize_)
 		{
 			// TODO: workaround for nasty threading issues
 			throw std::exception("Unable to write frame; mismatching frame sizes");
 		}
 
-		frame.size = current_framesize_;
-		auto buffer_size = frame.size.BufferSize();
+		auto buffer_size = frame->size.BufferSize();
 
-		std::memcpy(frame.buffer_left.get(), framebuffer_left_.get(), buffer_size);
-		std::memcpy(frame.buffer_right.get(), framebuffer_right_.get(), buffer_size);
+		std::memcpy(frame->buffer_left.get(), framebuffer_left_.get(), buffer_size);
+		std::memcpy(frame->buffer_right.get(), framebuffer_right_.get(), buffer_size);
 	}
 
 	return current_framecounter;

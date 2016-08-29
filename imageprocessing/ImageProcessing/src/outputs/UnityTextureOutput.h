@@ -24,6 +24,6 @@ namespace ImageProcessing
 		virtual ~UnityTextureOutput();
 
 	protected:
-		virtual void Write(const FrameData &frame) noexcept override;
+		virtual void Write(const FrameData *frame) noexcept override;
 	};
 }

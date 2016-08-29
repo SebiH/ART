@@ -42,11 +42,11 @@ void ThreadedPipeline::ResizeBuffers(const FrameSize &new_size)
 	}
 }
 
-FrameData ThreadedPipeline::CreateFrame()
+std::shared_ptr<const FrameData> ThreadedPipeline::CreateFrame()
 {
 	auto frame_id = frame_uid_generator.GetUID();
 	std::unique_lock<std::mutex> lock(buffer_mutex_);
-	return FrameData(frame_id, back_buffer_left_, back_buffer_right_, current_framesize_);
+	return std::make_shared<FrameData>(frame_id, back_buffer_left_, back_buffer_right_, current_framesize_);
 }
 
 void ThreadedPipeline::SwitchBuffers()
@@ -88,6 +88,9 @@ void ThreadedPipeline::Stop()
 	}
 }
 
+
+#include "frames/JsonFrameData.h"
+
 void ThreadedPipeline::Run()
 {
 	auto camera = ActiveCamera::Instance();
@@ -114,7 +117,7 @@ void ThreadedPipeline::Run()
 		auto frame = CreateFrame();
 		try
 		{
-			camera->WriteFrame(frame, current_framesize_);
+			camera->WriteFrame(frame.get());
 		}
 		catch (const std::exception &e)
 		{
@@ -127,7 +130,7 @@ void ThreadedPipeline::Run()
 			// pass frame into all processing modules
 			for (auto processor : processors_)
 			{
-				processor->Process(frame);
+				frame = processor->Process(frame);
 			}
 
 			// register backbuffer as result in output module

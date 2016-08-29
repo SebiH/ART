@@ -51,7 +51,7 @@ namespace ImageProcessing
 		std::shared_ptr<CameraSourceInterface> GetSource();
 
 		void WaitForNewFrame(int current_frame_id);
-		int WriteFrame(FrameData &frame, const FrameSize &size);
+		int WriteFrame(const FrameData *frame);
 
 		void FetchNewFrame();
 

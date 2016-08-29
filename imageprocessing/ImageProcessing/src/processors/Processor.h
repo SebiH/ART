@@ -1,6 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <string>
+
 #include "frames/FrameData.h"
 #include "utils/UID.h"
 #include "utils/UIDGenerator.h"
@@ -18,7 +20,7 @@ namespace ImageProcessing
 
 		UID Id() const { return id_; }
 		
-		virtual void Process(FrameData &frame) = 0;
+		virtual std::shared_ptr<const FrameData> Process(const std::shared_ptr<const FrameData> &frame) = 0;
 
 		// Workaround to accomodate different properties while trying to maintain simple Unity API..
 		// GetDoubleProperty, GetIntProperty, etc.?

@@ -103,6 +103,7 @@
     <ClCompile Include="src\cameras\OvrvisionCameraSource.cpp" />
     <ClCompile Include="src\api\logging.cpp" />
     <ClCompile Include="src\api\unity_plugin.cpp" />
+    <ClCompile Include="src\frames\JsonFrameData.cpp" />
     <ClCompile Include="src\outputs\JsonOutput.cpp" />
     <ClCompile Include="src\outputs\OpenCvOutput.cpp" />
     <ClCompile Include="src\outputs\UnityTextureOutput.cpp" />

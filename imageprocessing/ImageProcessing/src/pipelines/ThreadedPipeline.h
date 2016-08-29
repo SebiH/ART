@@ -60,7 +60,7 @@ namespace ImageProcessing
 		// TODO: should be Event<..>::EventHandler, but throws errors?
 		std::function<void(const FrameSize &)> framesize_changed_handler_;
 		void ResizeBuffers(const FrameSize &new_size);
-		FrameData CreateFrame();
+		std::shared_ptr<const FrameData> CreateFrame();
 		void SwitchBuffers();
 	};
 }

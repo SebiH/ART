@@ -18,10 +18,10 @@ JsonOutput::~JsonOutput()
 }
 
 
-void JsonOutput::RegisterResult(const FrameData &frame)
+void JsonOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
 {
 	// write result immediately, don't wait
-	Write(frame);
+	Write(frame.get());
 }
 
 
@@ -30,15 +30,12 @@ void JsonOutput::WriteResult()
 	// result is written immediately upon receiving
 }
 
-void JsonOutput::Write(const FrameData &frame) noexcept
+void JsonOutput::Write(const FrameData *frame) noexcept
 {
-	if (auto json_frame = dynamic_cast<const JsonFrameData *>(&frame))
+	auto json_frame = dynamic_cast<const JsonFrameData *>(frame);
+	if (json_frame)
 	{
 		callback_(json_frame->json.c_str());
-	}
-	else
-	{
-		DebugLog("Could not trigger callback: Provided frame does not have JSON!");
 	}
 }
 
