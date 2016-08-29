@@ -142,6 +142,9 @@ namespace Assets.Modules.Vision
         [DllImport("ImageProcessing")]
         public static extern int AddArToolkitProcessor(int pipeline_id);
 
+        [DllImport("ImageProcessing")]
+        public static extern int RemoveProcessor(int pipeline_id, int processor_id);
+
         #endregion
 
         #region unity_plugin
