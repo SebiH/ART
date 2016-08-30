@@ -14,7 +14,6 @@ extern "C" UNITY_INTERFACE_EXPORT int AddArToolkitProcessor(const int pipeline_i
 	try
 	{
 		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
-
 		std::shared_ptr<Processor> artoolkit_processor = std::make_shared<ArToolkitProcessor>(std::string(json_config));
 		pipeline->AddProcessor(artoolkit_processor);
 		return artoolkit_processor->Id();
@@ -33,12 +32,6 @@ extern "C" UNITY_INTERFACE_EXPORT void RemoveProcessor(const int pipeline_id, co
 	try
 	{
 		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
-		
-		if (!pipeline)
-		{
-			throw std::exception("No pipeline with this id");
-		}
-
 		pipeline->RemoveProcessor(processor_id);
 	}
 	catch (const std::exception &e)
@@ -52,12 +45,6 @@ extern "C" UNITY_INTERFACE_EXPORT const char* GetProcessorProperties(const int p
 	try
 	{
 		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
-		
-		if (!pipeline)
-		{
-			throw std::exception("No pipeline with this id");
-		}
-
 		auto processor = pipeline->GetProcessor(processor_id);
 		return processor->GetProperties().dump().c_str();
 	}
@@ -74,12 +61,6 @@ extern "C" UNITY_INTERFACE_EXPORT void SetProcessorProperties(const int pipeline
 	try
 	{
 		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
-		
-		if (!pipeline)
-		{
-			throw std::exception("No pipeline with this id");
-		}
-
 		auto processor = pipeline->GetProcessor(processor_id);
 		auto config = nlohmann::json::parse(json_config_str);
 		processor->SetProperties(config);
