@@ -14,8 +14,6 @@ namespace ImageProcessing
 		OpenCvOutput(std::string windowname);
 		~OpenCvOutput();
 
-		void RegisterResult(const std::shared_ptr<const FrameData> &result) override;
-
 	protected:
 		virtual void Write(const FrameData *frame) noexcept override;
 	};
