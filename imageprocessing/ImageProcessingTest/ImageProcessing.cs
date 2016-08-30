@@ -145,6 +145,12 @@ namespace ImageProcessingTest
         [DllImport("ImageProcessing")]
         public static extern int RemoveProcessor(int pipeline_id, int processor_id);
 
+        [DllImport("ImageProcessing")]
+        public static extern string GetProcessorProperties(int pipeline_id, int processor_id);
+
+        [DllImport("ImageProcessing")]
+        public static extern void SetProcessorProperties(int pipeline_id, int processor_id, string json_config_str);
+
         #endregion
 
         #region unity_plugin
