@@ -16,7 +16,27 @@ namespace Assets.Modules.Vision.Processors
 
         public void Register(int pipelineId)
         {
-            _id = ImageProcessing.AddArToolkitProcessor(pipelineId);
+            _id = ImageProcessing.AddArToolkitProcessor(pipelineId, @"
+                {
+                    ""config"": {
+                        ""calibration_left"": ""C:/code/resources/calib_ovrvision_left.dat"",
+                        ""calibration_right"": ""C:/code/resources/calib_ovrvision_right.dat""
+                    },
+                    ""markers"": [
+                        {
+                            ""size"": 5.5,
+                            ""pattern_path"": ""C:/code/resources/kanji.patt"",
+                            ""type"": ""SINGLE"",
+                            ""filter"": 5.0
+                        },
+                        {
+                            ""size"": 5.5,
+                            ""pattern_path"": ""C:/code/resources/hiro.patt"",
+                            ""type"": ""SINGLE"",
+                            ""filter"": 5.0
+                        }
+                    ]
+                }");
             _id = -1;
         }
     }

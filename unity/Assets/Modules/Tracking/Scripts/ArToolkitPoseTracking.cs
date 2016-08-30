@@ -1,27 +1,43 @@
 using Assets.Modules.Vision;
 using Assets.Modules.Vision.Outputs;
 using Assets.Modules.Vision.Processors;
+using System;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
     public class ArToolkitPoseTracking : MonoBehaviour
     {
+        [Serializable]
         private class PoseMatrix
         {
             public float m00, m01, m02, m03;
             public float m10, m11, m12, m13;
             public float m20, m21, m22, m23;
-            public float m30, m31, m32, m33;
         }
+
+        [Serializable]
+        private class MarkerInfo
+        {
+            public int id;
+            public PoseMatrix transform_matrix;
+        }
+
+        [Serializable]
+        private class ArToolkitOutput
+        {
+            public MarkerInfo[] markers_left;
+            public MarkerInfo[] markers_right;
+        }
+
 
         public Pipeline ActivePipeline;
 
         private ArToolkitProcessor _artkProcessor;
         private JsonOutput _artkOutput;
 
-        private bool _hasNewPose = false;
-        private PoseMatrix _currentPose;
+        private bool _hasNewOutput = false;
+        private ArToolkitOutput _currentOutput;
 
         void Start()
         {
@@ -42,8 +58,8 @@ namespace Assets.Modules.Tracking
         {
             try
             {
-                _currentPose = JsonUtility.FromJson<PoseMatrix>(msg);
-                _hasNewPose = true;
+                _currentOutput = JsonUtility.FromJson<ArToolkitOutput>(msg);
+                _hasNewOutput = true;
             }
             catch
             {
@@ -53,52 +69,57 @@ namespace Assets.Modules.Tracking
 
         void Update()
         {
-            if (_hasNewPose)
+            if (_hasNewOutput)
             {
-                var pose = _currentPose;
-                _hasNewPose = false;
+                _hasNewOutput = false;
 
-                var transformMatrix = new Matrix4x4();
+                if (_currentOutput.markers_left.Length > 0)
+                {
+                    var pose = _currentOutput.markers_left[0].transform_matrix;
+                    var transformMatrix = new Matrix4x4();
 
-                transformMatrix.m00 = pose.m00;
-                transformMatrix.m01 = pose.m01;
-                transformMatrix.m02 = pose.m02;
-                transformMatrix.m03 = pose.m03;
+                    transformMatrix.m00 = pose.m00;
+                    transformMatrix.m01 = pose.m01;
+                    transformMatrix.m02 = pose.m02;
+                    transformMatrix.m03 = pose.m03;
 
-                transformMatrix.m10 = pose.m10;
-                transformMatrix.m11 = pose.m11;
-                transformMatrix.m12 = pose.m12;
-                transformMatrix.m13 = pose.m13;
+                    transformMatrix.m10 = pose.m10;
+                    transformMatrix.m11 = pose.m11;
+                    transformMatrix.m12 = pose.m12;
+                    transformMatrix.m13 = pose.m13;
 
-                transformMatrix.m20 = pose.m20;
-                transformMatrix.m21 = pose.m21;
-                transformMatrix.m22 = pose.m22;
-                transformMatrix.m23 = pose.m23;
+                    transformMatrix.m20 = pose.m20;
+                    transformMatrix.m21 = pose.m21;
+                    transformMatrix.m22 = pose.m22;
+                    transformMatrix.m23 = pose.m23;
 
-                transformMatrix.m30 = pose.m30;
-                transformMatrix.m31 = pose.m31;
-                transformMatrix.m32 = pose.m32;
-                transformMatrix.m33 = pose.m33;
+                    transformMatrix.m30 = 0;
+                    transformMatrix.m31 = 0;
+                    transformMatrix.m32 = 0;
+                    transformMatrix.m33 = 1;
 
-                var pos = ExtractTranslationFromMatrix(ref transformMatrix);
-                // ARToolkit cm -> Unity m
-                pos = pos / 100f;
-                // invert to match camera
-                pos.y = -pos.y;
+                    var pos = ExtractTranslationFromMatrix(ref transformMatrix);
+                    // ARToolkit cm -> Unity m
+                    pos = pos / 100f;
+                    // invert to match camera
+                    pos.y = -pos.y;
 
-                transform.position = pos;
-                transform.localScale = ExtractScaleFromMatrix(ref transformMatrix);
+                    transform.position = pos;
+                    transform.localScale = ExtractScaleFromMatrix(ref transformMatrix);
 
-                var eulerRot = ExtractRotationFromMatrix(ref transformMatrix).eulerAngles;
-                eulerRot.x = -eulerRot.x;
-                //eulerRot.y = -eulerRot.y;
-                eulerRot.z = -eulerRot.z;
+                    var eulerRot = ExtractRotationFromMatrix(ref transformMatrix).eulerAngles;
+                    eulerRot.x = -eulerRot.x;
+                    //eulerRot.y = -eulerRot.y;
+                    eulerRot.z = -eulerRot.z;
 
-                transform.rotation = Quaternion.Euler(eulerRot);
+                    transform.rotation = Quaternion.Euler(eulerRot);
+                }
+                else
+                {
+                    Debug.Log("No left marker");
+                }
             }
         }
-
-
 
 
 
