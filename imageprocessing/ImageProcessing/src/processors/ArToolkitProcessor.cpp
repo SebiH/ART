@@ -65,7 +65,10 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 	auto marker_num_r = arGetMarkerNum(ar_handle_r_);
 
 	bool marker_detected = false;
-	json payload;
+	json payload{
+		{ "markers_left", json::array() },
+		{ "markers_right", json::array() }
+	};
 
 	for (auto i = 0; i < marker_num_l; i++)
 	{
@@ -75,7 +78,7 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 		{
 			auto pose = ProcessMarkerInfo(info);
 			DrawMarker(info, frame->size, frame->buffer_left.get());
-			payload["pose_left"].push_back(pose);
+			payload["markers_left"].push_back(pose);
 			marker_detected = true;
 		}
 	}
@@ -89,7 +92,7 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 		{
 			auto pose = ProcessMarkerInfo(info);
 			DrawMarker(info, frame->size, frame->buffer_right.get());
-			payload["pose_right"].push_back(pose);
+			payload["markers_right"].push_back(pose);
 			marker_detected = true;
 		}
 	}
@@ -111,22 +114,24 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info)
 	ARdouble transform_matrix[3][4];
 	arGetTransMatSquare(ar_3d_handle_l_, &info, 4.4, transform_matrix);
 
-	return json {
-		{ "transform_matrix",
-			{"m00", transform_matrix[0][0]},
-			{"m01", transform_matrix[0][1]},
-			{"m02", transform_matrix[0][2]},
-			{"m03", transform_matrix[0][3]},
+	return json{
+		{ "id", info.id },
+		{ "transform_matrix", {
+				{"m00", transform_matrix[0][0]},
+				{"m01", transform_matrix[0][1]},
+				{"m02", transform_matrix[0][2]},
+				{"m03", transform_matrix[0][3]},
 
-			{"m10", transform_matrix[1][0]},
-			{"m11", transform_matrix[1][1]},
-			{"m12", transform_matrix[1][2]},
-			{"m13", transform_matrix[1][3]},
+				{"m10", transform_matrix[1][0]},
+				{"m11", transform_matrix[1][1]},
+				{"m12", transform_matrix[1][2]},
+				{"m13", transform_matrix[1][3]},
 
-			{"m20", transform_matrix[2][0]},
-			{"m21", transform_matrix[2][1]},
-			{"m22", transform_matrix[2][2]},
-			{"m23", transform_matrix[2][3]}
+				{"m20", transform_matrix[2][0]},
+				{"m21", transform_matrix[2][1]},
+				{"m22", transform_matrix[2][2]},
+				{"m23", transform_matrix[2][3]}
+			}
 		}
 	};
 }
