@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <json/json.hpp>
 
 #include "frames/FrameData.h"
 #include "utils/UID.h"
@@ -22,11 +23,7 @@ namespace ImageProcessing
 		
 		virtual std::shared_ptr<const FrameData> Process(const std::shared_ptr<const FrameData> &frame) = 0;
 
-		// Workaround to accomodate different properties while trying to maintain simple Unity API..
-		// GetDoubleProperty, GetIntProperty, etc.?
-		//TODO: maybe look into LogDebugging blah?
-		//TODO: config via json?
-		//virtual std::string GetProperty(const std::string) = 0;
-		//virtual void SetProperty(const std::string) = 0;
+		virtual nlohmann::json GetProperties() = 0;
+		virtual void SetProperties(const nlohmann::json config) = 0;
 	};
 }
