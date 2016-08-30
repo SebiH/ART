@@ -45,6 +45,9 @@ namespace ImageProcessing
 		AR3DHandle *ar_3d_handle_l_ = nullptr;
 		AR3DHandle *ar_3d_handle_r_ = nullptr;
 
+		// get/settable properties
+		double min_confidence_ = 0.5;
+
 	public:
 		/*
 		 * Configuration example:
@@ -69,6 +72,9 @@ namespace ImageProcessing
 		ArToolkitProcessor(std::string config);
 		virtual ~ArToolkitProcessor();
 		virtual std::shared_ptr<const FrameData> Process(const std::shared_ptr<const FrameData> &frame) override;
+
+		virtual nlohmann::json GetProperties() override;
+		virtual void SetProperties(const nlohmann::json config) override;
 
 	private:
 		void Initialize(const int sizeX, const int sizeY, const int depth);

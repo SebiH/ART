@@ -66,13 +66,12 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 	bool marker_detected = false;
 	json payload;
-	auto min_confidence = 0.5;
 
 	for (auto i = 0; i < marker_num_l; i++)
 	{
 		auto info = marker_info_l[i];
 
-		if (info.cf > min_confidence)
+		if (info.cf > min_confidence_)
 		{
 			auto pose = ProcessMarkerInfo(info);
 			DrawMarker(info, frame->size, frame->buffer_left.get());
@@ -86,7 +85,7 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 	{
 		auto info = marker_info_r[i];
 
-		if (info.cf > min_confidence)
+		if (info.cf > min_confidence_)
 		{
 			auto pose = ProcessMarkerInfo(info);
 			DrawMarker(info, frame->size, frame->buffer_right.get());
@@ -325,4 +324,22 @@ void ArToolkitProcessor::SetupMarker(json &json_marker)
 	}
 
 	markers_.push_back(marker);
+}
+
+
+nlohmann::json ArToolkitProcessor::GetProperties()
+{
+	return json{
+		{ "min_confidence", min_confidence_ }
+	};
+}
+
+
+
+void ArToolkitProcessor::SetProperties(const nlohmann::json config)
+{
+	if (config.count("min_confidence"))
+	{
+		min_confidence_ = config["min_confidence"].get<double>();
+	}
 }
