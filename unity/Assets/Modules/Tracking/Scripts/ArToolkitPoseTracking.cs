@@ -17,9 +17,20 @@ namespace Assets.Modules.Tracking
         }
 
         [Serializable]
+        private class Corners
+        {
+            public double[] topleft;
+            public double[] topright;
+            public double[] bottomleft;
+            public double[] bottomright;
+        }
+
+        [Serializable]
         private class MarkerInfo
         {
             public int id;
+            public double[] pos;
+            public Corners corners;
             public PoseMatrix transform_matrix;
         }
 

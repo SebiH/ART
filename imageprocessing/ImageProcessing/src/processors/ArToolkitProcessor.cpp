@@ -116,6 +116,16 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info)
 
 	return json{
 		{ "id", info.id },
+		{ "pos", { info.pos[0], info.pos[1] }},
+		{ "corners",
+			{
+				// TODO: no idea if description is correct or even consistent!
+				{"topleft", { info.vertex[0][0], info.vertex[0][1] } },
+				{"topright", { info.vertex[1][0], info.vertex[1][1] } },
+				{"bottomleft", { info.vertex[2][0], info.vertex[2][1] } },
+				{"bottomright", { info.vertex[3][0], info.vertex[3][1] } },
+			}
+		},
 		{ "transform_matrix", {
 				{"m00", transform_matrix[0][0]},
 				{"m01", transform_matrix[0][1]},
