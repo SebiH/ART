@@ -38,6 +38,12 @@ extern "C" UnityRenderingEvent UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API GetRen
 	return OnRenderEvent;
 }
 
+// don't use this within unity!
+extern "C" void UNITY_INTERFACE_EXPORT ManualUpdate()
+{
+	OnRenderEvent(-1);
+}
+
 
 
 

@@ -152,6 +152,9 @@ namespace ImageProcessingTest
         [DllImport("ImageProcessing")]
         public static extern IntPtr GetRenderEventFunc();
 
+        [DllImport("ImageProcessing")]
+        public static extern void ManualUpdate();
+
         #endregion
     }
 }

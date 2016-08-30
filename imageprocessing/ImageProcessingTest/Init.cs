@@ -50,6 +50,7 @@ namespace ImageProcessingTest
 
             while (true)
             {
+                ImageProcessing.ManualUpdate();
                 keyPressed = (char)ImageProcessing.OpenCvWaitKey(5);
 
                 if (keyPressed == 's')
@@ -68,7 +69,7 @@ namespace ImageProcessingTest
                     }
                 }
 
-                if (keyPressed == 'q' || counter++ > 10)
+                if (keyPressed == 'q')
                 {
                     ImageProcessing.RemoveProcessor(pipeline, processor);
                     ImageProcessing.RemoveOutput(pipeline, output);
