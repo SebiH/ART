@@ -64,113 +64,35 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 	auto marker_num_l = arGetMarkerNum(ar_handle_l_);
 	auto marker_num_r = arGetMarkerNum(ar_handle_r_);
 
-	//		pose = {
-
-	//			{"m00", markersSquare[i].pose.T[0]},
-	//			{"m10", markersSquare[i].pose.T[1]},
-	//			{"m20", markersSquare[i].pose.T[2]},
-	//			{"m30", markersSquare[i].pose.T[3]},
-
-	//			{"m01", markersSquare[i].pose.T[4]},
-	//			{"m11", markersSquare[i].pose.T[5]},
-	//			{"m21", markersSquare[i].pose.T[6]},
-	//			{"m31", markersSquare[i].pose.T[7]},
-
-	//			{"m02", markersSquare[i].pose.T[8]},
-	//			{"m12", markersSquare[i].pose.T[9]},
-	//			{"m22", markersSquare[i].pose.T[10]},
-	//			{"m32", markersSquare[i].pose.T[11]},
-
-	//			{"m03", markersSquare[i].pose.T[12]},
-	//			{"m13", markersSquare[i].pose.T[13]},
-	//			{"m23", markersSquare[i].pose.T[14]},
-	//			{"m33", markersSquare[i].pose.T[15]}
-	//		};
-
-	//		/*
-	//			{"m00", markersSquare[i].pose.T[0]},
-	//			{"m01", markersSquare[i].pose.T[1]},
-	//			{"m02", markersSquare[i].pose.T[2]},
-	//			{"m03", markersSquare[i].pose.T[3]},
-
-	//			{"m10", markersSquare[i].pose.T[4]},
-	//			{"m11", markersSquare[i].pose.T[5]},
-	//			{"m12", markersSquare[i].pose.T[6]},
-	//			{"m13", markersSquare[i].pose.T[7]},
-
-	//			{"m20", markersSquare[i].pose.T[8]},
-	//			{"m21", markersSquare[i].pose.T[9]},
-	//			{"m22", markersSquare[i].pose.T[10]},
-	//			{"m23", markersSquare[i].pose.T[11]},
-
-	//			{"m30", markersSquare[i].pose.T[12]},
-	//			{"m31", markersSquare[i].pose.T[13]},
-	//			{"m32", markersSquare[i].pose.T[14]},
-	//			{"m33", markersSquare[i].pose.T[15]}
-	//
-	//		*/
-	//	}
-	//}
-
-
 	bool marker_detected = false;
 	json payload;
+	auto min_confidence = 0.5;
 
-	if (marker_num_l > 0)
+	for (auto i = 0; i < marker_num_l; i++)
 	{
-		ARdouble transform_matrix[3][4];
-		arGetTransMatSquare(ar_3d_handle_l_, &(marker_info_l[0]), 4.4, transform_matrix);
+		auto info = marker_info_l[i];
 
-		json pose {
-			{ "transform_matrix",
-				{"m00", transform_matrix[0][0]},
-				{"m01", transform_matrix[0][1]},
-				{"m02", transform_matrix[0][2]},
-				{"m03", transform_matrix[0][3]},
-
-				{"m10", transform_matrix[1][0]},
-				{"m11", transform_matrix[1][1]},
-				{"m12", transform_matrix[1][2]},
-				{"m13", transform_matrix[1][3]},
-
-				{"m20", transform_matrix[2][0]},
-				{"m21", transform_matrix[2][1]},
-				{"m22", transform_matrix[2][2]},
-				{"m23", transform_matrix[2][3]}
-			}
-		};
-
-		payload["pose_left"] = pose;
-		marker_detected = true;
+		if (info.cf > min_confidence)
+		{
+			auto pose = ProcessMarkerInfo(info);
+			DrawMarker(info, frame->size, frame->buffer_left.get());
+			payload["pose_left"].push_back(pose);
+			marker_detected = true;
+		}
 	}
 
 
-	if (marker_num_r > 0)
+	for (auto i = 0; i < marker_num_r; i++)
 	{
-		ARdouble transform_matrix[3][4];
-		arGetTransMatSquare(ar_3d_handle_r_, &(marker_info_r[0]), 4.4, transform_matrix);
+		auto info = marker_info_r[i];
 
-		json pose {
-			{ "transform_matrix",
-				{"m00", transform_matrix[0][0]},
-				{"m01", transform_matrix[0][1]},
-				{"m02", transform_matrix[0][2]},
-				{"m03", transform_matrix[0][3]},
-
-				{"m10", transform_matrix[1][0]},
-				{"m11", transform_matrix[1][1]},
-				{"m12", transform_matrix[1][2]},
-				{"m13", transform_matrix[1][3]},
-
-				{"m20", transform_matrix[2][0]},
-				{"m21", transform_matrix[2][1]},
-				{"m22", transform_matrix[2][2]},
-				{"m23", transform_matrix[2][3]}
-			}
-		};
-
-		payload["pose_right"] = pose;
-		marker_detected = true;
+		if (info.cf > min_confidence)
+		{
+			auto pose = ProcessMarkerInfo(info);
+			DrawMarker(info, frame->size, frame->buffer_right.get());
+			payload["pose_right"].push_back(pose);
+			marker_detected = true;
+		}
 	}
 
 
@@ -183,6 +105,48 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 		return frame;
 	}
 }
+
+
+json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info)
+{
+	ARdouble transform_matrix[3][4];
+	arGetTransMatSquare(ar_3d_handle_l_, &info, 4.4, transform_matrix);
+
+	return json {
+		{ "transform_matrix",
+			{"m00", transform_matrix[0][0]},
+			{"m01", transform_matrix[0][1]},
+			{"m02", transform_matrix[0][2]},
+			{"m03", transform_matrix[0][3]},
+
+			{"m10", transform_matrix[1][0]},
+			{"m11", transform_matrix[1][1]},
+			{"m12", transform_matrix[1][2]},
+			{"m13", transform_matrix[1][3]},
+
+			{"m20", transform_matrix[2][0]},
+			{"m21", transform_matrix[2][1]},
+			{"m22", transform_matrix[2][2]},
+			{"m23", transform_matrix[2][3]}
+		}
+	};
+}
+
+
+
+void ArToolkitProcessor::DrawMarker(const ARMarkerInfo &marker, const FrameSize &size, unsigned char *buffer)
+{
+	cv::Mat img = cv::Mat(cv::Size(size.width, size.height), size.CvType(), buffer);
+	cv::circle(img, cv::Point(marker.pos[0], marker.pos[1]), 5, cv::Scalar(0, 0, 255, 255), 1);
+
+	for (int j = 0; j < 4; j++)
+	{
+		auto cornerPos = cv::Point(marker.vertex[j][0], marker.vertex[j][1]);
+		cv::circle(img, cornerPos, 3, cv::Scalar(255, 0, 0, 255), 1);
+	}
+}
+
+
 
 void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int depth)
 {
