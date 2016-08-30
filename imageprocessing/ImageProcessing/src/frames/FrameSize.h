@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <opencv2/core.hpp>
 
 namespace ImageProcessing
 {
@@ -29,6 +30,23 @@ namespace ImageProcessing
 		std::size_t inline BufferSize() const
 		{
 			return width * height * depth;
+		}
+
+		int inline CvType() const
+		{
+			switch (depth)
+			{
+			case 1:
+				return CV_8UC1;
+			case 2:
+				return CV_8UC2;
+			case 3:
+				return CV_8UC3;
+			case 4:
+				return CV_8UC4;
+			default:
+				throw std::exception("Invalid depth!");
+			}
 		}
 
 		bool operator ==(const FrameSize &other) const
