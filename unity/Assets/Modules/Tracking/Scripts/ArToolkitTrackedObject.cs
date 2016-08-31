@@ -16,13 +16,13 @@ namespace Assets.Modules.Tracking
             ArToolkitListener.Instance.NewPoseDetected -= OnNewPose;
         }
 
-        void OnNewPose(string detectedMarkerName, Vector3 position, Quaternion rotation)
+        void OnNewPose(MarkerPose pose)
         {
             // TODO.
-            //if (detectedMarkerName == TrackedMarkerName)
+            //if (pose.Name == TrackedMarkerName)
             {
-                transform.position = position;
-                transform.rotation = rotation;
+                transform.position = pose.Position;
+                transform.rotation = pose.Rotation;
             }
         }
 

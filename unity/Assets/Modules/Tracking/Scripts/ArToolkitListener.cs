@@ -48,7 +48,7 @@ namespace Assets.Modules.Tracking
 
         public Pipeline ArToolkitPipeline;
 
-        public delegate void NewPoseHandler(string markername, Vector3 position, Quaternion rotation);
+        public delegate void NewPoseHandler(MarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
 
         private ArToolkitProcessor _artkProcessor;
@@ -137,21 +137,13 @@ namespace Assets.Modules.Tracking
             transformMatrix.m32 = 0;
             transformMatrix.m33 = 1;
 
-            var pos = MatrixUtils.ExtractTranslationFromMatrix(transformMatrix);
-            // invert to match camera
-            pos.y = -pos.y;
+            transformMatrix = transformMatrix.inverse;
 
-            var scale = MatrixUtils.ExtractScaleFromMatrix(transformMatrix);
-
-            var eulerRot = MatrixUtils.ExtractRotationFromMatrix(transformMatrix).eulerAngles;
-            eulerRot.x = -eulerRot.x;
-            //eulerRot.y = -eulerRot.y;
-            eulerRot.z = -eulerRot.z;
 
             if (NewPoseDetected != null)
             {
-                // TODO: markername
-                NewPoseDetected("TODO", pos, Quaternion.Euler(eulerRot));
+                // TODO: name
+                NewPoseDetected(new MarkerPose(marker.id, "TODO", transformMatrix));
             }
         }
     }
