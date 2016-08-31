@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
 
@@ -11,14 +12,14 @@ namespace Assets.Modules.Tracking
         {
             IsReadyForCalibration = false;
             ArToolkitListener.Instance.NewPoseDetected += OnArtkPose;
-            OptitrackListener.Instance.PacketNotification += OnOptitrackPose;
+            OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
             SteamVR_Utils.Event.Listen("new_poses", OnSteamVrPose);
         }
 
         void OnDisable()
         {
             ArToolkitListener.Instance.NewPoseDetected -= OnArtkPose;
-            OptitrackListener.Instance.PacketNotification -= OnOptitrackPose;
+            OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
             SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
         }
 
@@ -30,7 +31,7 @@ namespace Assets.Modules.Tracking
             transform.rotation = pose.Rotation;
         }
 
-        private void OnOptitrackPose(object sender, string packet)
+        private void OnOptitrackPose(List<OptitrackPose> poses)
         {
 
         }
