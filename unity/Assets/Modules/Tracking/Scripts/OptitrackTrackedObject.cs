@@ -1,92 +1,58 @@
 using UnityEngine;
-using System.Xml;
 using System;
 using System.Collections.Generic;
 
-/// <summary>
-/// Track object through SlipStream (NatNet's local server that streams via XML to Unity)
-/// </summary>
-public class OptitrackTrackedObject : MonoBehaviour
+namespace Assets.Modules.Tracking
 {
-    // Name in OptiTrack
-    public string TrackedName = "";
-
-    public bool TrackPosition = true;
-    public bool TrackOrientation = true;
-
-    public bool DrawMarkers;
-
-	void Start ()
+    /// <summary>
+    /// Track object through SlipStream (NatNet's local server that streams via XML to Unity)
+    /// </summary>
+    public class OptitrackTrackedObject : MonoBehaviour
     {
-        OptitrackListener.Instance.PacketNotification += new PacketReceivedHandler(OnPacketReceived);
-	}
+        // Name in OptiTrack
+        public string TrackedName = "";
 
-    void OnPacketReceived(object sender, string Packet)
-    {
-        XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.LoadXml(Packet);
+        public bool TrackPosition = true;
+        public bool TrackOrientation = true;
 
-        XmlNodeList rbList = xmlDoc.GetElementsByTagName("RigidBody");
+        public bool DrawMarkers;
 
-        for (int index = 0; index < rbList.Count; index++)
+        void OnEnable()
         {
-            var rbName = rbList[index].Attributes["Name"].InnerText;
+            OptitrackListener.Instance.PosesReceived += OnPosesReceived;
+        }
 
-            if (String.Compare(rbName, TrackedName, StringComparison.CurrentCultureIgnoreCase) == 0)
+        void OnDisable()
+        {
+            OptitrackListener.Instance.PosesReceived -= OnPosesReceived;
+        }
+
+        void OnPosesReceived(List<OptitrackPose> poses)
+        {
+            foreach (var pose in poses)
             {
+                if (pose.RigidbodyName != TrackedName)
+                {
+                    continue;
+                }
+
                 if (TrackPosition)
                 {
-                    float x = (float)System.Convert.ToDouble(rbList[index].Attributes["x"].InnerText);
-                    float y = (float)System.Convert.ToDouble(rbList[index].Attributes["y"].InnerText);
-                    float z = (float)System.Convert.ToDouble(rbList[index].Attributes["z"].InnerText);
-
-                    //== coordinate system conversion (right to left handed) ==--
-                    z = -z;
-                    Vector3 position = new Vector3(x, y, z);
-
-                    this.transform.position = position;
+                    transform.position = pose.Position;
                 }
 
                 if (TrackOrientation)
                 {
-                    float qx = (float)System.Convert.ToDouble(rbList[index].Attributes["qx"].InnerText);
-                    float qy = (float)System.Convert.ToDouble(rbList[index].Attributes["qy"].InnerText);
-                    float qz = (float)System.Convert.ToDouble(rbList[index].Attributes["qz"].InnerText);
-                    float qw = (float)System.Convert.ToDouble(rbList[index].Attributes["qw"].InnerText);
-
-                    //== coordinate system conversion (right to left handed) ==--
-
-                    qz = -qz;
-                    qw = -qw;
-
-                    Quaternion orientation = new Quaternion(qx, qy, qz, qw);
-
-                    this.transform.rotation = orientation;
+                    transform.rotation = pose.Rotation;
                 }
-
 
                 if (DrawMarkers)
                 {
-                    for (var j = 0; j < rbList[index].ChildNodes.Count; j++)
+                    foreach (var marker in pose.Markers)
                     {
-                        var marker = rbList[index].ChildNodes[j];
+                        string markerName = String.Format("Marker{0}_{1}", pose.Id, marker.Id);
 
-                        int rbID = System.Convert.ToInt32(rbList[index].Attributes["ID"].InnerText);
-                        int mID = System.Convert.ToInt32(marker.Attributes["ID"].InnerText);
-                        float mx = (float)System.Convert.ToDouble(marker.Attributes["x"].InnerText);
-                        float my = (float)System.Convert.ToDouble(marker.Attributes["y"].InnerText);
-                        float mz = (float)System.Convert.ToDouble(marker.Attributes["z"].InnerText);
-
-                        mz = -mz;
-
-                        Vector3 mPosition = new Vector3(mx, my, mz);
-                        Quaternion mOrientation = Quaternion.identity;
-
-                        string markerName = String.Format("Marker{0}_{1}", rbID, mID);
-
-                        GameObject markerObj;
-
-                        markerObj = GameObject.Find(markerName);
+                        var markerObj = GameObject.Find(markerName);
 
                         if (markerObj == null)
                         {
@@ -97,13 +63,10 @@ public class OptitrackTrackedObject : MonoBehaviour
                             markerObj.name = markerName;
                         }
 
-                        markerObj.transform.position = mPosition;
-                        markerObj.transform.rotation = mOrientation;
+                        markerObj.transform.position = marker.Position;
                     }
                 }
             }
-
-    
         }
     }
 }
