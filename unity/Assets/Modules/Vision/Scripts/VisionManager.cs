@@ -62,8 +62,11 @@ namespace Assets.Modules.Vision
             CamSource.Stop();
         }
 
+        System.IntPtr RenderEventFunc;
+
         IEnumerator Start()
         {
+            RenderEventFunc = ImageProcessing.GetRenderEventFunc();
             yield return StartCoroutine("CallPluginAtStartOfFrames");
         }
 
@@ -74,7 +77,7 @@ namespace Assets.Modules.Vision
             {
                 if (_isRunning)
                 {
-                    GL.IssuePluginEvent(ImageProcessing.GetRenderEventFunc(), 1);
+                    GL.IssuePluginEvent(RenderEventFunc, 1);
                 }
                 yield return new WaitForEndOfFrame();
             }
