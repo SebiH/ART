@@ -1,6 +1,7 @@
 #include "cameras/ActiveCamera.h"
 
 #include <algorithm>
+#include <chrono>
 #include "utils/Logger.h"
 
 using namespace ImageProcessing;
@@ -61,6 +62,19 @@ void ActiveCamera::FetchNewFrame()
 	// Use copy (instead of member) to avoid lock over whole FetchFrame operation
 	auto cam_src = GetSource();
 
+#if MEASURE_FPS
+	static auto s_last = std::chrono::high_resolution_clock::now();
+	static int s_fps_counter = 0;
+	auto duration = std::chrono::high_resolution_clock::now() - s_last;
+
+	if (std::chrono::duration_cast<std::chrono::seconds>(duration).count() >= 1)
+	{
+		DebugLog(std::string("FPS ") + std::to_string(s_fps_counter));
+		s_fps_counter = 0;
+		s_last = std::chrono::high_resolution_clock::now();
+	}
+#endif
+
 	if (!cam_src || !cam_src->IsOpen())
 	{
 		// TODO: not optimal..
@@ -71,6 +85,11 @@ void ActiveCamera::FetchNewFrame()
 	try
 	{
 		cam_src->PrepareNextFrame();
+
+#if MEASURE_FPS
+		s_fps_counter++;
+#endif
+		
 
 		{
 			std::unique_lock<std::mutex> frame_lock(mutex_);
