@@ -13,7 +13,7 @@ namespace Assets.Scripts
      *
      *  Would be best to inherit from SteamVR_TrackedObject, but relevant methods are private
      */
-    public class DelayedSteamVrTracking : MonoBehaviour
+    public class SteamVrDelayedTrackedObject : MonoBehaviour
     {
         public bool TrackRotation = true;
         public bool TrackPosition = true;

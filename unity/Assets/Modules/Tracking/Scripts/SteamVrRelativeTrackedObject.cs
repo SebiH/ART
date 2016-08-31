@@ -13,7 +13,7 @@ namespace Assets.Scripts
      *
      *  Would be best to inherit from SteamVR_TrackedObject, but relevant methods are private
      */
-    public class RelativeViveTracking : MonoBehaviour
+    public class SteamVrRelativeTrackedObject : MonoBehaviour
    {
         public EIndex relativeToIndex;
         public GameObject RotationAnchor;
