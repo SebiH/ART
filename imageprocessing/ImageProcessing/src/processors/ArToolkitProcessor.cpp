@@ -112,7 +112,8 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info)
 {
 	ARdouble transform_matrix[3][4];
-	arGetTransMatSquare(ar_3d_handle_l_, &info, 4.4, transform_matrix);
+	const Marker marker = GetMarker(info);
+	arGetTransMatSquare(ar_3d_handle_l_, &info, marker.size, transform_matrix);
 
 	return json{
 		{ "id", info.id },
@@ -357,4 +358,17 @@ void ArToolkitProcessor::SetProperties(const nlohmann::json config)
 	{
 		min_confidence_ = config["min_confidence"].get<double>();
 	}
+}
+
+const ArToolkitProcessor::Marker ArToolkitProcessor::GetMarker(const ARMarkerInfo &info) const
+{
+	for (auto &marker : markers_)
+	{
+		if (marker.pattern_id == info.id)
+		{
+			return marker;
+		}
+	}
+
+	throw std::exception("Unregistered marker");
 }

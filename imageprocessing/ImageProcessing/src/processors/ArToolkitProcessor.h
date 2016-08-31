@@ -84,5 +84,6 @@ namespace ImageProcessing
 
 		nlohmann::json ProcessMarkerInfo(ARMarkerInfo &info);
 		void DrawMarker(const ARMarkerInfo &info, const FrameSize &size, unsigned char *buffer);
+		const Marker GetMarker(const ARMarkerInfo &info) const;
 	};
 }
