@@ -110,8 +110,6 @@ namespace Assets.Modules.Tracking
                     transformMatrix.m33 = 1;
 
                     var pos = ExtractTranslationFromMatrix(ref transformMatrix);
-                    // ARToolkit cm -> Unity m
-                    pos = pos / 100f;
                     // invert to match camera
                     pos.y = -pos.y;
 

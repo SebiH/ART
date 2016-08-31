@@ -59,7 +59,7 @@ namespace ImageProcessing
 			},
 			"markers": [
 				{
-					"size": 5.5, // in mm
+					"size": 0.026, // in m! 2.6cm => 0.026
 					"pattern_path": "absolute/path/to/file.patt",
 					"type": "SINGLE", // SINGLE, MULTI (unsupported), NFT (unsupported)
 					"filter": 5.0 // cuttoff frequency for pose estimation (?) (optional)

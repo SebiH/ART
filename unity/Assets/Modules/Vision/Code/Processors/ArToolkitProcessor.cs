@@ -24,13 +24,13 @@ namespace Assets.Modules.Vision.Processors
                     },
                     ""markers"": [
                         {
-                            ""size"": 5.5,
+                            ""size"": 0.026,
                             ""pattern_path"": ""C:/code/resources/kanji.patt"",
                             ""type"": ""SINGLE"",
                             ""filter"": 5.0
                         },
                         {
-                            ""size"": 5.5,
+                            ""size"": 0.026,
                             ""pattern_path"": ""C:/code/resources/hiro.patt"",
                             ""type"": ""SINGLE"",
                             ""filter"": 5.0
