@@ -7,7 +7,7 @@ namespace Assets.Modules.Tracking
     {
         public readonly int Id;
         public readonly string Name;
-        public readonly Matrix4x4 PoseMatrix;
+        public Matrix4x4 PoseMatrix;
 
         public Vector3 Position
         {
