@@ -1,124 +1,161 @@
-
-//=============================================================================----
-// Copyright � NaturalPoint, Inc. All Rights Reserved.
-// 
-// This software is provided by the copyright holders and contributors "as is" and
-// any express or implied warranties, including, but not limited to, the implied
-// warranties of merchantability and fitness for a particular purpose are disclaimed.
-// In no event shall NaturalPoint, Inc. or contributors be liable for any direct,
-// indirect, incidental, special, exemplary, or consequential damages
-// (including, but not limited to, procurement of substitute goods or services;
-// loss of use, data, or profits; or business interruption) however caused
-// and on any theory of liability, whether in contract, strict liability,
-// or tort (including negligence or otherwise) arising in any way out of
-// the use of this software, even if advised of the possibility of such damage.
-//=============================================================================----
-
-// This script is intended to be attached to a Game Object.  It will receive
-// XML data from the NatNet UnitySample application and notify any listening
-// objects via the PacketNotification delegate.
-
-// Attach Body.cs to an empty Game Object and it will parse and create visual
-// game objects based on bone data.  Body.cs is meant to be a simple example 
-// of how to parse and display skeletal data in Unity.
-
-
 using UnityEngine;
-using System.Collections;
 using System;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Xml;
+using System.Collections.Generic;
 
-
-
-public delegate void PacketReceivedHandler(object sender, string PacketData);
-
-public class OptitrackListener : MonoBehaviour
+namespace Assets.Modules.Tracking
 {
-    public static OptitrackListener Instance;
+    public delegate void OptitrackPosesReceived(List<OptitrackPose> poses);
 
-	public string IP = "127.0.0.1";
-	public int Port  = 16000;
-	
-	public event PacketReceivedHandler PacketNotification;
-	
-	private IPEndPoint mRemoteIpEndPoint;
-	private Socket     mListener;
-	private byte[]     mReceiveBuffer;
-	private string     mPacket;
-	private int        mPreviousSubPacketIndex = 0;
-	private const int  kMaxSubPacketSize       = 1400;
-	
-	void Awake()
-	{
-        Instance = this;
+    public class OptitrackListener : MonoBehaviour
+    {
+        public static OptitrackListener Instance;
 
-		mReceiveBuffer = new byte[kMaxSubPacketSize];
-		mPacket        = System.String.Empty;
-		
-		mRemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Port);
-		mListener = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-		mListener.Bind(mRemoteIpEndPoint);
-		
-		mListener.Blocking          = false;
-		mListener.ReceiveBufferSize = 128*1024;
-	}
- 
-	public void UDPRead()
-	{
-		try
-		{
-			int bytesReceived = mListener.Receive(mReceiveBuffer);
-			
-			int maxSubPacketProcess = 200;
-			
-			while(bytesReceived>0 && maxSubPacketProcess>0)
-			{
-				//== ensure header is present ==--
-				if(bytesReceived>=2)
-				{
-					int  subPacketIndex = mReceiveBuffer[0];
-					bool lastPacket     = mReceiveBuffer[1]==1;
-					
-					if(subPacketIndex==0)
-					{
-						mPacket = System.String.Empty;
-					}
-					
-					if(subPacketIndex==0 || subPacketIndex==mPreviousSubPacketIndex+1)
-					{
-						mPacket += Encoding.ASCII.GetString(mReceiveBuffer, 2, bytesReceived-2);
-						
-						mPreviousSubPacketIndex = subPacketIndex;
-						
-						if(lastPacket)
-						{
-							//== ok packet has been created from sub packets and is complete ==--
-							
-							//== notify listeners ==--
-							
-							if(PacketNotification!=null)
-								PacketNotification(this, mPacket);
-						}
-					}			
-				}
-								
-				bytesReceived = mListener.Receive(mReceiveBuffer);
+        public string IP = "127.0.0.1";
+        public int Port = 16000;
 
-				//== time this out of packets are coming in faster than we can process ==--
-				maxSubPacketProcess--;
-			}
-		}
-		catch(Exception)
-		{
-            // ignore
+        public event OptitrackPosesReceived PosesReceived;
+
+        private IPEndPoint mRemoteIpEndPoint;
+        private Socket mListener;
+        private byte[] mReceiveBuffer;
+        private string mPacket;
+        private int mPreviousSubPacketIndex = 0;
+        private const int kMaxSubPacketSize = 1400;
+
+        void Awake()
+        {
+            Instance = this;
+
+            mReceiveBuffer = new byte[kMaxSubPacketSize];
+            mPacket = string.Empty;
+
+            mRemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Port);
+            mListener = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            mListener.Bind(mRemoteIpEndPoint);
+
+            mListener.Blocking = false;
+            mListener.ReceiveBufferSize = 128 * 1024;
         }
-	}
- 
-	void Update()
-	{
-		UDPRead();
-	
-	}
+
+        public void UDPRead()
+        {
+            try
+            {
+                int bytesReceived = mListener.Receive(mReceiveBuffer);
+
+                int maxSubPacketProcess = 200;
+
+                while (bytesReceived > 0 && maxSubPacketProcess > 0)
+                {
+                    //== ensure header is present ==--
+                    if (bytesReceived >= 2)
+                    {
+                        int subPacketIndex = mReceiveBuffer[0];
+                        bool lastPacket = mReceiveBuffer[1] == 1;
+
+                        if (subPacketIndex == 0)
+                        {
+                            mPacket = System.String.Empty;
+                        }
+
+                        if (subPacketIndex == 0 || subPacketIndex == mPreviousSubPacketIndex + 1)
+                        {
+                            mPacket += Encoding.ASCII.GetString(mReceiveBuffer, 2, bytesReceived - 2);
+
+                            mPreviousSubPacketIndex = subPacketIndex;
+
+                            if (lastPacket)
+                            {
+                                //== packet has been created from sub packets and is complete ==--
+                                SendPacketNotification(mPacket);
+                            }
+                        }
+                    }
+
+                    bytesReceived = mListener.Receive(mReceiveBuffer);
+
+                    //== time this out of packets are coming in faster than we can process ==--
+                    maxSubPacketProcess--;
+                }
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
+        }
+
+        private void SendPacketNotification(string packet)
+        {
+            XmlDocument xmlDoc = new XmlDocument();
+            xmlDoc.LoadXml(packet);
+
+            XmlNodeList rbList = xmlDoc.GetElementsByTagName("RigidBody");
+
+            var poses = new List<OptitrackPose>();
+    
+            for (int index = 0; index < rbList.Count; index++)
+            {
+                var pose = new OptitrackPose();
+
+                pose.Id = Convert.ToInt32(rbList[index].Attributes["ID"].InnerText);
+                var rbName = rbList[index].Attributes["Name"].InnerText;
+                pose.RigidbodyName = rbName;
+
+                float x = (float)Convert.ToDouble(rbList[index].Attributes["x"].InnerText);
+                float y = (float)Convert.ToDouble(rbList[index].Attributes["y"].InnerText);
+                float z = (float)Convert.ToDouble(rbList[index].Attributes["z"].InnerText);
+
+                //== coordinate system conversion (right to left handed) ==--
+                z = -z;
+                pose.Position = new Vector3(x, y, z);
+
+                float qx = (float)Convert.ToDouble(rbList[index].Attributes["qx"].InnerText);
+                float qy = (float)Convert.ToDouble(rbList[index].Attributes["qy"].InnerText);
+                float qz = (float)Convert.ToDouble(rbList[index].Attributes["qz"].InnerText);
+                float qw = (float)Convert.ToDouble(rbList[index].Attributes["qw"].InnerText);
+
+                //== coordinate system conversion (right to left handed) ==--
+
+                qz = -qz;
+                qw = -qw;
+
+                pose.Rotation = new Quaternion(qx, qy, qz, qw);
+
+                for (var j = 0; j < rbList[index].ChildNodes.Count; j++)
+                {
+                    var marker = new OptitrackPose.Marker();
+                    var markerXml = rbList[index].ChildNodes[j];
+
+                    marker.Id = Convert.ToInt32(markerXml.Attributes["ID"].InnerText);
+
+                    float mx = (float)Convert.ToDouble(markerXml.Attributes["x"].InnerText);
+                    float my = (float)Convert.ToDouble(markerXml.Attributes["y"].InnerText);
+                    float mz = (float)Convert.ToDouble(markerXml.Attributes["z"].InnerText);
+
+                    //== coordinate system conversion (right to left handed) ==--
+                    mz = -mz;
+
+                    marker.Position = new Vector3(mx, my, mz);
+
+                    pose.Markers.Add(marker);
+                }
+
+                poses.Add(pose);
+            }
+
+            if (PosesReceived != null)
+            {
+                PosesReceived(poses);
+            }
+        }
+
+        void Update()
+        {
+            UDPRead();
+        }
+    }
 }
