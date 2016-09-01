@@ -57,7 +57,7 @@ namespace Assets.Modules.Tracking
         private bool _hasNewOutput = false;
         private ArToolkitOutput _currentOutput;
 
-        void Start()
+        void OnEnable()
         {
             Instance = this;
 
@@ -68,7 +68,7 @@ namespace Assets.Modules.Tracking
             ArToolkitPipeline.AddOutput(_artkOutput);
         }
 
-        void OnDestroy()
+        void OnDisable()
         {
             ArToolkitPipeline.RemoveProcessor(_artkProcessor);
             ArToolkitPipeline.RemoveOutput(_artkOutput);
