@@ -23,12 +23,20 @@ namespace Assets.Modules.Tracking
             SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
         }
 
+        private Vector3 _position = Vector3.zero;
+        private Quaternion _rotation = Quaternion.identity;
 
         private void OnArtkPose(MarkerPose pose)
         {
-            transform.position = pose.Position;
+            _position = pose.Position;
             //transform.rotation = Quaternion.Inverse(rotation);
-            transform.rotation = pose.Rotation;
+            _rotation = pose.Rotation;
+        }
+
+        void Update()
+        {
+            transform.position = _position;
+            transform.rotation = _rotation;
         }
 
         private void OnOptitrackPose(List<OptitrackPose> poses)
@@ -40,7 +48,7 @@ namespace Assets.Modules.Tracking
         {
             var i = (int)OpenVR.k_unTrackedDeviceIndex_Hmd;
 
-            var poses = (Valve.VR.TrackedDevicePose_t[])args[0];
+            var poses = (TrackedDevicePose_t[])args[0];
             if (poses.Length <= i)
                 return;
 
