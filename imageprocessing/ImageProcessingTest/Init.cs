@@ -12,8 +12,8 @@ namespace ImageProcessingTest
 
         static void Main(string[] args)
         {
-            ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
-            //ImageProcessing.SetOvrCamera(2, 0);
+            //ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
+            ImageProcessing.SetOvrCamera(3, 0);
             ImageProcessing.StartImageProcessing();
 
             int pipeline = ImageProcessing.CreatePipeline();
