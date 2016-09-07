@@ -66,74 +66,11 @@ int DummyCameraSource::GetFrameChannels() const
 	return img_.channels();
 }
 
-int DummyCameraSource::GetCamExposure() const
-{
-	return 0;
-}
-
-void DummyCameraSource::SetCamExposure(const int val) const
+void DummyCameraSource::SetProperties(const nlohmann::json json_config)
 {
 }
 
-int DummyCameraSource::GetCamGain() const
+nlohmann::json DummyCameraSource::GetProperties() const
 {
-	return 0;
-}
-
-void DummyCameraSource::SetCamGain(const int val) const
-{
-}
-
-int DummyCameraSource::GetCamBLC() const
-{
-	return 0;
-}
-
-void DummyCameraSource::SetCamBLC(const int val) const
-{
-}
-
-bool DummyCameraSource::GetCamAutoWhiteBalance() const
-{
-	return false;
-}
-
-void DummyCameraSource::SetCamAutoWhiteBalance(const bool val) const
-{
-}
-
-int DummyCameraSource::GetCamWhiteBalanceR() const
-{
-	return 0;
-}
-
-void DummyCameraSource::SetCamWhiteBalanceR(const int val) const
-{
-}
-
-int DummyCameraSource::GetCamWhiteBalanceG() const
-{
-	return 0;
-}
-
-void DummyCameraSource::SetCamWhiteBalanceG(const int val) const
-{
-}
-
-int DummyCameraSource::GetCamWhiteBalanceB() const
-{
-	return 0;
-}
-
-void DummyCameraSource::SetCamWhiteBalanceB(const int val) const
-{
-}
-
-int DummyCameraSource::GetCamFps() const
-{
-	return 1;
-}
-
-void ImageProcessing::DummyCameraSource::SetCamExposurePerSec(const float val) const
-{
+	return nlohmann::json();
 }

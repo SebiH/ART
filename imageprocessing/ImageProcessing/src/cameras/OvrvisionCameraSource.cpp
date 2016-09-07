@@ -117,83 +117,14 @@ int OvrvisionCameraSource::GetFrameChannels() const
 	return 4;
 }
 
-int OvrvisionCameraSource::GetCamExposure() const
+
+void OvrvisionCameraSource::SetProperties(const nlohmann::json json_config)
 {
-	return ovr_camera_->GetCameraExposure();
+
 }
 
-void OvrvisionCameraSource::SetCamExposure(const int val) const
+nlohmann::json OvrvisionCameraSource::GetProperties() const
 {
-	ovr_camera_->SetCameraExposure(val);
+	return nlohmann::json();
 }
 
-void OvrvisionCameraSource::SetCamExposurePerSec(const float val) const
-{
-	ovr_camera_->SetCameraExposurePerSec(val);
-}
-
-
-int OvrvisionCameraSource::GetCamGain() const
-{
-	return ovr_camera_->GetCameraGain();
-}
-
-void OvrvisionCameraSource::SetCamGain(const int val) const
-{
-	ovr_camera_->SetCameraGain(val);
-}
-
-int OvrvisionCameraSource::GetCamBLC() const
-{
-	return ovr_camera_->GetCameraBLC();
-}
-
-void OvrvisionCameraSource::SetCamBLC(const int val) const
-{
-	ovr_camera_->SetCameraBLC(val);
-}
-
-bool OvrvisionCameraSource::GetCamAutoWhiteBalance() const
-{
-	return ovr_camera_->GetCameraWhiteBalanceAuto();
-}
-
-void OvrvisionCameraSource::SetCamAutoWhiteBalance(const bool val) const
-{
-	ovr_camera_->SetCameraWhiteBalanceAuto(val);
-}
-
-int OvrvisionCameraSource::GetCamWhiteBalanceR() const
-{
-	return ovr_camera_->GetCameraWhiteBalanceR();
-}
-
-void OvrvisionCameraSource::SetCamWhiteBalanceR(const int val) const
-{
-	ovr_camera_->SetCameraWhiteBalanceR(val);
-}
-
-int OvrvisionCameraSource::GetCamWhiteBalanceG() const
-{
-	return ovr_camera_->GetCameraWhiteBalanceG();
-}
-
-void OvrvisionCameraSource::SetCamWhiteBalanceG(const int val) const
-{
-	ovr_camera_->SetCameraWhiteBalanceG(val);
-}
-
-int OvrvisionCameraSource::GetCamWhiteBalanceB() const
-{
-	return ovr_camera_->GetCameraWhiteBalanceB();
-}
-
-void OvrvisionCameraSource::SetCamWhiteBalanceB(const int val) const
-{
-	ovr_camera_->SetCameraWhiteBalanceB(val);
-}
-
-int OvrvisionCameraSource::GetCamFps() const
-{
-	return ovr_camera_->GetCamFramerate();
-}

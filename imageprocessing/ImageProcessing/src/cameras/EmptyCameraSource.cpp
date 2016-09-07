@@ -45,74 +45,11 @@ int EmptyCameraSource::GetFrameChannels() const
 	return 3;
 }
 
-int EmptyCameraSource::GetCamExposure() const
-{
-	return 0;
-}
-
-void EmptyCameraSource::SetCamExposure(const int val) const
+void EmptyCameraSource::SetProperties(const nlohmann::json json_config)
 {
 }
 
-void EmptyCameraSource::SetCamExposurePerSec(const float val) const
+nlohmann::json EmptyCameraSource::GetProperties() const
 {
-}
-
-int EmptyCameraSource::GetCamGain() const
-{
-	return 0;
-}
-
-void EmptyCameraSource::SetCamGain(const int val) const
-{
-}
-
-int EmptyCameraSource::GetCamBLC() const
-{
-	return 0;
-}
-
-void EmptyCameraSource::SetCamBLC(const int val) const
-{
-}
-
-bool EmptyCameraSource::GetCamAutoWhiteBalance() const
-{
-	return false;
-}
-
-void EmptyCameraSource::SetCamAutoWhiteBalance(const bool val) const
-{
-}
-
-int EmptyCameraSource::GetCamWhiteBalanceR() const
-{
-	return 0;
-}
-
-void EmptyCameraSource::SetCamWhiteBalanceR(const int val) const
-{
-}
-
-int EmptyCameraSource::GetCamWhiteBalanceG() const
-{
-	return 0;
-}
-
-void EmptyCameraSource::SetCamWhiteBalanceG(const int val) const
-{
-}
-
-int EmptyCameraSource::GetCamWhiteBalanceB() const
-{
-	return 0;
-}
-
-void EmptyCameraSource::SetCamWhiteBalanceB(const int val) const
-{
-}
-
-int EmptyCameraSource::GetCamFps() const
-{
-	return 1;
+	return nlohmann::json();
 }

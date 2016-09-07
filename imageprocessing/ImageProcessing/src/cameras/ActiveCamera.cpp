@@ -33,7 +33,7 @@ void ActiveCamera::Stop()
 	{
 		is_running_ = false;
 		auto cam_src = GetSource();
-		if (cam_src.get() != nullptr && cam_src->IsOpen())
+		if (cam_src && cam_src->IsOpen())
 		{
 			cam_src->Close();
 		}
