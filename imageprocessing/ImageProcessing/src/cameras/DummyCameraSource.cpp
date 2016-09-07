@@ -66,7 +66,7 @@ int DummyCameraSource::GetFrameChannels() const
 	return img_.channels();
 }
 
-void DummyCameraSource::SetProperties(const nlohmann::json json_config)
+void DummyCameraSource::SetProperties(const nlohmann::json &json_config)
 {
 }
 

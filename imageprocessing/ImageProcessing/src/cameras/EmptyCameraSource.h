@@ -17,6 +17,6 @@ namespace ImageProcessing
 		virtual int GetFrameChannels() const override;
 
 		virtual nlohmann::json GetProperties() const override;
-		virtual void SetProperties(const nlohmann::json json_config) override;
+		virtual void SetProperties(const nlohmann::json &json_config) override;
 	};
 }

@@ -45,7 +45,7 @@ int EmptyCameraSource::GetFrameChannels() const
 	return 3;
 }
 
-void EmptyCameraSource::SetProperties(const nlohmann::json json_config)
+void EmptyCameraSource::SetProperties(const nlohmann::json &json_config)
 {
 }
 

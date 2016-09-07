@@ -118,9 +118,8 @@ int OvrvisionCameraSource::GetFrameChannels() const
 }
 
 
-void OvrvisionCameraSource::SetProperties(const nlohmann::json json_config)
+void OvrvisionCameraSource::SetProperties(const nlohmann::json &json_config)
 {
-
 }
 
 nlohmann::json OvrvisionCameraSource::GetProperties() const
