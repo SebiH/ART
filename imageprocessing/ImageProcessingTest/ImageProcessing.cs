@@ -36,64 +36,10 @@ namespace ImageProcessingTest
         public static extern int GetCamChannels();
 
         [DllImport("ImageProcessing")]
-        public static extern int GetCamGain();
+        public static extern string GetCamJsonProperties();
 
         [DllImport("ImageProcessing")]
-        public static extern void SetCamGain(int val);
-
-        [DllImport("ImageProcessing")]
-        public static extern int GetCamExposure();
-
-        [DllImport("ImageProcessing")]
-        public static extern void SetCamExposure(int val);
-
-        [DllImport("ImageProcessing")]
-        public static extern void SetCamExposurePerSec(float val);
-
-        [DllImport("ImageProcessing")]
-        public static extern int GetCamBLC();
-
-        [DllImport("ImageProcessing")]
-        public static extern void SetCamBLC(int val);
-
-        [DllImport("ImageProcessing")]
-        public static extern bool GetCamAutoWhiteBalance();
-
-        [DllImport("ImageProcessing")]
-        public static extern void SetCamAutoWhiteBalance(bool val);
-
-        [DllImport("ImageProcessing")]
-        public static extern int GetCamWhiteBalanceR();
-
-        [DllImport("ImageProcessing")]
-        public static extern void SetCamWhiteBalanceR(int val);
-
-        [DllImport("ImageProcessing")]
-        public static extern int GetCamWhiteBalanceG();
-
-        [DllImport("ImageProcessing")]
-        public static extern void SetCamWhiteBalanceG(int val);
-
-        [DllImport("ImageProcessing")]
-        public static extern int GetCamWhiteBalanceB();
-
-        [DllImport("ImageProcessing")]
-        public static extern void SetCamWhiteBalanceB(int val);
-
-        [DllImport("ImageProcessing")]
-        public static extern int GetCamFps();
-
-        [DllImport("ImageProcessing")]
-        public static extern float GetHMDRightGap(int at);
-
-        [DllImport("ImageProcessing")]
-        public static extern float GetCamFocalPoint();
-
-        [DllImport("ImageProcessing")]
-        public static extern int GetProcessingMode();
-
-        [DllImport("ImageProcessing")]
-        public static extern void SetProcessingMode(int mode);
+        public static extern void SetCamJsonProperties(string json_str_config);
 
         #endregion
 
