@@ -75,32 +75,6 @@ bool OvrvisionCameraSource::IsOpen() const
 
 
 
-
-
-float OvrvisionCameraSource::GetCamFocalPoint() const
-{
-	return ovr_camera_->GetCamFocalPoint();
-}
-
-
-float OvrvisionCameraSource::GetHMDRightGap(const int at) const
-{
-	return ovr_camera_->GetHMDRightGap(at);
-}
-
-void OvrvisionCameraSource::SetProcessingMode(const OVR::Camqt mode)
-{
-	process_mode_ = mode;
-}
-
-int OvrvisionCameraSource::GetProcessingMode() const
-{
-	return process_mode_;
-}
-
-
-
-
 int OvrvisionCameraSource::GetFrameWidth() const
 {
 	return ovr_camera_->GetCamWidth();
@@ -120,10 +94,79 @@ int OvrvisionCameraSource::GetFrameChannels() const
 
 void OvrvisionCameraSource::SetProperties(const nlohmann::json &json_config)
 {
+	if (json_config.count("ProcessingMode") != 0)
+	{
+		process_mode_ = static_cast<OVR::Camqt>(json_config["ProcessingMode"].get<int>());
+	}
+
+	if (json_config.count("Exposure") != 0)
+	{
+		auto exposure = json_config["Exposure"].get<int>();
+		ovr_camera_->SetCameraExposure(exposure);
+	}
+
+	if (json_config.count("ExposurePerSec") != 0)
+	{
+		auto fps = json_config["ExposurePerSec"].get<float>();
+		ovr_camera_->SetCameraExposurePerSec(fps);
+	}
+
+	if (json_config.count("Gain") != 0)
+	{
+		auto gain = json_config["Gain"].get<int>();
+		ovr_camera_->SetCameraGain(gain);
+	}
+
+	if (json_config.count("BLC") != 0)
+	{
+		auto blc = json_config["BLC"].get<int>();
+		ovr_camera_->SetCameraBLC(blc);
+	}
+
+	if (json_config.count("AutoWhiteBalance") != 0)
+	{
+		auto whitebalance = json_config["AutoWhiteBalance"].get<bool>();
+		ovr_camera_->SetCameraWhiteBalanceAuto(whitebalance);
+	}
+
+	if (json_config.count("WhiteBalanceR") != 0)
+	{
+		auto whitebalance = json_config["WhiteBalanceR"].get<int>();
+		ovr_camera_->SetCameraWhiteBalanceR(whitebalance);
+	}
+
+	if (json_config.count("WhiteBalanceG") != 0)
+	{
+		auto whitebalance = json_config["WhiteBalanceG"].get<int>();
+		ovr_camera_->SetCameraWhiteBalanceG(whitebalance);
+	}
+
+	if (json_config.count("WhiteBalanceB") != 0)
+	{
+		auto whitebalance = json_config["WhiteBalanceB"].get<int>();
+		ovr_camera_->SetCameraWhiteBalanceB(whitebalance);
+	}
 }
 
 nlohmann::json OvrvisionCameraSource::GetProperties() const
 {
-	return nlohmann::json();
+	if (IsOpen())
+	{
+		return nlohmann::json{
+			{ "HMDRightGap", { ovr_camera_->GetHMDRightGap(0), ovr_camera_->GetHMDRightGap(1), ovr_camera_->GetHMDRightGap(2) } },
+			{ "ProcessingMode", static_cast<int>(process_mode_) },
+			{ "Exposure", ovr_camera_->GetCameraExposure() },
+			{ "Gain", ovr_camera_->GetCameraGain() },
+			{ "BLC", ovr_camera_->GetCameraBLC() },
+			{ "AutoWhiteBalance", ovr_camera_->GetCameraWhiteBalanceAuto() },
+			{ "WhiteBalanceR", ovr_camera_->GetCameraWhiteBalanceR() },
+			{ "WhiteBalanceG", ovr_camera_->GetCameraWhiteBalanceG() },
+			{ "WhiteBalanceB", ovr_camera_->GetCameraWhiteBalanceB() }
+		};
+	}
+	else
+	{
+		return nlohmann::json();
+	}
 }
 

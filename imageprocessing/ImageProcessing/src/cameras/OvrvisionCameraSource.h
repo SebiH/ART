@@ -27,14 +27,6 @@ namespace ImageProcessing
 		virtual bool IsOpen() const override;
 
 		/*
-		 * Ovrvision specific properties
-		 */
-		float GetCamFocalPoint() const;
-		float GetHMDRightGap(const int at) const;
-		void SetProcessingMode(const OVR::Camqt mode);
-		int GetProcessingMode() const;
-
-		/*
 		* Camera properties
 		*/
 		virtual int GetFrameWidth() const override;
