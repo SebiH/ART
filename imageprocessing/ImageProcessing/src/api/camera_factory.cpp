@@ -82,7 +82,7 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOpenCVCamera()
 	}
 	catch (const std::exception &e)
 	{
-		DebugLog(std::string("Unable to set dummy source: ") + e.what());
+		DebugLog(std::string("Unable to set opencv source: ") + e.what());
 	}
 }
 

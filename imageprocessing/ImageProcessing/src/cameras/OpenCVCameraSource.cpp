@@ -1,5 +1,7 @@
 #include "cameras/OpenCVCameraSource.h"
 
+#include <chrono>
+#include <thread>
 #include <opencv2/imgproc.hpp>
 #include "utils/Logger.h"
 
@@ -18,6 +20,7 @@ OpenCVCameraSource::~OpenCVCameraSource()
 void OpenCVCameraSource::PrepareNextFrame()
 {
 	camera_->grab();
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 void OpenCVCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
@@ -25,14 +28,15 @@ void OpenCVCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * 
 	cv::Mat frame;
 	camera_->retrieve(frame);
 
-	if (frame.channels() == 4)
+	if (frame.channels() == 3)
 	{
-		// convert back to 3-channel BGR
-		cv::cvtColor(frame, frame, CV_BGRA2BGR);
+		// convert back to 4-channel BGRA for easier unity handling
+		cv::cvtColor(frame, frame, CV_BGR2BGRA);
 	}
 	else if (frame.channels() != GetFrameChannels())
 	{
-		throw std::exception("Camera provided unexpected amount of channels");
+		DebugLog("Camera provided unknown amount of channels");
+		//throw std::exception("Camera provided unexpected amount of channels");
 	}
 
 	auto buffer_size = GetFrameWidth() * GetFrameHeight() * GetFrameChannels();
@@ -79,7 +83,7 @@ int OpenCVCameraSource::GetFrameHeight() const
 int OpenCVCameraSource::GetFrameChannels() const
 {
 	//return static_cast<int>(camera_->get(cv::CAP_PROP_ ? ));
-	return 3;
+	return 4;
 }
 
 nlohmann::json OpenCVCameraSource::GetProperties() const
