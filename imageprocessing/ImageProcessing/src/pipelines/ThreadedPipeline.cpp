@@ -115,7 +115,7 @@ void ThreadedPipeline::Run()
 		auto frame = CreateFrame();
 		try
 		{
-			camera->WriteFrame(frame.get());
+			current_frame_id = camera->WriteFrame(frame.get());
 		}
 		catch (const std::exception &e)
 		{
