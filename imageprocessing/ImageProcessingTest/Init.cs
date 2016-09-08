@@ -10,11 +10,19 @@ namespace ImageProcessingTest
             //Debug.WriteLine(msg);
         }
 
+        static void GetPropertiesCallback(string msg)
+        {
+            Debug.WriteLine(msg);
+        }
+
         static void Main(string[] args)
         {
             //ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
-            ImageProcessing.SetOvrCamera(3, 0);
+            ImageProcessing.SetOvrCamera(2, 0);
+            //ImageProcessing.SetOpenCVCamera();
             ImageProcessing.StartImageProcessing();
+
+            ImageProcessing.GetCamJsonProperties(GetPropertiesCallback);
 
             int pipeline = ImageProcessing.CreatePipeline();
             int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");

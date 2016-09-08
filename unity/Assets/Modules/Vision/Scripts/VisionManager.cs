@@ -8,58 +8,45 @@ namespace Assets.Modules.Vision
     {
         public static VisionManager Instance;
 
+        private CameraSource _activeCamera;
+        public CameraSource ActiveCamera
+        {
+            get { return _activeCamera; }
+            set
+            {
+                _activeCamera = value;
+                if (CameraSourceChanged != null)
+                {
+                    CameraSourceChanged(value);
+                }
+            }
+        }
+
         public delegate void CameraSourceChangedHandler(CameraSource newCamera);
         public event CameraSourceChangedHandler CameraSourceChanged;
 
         private bool _isRunning = false;
-
-
-        private CameraSource _prevCamSource;
-        public CameraSource CamSource;
-
 
         private static void OnDebugMessage(string message)
         {
             Debug.Log("[ImageProcessing]: " + message);
         }
 
-        void Awake()
+        void OnEnable()
         {
             Instance = this;
 
             ImageProcessing.RegisterLoggerCallback(OnDebugMessage);
 
-            CamSource.Start();
             ImageProcessing.StartImageProcessing();
             _isRunning = true;
         }
 
-        void Update()
-        {
-            if (_prevCamSource != CamSource)
-            {
-                Debug.Log("New camerasource detected, firing events");
 
-                if (_prevCamSource != null)
-                {
-                    _prevCamSource.Stop();
-                }
-
-                CamSource.Start();
-                _prevCamSource = CamSource;
-
-                if (CameraSourceChanged != null)
-                {
-                    CameraSourceChanged(CamSource);
-                }
-            }
-        }
-
-        void OnDestroy()
+        void OnDisable()
         {
             _isRunning = false;
             ImageProcessing.StopImageProcessing();
-            CamSource.Stop();
         }
 
         System.IntPtr RenderEventFunc;
@@ -69,7 +56,6 @@ namespace Assets.Modules.Vision
             RenderEventFunc = ImageProcessing.GetRenderEventFunc();
             yield return StartCoroutine("CallPluginAtStartOfFrames");
         }
-
 
         private IEnumerator CallPluginAtStartOfFrames()
         {

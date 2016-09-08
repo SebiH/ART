@@ -45,17 +45,16 @@ extern "C" UNITY_INTERFACE_EXPORT int GetCamChannels()
 	}
 }
 
-extern "C" UNITY_INTERFACE_EXPORT const char * GetCamJsonProperties()
+// workaround since strings can't easily be returned to c#
+typedef void(__stdcall * PropertyCallback) (const char *str);
+extern "C" UNITY_INTERFACE_EXPORT void GetCamJsonProperties(PropertyCallback callback)
 {
 	auto cam = ImageProcessing::ActiveCamera::Instance()->GetSource();
 
 	if (cam)
 	{
-		return cam->GetProperties().dump().c_str();
-	}
-	else
-	{
-		return "{}";
+		auto props = cam->GetProperties();
+		callback(props.dump(4).c_str());
 	}
 }
 

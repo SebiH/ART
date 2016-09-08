@@ -38,8 +38,9 @@ namespace ImageProcessingTest
         [DllImport("ImageProcessing")]
         public static extern int GetCamChannels();
 
+        public delegate void PropertyCallback(string json_properties);
         [DllImport("ImageProcessing")]
-        public static extern string GetCamJsonProperties();
+        public static extern void GetCamJsonProperties(PropertyCallback callback);
 
         [DllImport("ImageProcessing")]
         public static extern void SetCamJsonProperties(string json_str_config);

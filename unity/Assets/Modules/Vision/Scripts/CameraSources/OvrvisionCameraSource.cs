@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using UnityEngine;
 
 namespace Assets.Modules.Vision.CameraSources
 {
@@ -33,17 +31,64 @@ namespace Assets.Modules.Vision.CameraSources
         private ProcessingMode _prevCamMode;
         public ProcessingMode CamMode = ProcessingMode.DemosaicRemap; 
 
+
+        [Serializable]
+        private struct OvrSettings
+        {
+            public float[] HMDRightGap;
+            public float FocalPoint;
+            public int Exposure;
+            public int Gain;
+            public int BLC;
+            public bool AutoWhiteBalance;
+            public int WhiteBalanceR;
+            public int WhiteBalanceG;
+            public int WhiteBalanceB;
+        }
+
+        private OvrSettings _sourceSettings;
+
+        [Range(1, 47)]
+        public int Gain = 8;
+
+        [Range(0, 32767)]
+        public int Exposure = 12960;
+
+        [Range(0, 1023)]
+        public int BLC = 32;
+
+        public bool AutoWhiteBalance = true;
+
+        [Range(0, 4095)]
+        public int WhiteBalanceR = 1474;
+
+        [Range(0, 4095)]
+        public int WhiteBalanceG = 1024;
+
+        [Range(0, 4095)]
+        public int WhiteBalanceB = 1738;
+
+        public float GetFocalPoint()
+        {
+            return _sourceSettings.FocalPoint * 0.001f; // mm -> m
+        }
+
+        public Vector3 GetHMDRightGap()
+        {
+            return new Vector3(_sourceSettings.HMDRightGap[0] * 0.001f, _sourceSettings.HMDRightGap[1] * 0.001f, _sourceSettings.HMDRightGap[2] * 0.001f); // mm -> m
+        }
+
         public override void InitCamera()
         {
             _prevCamQuality = CamQuality;
             _prevCamMode = CamMode;
             ImageProcessing.SetOvrCamera((int)CamQuality, (int)CamMode);
+
+            UpdateCameraProperties(true);
         }
 
-        protected override void Update()
+        protected void Update()
         {
-            base.Update();
-
             bool hasModeChanged = (_prevCamMode != CamMode);
             bool hasQualityChanged = (_prevCamQuality != CamQuality);
 
@@ -51,6 +96,80 @@ namespace Assets.Modules.Vision.CameraSources
             {
                 InitCamera();
             }
+
+            UpdateCameraProperties();
         }
+
+        private void UpdateCameraProperties(bool force = false)
+        {
+            bool hasPropertyChanged = force;
+
+            if (Exposure != _sourceSettings.Exposure)
+            {
+                _sourceSettings.Exposure = Exposure;
+                hasPropertyChanged = true;
+            }
+
+            if (Gain != _sourceSettings.Gain)
+            {
+                _sourceSettings.Gain = Gain;
+                hasPropertyChanged = true;
+            }
+
+            if (BLC != _sourceSettings.BLC)
+            {
+                _sourceSettings.BLC = BLC;
+                hasPropertyChanged = true;
+            }
+
+            if (AutoWhiteBalance != _sourceSettings.AutoWhiteBalance)
+            {
+                _sourceSettings.AutoWhiteBalance = AutoWhiteBalance;
+                hasPropertyChanged = true;
+            }
+
+            if (WhiteBalanceR != _sourceSettings.WhiteBalanceR)
+            {
+                _sourceSettings.WhiteBalanceR = WhiteBalanceR;
+                hasPropertyChanged = true;
+            }
+
+            if (WhiteBalanceG != _sourceSettings.WhiteBalanceG)
+            {
+                _sourceSettings.WhiteBalanceG = WhiteBalanceG;
+                hasPropertyChanged = true;
+            }
+
+            if (WhiteBalanceB != _sourceSettings.WhiteBalanceB)
+            {
+                _sourceSettings.WhiteBalanceB = WhiteBalanceB;
+                hasPropertyChanged = true;
+            }
+
+            if (hasPropertyChanged)
+            {
+                // apply settings
+                var newConfig = JsonUtility.ToJson(_sourceSettings);
+                ImageProcessing.SetCamJsonProperties(newConfig);
+
+                // load new settings
+                ImageProcessing.GetCamJsonProperties(GetPropertyCallback);
+
+                // make sure settings are synced, in case a value was out of range
+                Gain = _sourceSettings.Gain;
+                Exposure = _sourceSettings.Exposure;
+                BLC = _sourceSettings.BLC;
+                AutoWhiteBalance = _sourceSettings.AutoWhiteBalance;
+                WhiteBalanceR = _sourceSettings.WhiteBalanceR;
+                WhiteBalanceG = _sourceSettings.WhiteBalanceG;
+                WhiteBalanceB = _sourceSettings.WhiteBalanceB;
+            }
+        }
+
+        private void GetPropertyCallback(string json_properties_str)
+        {
+            _sourceSettings = JsonUtility.FromJson<OvrSettings>(json_properties_str);
+        }
+
     }
 }

@@ -17,6 +17,7 @@ namespace Assets.Modules.Vision
         void Start()
         {
             VisionManager.Instance.CameraSourceChanged += Init;
+            Init(VisionManager.Instance.ActiveCamera);
         }
 
         void Init(CameraSource cam)
@@ -40,7 +41,13 @@ namespace Assets.Modules.Vision
             {
                 var aspectRatio = new Vector2((float)(imageWidth) / (float)(imageHeight), -1);
                 transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
-                transform.localPosition = new Vector3(0, 0, cam.SourceFocalPoint + 0.02f);
+
+                var ovrCam = cam as OvrvisionCameraSource;
+
+                if (ovrCam != null)
+                {
+                    transform.localPosition = new Vector3(0, 0, ovrCam.GetFocalPoint() + 0.02f);
+                }
             }
 
         }
