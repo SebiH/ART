@@ -24,7 +24,7 @@ namespace ImageProcessing
 
 		virtual void RegisterResult(const std::shared_ptr<const FrameData> &result)
 		{
-			std::unique_lock<std::mutex> lock(result_mutex_);
+			std::lock_guard<std::mutex> lock(result_mutex_);
 			current_result_ = result;
 		}
 
@@ -33,7 +33,7 @@ namespace ImageProcessing
 			std::shared_ptr<const FrameData> local_result;
 
 			{
-				std::unique_lock<std::mutex> lock(result_mutex_);
+				std::lock_guard<std::mutex> lock(result_mutex_);
 				local_result = current_result_;
 			}
 

@@ -92,7 +92,7 @@ void ActiveCamera::FetchNewFrame()
 		
 
 		{
-			std::unique_lock<std::mutex> frame_lock(mutex_);
+			std::lock_guard<std::mutex> frame_lock(mutex_);
 
 			if (cam_src != camera_source_)
 			{
@@ -115,7 +115,7 @@ void ActiveCamera::FetchNewFrame()
 
 void ActiveCamera::SetActiveSource(const std::shared_ptr<CameraSourceInterface> &cam)
 {
-	std::unique_lock<std::mutex> lock(mutex_);
+	std::lock_guard<std::mutex> lock(mutex_);
 	camera_source_ = cam;
 
 	if (cam)
@@ -137,7 +137,7 @@ void ActiveCamera::SetActiveSource(const std::shared_ptr<CameraSourceInterface> 
 
 std::shared_ptr<CameraSourceInterface> ActiveCamera::GetSource()
 {
-	std::unique_lock<std::mutex> lock(mutex_);
+	std::lock_guard<std::mutex> lock(mutex_);
 	return camera_source_;
 }
 
@@ -159,7 +159,7 @@ int ActiveCamera::WriteFrame(const FrameData *frame)
 	auto current_framecounter = frame_counter_.load();
 
 	{
-		std::unique_lock<std::mutex> lock(mutex_);
+		std::lock_guard<std::mutex> lock(mutex_);
 
 		if (frame->size != current_framesize_)
 		{

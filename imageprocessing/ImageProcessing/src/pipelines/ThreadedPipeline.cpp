@@ -31,7 +31,7 @@ void ThreadedPipeline::ResizeBuffers(const FrameSize &new_size)
 	auto buffer_size = new_size.BufferSize();
 
 	{
-		std::unique_lock<std::mutex> lock(buffer_mutex_);
+		std::lock_guard<std::mutex> lock(buffer_mutex_);
 
 		back_buffer_left_ = std::shared_ptr<unsigned char>(new unsigned char[buffer_size], std::default_delete<unsigned char[]>());
 		back_buffer_right_ = std::shared_ptr<unsigned char>(new unsigned char[buffer_size], std::default_delete<unsigned char[]>());
@@ -45,13 +45,13 @@ void ThreadedPipeline::ResizeBuffers(const FrameSize &new_size)
 std::shared_ptr<const FrameData> ThreadedPipeline::CreateFrame()
 {
 	auto frame_id = frame_uid_generator.GetUID();
-	std::unique_lock<std::mutex> lock(buffer_mutex_);
+	std::lock_guard<std::mutex> lock(buffer_mutex_);
 	return std::make_shared<FrameData>(frame_id, back_buffer_left_, back_buffer_right_, current_framesize_);
 }
 
 void ThreadedPipeline::SwitchBuffers()
 {
-	std::unique_lock<std::mutex> lock(buffer_mutex_);
+	std::lock_guard<std::mutex> lock(buffer_mutex_);
 
 	auto tmp_left = back_buffer_left_;
 	auto tmp_right = back_buffer_right_;
@@ -124,7 +124,7 @@ void ThreadedPipeline::Run()
 		}
 
 		{
-			std::unique_lock<std::mutex> lock(list_mutex_);
+			std::lock_guard<std::mutex> lock(list_mutex_);
 			// pass frame into all processing modules
 			for (auto processor : processors_)
 			{
@@ -149,14 +149,14 @@ void ThreadedPipeline::Run()
 
 void ThreadedPipeline::AddProcessor(std::shared_ptr<Processor> &processor)
 {
-	std::unique_lock<std::mutex> lock(list_mutex_);
+	std::lock_guard<std::mutex> lock(list_mutex_);
 	processors_.push_back(processor);
 }
 
 
 std::shared_ptr<Processor> ThreadedPipeline::GetProcessor(UID processor_id)
 {
-	std::unique_lock<std::mutex> lock(list_mutex_);
+	std::lock_guard<std::mutex> lock(list_mutex_);
 	for (auto processor : processors_)
 	{
 		if (processor->Id() == processor_id)
@@ -171,7 +171,7 @@ std::shared_ptr<Processor> ThreadedPipeline::GetProcessor(UID processor_id)
 
 void ThreadedPipeline::RemoveProcessor(UID processor_id)
 {
-	std::unique_lock<std::mutex> lock(list_mutex_);
+	std::lock_guard<std::mutex> lock(list_mutex_);
 	processors_.erase(std::remove_if(processors_.begin(), processors_.end(), [processor_id](const std::shared_ptr<Processor> &processor) {
 		return processor->Id() == processor_id;
 	}), processors_.end());
@@ -182,14 +182,14 @@ void ThreadedPipeline::RemoveProcessor(UID processor_id)
 
 void ThreadedPipeline::AddOutput(std::shared_ptr<Output> &output)
 {
-	std::unique_lock<std::mutex> lock(list_mutex_);
+	std::lock_guard<std::mutex> lock(list_mutex_);
 	outputs_.push_back(output);
 }
 
 
 std::shared_ptr<Output> ThreadedPipeline::GetOutput(UID output_id)
 {
-	std::unique_lock<std::mutex> lock(list_mutex_);
+	std::lock_guard<std::mutex> lock(list_mutex_);
 	for (auto output : outputs_)
 	{
 		if (output->Id() == output_id)
@@ -204,7 +204,7 @@ std::shared_ptr<Output> ThreadedPipeline::GetOutput(UID output_id)
 
 void ThreadedPipeline::RemoveOutput(UID output_id)
 {
-	std::unique_lock<std::mutex> lock(list_mutex_);
+	std::lock_guard<std::mutex> lock(list_mutex_);
 	outputs_.erase(std::remove_if(outputs_.begin(), outputs_.end(), [output_id](const std::shared_ptr<Output> &output) {
 		return output->Id() == output_id;
 	}), outputs_.end());
@@ -213,7 +213,7 @@ void ThreadedPipeline::RemoveOutput(UID output_id)
 
 void ThreadedPipeline::FlushOutputs()
 {
-	std::unique_lock<std::mutex> lock(list_mutex_);
+	std::lock_guard<std::mutex> lock(list_mutex_);
 	for (auto output : outputs_)
 	{
 		output->WriteResult();

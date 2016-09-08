@@ -20,7 +20,7 @@ OvrvisionCameraSource::~OvrvisionCameraSource()
 
 void OvrvisionCameraSource::PrepareNextFrame()
 {
-	std::unique_lock<std::mutex> lock(mutex_);
+	std::lock_guard<std::mutex> lock(mutex_);
 	if (IsOpen())
 	{
 		ovr_camera_->PreStoreCamData(process_mode_);
@@ -34,7 +34,7 @@ void OvrvisionCameraSource::PrepareNextFrame()
 
 void OvrvisionCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
 {
-	std::unique_lock<std::mutex> lock(mutex_);
+	std::lock_guard<std::mutex> lock(mutex_);
 	if (IsOpen())
 	{
 		ovr_camera_->GetCamImageBGRA(left_buffer, OVR::Cameye::OV_CAMEYE_LEFT);
@@ -47,7 +47,7 @@ void OvrvisionCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char
 
 void OvrvisionCameraSource::Open()
 {
-	std::unique_lock<std::mutex> lock(mutex_);
+	std::lock_guard<std::mutex> lock(mutex_);
 	if (!IsOpen())
 	{
 		auto open_success = ovr_camera_->Open(0, quality_);
@@ -61,7 +61,7 @@ void OvrvisionCameraSource::Open()
 
 void OvrvisionCameraSource::Close()
 {
-	std::unique_lock<std::mutex> lock(mutex_);
+	std::lock_guard<std::mutex> lock(mutex_);
 	if (IsOpen())
 	{
 		ovr_camera_->Close();
