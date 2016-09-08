@@ -20,6 +20,9 @@ namespace Assets.Modules.Vision
         public static extern void SetDummyCamera(string filepath);
 
         [DllImport("ImageProcessing")]
+        public static extern void SetOpenCVCamera();
+
+        [DllImport("ImageProcessing")]
         public static extern void SetEmptyCamera();
 
         #endregion

@@ -7,6 +7,7 @@
 #include "cameras/EmptyCameraSource.h"
 #include "cameras/DummyCameraSource.h"
 #include "cameras/OvrvisionCameraSource.h"
+#include "cameras/OpenCVCameraSource.h"
 #include "utils/Logger.h"
 
 
@@ -72,6 +73,18 @@ extern "C" UNITY_INTERFACE_EXPORT void SetDummyCamera(const char *filepath)
 	}
 }
 
+extern "C" UNITY_INTERFACE_EXPORT void SetOpenCVCamera()
+{
+	try
+	{
+		std::shared_ptr<ImageProcessing::CameraSourceInterface> opencv_source = std::make_shared<ImageProcessing::OpenCVCameraSource>();
+		SetCamera(opencv_source);
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to set dummy source: ") + e.what());
+	}
+}
 
 extern "C" UNITY_INTERFACE_EXPORT void SetEmptyCamera()
 {
