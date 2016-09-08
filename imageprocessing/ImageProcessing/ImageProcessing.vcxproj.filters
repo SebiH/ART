@@ -75,6 +75,9 @@
     <ClCompile Include="src\frames\JsonFrameData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\cameras\OpenCVCameraSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h">
@@ -141,6 +144,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\processors\ArToolkitProcessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\OpenCVCameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
