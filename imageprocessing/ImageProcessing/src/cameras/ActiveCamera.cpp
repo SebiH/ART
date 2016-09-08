@@ -38,6 +38,7 @@ void ActiveCamera::Stop()
 			cam_src->Close();
 		}
 
+		frame_notifier_.notify_all();
 		thread_.join();
 	}
 	catch (const std::exception &e)
@@ -145,12 +146,11 @@ std::shared_ptr<CameraSourceInterface> ActiveCamera::GetSource()
 void ActiveCamera::WaitForNewFrame(int consumer_frame_id)
 {
 	std::unique_lock<std::mutex> lock(frame_id_mutex_);
-	// TODO: timing out not optimal, but currently necessary to join thread for StopImageProcessing() if no source is set
-	auto success = frame_notifier_.wait_for(lock, std::chrono::seconds(2), [&]() { return frame_counter_ > consumer_frame_id; });
+	frame_notifier_.wait(lock, [&]() { return (frame_counter_ > consumer_frame_id) || !(is_running_); });
 
-	if (!success)
+	if (!is_running_)
 	{
-		throw std::exception("Waited too long");
+		throw std::exception("Thread is no longer active");
 	}
 }
 
