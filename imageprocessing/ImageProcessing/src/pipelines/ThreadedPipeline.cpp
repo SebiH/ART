@@ -89,8 +89,6 @@ void ThreadedPipeline::Stop()
 }
 
 
-#include "frames/JsonFrameData.h"
-
 void ThreadedPipeline::Run()
 {
 	auto camera = ActiveCamera::Instance();

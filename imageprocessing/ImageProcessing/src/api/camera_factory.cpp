@@ -22,13 +22,13 @@ extern "C" UNITY_INTERFACE_EXPORT void StopImageProcessing()
 }
 
 
-static void SetCamera(std::shared_ptr<ImageProcessing::CameraSourceInterface> &new_camera)
+static void SetCamera(const std::shared_ptr<ImageProcessing::CameraSourceInterface> &new_camera)
 {
 	auto active_camera = ImageProcessing::ActiveCamera::Instance();
 	auto cam_src = active_camera->GetSource();
 
 	// auto close old cam (if exists)
-	if (cam_src.get() != nullptr && cam_src->IsOpen())
+	if (cam_src && cam_src->IsOpen())
 	{
 		cam_src->Close();
 	}
