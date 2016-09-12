@@ -40,20 +40,21 @@ extern "C" UNITY_INTERFACE_EXPORT void RemoveProcessor(const int pipeline_id, co
 	}
 }
 
-extern "C" UNITY_INTERFACE_EXPORT const char* GetProcessorProperties(const int pipeline_id, const int processor_id)
+// workaround since strings can't easily be returned to c#
+typedef void(__stdcall * ProcessorPropertyCallback) (const char *str);
+extern "C" UNITY_INTERFACE_EXPORT void GetProcessorProperties(const int pipeline_id, const int processor_id, ProcessorPropertyCallback callback)
 {
 	try
 	{
 		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
 		auto processor = pipeline->GetProcessor(processor_id);
-		return processor->GetProperties().dump().c_str();
+
+		callback(processor->GetProperties().dump().c_str());
 	}
 	catch (const std::exception &e)
 	{
 		DebugLog(std::string("Unable to get processor config: ") + e.what());
-		return "Error";
 	}
-
 }
 
 extern "C" UNITY_INTERFACE_EXPORT void SetProcessorProperties(const int pipeline_id, const int processor_id, const char *json_config_str)

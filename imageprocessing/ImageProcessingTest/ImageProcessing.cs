@@ -95,8 +95,9 @@ namespace ImageProcessingTest
         [DllImport("ImageProcessing")]
         public static extern int RemoveProcessor(int pipeline_id, int processor_id);
 
+        public delegate void ProcessorPropertyCallback(string json_properties);
         [DllImport("ImageProcessing")]
-        public static extern string GetProcessorProperties(int pipeline_id, int processor_id);
+        public static extern void GetProcessorProperties(int pipeline_id, int processor_id, ProcessorPropertyCallback callback);
 
         [DllImport("ImageProcessing")]
         public static extern void SetProcessorProperties(int pipeline_id, int processor_id, string json_config_str);

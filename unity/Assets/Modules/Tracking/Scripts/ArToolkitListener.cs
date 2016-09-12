@@ -52,6 +52,9 @@ namespace Assets.Modules.Tracking
         public delegate void NewPoseHandler(MarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
 
+        [Range(0, 1)]
+        public float MinConfidence = 0.5f;
+
         private ArToolkitProcessor _artkProcessor;
         private JsonOutput _artkOutput;
 
@@ -107,6 +110,13 @@ namespace Assets.Modules.Tracking
                 //{
                 //    ProcessMarker(marker);
                 //}
+            }
+
+            if (MinConfidence != _artkProcessor.MinConfidence)
+            {
+                _artkProcessor.MinConfidence = MinConfidence;
+                // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
+                MinConfidence = _artkProcessor.MinConfidence;
             }
 
 
