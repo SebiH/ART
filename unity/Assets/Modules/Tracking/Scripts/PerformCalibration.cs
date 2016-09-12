@@ -1,3 +1,4 @@
+using Assets.Modules.Core.Util;
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
@@ -6,7 +7,40 @@ namespace Assets.Modules.Tracking
 {
     public class PerformCalibration : MonoBehaviour
     {
-        public bool IsReadyForCalibration;
+        const float SteadyPosThreshold = 0.2f;
+        const float SteadyAngleThreshold = 2f;
+
+        // will be set by script
+        public bool IsReadyForCalibration = false;
+        // will be set by script
+        public bool IsCalibrated = false;
+
+
+        // optional camera to track camera via ArToolkit
+        public Camera ArtkCamera;
+        public string ArtkCalibrationName = "kanji";
+        // will be set by script
+        public bool HasSteadyArtkPose = false;
+
+        private Vector3 _artkPos = Vector3.zero;
+        private Quaternion _artkRot  = Quaternion.identity;
+
+
+        public List<OptitrackPose.Marker> CalibrationOffsets = new List<OptitrackPose.Marker>();
+        public string OptitrackCalibrationName = "CalibrationHelper";
+        public string OptitrackCameraName = "HMD";
+        // will be set by script
+        public bool HasSteadyOptitrackCalibrationPose = false;
+        // will be set by script
+        public bool HasSteadyOptitrackCameraPose = false;
+
+        private OptitrackPose _optitrackCalibrationPose;
+        private OptitrackPose _optitrackCameraPose;
+
+        // will be set by script
+        public bool HasSteadyOpenVrPose = false;
+        private Quaternion _ovrRot = Quaternion.identity;
+
 
         void OnEnable()
         {
@@ -23,25 +57,66 @@ namespace Assets.Modules.Tracking
             SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
         }
 
-        private Vector3 _position = Vector3.zero;
-        private Quaternion _rotation = Quaternion.identity;
+        void Update()
+        {
+            IsReadyForCalibration = HasSteadyOptitrackCameraPose && HasSteadyOptitrackCalibrationPose && HasSteadyOpenVrPose && HasSteadyArtkPose;
+
+            if (ArtkCamera != null)
+            {
+                ArtkCamera.transform.localPosition = _artkPos;
+                ArtkCamera.transform.localRotation = _artkRot;
+            }
+        }
+
 
         private void OnArtkPose(MarkerPose pose)
         {
-            _position = pose.Position;
-            //transform.rotation = Quaternion.Inverse(rotation);
-            _rotation = pose.Rotation;
-        }
+            if (pose.Name == ArtkCalibrationName)
+            {
+                // we're interested in camera's position relative to marker, not markerposition
+                // -> we can get camera position by inverting marker transformation matrix
+                var invPoseMatrix = pose.PoseMatrix;
 
-        void Update()
-        {
-            transform.position = _position;
-            transform.rotation = _rotation;
+                var prevPos = _artkPos;
+                var prevRot = _artkRot;
+
+                _artkPos = MatrixUtils.ExtractTranslationFromMatrix(invPoseMatrix);
+                _artkRot = MatrixUtils.ExtractRotationFromMatrix(invPoseMatrix);
+
+                HasSteadyArtkPose = (_artkPos - prevPos).sqrMagnitude < SteadyPosThreshold;
+            }
         }
 
         private void OnOptitrackPose(List<OptitrackPose> poses)
         {
+            foreach (var pose in poses)
+            {
+                if (pose.RigidbodyName == OptitrackCalibrationName)
+                {
+                    SaveOptitrackPose(pose, ref _optitrackCalibrationPose, ref HasSteadyOptitrackCalibrationPose);
+                }
 
+                if (pose.RigidbodyName == OptitrackCameraName)
+                {
+                    SaveOptitrackPose(pose, ref _optitrackCameraPose, ref HasSteadyOptitrackCameraPose);
+                }
+            }
+        }
+
+        private void SaveOptitrackPose(OptitrackPose newPose, ref OptitrackPose memberPose, ref bool steadyIndicator)
+        {
+            if (memberPose == null)
+            {
+                steadyIndicator = false;
+            }
+            else
+            {
+                var prevPose = memberPose;
+                // TODO: compare markers etc...
+                steadyIndicator = true;
+            }
+
+            memberPose = newPose;
         }
 
         private void OnSteamVrPose(params object[] args)
@@ -60,13 +135,25 @@ namespace Assets.Modules.Tracking
 
             var pose = new SteamVR_Utils.RigidTransform(poses[i].mDeviceToAbsoluteTracking);
 
-            //(pose);
+            if (pose != null)
+            {
+                var prevRot = _ovrRot;
+                _ovrRot = pose.rot;
+
+                var deltaAngle = Quaternion.Angle(prevRot, _ovrRot);
+
+                HasSteadyOpenVrPose = (Mathf.Abs(deltaAngle) < SteadyAngleThreshold);
+            }
         }
 
 
         public void Calibrate()
         {
-
+            if (!IsReadyForCalibration)
+            {
+                Debug.LogWarning("Cannot performa calibration, not yet ready");
+                return;
+            }
         }
     }
 }

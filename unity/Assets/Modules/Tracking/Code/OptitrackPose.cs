@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
+    [Serializable]
     public class OptitrackPose
     {
+        [Serializable]
         public struct Marker
         {
             public int Id;
