@@ -83,7 +83,9 @@ namespace Assets.Modules.Tracking
                 _artkPos = MatrixUtils.ExtractTranslationFromMatrix(invPoseMatrix);
                 _artkRot = MatrixUtils.ExtractRotationFromMatrix(invPoseMatrix);
 
-                HasSteadyArtkPose = (_artkPos - prevPos).sqrMagnitude < SteadyPosThreshold;
+                var hasSteadyPos = (_artkPos - prevPos).sqrMagnitude < SteadyPosThreshold;
+                var hasSteadyRot = Quaternion.Angle(prevRot, _artkRot) < SteadyAngleThreshold;
+                HasSteadyArtkPose = hasSteadyPos && hasSteadyRot;
             }
         }
 
