@@ -11,7 +11,7 @@ namespace Assets.Modules.Tracking
     {
         #region JSON Message Content
         [Serializable]
-        private class PoseMatrix
+        private struct PoseMatrix
         {
             public float m00, m01, m02, m03;
             public float m10, m11, m12, m13;
@@ -19,7 +19,7 @@ namespace Assets.Modules.Tracking
         }
 
         [Serializable]
-        private class Corners
+        private struct Corners
         {
             public double[] topleft;
             public double[] topright;
@@ -28,7 +28,7 @@ namespace Assets.Modules.Tracking
         }
 
         [Serializable]
-        private class MarkerInfo
+        private struct MarkerInfo
         {
             public int id;
             public string name;
@@ -38,7 +38,7 @@ namespace Assets.Modules.Tracking
         }
 
         [Serializable]
-        private class ArToolkitOutput
+        private struct ArToolkitOutput
         {
             public MarkerInfo[] markers_left;
             public MarkerInfo[] markers_right;
@@ -83,7 +83,7 @@ namespace Assets.Modules.Tracking
             try
             {
                 _currentOutput = JsonUtility.FromJson<ArToolkitOutput>(json_msg);
-                _hasNewOutput = _currentOutput != null;
+                _hasNewOutput = true;
             }
             catch
             {

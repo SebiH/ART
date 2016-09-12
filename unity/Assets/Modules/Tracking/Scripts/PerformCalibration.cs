@@ -113,7 +113,7 @@ namespace Assets.Modules.Tracking
             }
             else
             {
-                var prevPose = memberPose;
+                //var prevPose = memberPose;
                 // TODO: compare markers etc...
                 steadyIndicator = true;
             }
@@ -137,15 +137,12 @@ namespace Assets.Modules.Tracking
 
             var pose = new SteamVR_Utils.RigidTransform(poses[i].mDeviceToAbsoluteTracking);
 
-            if (pose != null)
-            {
-                var prevRot = _ovrRot;
-                _ovrRot = pose.rot;
+            var prevRot = _ovrRot;
+            _ovrRot = pose.rot;
 
-                var deltaAngle = Quaternion.Angle(prevRot, _ovrRot);
+            var deltaAngle = Quaternion.Angle(prevRot, _ovrRot);
 
-                HasSteadyOpenVrPose = (Mathf.Abs(deltaAngle) < SteadyAngleThreshold);
-            }
+            HasSteadyOpenVrPose = (Mathf.Abs(deltaAngle) < SteadyAngleThreshold);
         }
 
 
