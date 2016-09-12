@@ -1,13 +1,14 @@
+using System;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
     public static class CalibrationOffset
     {
-        public static bool IsInitialized = false;
-        // ? public static DateTime LastInitialization;
+        public static bool IsCalibrated = false;
+        public static DateTime LastCalibration;
 
-        public static Quaternion SteamVrRotationOffset;
+        public static Quaternion OpenVrRotationOffset;
         public static Vector3 OptitrackToCameraOffset;
     }
 }

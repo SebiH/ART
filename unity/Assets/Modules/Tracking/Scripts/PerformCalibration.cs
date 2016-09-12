@@ -1,5 +1,7 @@
 using Assets.Modules.Core.Util;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Valve.VR;
 
@@ -12,9 +14,6 @@ namespace Assets.Modules.Tracking
 
         // will be set by script
         public bool IsReadyForCalibration = false;
-        // will be set by script
-        public bool IsCalibrated = false;
-
 
         // optional camera to track camera via ArToolkit
         public Camera ArtkCamera;
@@ -153,6 +152,44 @@ namespace Assets.Modules.Tracking
                 Debug.LogWarning("Cannot performa calibration, not yet ready");
                 return;
             }
+
+            CalibrationOffset.IsCalibrated = true;
+            CalibrationOffset.LastCalibration = DateTime.Now;
+
+            /*
+             *  Position
+             */
+
+            // offset optitrack -> marker
+            var markerPosInRoom = Vector3.zero;
+
+            if (CalibrationOffsets.Count != 0)
+            {
+                // build average over all given offsets
+                foreach (var calibOffset in CalibrationOffsets)
+                {
+                    var matchingMarker = _optitrackCalibrationPose.Markers.First(m => m.Id == calibOffset.Id);
+                    markerPosInRoom += (matchingMarker.Position + calibOffset.Position);
+                }
+
+                markerPosInRoom = markerPosInRoom / CalibrationOffsets.Count;
+            }
+
+            var artkCameraPosInRoom = _artkPos + markerPosInRoom; // TODO: could be '-' instead of '+' ?
+
+            CalibrationOffset.OptitrackToCameraOffset = (artkCameraPosInRoom - _optitrackCameraPose.Position);
+
+
+
+            /*
+             *  Rotation
+             */
+
+            var markerRotationInRoom = _optitrackCalibrationPose.Rotation;
+            // rotate artk camera accordingly
+            // save offset between camera rot and ovrRot
+
+            //CalibrationOffset.OpenVrRotationOffset = ;
         }
     }
 }
