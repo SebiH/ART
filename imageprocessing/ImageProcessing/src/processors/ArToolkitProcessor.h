@@ -22,6 +22,7 @@ namespace ImageProcessing
 			bool filter;
 
 			int pattern_id;
+			std::string name;
 			double filter_cutoff_freq;
 			double filter_sample_rate;
 
@@ -60,6 +61,7 @@ namespace ImageProcessing
 			"markers": [
 				{
 					"size": 0.026, // in m! 2.6cm => 0.026
+					"name": "myMarker",
 					"pattern_path": "absolute/path/to/file.patt",
 					"type": "SINGLE", // SINGLE, MULTI (unsupported), NFT (unsupported)
 					"filter": 5.0 // cuttoff frequency for pose estimation (?) (optional)

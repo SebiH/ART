@@ -18,8 +18,7 @@ namespace Assets.Modules.Tracking
 
         void OnNewPose(MarkerPose pose)
         {
-            // TODO.
-            //if (pose.Name == TrackedMarkerName)
+            if (pose.Name == TrackedMarkerName)
             {
                 transform.position = pose.Position;
                 transform.rotation = pose.Rotation;

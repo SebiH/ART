@@ -117,6 +117,7 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info)
 
 	return json{
 		{ "id", info.id },
+		{ "name", marker.name },
 		{ "pos", { info.pos[0], info.pos[1] }},
 		{ "corners",
 			{
@@ -326,6 +327,7 @@ void ArToolkitProcessor::SetupMarker(json &json_marker)
 	marker.pattern_path = json_marker["pattern_path"].get<std::string>();
 	marker.size = json_marker["size"].get<double>();
 	marker.type = json_marker["type"].get<std::string>();
+	marker.name = json_marker["name"].get<std::string>();
 
 	if (json_marker.count("filter") > 0)
 	{

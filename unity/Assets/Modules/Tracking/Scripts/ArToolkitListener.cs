@@ -31,6 +31,7 @@ namespace Assets.Modules.Tracking
         private class MarkerInfo
         {
             public int id;
+            public string name;
             public double[] pos;
             public Corners corners;
             public PoseMatrix transform_matrix;
@@ -142,8 +143,7 @@ namespace Assets.Modules.Tracking
 
             if (NewPoseDetected != null)
             {
-                // TODO: name
-                NewPoseDetected(new MarkerPose(marker.id, "TODO", transformMatrix));
+                NewPoseDetected(new MarkerPose(marker.id, marker.name, transformMatrix));
             }
         }
     }
