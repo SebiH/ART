@@ -3,13 +3,25 @@
 #include <chrono>
 #include <thread>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+
+#include "utils/Logger.h"
 
 using namespace ImageProcessing;
 
 DummyCameraSource::DummyCameraSource(std::string filename)
 	: img_(cv::imread(filename))
 {
-
+	if (img_.channels() == 3)
+	{
+		// convert back to 4-channel BGRA for easier unity handling
+		cv::cvtColor(img_, img_, CV_BGR2BGRA);
+	}
+	else if (img_.channels() != GetFrameChannels())
+	{
+		DebugLog("Camera provided unknown amount of channels");
+		//throw std::exception("Camera provided unexpected amount of channels");
+	}
 }
 
 DummyCameraSource::~DummyCameraSource()
@@ -63,7 +75,8 @@ int DummyCameraSource::GetFrameHeight() const
 
 int DummyCameraSource::GetFrameChannels() const
 {
-	return img_.channels();
+	// image is converted to 4 channels to match textures in unity
+	return 4;
 }
 
 void DummyCameraSource::SetProperties(const nlohmann::json &json_config)
