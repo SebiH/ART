@@ -26,7 +26,7 @@ namespace Assets.Modules.Vision.Processors
                     },
                     ""markers"": [
                         {
-                            ""size"": 0.026,
+                            ""size"": 0.056,
                             ""name"": ""kanji"",
                             ""pattern_path"": ""C:/code/resources/kanji.patt"",
                             ""type"": ""SINGLE"",
