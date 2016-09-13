@@ -36,6 +36,9 @@ Usage [optional]:
 #include <sstream>
 #include <map>
 
+#include <iostream>
+#include <fstream>
+
 #include "NatNetTypes.h"
 #include "NatNetClient.h"
 
@@ -413,6 +416,14 @@ void SendFrameToUnity(sFrameOfMocapData *data, void *pUserData)
         // stream xml data over UDP via SlipStream ==--
 
         gSlipStream->Stream( (unsigned char *) buffer, (int) strlen(buffer) );
+
+		// save data for later replay
+#if 0
+		std::ofstream file;
+		file.open("replay.dat", std::ofstream::out | std::ofstream::app);
+		file << buffer << std::endl;
+		file.close();
+#endif
     } 
 }
 
