@@ -16,7 +16,7 @@ namespace Assets.Modules.Tracking
         public bool IsReadyForCalibration = false;
 
         // optional camera to track camera via ArToolkit
-        public Camera ArtkCamera;
+        public Transform ArtkCamera;
         public string ArtkCalibrationName = "kanji";
         // will be set by script
         public bool HasSteadyArtkPose = false;
@@ -149,7 +149,7 @@ namespace Assets.Modules.Tracking
         {
             if (!IsReadyForCalibration)
             {
-                Debug.LogWarning("Cannot performa calibration, not yet ready");
+                Debug.LogWarning("Cannot perform calibration, not yet ready");
                 return;
             }
 
