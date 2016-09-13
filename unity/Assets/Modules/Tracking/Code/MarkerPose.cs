@@ -49,5 +49,12 @@ namespace Assets.Modules.Tracking
             Name = name;
             PoseMatrix = pose;
         }
+
+        public MarkerPose(MarkerPose other)
+        {
+            Id = other.Id;
+            Name = other.Name;
+            PoseMatrix = other.PoseMatrix;
+        }
     }
 }
