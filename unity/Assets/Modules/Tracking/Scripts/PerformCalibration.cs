@@ -16,7 +16,7 @@ namespace Assets.Modules.Tracking
         public bool IsReadyForCalibration = false;
 
         // optional camera to track camera via ArToolkit
-        public Camera ArtkCamera;
+        public Transform ArtkCamera;
         public string ArtkCalibrationName = "kanji";
         // will be set by script
         public bool HasSteadyArtkPose = false;
@@ -62,8 +62,8 @@ namespace Assets.Modules.Tracking
 
             if (ArtkCamera != null)
             {
-                ArtkCamera.transform.localPosition = _artkPos;
-                ArtkCamera.transform.localRotation = _artkRot;
+                ArtkCamera.transform.position = _artkPos;
+                ArtkCamera.transform.rotation = _artkRot;
             }
         }
 
@@ -74,13 +74,14 @@ namespace Assets.Modules.Tracking
             {
                 // we're interested in camera's position relative to marker, not markerposition
                 // -> we can get camera position by inverting marker transformation matrix
-                var invPoseMatrix = pose.PoseMatrix;
+                var invertedPose = new MarkerPose(pose);
+                invertedPose.PoseMatrix = invertedPose.PoseMatrix.inverse;
 
                 var prevPos = _artkPos;
                 var prevRot = _artkRot;
 
-                _artkPos = MatrixUtils.ExtractTranslationFromMatrix(invPoseMatrix);
-                _artkRot = MatrixUtils.ExtractRotationFromMatrix(invPoseMatrix);
+                _artkPos = invertedPose.Position;
+                _artkRot = invertedPose.Rotation;
 
                 var hasSteadyPos = (_artkPos - prevPos).sqrMagnitude < SteadyPosThreshold;
                 var hasSteadyRot = Quaternion.Angle(prevRot, _artkRot) < SteadyAngleThreshold;
@@ -149,7 +150,7 @@ namespace Assets.Modules.Tracking
         {
             if (!IsReadyForCalibration)
             {
-                Debug.LogWarning("Cannot performa calibration, not yet ready");
+                Debug.LogWarning("Cannot perform calibration, not yet ready");
                 return;
             }
 

@@ -16,10 +16,13 @@ namespace Assets.Modules.Tracking
         public bool TrackOrientation = true;
 
         public bool DrawMarkers;
+        private bool _prevDrawMarkers;
+        private List<GameObject> _createdMarkerObjs = new List<GameObject>();
 
         void OnEnable()
         {
             OptitrackListener.Instance.PosesReceived += OnPosesReceived;
+            _prevDrawMarkers = DrawMarkers;
         }
 
         void OnDisable()
@@ -66,6 +69,18 @@ namespace Assets.Modules.Tracking
                         markerObj.transform.position = marker.Position;
                     }
                 }
+                else if (_prevDrawMarkers != DrawMarkers)
+                {
+                    // option was switched off, clean up
+                    foreach (var marker in _createdMarkerObjs)
+                    {
+                        Destroy(marker);
+                    }
+
+                    _createdMarkerObjs.Clear();
+                }
+
+                _prevDrawMarkers = DrawMarkers;
             }
         }
     }

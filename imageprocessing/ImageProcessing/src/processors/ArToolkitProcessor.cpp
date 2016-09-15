@@ -72,14 +72,21 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 	for (auto i = 0; i < marker_num_l; i++)
 	{
-		auto info = marker_info_l[i];
-
-		if (info.cf > min_confidence_)
+		try
 		{
-			auto pose = ProcessMarkerInfo(info);
-			DrawMarker(info, frame->size, frame->buffer_left.get());
-			payload["markers_left"].push_back(pose);
-			marker_detected = true;
+			auto info = marker_info_l[i];
+
+			if (info.cf > min_confidence_)
+			{
+				auto pose = ProcessMarkerInfo(info);
+				DrawMarker(info, frame->size, frame->buffer_left.get());
+				payload["markers_left"].push_back(pose);
+				marker_detected = true;
+			}
+		}
+		catch (const std::exception &e)
+		{
+			DebugLog(std::string("Failed to process marker: ") + e.what());
 		}
 	}
 
@@ -88,12 +95,19 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 	{
 		auto info = marker_info_r[i];
 
-		if (info.cf > min_confidence_)
+		try
 		{
-			auto pose = ProcessMarkerInfo(info);
-			DrawMarker(info, frame->size, frame->buffer_right.get());
-			payload["markers_right"].push_back(pose);
-			marker_detected = true;
+			if (info.cf > min_confidence_)
+			{
+				auto pose = ProcessMarkerInfo(info);
+				DrawMarker(info, frame->size, frame->buffer_right.get());
+				payload["markers_right"].push_back(pose);
+				marker_detected = true;
+			}
+		}
+		catch (const std::exception &e)
+		{
+			DebugLog(std::string("Failed to process marker: ") + e.what());
 		}
 	}
 

@@ -143,14 +143,6 @@ namespace Assets.Modules.Tracking
             transformMatrix.m22 = pose.m22;
             transformMatrix.m23 = pose.m23;
 
-            transformMatrix.m30 = 0;
-            transformMatrix.m31 = 0;
-            transformMatrix.m32 = 0;
-            transformMatrix.m33 = 1;
-
-            transformMatrix = transformMatrix.inverse;
-
-
             if (NewPoseDetected != null)
             {
                 NewPoseDetected(new MarkerPose(marker.id, marker.name, transformMatrix));
