@@ -180,16 +180,22 @@ namespace Assets.Modules.Tracking
             CalibrationOffset.OptitrackToCameraOffset = (artkCameraPosInRoom - _optitrackCameraPose.Position);
 
 
-
             /*
              *  Rotation
              */
 
+            // adjust marker to optitrack's coordinate system
             var markerRotationInRoom = _optitrackCalibrationPose.Rotation;
-            // rotate artk camera accordingly
-            // save offset between camera rot and ovrRot
 
-            //CalibrationOffset.OpenVrRotationOffset = ;
+            // relation 'marker -> camera' is now based on room coordinates,
+            // due to anchoring the marker in optitrack's coordinate system
+            // - the camera's rotation + calibrationobjects rotation therefore 
+            // should be the correct rotation in the room
+            var cameraRotationInRoom =  markerRotationInRoom * _artkRot;
+
+            // this should be the direction in which the OpenVR headset *should*
+            // be looking - anything else we'll save as offset
+            CalibrationOffset.OpenVrRotationOffset  = _ovrRot * Quaternion.Inverse(cameraRotationInRoom);
         }
     }
 }
