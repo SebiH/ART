@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright © NaturalPoint, Inc. All Rights Reserved.
+// Copyright ï¿½ NaturalPoint, Inc. All Rights Reserved.
 // 
 // This software is provided by the copyright holders and contributors "as is" and
 // any express or implied warranties, including, but not limited to, the implied
@@ -13,6 +13,11 @@
 // the use of this software, even if advised of the possibility of such damage.
 //=============================================================================
 
+
+#define CAPTURE_STREAM 0
+#define REPLAY_FROM_FILE 0
+
+#define CAPTURE_FILENAME "replay.dat"
 
 /*
 
@@ -74,6 +79,32 @@ int _tmain(int argc, _TCHAR* argv[])
     int iResult;
     int iConnectionType = ConnectionType_Multicast;
     //int iConnectionType = ConnectionType_Unicast;
+
+#if REPLAY_FROM_FILE
+
+	// read line for line, each line is a single package
+	// after reaching end, we'll start from the beginning to get a continous stream
+	std::string line;
+	gSlipStream = new cSlipStream(szUnityIPAddress, 16000);
+	printf("Reading data from file %s ... \n", CAPTURE_FILENAME);
+
+	long counter = 0;
+
+	while (true)
+	{
+		auto file = std::ifstream(CAPTURE_FILENAME);
+
+		while (std::getline(file, line))
+		{
+			printf("Sending new packet (%ld)\n", counter++);
+			gSlipStream->Stream((unsigned char *)line.c_str(), line.length());
+			_sleep(5);
+		}
+
+		printf("Reached end of file\n");
+	}
+
+#else
     
     // parse command line args
     if(argc>1)
@@ -248,6 +279,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	// Done - clean up.
 	theClient->Uninitialize();
 
+#endif
+
+
 	return ErrorCode_OK;
 }
 
@@ -418,9 +452,9 @@ void SendFrameToUnity(sFrameOfMocapData *data, void *pUserData)
         gSlipStream->Stream( (unsigned char *) buffer, (int) strlen(buffer) );
 
 		// save data for later replay
-#if 0
+#if CAPTURE_STREAM
 		std::ofstream file;
-		file.open("replay.dat", std::ofstream::out | std::ofstream::app);
+		file.open(CAPTURE_FILENAME, std::ofstream::out | std::ofstream::app);
 		file << buffer << std::endl;
 		file.close();
 #endif
