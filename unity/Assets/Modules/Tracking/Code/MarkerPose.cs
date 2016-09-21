@@ -50,11 +50,9 @@ namespace Assets.Modules.Tracking
             PoseMatrix = pose;
         }
 
-        public MarkerPose(MarkerPose other)
+        public MarkerPose Inverse()
         {
-            Id = other.Id;
-            Name = other.Name;
-            PoseMatrix = other.PoseMatrix;
+            return new MarkerPose(Id, Name, PoseMatrix.inverse);
         }
     }
 }

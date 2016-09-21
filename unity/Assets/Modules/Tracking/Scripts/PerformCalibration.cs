@@ -74,8 +74,8 @@ namespace Assets.Modules.Tracking
             {
                 // we're interested in camera's position relative to marker, not markerposition
                 // -> we can get camera position by inverting marker transformation matrix
-                var invertedPose = new MarkerPose(pose);
-                invertedPose.PoseMatrix = invertedPose.PoseMatrix.inverse;
+
+                var invertedPose = pose.Inverse();
 
                 var prevPos = _artkPos;
                 var prevRot = _artkRot;
