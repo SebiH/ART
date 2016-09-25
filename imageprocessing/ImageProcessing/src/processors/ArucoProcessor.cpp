@@ -23,6 +23,6 @@ nlohmann::json ArucoProcessor::GetProperties()
 	return nlohmann::json();
 }
 
-void ArucoProcessor::SetProperties(const nlohmann::json config)
+void ArucoProcessor::SetProperties(const nlohmann::json &config)
 {
 }
