@@ -79,6 +79,11 @@ int DummyCameraSource::GetFrameChannels() const
 	return 4;
 }
 
+float DummyCameraSource::GetFocalLength() const
+{
+	return 1.f;
+}
+
 void DummyCameraSource::SetProperties(const nlohmann::json &json_config)
 {
 }

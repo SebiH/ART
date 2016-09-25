@@ -21,6 +21,7 @@ namespace ImageProcessing
 		virtual int GetFrameWidth() const = 0;
 		virtual int GetFrameHeight() const = 0;
 		virtual int GetFrameChannels() const = 0;
+		virtual float GetFocalLength() const = 0;
 
 		virtual nlohmann::json GetProperties() const = 0;
 		virtual void SetProperties(const nlohmann::json &json_config) = 0;

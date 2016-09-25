@@ -45,6 +45,11 @@ int EmptyCameraSource::GetFrameChannels() const
 	return 3;
 }
 
+float EmptyCameraSource::GetFocalLength() const
+{
+	return 0.1f;
+}
+
 void EmptyCameraSource::SetProperties(const nlohmann::json &json_config)
 {
 }

@@ -91,6 +91,11 @@ int OvrvisionCameraSource::GetFrameChannels() const
 	return 4;
 }
 
+float ImageProcessing::OvrvisionCameraSource::GetFocalLength() const
+{
+	return ovr_camera_->GetCamFocalPoint();
+}
+
 
 void OvrvisionCameraSource::SetProperties(const nlohmann::json &json_config)
 {
