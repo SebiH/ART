@@ -19,7 +19,7 @@ namespace Assets.Modules.Tracking.Scripts
 
             public Vector3 ToUnityVec3()
             {
-                return new Vector3(x, y, z);
+                return new Vector3(x, -y, z);
             }
         }
 

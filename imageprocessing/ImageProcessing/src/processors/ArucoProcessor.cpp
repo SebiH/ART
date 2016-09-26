@@ -84,6 +84,11 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		Quaternion quat;
 		RotMatToQuaternion(&quat, rotation_matrix);
 
+		// ??? (Taken from OvrVision Pro)
+		quat.w = -quat.w;
+		Quaternion adjustment{ 1.0f, 0.0f, 0.0f, 0.0f };
+		quat = MultiplyQuaternion(&quat, &adjustment);
+
 		// Draw markers on image
 		cv::circle(img_left, marker.getCenter(), 5, cv::Scalar(0, 0, 255, 255), 1);
 
