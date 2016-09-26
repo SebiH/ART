@@ -55,11 +55,11 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		{ "markers_right", json::array() }
 	};
 
-	for (const auto &marker : detected_markers)
+	for (auto &marker : detected_markers)
 	{
-		// this is done in unity..
-		//marker.Rvec.at<float>(0, 0) = -marker.Rvec.at<float>(0, 0);
-		//marker.Rvec.at<float>(2, 0) = -marker.Rvec.at<float>(2, 0);
+		// Conversion to unity coordinate system
+		marker.Rvec.at<float>(0, 0) = -marker.Rvec.at<float>(0, 0);
+		marker.Rvec.at<float>(2, 0) = -marker.Rvec.at<float>(2, 0);
 		cv::Mat rotation(3, 3, CV_32FC1);
 		cv::Rodrigues(marker.Rvec, rotation);
 
