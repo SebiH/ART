@@ -20,9 +20,7 @@ namespace Assets.Modules.Tracking.Scripts
         {
             if (pose.Id == TrackedId)
             {
-                // TODO: should be HMDGap from OvrVision..?
-                var offset = new Vector3(-0.032f, 0.0f, 0.0f);
-                transform.position = pose.Position + offset;
+                transform.position = pose.Position;
                 transform.rotation = pose.Rotation;
             }
         }

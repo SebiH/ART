@@ -124,10 +124,13 @@ namespace Assets.Modules.Tracking.Scripts
 
         private ArucoMarkerPose ProcessOutput(ArucoPose pose)
         {
+            // TODO: should be HMDGap from OvrVision..?
+            var offset = new Vector3(-0.032f, 0.0f, 0.0f);
+
             return new ArucoMarkerPose
             {
                 Id = pose.id,
-                Position = pose.position.ToUnityVec3(),
+                Position = pose.position.ToUnityVec3() - offset,
                 Rotation = pose.rotation.ToUnityQuaternion()
             };
         }
