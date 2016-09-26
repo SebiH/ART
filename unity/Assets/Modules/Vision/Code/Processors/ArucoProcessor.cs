@@ -8,13 +8,21 @@ namespace Assets.Modules.Vision.Processors
         private int _registeredPipelineId = -1;
         private int _id = -1;
 
+        private double _markerSizeInMeter;
+
+        public ArucoProcessor(double markerSizeInMeter)
+        {
+            _markerSizeInMeter = markerSizeInMeter;
+        }
+
         public void Register(int pipelineId)
         {
             _registeredPipelineId = pipelineId;
-            _id = ImageProcessing.AddArucoProcessor(pipelineId, @"
-                {
-                    ""marker_size_m"": 0.05
-                }");
+            // Double braces in json due to String.Format
+            _id = ImageProcessing.AddArucoProcessor(pipelineId, String.Format(@"
+                {{
+                    ""marker_size_m"": {0}
+                }}", _markerSizeInMeter));
 
             ImageProcessing.GetProcessorProperties(_registeredPipelineId, _id, GetPropertyCallback);
         }
