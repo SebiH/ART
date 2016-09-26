@@ -27,33 +27,34 @@ namespace ImageProcessingTest
             int pipeline = ImageProcessing.CreatePipeline();
             int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
             int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
-            int processor = ImageProcessing.AddArToolkitProcessor(pipeline, @"
+            int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.05 } ");
+//            int processor = ImageProcessing.AddArToolkitProcessor(pipeline, @"
 
 
-		{
-			""config"": {
-				""calibration_left"": ""C:/code/resources/calib_ovrvision_left.dat"",
-				""calibration_right"": ""C:/code/resources/calib_ovrvision_right.dat""
-			},
-			""markers"": [
-				{
-					""size"": 0.056,
-                    ""name"": ""kanji"",
-					""pattern_path"": ""C:/code/resources/kanji.patt"",
-					""type"": ""SINGLE"",
-					""filter"": 5.0
-				},
-				{
-					""size"": 0.026,
-                    ""name"": ""hiro"",
-					""pattern_path"": ""C:/code/resources/hiro.patt"",
-					""type"": ""SINGLE"",
-					""filter"": 5.0
-				}
-			]
-		}
+//		{
+//			""config"": {
+//				""calibration_left"": ""C:/code/resources/calib_ovrvision_left.dat"",
+//				""calibration_right"": ""C:/code/resources/calib_ovrvision_right.dat""
+//			},
+//			""markers"": [
+//				{
+//					""size"": 0.056,
+//                    ""name"": ""kanji"",
+//					""pattern_path"": ""C:/code/resources/kanji.patt"",
+//					""type"": ""SINGLE"",
+//					""filter"": 5.0
+//				},
+//				{
+//					""size"": 0.026,
+//                    ""name"": ""hiro"",
+//					""pattern_path"": ""C:/code/resources/hiro.patt"",
+//					""type"": ""SINGLE"",
+//					""filter"": 5.0
+//				}
+//			]
+//		}
 
-");
+//");
 
             char keyPressed;
             int counter = 0;
