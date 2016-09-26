@@ -15,6 +15,7 @@ namespace ImageProcessing
 		virtual int GetFrameWidth() const override;
 		virtual int GetFrameHeight() const override;
 		virtual int GetFrameChannels() const override;
+		virtual float GetFocalLength() const override;
 
 		virtual nlohmann::json GetProperties() const override;
 		virtual void SetProperties(const nlohmann::json &json_config) override;

@@ -24,6 +24,6 @@ namespace ImageProcessing
 		virtual std::shared_ptr<const FrameData> Process(const std::shared_ptr<const FrameData> &frame) = 0;
 
 		virtual nlohmann::json GetProperties() = 0;
-		virtual void SetProperties(const nlohmann::json config) = 0;
+		virtual void SetProperties(const nlohmann::json &config) = 0;
 	};
 }

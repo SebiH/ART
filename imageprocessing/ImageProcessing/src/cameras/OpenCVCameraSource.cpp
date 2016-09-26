@@ -86,6 +86,11 @@ int OpenCVCameraSource::GetFrameChannels() const
 	return 4;
 }
 
+float OpenCVCameraSource::GetFocalLength() const
+{
+	return 0.1f;
+}
+
 nlohmann::json OpenCVCameraSource::GetProperties() const
 {
 	// NYI

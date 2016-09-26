@@ -368,7 +368,7 @@ nlohmann::json ArToolkitProcessor::GetProperties()
 
 
 
-void ArToolkitProcessor::SetProperties(const nlohmann::json config)
+void ArToolkitProcessor::SetProperties(const nlohmann::json &config)
 {
 	if (config.count("min_confidence"))
 	{
