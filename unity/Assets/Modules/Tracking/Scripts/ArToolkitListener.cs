@@ -78,7 +78,7 @@ namespace Assets.Modules.Tracking
             ArToolkitPipeline.RemoveOutput(_artkOutput);
         }
 
-        void OnPoseChanged(string json_msg)
+        private void OnPoseChanged(string json_msg)
         {
             try
             {
