@@ -1,9 +1,11 @@
-using Assets.Modules.Core.Util;
+//#define USE_ARTOOLKIT
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Valve.VR;
+
 
 namespace Assets.Modules.Tracking
 {
@@ -15,6 +17,7 @@ namespace Assets.Modules.Tracking
         // will be set by script
         public bool IsReadyForCalibration = false;
 
+#if (USE_ARTOOLKIT)
         // optional camera to track camera via ArToolkit
         public Transform ArtkCamera;
         public string ArtkCalibrationName = "kanji";
@@ -23,7 +26,16 @@ namespace Assets.Modules.Tracking
 
         private Vector3 _artkPos = Vector3.zero;
         private Quaternion _artkRot  = Quaternion.identity;
+#else
+        // optional camera to track camera via Aruco
+        public Transform ArucoCamera;
+        public int ArucoCalibrationId = 56;
+        // will be set by script
+        public bool HasSteadyArucoPose = false;
 
+        private Vector3 _arucoPos = Vector3.zero;
+        private Quaternion _arucoRot = Quaternion.identity;
+#endif
 
         public List<OptitrackPose.Marker> CalibrationOffsets = new List<OptitrackPose.Marker>();
         public string OptitrackCalibrationName = "CalibrationHelper";
@@ -44,20 +56,29 @@ namespace Assets.Modules.Tracking
         void OnEnable()
         {
             IsReadyForCalibration = false;
+#if (USE_ARTOOLKIT)
             ArToolkitListener.Instance.NewPoseDetected += OnArtkPose;
+#else
+            ArucoListener.Instance.NewPoseDetected += OnArucoPose;
+#endif
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
             SteamVR_Utils.Event.Listen("new_poses", OnSteamVrPose);
         }
 
         void OnDisable()
         {
+#if (USE_ARTOOLKIT)
             ArToolkitListener.Instance.NewPoseDetected -= OnArtkPose;
+#else
+            ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
+#endif
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
             SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
         }
 
         void Update()
         {
+#if (USE_ARTOOLKIT)
             IsReadyForCalibration = HasSteadyOptitrackCameraPose && HasSteadyOptitrackCalibrationPose && HasSteadyOpenVrPose && HasSteadyArtkPose;
 
             if (ArtkCamera != null)
@@ -65,9 +86,19 @@ namespace Assets.Modules.Tracking
                 ArtkCamera.transform.position = _artkPos;
                 ArtkCamera.transform.rotation = _artkRot;
             }
+#else
+            IsReadyForCalibration = HasSteadyOptitrackCameraPose && HasSteadyOptitrackCalibrationPose && HasSteadyOpenVrPose && HasSteadyArucoPose;
+
+            if (ArucoCamera != null)
+            {
+                ArucoCamera.transform.position = _arucoPos;
+                ArucoCamera.transform.rotation = _arucoRot;
+            }
+#endif
         }
 
 
+#if (USE_ARTOOLKIT)
         private void OnArtkPose(MarkerPose pose)
         {
             if (pose.Name == ArtkCalibrationName)
@@ -88,6 +119,29 @@ namespace Assets.Modules.Tracking
                 HasSteadyArtkPose = hasSteadyPos && hasSteadyRot;
             }
         }
+#else
+
+        private void OnArucoPose(ArucoMarkerPose pose)
+        {
+            if (pose.Id == ArucoCalibrationId)
+            {
+                // we're interested in camera's position relative to marker, not markerposition
+                // -> we can get camera position by inverting marker transformation matrix
+                var transformMatrix = Matrix4x4.TRS(pose.Position, pose.Rotation, Vector3.one);
+                var invMatrix = transformMatrix.inverse;
+
+                var prevPos = _arucoPos;
+                var prevRot = _arucoRot;
+
+                _arucoPos = invMatrix.GetPosition();
+                _arucoRot = invMatrix.GetRotation();
+
+                var hasSteadyPos = (_arucoPos - prevPos).sqrMagnitude < SteadyPosThreshold;
+                var hasSteadyRot = Quaternion.Angle(prevRot, _arucoRot) < SteadyAngleThreshold;
+                HasSteadyArucoPose = hasSteadyPos && hasSteadyRot;
+            }
+        }
+#endif
 
         private void OnOptitrackPose(List<OptitrackPose> poses)
         {
@@ -176,7 +230,11 @@ namespace Assets.Modules.Tracking
                 markerPosInRoom = markerPosInRoom / CalibrationOffsets.Count;
             }
 
+#if (USE_ARTOOLKIT)
             var artkCameraPosInRoom = _artkPos + markerPosInRoom; // TODO: could be '-' instead of '+' ?
+#else
+            var artkCameraPosInRoom = _arucoPos + markerPosInRoom; // TODO: could be '-' instead of '+' ?
+#endif
 
             CalibrationOffset.OptitrackToCameraOffset = (artkCameraPosInRoom - _optitrackCameraPose.Position);
 
@@ -192,7 +250,11 @@ namespace Assets.Modules.Tracking
             // due to anchoring the marker in optitrack's coordinate system
             // - the camera's rotation + calibrationobjects rotation therefore 
             // should be the correct rotation in the room
+#if (USE_ARTOOLKIT)
             var cameraRotationInRoom =  markerRotationInRoom * _artkRot;
+#else
+            var cameraRotationInRoom = markerRotationInRoom * _arucoRot;
+#endif
 
             // this should be the direction in which the OpenVR headset *should*
             // be looking - anything else we'll save as offset
