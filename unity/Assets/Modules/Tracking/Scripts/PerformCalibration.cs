@@ -224,7 +224,7 @@ namespace Assets.Modules.Tracking
                 foreach (var calibOffset in CalibrationOffsets)
                 {
                     var matchingMarker = _optitrackCalibrationPose.Markers.First(m => m.Id == calibOffset.Id);
-                    markerPosInRoom += (matchingMarker.Position + calibOffset.Position);
+                    markerPosInRoom += (matchingMarker.Position + _optitrackCalibrationPose.Rotation * calibOffset.Position);
                 }
 
                 markerPosInRoom = markerPosInRoom / CalibrationOffsets.Count;

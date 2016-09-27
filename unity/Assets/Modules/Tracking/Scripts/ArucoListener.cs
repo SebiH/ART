@@ -130,13 +130,15 @@ namespace Assets.Modules.Tracking
             var posOffset = new Vector3(-0.032f, 0.0f, 0.0f);
 
             // Rotation offset to match Optitrack's Calibration Helper
-            var rotOffset = Quaternion.Euler(RotationOffset);
+            //var rotOffset = Quaternion.Euler(RotationOffset);
+            var rotation = pose.rotation.ToUnityQuaternion().eulerAngles + RotationOffset;
 
             return new ArucoMarkerPose
             {
                 Id = pose.id,
                 Position = pose.position.ToUnityVec3() + posOffset,
-                Rotation = pose.rotation.ToUnityQuaternion() * rotOffset
+                //Rotation = pose.rotation.ToUnityQuaternion() * rotOffset
+                Rotation = Quaternion.Euler(rotation)
             };
         }
     }
