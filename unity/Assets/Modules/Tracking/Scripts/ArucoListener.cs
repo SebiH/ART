@@ -62,6 +62,8 @@ namespace Assets.Modules.Tracking
         // Cannot be changed once script is running
         public double MarkerSizeInMeter = 0.15;
 
+        public Vector3 RotationOffset;
+
         public delegate void NewPoseHandler(ArucoMarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
 
@@ -125,13 +127,16 @@ namespace Assets.Modules.Tracking
         private ArucoMarkerPose ProcessOutput(ArucoPose pose)
         {
             // TODO: should be HMDGap from OvrVision..?
-            var offset = new Vector3(-0.032f, 0.0f, 0.0f);
+            var posOffset = new Vector3(-0.032f, 0.0f, 0.0f);
+
+            // Rotation offset to match Optitrack's Calibration Helper
+            var rotOffset = Quaternion.Euler(RotationOffset);
 
             return new ArucoMarkerPose
             {
                 Id = pose.id,
-                Position = pose.position.ToUnityVec3() - offset,
-                Rotation = pose.rotation.ToUnityQuaternion()
+                Position = pose.position.ToUnityVec3() + posOffset,
+                Rotation = pose.rotation.ToUnityQuaternion() * rotOffset
             };
         }
     }
