@@ -64,6 +64,34 @@ namespace Assets.Modules.Tracking
                             markerObj.transform.parent = transform;
                             markerObj.transform.localScale = scale;
                             markerObj.name = markerName;
+
+                            Renderer rend = markerObj.GetComponent<Renderer>();
+
+                            switch (marker.Id)
+                            {
+                                case 0:
+                                    rend.material.color = Color.white;
+                                    break;
+                                case 1:
+                                    rend.material.color = Color.red;
+                                    break;
+                                case 2:
+                                    rend.material.color = Color.green;
+                                    break;
+                                case 3:
+                                    rend.material.color = Color.blue;
+                                    break;
+                                case 4:
+                                    rend.material.color = Color.yellow;
+                                    break;
+                                case 5:
+                                    rend.material.color = Color.grey;
+                                    break;
+
+                                default:
+                                    rend.material.color = Color.black;
+                                    break;
+                            }
                         }
 
                         markerObj.transform.position = marker.Position;
