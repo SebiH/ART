@@ -89,10 +89,10 @@ namespace Assets.Modules.Tracking
 #else
             IsReadyForCalibration = HasSteadyOptitrackCameraPose && HasSteadyOptitrackCalibrationPose && HasSteadyOpenVrPose && HasSteadyArucoPose;
 
-            if (ArucoCamera != null)
+            if (ArucoCamera != null && !CalibrationOffset.IsCalibrated)
             {
-                ArucoCamera.transform.position = _arucoPos;
-                ArucoCamera.transform.rotation = _arucoRot;
+                ArucoCamera.transform.localPosition = _arucoPos;
+                ArucoCamera.transform.localRotation = _arucoRot;
             }
 #endif
         }
