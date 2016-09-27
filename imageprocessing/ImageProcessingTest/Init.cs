@@ -27,7 +27,7 @@ namespace ImageProcessingTest
             int pipeline = ImageProcessing.CreatePipeline();
             int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
             int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
-            int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.05 } ");
+            int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.141 } ");
 //            int processor = ImageProcessing.AddArToolkitProcessor(pipeline, @"
 
 
