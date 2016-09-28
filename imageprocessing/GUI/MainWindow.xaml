@@ -15,7 +15,19 @@
                 <ComboBoxItem>Null</ComboBoxItem>
             </ComboBox>
             <Button Click="Button_Click">Open Camera</Button>
-            <Button>Generate Aruco Markers</Button>
+
+            <Separator Margin="20"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0">Marker Pixel Size</Label>
+                <TextBox Grid.Column="1" x:Name="ArucoMarkerSizeBox">75</TextBox>
+            </Grid>
+            <ComboBox x:Name="ArucoDictionaries" />
+            <Button Click="GenerateArucoMarker">Generate Aruco Markers</Button>
         </StackPanel>
     </Grid>
 </Window>

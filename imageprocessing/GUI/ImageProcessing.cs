@@ -116,5 +116,15 @@ namespace GUI
         public static extern void ManualUpdate();
 
         #endregion
+
+        #region Tools
+        public delegate void ToolCallback(string json_message);
+
+        [DllImport("ImageProcessing")]
+        public static extern void GetArucoDictionaries(ToolCallback callback);
+
+        [DllImport("ImageProcessing")]
+        public static extern void GenerateArucoMarkers(string dictionary_name, string output_dir, int pixel_size);
+        #endregion
     }
 }

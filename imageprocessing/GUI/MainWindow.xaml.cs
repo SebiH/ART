@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Linq;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -5,6 +7,13 @@ namespace GUI
 {
     public partial class MainWindow : Window
     {
+        private string _currentToolOutput;
+        private void ToolCallback(string json_msg)
+        {
+            _currentToolOutput = json_msg;
+        }
+
+
         private void JsonMsg(string msg)
         {
             //Debug.WriteLine(msg);
@@ -18,6 +27,7 @@ namespace GUI
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += (s, e) => PopulateArucoDictionaries();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -98,6 +108,33 @@ namespace GUI
                     }
                 }
             });
+        }
+
+        private void GenerateArucoMarker(object sender, RoutedEventArgs e)
+        {
+            if (ArucoDictionaries.SelectedIndex == -1)
+            {
+                MessageBox.Show("Select aruco library first");
+                return;
+            }
+
+            var dictionary = ArucoDictionaries.SelectedItem as string;
+            int markersize = int.Parse(ArucoMarkerSizeBox.Text);
+            var saveDir = "markers/";
+            Directory.CreateDirectory(saveDir);
+
+            ImageProcessing.GenerateArucoMarkers(dictionary, saveDir, markersize);
+        }
+
+        private void PopulateArucoDictionaries()
+        {
+            ImageProcessing.GetArucoDictionaries(ToolCallback);
+            dynamic output = JArray.Parse(_currentToolOutput);
+
+            foreach (var entry in output)
+            {
+                ArucoDictionaries.Items.Add(((JToken)entry).ToString());
+            }
         }
     }
 }
