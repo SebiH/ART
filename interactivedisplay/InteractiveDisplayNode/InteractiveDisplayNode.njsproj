@@ -34,6 +34,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="public\calibration.html" />
     <Content Include="public\index.html" />
     <Content Include="public\jquery.tipsy.css" />
     <Content Include="public\trust-business.csv" />
@@ -43,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="public\" />
+    <Folder Include="public\markers\" />
     <Folder Include="Scripts\" />
     <Folder Include="Scripts\typings\" />
     <Folder Include="Scripts\typings\node\" />
