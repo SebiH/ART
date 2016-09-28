@@ -113,6 +113,7 @@
     <ClCompile Include="src\processors\ArucoProcessor.cpp" />
     <ClCompile Include="src\processors\_stereo_detection.cpp" />
     <ClCompile Include="src\pipelines\ThreadedPipeline.cpp" />
+    <ClCompile Include="src\tools\ArucoTools.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +137,7 @@
     <ClInclude Include="src\processors\ArucoProcessor.h" />
     <ClInclude Include="src\processors\Processor.h" />
     <ClInclude Include="src\api\unity_plugin.h" />
+    <ClInclude Include="src\tools\ArucoTools.h" />
     <ClInclude Include="src\utils\Event.h" />
     <ClInclude Include="src\utils\Logger.h" />
     <ClInclude Include="src\utils\UID.h" />
