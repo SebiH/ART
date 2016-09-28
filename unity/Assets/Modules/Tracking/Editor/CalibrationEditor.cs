@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -11,6 +7,7 @@ namespace Assets.Modules.Tracking.Editor
     [CustomEditor(typeof(PerformCalibration))]
     class CalibrationEditor : UnityEditor.Editor
     {
+        private static string _calibrationFilename = "";
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -23,6 +20,18 @@ namespace Assets.Modules.Tracking.Editor
             if (GUILayout.Button("Switch to Calibrated Scene") && Application.isPlaying)
             {
                 SceneManager.LoadScene("Scenes/CalibratedTestScene");
+            }
+
+            GUILayout.Label("CalibrationOffsets filename");
+            _calibrationFilename = GUILayout.TextField(_calibrationFilename);
+            if (GUILayout.Button("Save CalibrationOffsets") && Application.isPlaying)
+            {
+                CalibrationOffset.SaveToFile(_calibrationFilename);
+            }
+
+            if (GUILayout.Button("Load CalibrationOffsets") && Application.isPlaying)
+            {
+                CalibrationOffset.LoadFromFile(_calibrationFilename);
             }
         }
     }

@@ -1,3 +1,4 @@
+using Assets.Modules.Core.Code;
 using System;
 using System.IO;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace Assets.Modules.Tracking
             public Vector3 Position;
         }
 
-        public static void SaveToFile(string filename)
+        public static void SaveToFile(string relativeFilename)
         {
             var offsets = new Offsets
             {
@@ -28,16 +29,22 @@ namespace Assets.Modules.Tracking
                 Position = OptitrackToCameraOffset
             };
 
-            File.WriteAllText(filename, JsonUtility.ToJson(offsets));
+            var absoluteFilename = Paths.GetAbsolutePath(relativeFilename);
+
+            File.WriteAllText(absoluteFilename, JsonUtility.ToJson(offsets));
+            Debug.Log(String.Format("Saved to {0}", absoluteFilename));
         }
 
-        public static void LoadFromFile(string filename)
+        public static void LoadFromFile(string relativeFilename)
         {
-            var contents = File.ReadAllText(filename);
+            var absoluteFilename = Paths.GetAbsolutePath(relativeFilename);
+            Debug.Log(String.Format("Loading from {0}", absoluteFilename));
+            var contents = File.ReadAllText(absoluteFilename);
             var offsets = JsonUtility.FromJson<Offsets>(contents);
 
             OpenVrRotationOffset = offsets.Rotation;
             OptitrackToCameraOffset = offsets.Position;
+            Debug.Log(String.Format("Loaded CalibrationOffsets: Rotation: {0}   Position: {1}", offsets.Rotation.ToString(), offsets.Position.ToString()));
         }
     }
 }
