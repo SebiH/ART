@@ -95,6 +95,9 @@ sysinfo.txt
 # Output directory for imageprocessing tools
 /imageprocessing/bin/
 
+# NuGet
+imageprocessing/packages/
+
 # ==========
 # Node / JS
 # ==========
