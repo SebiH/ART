@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace ImageProcessingTest
+namespace GUI
 {
     public static class ImageProcessing
     {
