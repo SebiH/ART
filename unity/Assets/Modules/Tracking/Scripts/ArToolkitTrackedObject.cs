@@ -6,12 +6,12 @@ namespace Assets.Modules.Tracking
     {
         public string TrackedMarkerName;
 
-        void Start()
+        void OnEnable()
         {
             ArToolkitListener.Instance.NewPoseDetected += OnNewPose;
         }
 
-        void OnDestroy()
+        void OnDisable()
         {
             ArToolkitListener.Instance.NewPoseDetected -= OnNewPose;
         }
