@@ -37,6 +37,10 @@
     <Content Include="public\calibration.html" />
     <Content Include="public\index.html" />
     <Content Include="public\jquery.tipsy.css" />
+    <Content Include="public\markers\aruco_00000.png" />
+    <Content Include="public\markers\aruco_00001.png" />
+    <Content Include="public\markers\aruco_00002.png" />
+    <Content Include="public\markers\aruco_00003.png" />
     <Content Include="public\trust-business.csv" />
     <TypeScriptCompile Include="Scripts\typings\node\node.d.ts" />
     <TypeScriptCompile Include="server.ts" />
