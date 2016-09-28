@@ -81,6 +81,9 @@
     <ClCompile Include="src\processors\ArucoProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\api\tools.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\tools\ArucoTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

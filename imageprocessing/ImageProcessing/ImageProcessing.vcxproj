@@ -97,6 +97,7 @@
     <ClCompile Include="src\api\output_factory.cpp" />
     <ClCompile Include="src\api\pipeline.cpp" />
     <ClCompile Include="src\api\processor_factory.cpp" />
+    <ClCompile Include="src\api\tools.cpp" />
     <ClCompile Include="src\cameras\ActiveCamera.cpp" />
     <ClCompile Include="src\cameras\DummyCameraSource.cpp" />
     <ClCompile Include="src\cameras\EmptyCameraSource.cpp" />
