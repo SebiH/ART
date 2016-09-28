@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -53,10 +53,10 @@ namespace Assets.Modules.Tracking
             }
 
             transform.localPosition = markerPosInRoom;
-            transform.localRotation = _optitrackCalibrationPose.Rotation;
-            // rotate around 180 degrees because marker is on the backside
-            //Quaternion offset = Quaternion.Euler(180f, 0f, 0f);
-            //transform.localRotation *= offset;
+            if (_optitrackCalibrationPose != null)
+            {
+                transform.localRotation = _optitrackCalibrationPose.Rotation;
+            }
         }
     }
 }
