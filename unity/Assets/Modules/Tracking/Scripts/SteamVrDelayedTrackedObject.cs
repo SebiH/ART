@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
 
-namespace Assets.Scripts
+namespace Assets.Modules.Tracking
 {
     /**
      *  Modified SteamVR_TrackedObject script.
@@ -21,9 +21,6 @@ namespace Assets.Scripts
         [Range(0, 0.2f)]
         // Delay in ms
         public float TrackingDelay = 0f;
-
-        public Vector3 RotationOffset = Vector3.zero;
-
 
         private Queue<DelayedPose> _trackedPoses = new Queue<DelayedPose>();
         
@@ -122,7 +119,7 @@ namespace Assets.Scripts
 
             if (TrackRotation)
             {
-                transform.rotation = Quaternion.Euler(pose.rot.eulerAngles + RotationOffset);
+                transform.rotation = pose.rot * CalibrationOffset.OpenVrRotationOffset;
             }
         }
 
