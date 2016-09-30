@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Calibration
 {
     public class ApplyCameraCalibration : MonoBehaviour
     {

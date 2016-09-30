@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Assets.Modules.Tracking.Editor
+namespace Assets.Modules.Calibration
 {
     [CustomEditor(typeof(PerformCalibration))]
     class CalibrationEditor : UnityEditor.Editor

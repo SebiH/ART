@@ -7,7 +7,7 @@ using UnityEngine;
 using Valve.VR;
 
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Calibration
 {
     public class PerformCalibration : MonoBehaviour
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Calibration
 {
     public class MultiMarker_MarkerSetup : MonoBehaviour
     {

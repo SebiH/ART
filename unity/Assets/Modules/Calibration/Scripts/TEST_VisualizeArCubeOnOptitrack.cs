@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Calibration
 {
 
     public class VisualizeArCubeOnOptitrack : MonoBehaviour
