@@ -53,11 +53,16 @@ namespace Assets.Modules.Tracking
                 {
                     foreach (var marker in pose.Markers)
                     {
-                        string markerName = String.Format("Marker{0}_{1}", pose.Id, marker.Id);
+                        string markerName = String.Format("Marker_{0}", marker.Id);
 
-                        var markerObj = GameObject.Find(markerName);
+                        var markerTransform = transform.Find(markerName);
+                        GameObject markerObj;
 
-                        if (markerObj == null)
+                        if (markerTransform != null)
+                        {
+                            markerObj = markerTransform.gameObject;
+                        }
+                        else
                         {
                             markerObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                             Vector3 scale = new Vector3(0.01f, 0.01f, 0.01f);
