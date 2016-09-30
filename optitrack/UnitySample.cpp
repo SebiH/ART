@@ -82,6 +82,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 #if REPLAY_FROM_FILE
 
+	strcpy(szUnityIPAddress, "127.0.0.1");
+	printf("Connecting to Unity3D on LocalMachine...\n");
+
 	// read line for line, each line is a single package
 	// after reaching end, we'll start from the beginning to get a continous stream
 	std::string line;
