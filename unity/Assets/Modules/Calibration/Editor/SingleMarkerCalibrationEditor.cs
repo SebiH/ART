@@ -1,11 +1,12 @@
+using Assets.Modules.Tracking;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Modules.Calibration
 {
-    [CustomEditor(typeof(PerformCalibration))]
-    class CalibrationEditor : UnityEditor.Editor
+    [CustomEditor(typeof(PerformCalibrationSingleMarker))]
+    class SingleMarkerCalibrationEditor : Editor
     {
         private static string _calibrationFilename = "";
         public override void OnInspectorGUI()
@@ -13,7 +14,7 @@ namespace Assets.Modules.Calibration
             base.OnInspectorGUI();
             if (GUILayout.Button("Perform Calibration") && Application.isPlaying)
             {
-                var script = target as PerformCalibration;
+                var script = target as PerformCalibrationSingleMarker;
                 script.Calibrate();
             }
 

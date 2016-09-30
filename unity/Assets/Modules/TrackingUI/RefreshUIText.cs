@@ -1,14 +1,13 @@
 using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
-using Assets.Modules.Tracking;
 using System.Text;
+using Assets.Modules.Calibration;
 
 namespace Assets.Modules.TrackingUI
 {
     public class RefreshUIText : MonoBehaviour
     {
-        public PerformCalibration CalibrationScript;
+        public PerformCalibrationSingleMarker CalibrationScript;
         private Text _textbox;
 
         void Start()

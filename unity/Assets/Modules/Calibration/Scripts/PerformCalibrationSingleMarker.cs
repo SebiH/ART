@@ -1,5 +1,6 @@
 //#define USE_ARTOOLKIT
 
+using Assets.Modules.Tracking;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using Valve.VR;
 
 namespace Assets.Modules.Calibration
 {
-    public class PerformCalibration : MonoBehaviour
+    public class PerformCalibrationSingleMarker : MonoBehaviour
     {
         const float SteadyPosThreshold = 0.2f;
         const float SteadyAngleThreshold = 2f;
