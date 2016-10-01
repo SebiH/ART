@@ -1,5 +1,6 @@
 using Assets.Modules.Tracking;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.Calibration
@@ -15,8 +16,14 @@ namespace Assets.Modules.Calibration
         public GameObject MarkerPreviewPrefab;
         private GameObject _markerPreview;
 
+        public bool CanSetMarker { get; private set; }
+        public float SetMarkerProgress { get; private set; }
+
         void OnEnable()
         {
+            CanSetMarker = true;
+            SetMarkerProgress = 0f;
+
             _markerPreview = GameObject.Instantiate(MarkerPreviewPrefab);
 
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
@@ -50,9 +57,23 @@ namespace Assets.Modules.Calibration
         }
 
 
-        public void SetMarker()
+        public void StartSetMarker()
         {
-            // Wait 10 seconds to gather average of all optitrack points?
+            StartCoroutine(SetMarker());
+        }
+
+        private IEnumerator SetMarker()
+        {
+            CanSetMarker = false;
+
+            while (SetMarkerProgress < 1f)
+            {
+                SetMarkerProgress += 0.05f;
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            CanSetMarker = true;
+            SetMarkerProgress = 0f;
         }
     }
 }
