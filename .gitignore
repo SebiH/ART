@@ -82,16 +82,7 @@ sysinfo.txt
 /unity/Assets/Plugins/generated/*.meta
 
 # Library folder, managed via other scripts
-/tools/tools/thirdparty/libs/*
-/tools/ImageProcessing/thirdparty/dll/*
-
-/tools/ArToolkitCalibration/thirdparty/libs_vc12_32/*
-/tools/ArToolkitCalibration/thirdparty/libs_vc14_64/*
-/tools/ArToolkitCalibration/thirdparty/dll_vc12_32/*
-/tools/ArToolkitCalibration/thirdparty/dll_vc14_64/*
-
-/tools/optitrack/thirdparty/libs_vc12_32/*
-/tools/optitrack/thirdparty/libs_vc12_64/*
+/tools/thirdparty/*
 
 # Output directory for imageprocessing tools
 /tools/build/

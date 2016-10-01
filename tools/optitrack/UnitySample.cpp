@@ -44,11 +44,11 @@ Usage [optional]:
 #include <iostream>
 #include <fstream>
 
-#include "NatNetTypes.h"
-#include "NatNetClient.h"
+#include "NatNet/NatNetTypes.h"
+#include "NatNet/NatNetClient.h"
 
 #include "tinyxml/tinyxml.h"  //== for xml encoding of Unity3D payload
-#include "NatNetRepeater.h"   //== for transport of data over UDP to Unity3D
+#include "NatNet/NatNetRepeater.h"   //== for transport of data over UDP to Unity3D
 
 //== Slip Stream globals ==--
 
