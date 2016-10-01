@@ -90,10 +90,11 @@ sysinfo.txt
 /tools/ArToolkitCalibration/thirdparty/dll_vc12_32/*
 /tools/ArToolkitCalibration/thirdparty/dll_vc14_64/*
 
-/tools/optitrack/thirdparty/lib/*
+/tools/optitrack/thirdparty/libs_vc12_32/*
+/tools/optitrack/thirdparty/libs_vc12_64/*
 
 # Output directory for imageprocessing tools
-/tools/bin/
+/tools/build/
 
 # NuGet
 /tools/packages/

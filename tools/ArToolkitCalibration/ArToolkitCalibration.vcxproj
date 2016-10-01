@@ -69,22 +69,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(SolutionDir)obj\artoolkitcalibration\$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)bin\artoolkitcalibration\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\obj\artoolkitcalibration\$(Platform)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)build\bin\gui\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(SolutionDir)obj\artoolkitcalibration\$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)bin\artoolkitcalibration\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)build\obj\artoolkitcalibration\$(Platform)_$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)build\bin\gui\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)bin\artoolkitcalibration\$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)obj\artoolkitcalibration\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)build\bin\gui\</OutDir>
+    <IntDir>$(SolutionDir)build\obj\artoolkitcalibration\$(Platform)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)bin\artoolkitcalibration\$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)obj\artoolkitcalibration\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)build\bin\gui\</OutDir>
+    <IntDir>$(SolutionDir)build\obj\artoolkitcalibration\$(Platform)_$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
