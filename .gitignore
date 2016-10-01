@@ -82,21 +82,21 @@ sysinfo.txt
 /unity/Assets/Plugins/generated/*.meta
 
 # Library folder, managed via other scripts
-/imageprocessing/ImageProcessing/thirdparty/libs/*
-/imageprocessing/ImageProcessing/thirdparty/dll/*
+/tools/tools/thirdparty/libs/*
+/tools/ImageProcessing/thirdparty/dll/*
 
-/imageprocessing/ArToolkitCalibration/thirdparty/libs_vc12_32/*
-/imageprocessing/ArToolkitCalibration/thirdparty/libs_vc14_64/*
-/imageprocessing/ArToolkitCalibration/thirdparty/dll_vc12_32/*
-/imageprocessing/ArToolkitCalibration/thirdparty/dll_vc14_64/*
+/tools/ArToolkitCalibration/thirdparty/libs_vc12_32/*
+/tools/ArToolkitCalibration/thirdparty/libs_vc14_64/*
+/tools/ArToolkitCalibration/thirdparty/dll_vc12_32/*
+/tools/ArToolkitCalibration/thirdparty/dll_vc14_64/*
 
-/imageprocessing/optitrack/thirdparty/lib/*
+/tools/optitrack/thirdparty/lib/*
 
 # Output directory for imageprocessing tools
-/imageprocessing/bin/
+/tools/bin/
 
 # NuGet
-imageprocessing/packages/
+/tools/packages/
 
 # ==========
 # Node / JS
