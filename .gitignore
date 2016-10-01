@@ -90,7 +90,7 @@ sysinfo.txt
 /imageprocessing/ArToolkitCalibration/thirdparty/dll_vc12_32/*
 /imageprocessing/ArToolkitCalibration/thirdparty/dll_vc14_64/*
 
-/optitrack/lib/*
+/imageprocessing/optitrack/thirdparty/lib/*
 
 # Output directory for imageprocessing tools
 /imageprocessing/bin/
