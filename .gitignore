@@ -85,10 +85,10 @@ sysinfo.txt
 /imageprocessing/ImageProcessing/thirdparty/libs/*
 /imageprocessing/ImageProcessing/thirdparty/dll/*
 
-/imageprocessing/Tools/thirdparty/libs_vc12_32/*
-/imageprocessing/Tools/thirdparty/libs_vc14_64/*
-/imageprocessing/Tools/thirdparty/dll_vc12_32/*
-/imageprocessing/Tools/thirdparty/dll_vc14_64/*
+/imageprocessing/ArToolkitCalibration/thirdparty/libs_vc12_32/*
+/imageprocessing/ArToolkitCalibration/thirdparty/libs_vc14_64/*
+/imageprocessing/ArToolkitCalibration/thirdparty/dll_vc12_32/*
+/imageprocessing/ArToolkitCalibration/thirdparty/dll_vc14_64/*
 
 /optitrack/lib/*
 

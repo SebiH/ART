@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImageProcessing", "ImageProcessing\ImageProcessing.vcxproj", "{876C14A4-B1B3-49EC-81C6-CB3829ABCC3C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tools", "Tools\Tools.vcxproj", "{628A03C2-3448-47EF-8CF7-F9DB13A4C81A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ArToolkitCalibration", "ArToolkitCalibration\ArToolkitCalibration.vcxproj", "{628A03C2-3448-47EF-8CF7-F9DB13A4C81A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI", "GUI\GUI.csproj", "{F6456212-C32F-483E-A855-60F741047002}"
 	ProjectSection(ProjectDependencies) = postProject

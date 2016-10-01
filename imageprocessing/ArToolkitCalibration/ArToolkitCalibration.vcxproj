@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{628A03C2-3448-47EF-8CF7-F9DB13A4C81A}</ProjectGuid>
-    <RootNamespace>Tools</RootNamespace>
+    <RootNamespace>ArToolkitCalibration</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -69,22 +69,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IntDir>$(SolutionDir)obj\tools\$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)bin\tools\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\artoolkitcalibration\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\artoolkitcalibration\$(Platform)_$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IntDir>$(SolutionDir)obj\tools\$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(SolutionDir)bin\tools\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\artoolkitcalibration\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\artoolkitcalibration\$(Platform)_$(Configuration)\</OutDir>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)bin\tools\$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)obj\tools\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\artoolkitcalibration\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\artoolkitcalibration\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)bin\tools\$(Platform)_$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)obj\tools\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\artoolkitcalibration\$(Platform)_$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\artoolkitcalibration\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -125,7 +125,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>./thirdparty/include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./thirdparty/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
