@@ -50,6 +50,15 @@ bool szIsRunning;
 
 void SendXMLToUnity(sFrameOfMocapData *data, void* pUserData);
 
+
+typedef void(__stdcall * OutputCallback) (const char *str);
+static OutputCallback ExternalCallback;
+
+extern "C" __declspec(dllexport) void RegisterCallback(OutputCallback callback)
+{
+	ExternalCallback = callback;
+}
+
 static inline void Log(const std::string &fmt_str, ...)
 {
 	if (szLogLevel > 0)
@@ -72,7 +81,14 @@ static inline void Log(const std::string &fmt_str, ...)
 				break;
 		}
 
-		printf(formatted.get());
+		if (ExternalCallback)
+		{
+			ExternalCallback(formatted.get());
+		}
+		else
+		{
+			printf(formatted.get());
+		}
 	}
 }
 
@@ -82,13 +98,14 @@ extern "C" __declspec(dllexport) void StopServer()
 }
 
 
-extern "C" __declspec(dllexport) void ReplayFromData(const char *filename)
+extern "C" __declspec(dllexport) void ReplayFromData(const char *filename, int loglevel)
 {
 	if (szIsRunning)
 	{
 		StopServer();
 	}
 
+	szLogLevel = loglevel;
 	szIsRunning = true;
 	szUnityIPAddress = std::string("127.0.0.1");
 	Log("Connecting to Unity3D on LocalMachine...\n");
@@ -105,7 +122,7 @@ extern "C" __declspec(dllexport) void ReplayFromData(const char *filename)
 	{
 		auto file = std::ifstream(filename);
 
-		while (std::getline(file, line))
+		while (std::getline(file, line) && szIsRunning)
 		{
 			Log("Sending new packet (%ld)\n", counter++);
 			gSlipStream->Stream((unsigned char *)line.c_str(), line.length());
