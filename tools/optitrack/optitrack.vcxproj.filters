@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="UnitySample.cpp" />
     <ClCompile Include="tinyxml\tinyxml.cpp">
       <Filter>third party\tinyxml</Filter>
     </ClCompile>
@@ -14,6 +13,7 @@
     <ClCompile Include="tinyxml\tinystr.cpp">
       <Filter>third party\tinyxml</Filter>
     </ClCompile>
+    <ClCompile Include="OptitrackBridge.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tinyxml\tinyxml.h">
