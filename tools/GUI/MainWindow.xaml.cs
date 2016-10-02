@@ -1,3 +1,4 @@
+using GUI.Optitrack;
 using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Threading.Tasks;
@@ -135,6 +136,11 @@ namespace GUI
             {
                 ArucoDictionaries.Items.Add(((JToken)entry).ToString());
             }
+        }
+
+        private void Optitrack_Click(object sender, RoutedEventArgs e)
+        {
+            new OptitrackWindow().Show();
         }
     }
 }

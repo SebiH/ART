@@ -28,6 +28,10 @@
             </Grid>
             <ComboBox x:Name="ArucoDictionaries" />
             <Button Click="GenerateArucoMarker">Generate Aruco Markers</Button>
+
+            <Separator Margin="20"/>
+
+            <Button Click="Optitrack_Click">Optitrack Server</Button>
         </StackPanel>
     </Grid>
 </Window>
