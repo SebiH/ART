@@ -133,7 +133,7 @@ extern "C" __declspec(dllexport) void StartServer(const char *OptitrackIp, const
 	szLogLevel = LogLevel;
 
 	// parse command line args
-	if (OptitrackIp != '\0')
+	if (*OptitrackIp != '\0')
 	{
 		szServerIPAddress = std::string(OptitrackIp);
 		Log("Connecting to server at %s...\n", szServerIPAddress);
@@ -144,7 +144,7 @@ extern "C" __declspec(dllexport) void StartServer(const char *OptitrackIp, const
 		Log("Connecting to server at LocalMachine\n");
 	}
 
-	if (ListenIp != '\0')
+	if (*ListenIp != '\0')
 	{
 		szMyIPAddress = std::string(ListenIp);
 		Log("Connecting from %s...\n", szMyIPAddress);
@@ -155,7 +155,7 @@ extern "C" __declspec(dllexport) void StartServer(const char *OptitrackIp, const
 		Log("Connecting from LocalMachine...\n");
 	}
 
-	if (UnityIp != '\0')
+	if (*UnityIp != '\0')
 	{
 		szUnityIPAddress = std::string(UnityIp);
 		Log("Connecting to Unity3D at %s...\n", szUnityIPAddress);
@@ -166,7 +166,7 @@ extern "C" __declspec(dllexport) void StartServer(const char *OptitrackIp, const
 		Log("Connecting to Unity3D on LocalMachine...\n");
 	}
 
-	if (SaveFile != '\0')
+	if (*SaveFile != '\0')
 	{
 		szCaptureFilename = std::string(SaveFile);
 		Log("Saving capture data to file %s...\n", szCaptureFilename);
