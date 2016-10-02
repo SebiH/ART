@@ -46,6 +46,8 @@ std::string szCaptureFilename;
 
 int szLogLevel;
 
+bool szIsRunning;
+
 void SendXMLToUnity(sFrameOfMocapData *data, void* pUserData);
 
 static inline void Log(const std::string &fmt_str, ...)
@@ -74,8 +76,20 @@ static inline void Log(const std::string &fmt_str, ...)
 	}
 }
 
+extern "C" __declspec(dllexport) void StopServer()
+{
+	szIsRunning = false;
+}
+
+
 extern "C" __declspec(dllexport) void ReplayFromData(const char *filename)
 {
+	if (szIsRunning)
+	{
+		StopServer();
+	}
+
+	szIsRunning = true;
 	szUnityIPAddress = std::string("127.0.0.1");
 	Log("Connecting to Unity3D on LocalMachine...\n");
 
@@ -87,7 +101,7 @@ extern "C" __declspec(dllexport) void ReplayFromData(const char *filename)
 
 	long counter = 0;
 
-	while (true)
+	while (szIsRunning)
 	{
 		auto file = std::ifstream(filename);
 
@@ -106,6 +120,12 @@ extern "C" __declspec(dllexport) void ReplayFromData(const char *filename)
 
 extern "C" __declspec(dllexport) void StartServer(const char *OptitrackIp, const char *ListenIp, const char *UnityIp, const char *SaveFile, int LogLevel)
 {
+	if (szIsRunning)
+	{
+		StopServer();
+	}
+	szIsRunning = true;
+
 	int iResult;
 	int iConnectionType = ConnectionType_Multicast;
 	//int iConnectionType = ConnectionType_Unicast;
@@ -241,53 +261,9 @@ extern "C" __declspec(dllexport) void StartServer(const char *OptitrackIp, const
 	Log("\nClient is connected to server and listening for data...\n");
 	int c;
 	bool bExit = false;
-	while (c = _getch())
+	while (szIsRunning)
 	{
-		switch (c)
-		{
-		case 'q':
-			bExit = true;
-			break;
-		case 'r':
-			resetClient();
-			break;
-		case 'p':
-			sServerDescription ServerDescription;
-			memset(&ServerDescription, 0, sizeof(ServerDescription));
-			theClient->GetServerDescription(&ServerDescription);
-			if (!ServerDescription.HostPresent)
-			{
-				Log("Unable to connect to server. Host not present. Exiting.");
-				return;
-			}
-			break;
-		case 'f':
-		{
-			sFrameOfMocapData* pData = theClient->GetLastFrameOfData();
-			Log("Most Recent Frame: %d", pData->iFrame);
-		}
-		break;
-		case 'm':	                        // change to multicast
-			iResult = CreateClient(ConnectionType_Multicast);
-			if (iResult == ErrorCode_OK)
-				Log("Client connection type changed to Multicast.\n\n");
-			else
-				Log("Error changing client connection type to Multicast.\n\n");
-			break;
-		case 'u':	                        // change to unicast
-			iResult = CreateClient(ConnectionType_Unicast);
-			if (iResult == ErrorCode_OK)
-				Log("Client connection type changed to Unicast.\n\n");
-			else
-				Log("Error changing client connection type to Unicast.\n\n");
-			break;
-
-
-		default:
-			break;
-		}
-		if (bExit)
-			break;
+		;
 	}
 
 	// Done - clean up.

@@ -14,5 +14,8 @@ namespace GUI
 
         [DllImport("optitrack")]
         public static extern void StartServer(string OptitrackIp, string ListenIp, string UnityIp, string SaveFile, int LogLevel);
+
+        [DllImport("optitrack")]
+        public static extern void StopServer();
     }
 }
