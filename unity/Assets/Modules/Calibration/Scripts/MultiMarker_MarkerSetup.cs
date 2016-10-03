@@ -15,6 +15,7 @@ namespace Assets.Modules.Calibration
         public GameObject Calibrator;
         public GameObject MarkerPreviewPrefab;
         private GameObject _markerPreview;
+        private int _currentCalibratingMarkerId;
 
         public bool CanSetMarker { get; private set; }
         public float SetMarkerProgress { get; private set; }
@@ -57,9 +58,13 @@ namespace Assets.Modules.Calibration
         }
 
 
-        public void StartSetMarker()
+        public void StartSetMarker(int markerId)
         {
-            StartCoroutine(SetMarker());
+            if (CanSetMarker)
+            {
+                _currentCalibratingMarkerId = markerId;
+                StartCoroutine(SetMarker());
+            }
         }
 
         private IEnumerator SetMarker()
