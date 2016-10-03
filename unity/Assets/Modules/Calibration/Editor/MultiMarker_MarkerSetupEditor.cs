@@ -24,6 +24,7 @@ namespace Assets.Modules.Calibration
                 EditorGUI.ProgressBar(r, script.SetMarkerProgress, "Calibrating...");
                 GUILayout.Space(19);
                 EditorGUILayout.EndVertical();
+                Repaint();
             }
         }
     }
