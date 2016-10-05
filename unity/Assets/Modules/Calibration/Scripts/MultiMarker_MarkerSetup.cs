@@ -80,11 +80,13 @@ namespace Assets.Modules.Calibration
             {
                 sampleCount++;
                 positionSamples += _markerPreview.transform.position;
-                rotationSamples += _markerPreview.tran
+                //rotationSamples += _markerPreview.tran
 
                 SetMarkerProgress += 0.05f;
                 yield return new WaitForSeconds(0.1f);
             }
+
+
 
             CanSetMarker = true;
             SetMarkerProgress = 0f;
