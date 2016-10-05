@@ -315,13 +315,16 @@ int CreateClient(int iConnectionType)
 
 	// Init Client and connect to NatNet server
 	// to use NatNet default port assigments
-	auto myIp = std::make_unique<char[]>(szMyIPAddress.length());
-	strncpy(myIp.get(), szMyIPAddress.c_str(), szMyIPAddress.length());
 
-	auto serverIp = std::make_unique<char[]>(szServerIPAddress.length());
-	strncpy(serverIp.get(), szServerIPAddress.c_str(), szServerIPAddress.length());
+	// TODO: this probably leaks memory (unique ptrs cause crash because memory is needed by natnet client?),
+	//       but function isn't used very often and likely only once so this is low priority
+	auto myIp = new char[szMyIPAddress.length() + 1];
+	strncpy(myIp, szMyIPAddress.c_str(), szMyIPAddress.length() + 1);
 
-	int retCode = theClient->Initialize(myIp.get(), serverIp.get());
+	auto serverIp = new char[szServerIPAddress.length() + 1];
+	strncpy(serverIp, szServerIPAddress.c_str(), szServerIPAddress.length() + 1);
+
+	int retCode = theClient->Initialize(myIp, serverIp);
 	// to use a different port for commands and/or data:
 	//int retCode = theClient->Initialize(szMyIPAddress, szServerIPAddress, MyServersCommandPort, MyServersDataPort);
 	if (retCode != ErrorCode_OK)
