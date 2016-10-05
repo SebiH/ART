@@ -36,8 +36,8 @@ namespace GUI
             Task.Run(() =>
             {
                 //ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
-                //ImageProcessing.SetOvrCamera(2, 0);
-                ImageProcessing.SetOpenCVCamera();
+                ImageProcessing.SetOvrCamera(2, 0);
+                //ImageProcessing.SetOpenCVCamera();
                 ImageProcessing.StartImageProcessing();
 
                 ImageProcessing.GetCamJsonProperties(GetPropertiesCallback);

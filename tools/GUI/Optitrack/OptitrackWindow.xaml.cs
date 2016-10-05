@@ -19,6 +19,7 @@ namespace GUI.Optitrack
             _currentDispatcher = Dispatcher.CurrentDispatcher;
         }
 
+
         private void StartServer_Click(object sender, RoutedEventArgs e)
         {
             var optitrackIp = OptitrackIpBox.Text;
@@ -31,9 +32,17 @@ namespace GUI.Optitrack
             {
                 var sb = new StringBuilder();
                 DateTime lastUpdate = DateTime.Now;
+                DateTime lastClear = DateTime.Now;
                 OptitrackServer.OutputCallback callback = (msg) =>
                 {
                     sb.Append(msg);
+
+                    // periodically remove complete log
+                    if ((DateTime.Now - lastClear).TotalMilliseconds > 2000)
+                    {
+                        sb = new StringBuilder();
+                        lastClear = DateTime.Now;
+                    }
 
                     // reduce amount of calls to current dispatcher
                     if ((DateTime.Now - lastUpdate).TotalMilliseconds > 100)

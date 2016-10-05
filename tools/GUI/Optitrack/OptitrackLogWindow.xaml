@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="OptitrackLogWindow" Height="300" Width="300"
         x:Name="root">
-    <ScrollViewer x:Name="LogScroller">
-        <TextBox Text="{Binding ElementName=root, Path=Log}" TextWrapping="Wrap"/>
+    <ScrollViewer x:Name="LogScroller" VerticalScrollBarVisibility="Hidden">
+        <TextBox Text="{Binding ElementName=root, Path=Log}" TextWrapping="NoWrap"/>
     </ScrollViewer>
 </Window>
