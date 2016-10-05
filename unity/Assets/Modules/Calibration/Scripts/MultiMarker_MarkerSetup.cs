@@ -1,6 +1,7 @@
 using Assets.Modules.Tracking;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.Calibration
@@ -69,10 +70,18 @@ namespace Assets.Modules.Calibration
 
         private IEnumerator SetMarker()
         {
+            var positionSamples = Vector3.zero;
+            var rotationSamples = Vector3.zero;
+            int sampleCount = 0;
+
             CanSetMarker = false;
 
             while (SetMarkerProgress < 1f)
             {
+                sampleCount++;
+                positionSamples += _markerPreview.transform.position;
+                rotationSamples += _markerPreview.tran
+
                 SetMarkerProgress += 0.05f;
                 yield return new WaitForSeconds(0.1f);
             }
