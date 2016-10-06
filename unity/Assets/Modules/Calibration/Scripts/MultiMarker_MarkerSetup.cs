@@ -15,6 +15,7 @@ namespace Assets.Modules.Calibration
 
         public GameObject Calibrator;
         public GameObject MarkerPreviewPrefab;
+        public GameObject MarkerPrefab;
         private GameObject _markerPreview;
         private int _currentCalibratingMarkerId;
 
@@ -86,7 +87,16 @@ namespace Assets.Modules.Calibration
                 yield return new WaitForSeconds(0.1f);
             }
 
+            if (sampleCount > 0)
+            {
+                positionSamples = positionSamples / sampleCount;
+            }
 
+            var createdMarker = Instantiate(MarkerPrefab);
+            createdMarker.GetComponent<MultiMarker_Debug_CameraIndicator>().MarkerId = _currentCalibratingMarkerId;
+            createdMarker.transform.position = positionSamples;
+            // TODO: rotation sampling!
+            createdMarker.transform.rotation = _markerPreview.transform.rotation;
 
             CanSetMarker = true;
             SetMarkerProgress = 0f;
