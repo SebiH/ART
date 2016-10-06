@@ -13,7 +13,7 @@ namespace Assets.Modules.Calibration
 
         public int BindToIndex = -1;
 
-        public GameObject Calibrator;
+        public string OptitrackCalibratorName = "CalibrationHelper";
         public GameObject MarkerPreviewPrefab;
         public GameObject MarkerPrefab;
         private GameObject _markerPreview;
@@ -31,34 +31,40 @@ namespace Assets.Modules.Calibration
 
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
             _markerPreview.transform.localScale = new Vector3(markerSize, 0.001f, markerSize);
+
+            OptitrackListener.Instance.PosesReceived += OnOptitrackPoses;
         }
 
         void OnDisable()
         {
             Destroy(_markerPreview);
+            OptitrackListener.Instance.PosesReceived -= OnOptitrackPoses;
         }
 
-        void Update()
-        {
-            _markerPreview.transform.localPosition = CalibratorToMarkerPosOffset;
-            _markerPreview.transform.localRotation = Quaternion.Euler(CalibratorToMarkerRotOffset);
 
-            if (BindToIndex == -1)
+        void OnOptitrackPoses(List<OptitrackPose> poses)
+        {
+            foreach (var pose in poses)
             {
-                _markerPreview.transform.parent = Calibrator.transform;
-            }
-            else
-            {
-                // TODO: code duplication..
-                var optitrackMarker = Calibrator.transform.Find(String.Format("Marker_{0}", BindToIndex + 1));
-                if (optitrackMarker != null)
+                if (pose.RigidbodyName == OptitrackCalibratorName)
                 {
-                    _markerPreview.transform.parent = optitrackMarker;
+                    if (BindToIndex == -1)
+                    {
+                        _markerPreview.transform.position = pose.Position;
+                    }
+                    else
+                    {
+                        var marker = pose.Markers.Find((m) => m.Id == BindToIndex);
+                        _markerPreview.transform.position = marker.Position;
+                    }
+
+                    _markerPreview.transform.position += CalibratorToMarkerPosOffset;
+                    _markerPreview.transform.rotation = pose.Rotation * Quaternion.Euler(CalibratorToMarkerRotOffset);
+
+                    break;
                 }
             }
-
         }
-
 
         public void StartSetMarker(int markerId)
         {
