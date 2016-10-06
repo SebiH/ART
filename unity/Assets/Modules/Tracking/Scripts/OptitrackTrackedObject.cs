@@ -65,7 +65,7 @@ namespace Assets.Modules.Tracking
                         else
                         {
                             markerObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                            Vector3 scale = new Vector3(0.01f, 0.01f, 0.01f);
+                            Vector3 scale = new Vector3(0.02f, 0.02f, 0.02f);
                             markerObj.transform.parent = transform;
                             markerObj.transform.localScale = scale;
                             markerObj.name = markerName;
