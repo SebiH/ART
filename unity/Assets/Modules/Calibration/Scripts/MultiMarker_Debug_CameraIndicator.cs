@@ -1,4 +1,4 @@
-﻿using Assets.Modules.Core.Util;
+using Assets.Modules.Core.Util;
 using Assets.Modules.Tracking;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace Assets.Modules.Calibration
         {
             ArucoListener.Instance.NewPoseDetected += OnArucoPose;
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
-            Visuals.localScale = new Vector3(markerSize, 0.01f, markerSize);
+            Visuals.localScale = new Vector3(markerSize, 0.001f, markerSize);
         }
 
         void OnDisable()
