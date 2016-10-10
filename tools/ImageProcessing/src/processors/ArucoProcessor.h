@@ -21,8 +21,8 @@ namespace ImageProcessing
 			};
 		};
 
-		std::unique_ptr<aruco::MarkerDetector> detector_;
-		std::unique_ptr<aruco::CameraParameters> camera_params_;
+		aruco::MarkerDetector detector_;
+		aruco::CameraParameters camera_params_;
 		FrameSize initialized_size_;
 		float marker_size_m_;
 

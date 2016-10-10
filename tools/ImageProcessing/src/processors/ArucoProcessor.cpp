@@ -1,6 +1,7 @@
 #include "ArucoProcessor.h"
 
 #include <opencv2/opencv.hpp>
+#include <aruco/cvdrawingutils.h>
 
 #include "cameras/ActiveCamera.h"
 #include "cameras/CameraSourceInterface.h"
@@ -12,9 +13,6 @@ using json = nlohmann::json;
 ArucoProcessor::ArucoProcessor(const json &marker_config)
 	: initialized_size_(-1, -1, -1)
 {
-	detector_ = std::make_unique<aruco::MarkerDetector>();
-	camera_params_ = std::make_unique<aruco::CameraParameters>();
-
 	if (marker_config.count("marker_size_m"))
 	{
 		marker_size_m_ = marker_config["marker_size_m"].get<float>();
@@ -22,9 +20,9 @@ ArucoProcessor::ArucoProcessor(const json &marker_config)
 
 	// detector settings
 	// TODO: deprecated! use setParams, allow settings via Get/SetProperties
-	detector_->setCornerRefinementMethod(aruco::MarkerDetector::LINES);
-	detector_->setThresholdMethod(aruco::MarkerDetector::FIXED_THRES);
-	detector_->setThresholdParams(threshold_, 0.0);
+	detector_.setCornerRefinementMethod(aruco::MarkerDetector::LINES);
+	detector_.setThresholdMethod(aruco::MarkerDetector::FIXED_THRES);
+	detector_.setThresholdParams(threshold_, 0.0);
 }
 
 ArucoProcessor::~ArucoProcessor()
@@ -48,7 +46,7 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 
 	std::vector<aruco::Marker> detected_markers;
 	// TODO: crashes with release version of aruco, works in debug?
-	detector_->detect(img_gray, detected_markers, camera_params_->CameraMatrix, cv::Mat(), marker_size_m_, true);
+	detector_.detect(img_gray, detected_markers, camera_params_.CameraMatrix, cv::Mat(), marker_size_m_, true);
 
 	json processed_markers{
 		{ "markers_left", json::array() },
@@ -167,7 +165,7 @@ void ArucoProcessor::Init(const FrameSize &size, const float focalpoint)
 	cameramat.at<float>(8) = 1.0f;
 
 	cv::Mat distorsionCoeff(4, 1, CV_32FC1);
-	camera_params_->setParams(cameramat, distorsionCoeff, cv::Size(size.width, size.height));
+	camera_params_.setParams(cameramat, distorsionCoeff, cv::Size(size.width, size.height));
 
 	initialized_size_ = size;
 }
