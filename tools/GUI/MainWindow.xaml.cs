@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace GUI
 {
@@ -33,11 +34,19 @@ namespace GUI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            var camera = (CameraSelectionBox.SelectedItem as ComboBoxItem).Content as string;
+
             Task.Run(() =>
             {
-                //ImageProcessing.SetDummyCamera("C:/code/resources/dummy_image_default.png");
-                ImageProcessing.SetOvrCamera(2, 0);
-                //ImageProcessing.SetOpenCVCamera();
+                if (camera == "OVRVision")
+                {
+                    ImageProcessing.SetOvrCamera(2, 0);
+                }
+                else if (camera == "OpenCV")
+                {
+                    ImageProcessing.SetOpenCVCamera();
+                }
+
                 ImageProcessing.StartImageProcessing();
 
                 ImageProcessing.GetCamJsonProperties(GetPropertiesCallback);
@@ -45,34 +54,7 @@ namespace GUI
                 int pipeline = ImageProcessing.CreatePipeline();
                 int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
                 int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
-                int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.141 } ");
-                //            int processor = ImageProcessing.AddArToolkitProcessor(pipeline, @"
-
-
-                //		{
-                //			""config"": {
-                //				""calibration_left"": ""C:/code/resources/calib_ovrvision_left.dat"",
-                //				""calibration_right"": ""C:/code/resources/calib_ovrvision_right.dat""
-                //			},
-                //			""markers"": [
-                //				{
-                //					""size"": 0.056,
-                //                    ""name"": ""kanji"",
-                //					""pattern_path"": ""C:/code/resources/kanji.patt"",
-                //					""type"": ""SINGLE"",
-                //					""filter"": 5.0
-                //				},
-                //				{
-                //					""size"": 0.026,
-                //                    ""name"": ""hiro"",
-                //					""pattern_path"": ""C:/code/resources/hiro.patt"",
-                //					""type"": ""SINGLE"",
-                //					""filter"": 5.0
-                //				}
-                //			]
-                //		}
-
-                //");
+                int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.048 } ");
 
                 char keyPressed;
                 int counter = 0;

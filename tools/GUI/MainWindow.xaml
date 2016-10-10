@@ -8,7 +8,7 @@
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <StackPanel Margin="20">
-            <ComboBox>
+            <ComboBox x:Name="CameraSelectionBox">
                 <ComboBoxItem>OVRVision</ComboBoxItem>
                 <ComboBoxItem>OpenCV</ComboBoxItem>
                 <ComboBoxItem>Dummy</ComboBoxItem>
