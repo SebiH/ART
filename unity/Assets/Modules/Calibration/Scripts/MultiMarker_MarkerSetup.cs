@@ -1,5 +1,4 @@
 using Assets.Modules.Tracking;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +7,13 @@ namespace Assets.Modules.Calibration
 {
     public class MultiMarker_MarkerSetup : MonoBehaviour
     {
+        public struct CalibratedMarkerObject
+        {
+            public int Id;
+            public GameObject Marker;
+        }
+
+
         public Vector3 CalibratorToMarkerPosOffset = Vector3.zero;
         public Vector3 CalibratorToMarkerRotOffset = Vector3.zero;
 
@@ -22,12 +28,20 @@ namespace Assets.Modules.Calibration
         public bool CanSetMarker { get; private set; }
         public float SetMarkerProgress { get; private set; }
 
+
+        public List<CalibratedMarkerObject> CalibratedMarkers
+        {
+            get; private set;
+        }
+
         void OnEnable()
         {
+            CalibratedMarkers = new List<CalibratedMarkerObject>();
+
             CanSetMarker = true;
             SetMarkerProgress = 0f;
 
-            _markerPreview = GameObject.Instantiate(MarkerPreviewPrefab);
+            _markerPreview = Instantiate(MarkerPreviewPrefab);
 
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
             _markerPreview.transform.localScale = new Vector3(markerSize, 0.001f, markerSize);
@@ -106,6 +120,12 @@ namespace Assets.Modules.Calibration
 
             CanSetMarker = true;
             SetMarkerProgress = 0f;
+
+            CalibratedMarkers.Add(new CalibratedMarkerObject
+            {
+                Id = _currentCalibratingMarkerId,
+                Marker = createdMarker
+            });
         }
     }
 }
