@@ -44,6 +44,8 @@ namespace Assets.Modules.Tracking
 
             OpenVrRotationOffset = offsets.Rotation;
             OptitrackToCameraOffset = offsets.Position;
+            IsCalibrated = true;
+            LastCalibration = DateTime.Now;
             Debug.Log(String.Format("Loaded CalibrationOffsets: Rotation: {0}   Position: {1}", offsets.Rotation.ToString(), offsets.Position.ToString()));
         }
     }
