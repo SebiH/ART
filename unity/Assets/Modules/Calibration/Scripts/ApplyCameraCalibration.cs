@@ -11,7 +11,7 @@ namespace Assets.Modules.Calibration
             if (CalibrationOffset.IsCalibrated)
             {
                 transform.localPosition = CalibrationOffset.OptitrackToCameraOffset;
-                transform.localRotation = CalibrationOffset.OpenVrRotationOffset;
+                //transform.localRotation = CalibrationOffset.OpenVrRotationOffset;
 
                 enabled = false;
             }
