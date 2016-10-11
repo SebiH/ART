@@ -10,7 +10,7 @@ namespace Assets.Modules.Tracking
         public static bool IsCalibrated = false;
         public static DateTime LastCalibration;
 
-        public static Quaternion OpenVrRotationOffset;
+        public static Quaternion OpenVrRotationOffset = Quaternion.identity;
         public static Vector3 OptitrackToCameraOffset;
 
 
