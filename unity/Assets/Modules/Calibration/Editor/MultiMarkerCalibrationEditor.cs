@@ -5,7 +5,7 @@ using Assets.Modules.Tracking;
 
 namespace Assets.Modules.Calibration
 {
-    //[CustomEditor(typeof(PerformCalibrationMultiMarker))]
+    [CustomEditor(typeof(MultiMarker_PerformCalibration))]
     public class MultiMarkerCalibrationEditor : Editor
     {
         private static string _calibrationFilename = "";
@@ -14,7 +14,7 @@ namespace Assets.Modules.Calibration
             base.OnInspectorGUI();
             if (GUILayout.Button("Perform Calibration") && Application.isPlaying)
             {
-                var script = target as PerformCalibrationSingleMarker;
+                var script = target as MultiMarker_PerformCalibration;
                 script.Calibrate();
             }
 
