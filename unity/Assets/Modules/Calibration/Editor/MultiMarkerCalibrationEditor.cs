@@ -20,7 +20,7 @@ namespace Assets.Modules.Calibration
 
             if (GUILayout.Button("Switch to Calibrated Scene") && Application.isPlaying)
             {
-                SceneManager.LoadScene("Scenes/CalibratedTestScene");
+                SceneManager.LoadScene("Modules/Calibration/Scenes/CalibratedTestScene");
             }
 
             GUILayout.Label("CalibrationOffsets filename");
