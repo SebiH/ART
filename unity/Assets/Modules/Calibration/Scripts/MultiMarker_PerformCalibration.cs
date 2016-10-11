@@ -109,6 +109,9 @@ namespace Assets.Modules.Calibration
                         _calibratedArucoPoses.Add(pose.Id, calibratedPose);
                     }
 
+                    // TODO thresholding etc
+                    HasSteadyArucoPose = true;
+
                     break;
                 }
             }
@@ -131,6 +134,10 @@ namespace Assets.Modules.Calibration
                     {
                         HasSteadyOptitrackCameraPose = true;
                     }
+
+                    _optitrackCameraPose = pose;
+                    // TODO thresholding etc
+                    HasSteadyOptitrackCameraPose = true;
 
                     break;
                 }
