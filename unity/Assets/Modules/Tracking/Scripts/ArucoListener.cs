@@ -122,10 +122,17 @@ namespace Assets.Modules.Tracking
         }
 
 
+        public bool UseOffset = true;
+
         private ArucoMarkerPose ProcessOutput(ArucoPose pose)
         {
             // TODO: should be HMDGap from OvrVision..?
             var posOffset = new Vector3(-0.032f, 0.0f, 0.0f);
+
+            if (!UseOffset)
+            {
+                posOffset = Vector3.zero;
+            }
 
             // Rotation offset to match Optitrack's Calibration Helper
             //var rotOffset = Quaternion.Euler(RotationOffset);
