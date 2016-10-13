@@ -77,7 +77,6 @@ namespace Assets.Modules.Calibration
             }
         }
 
-
         private void OnArucoPose(ArucoMarkerPose pose)
         {
             foreach (var cMarker in _markerSetupScript.CalibratedMarkers)
@@ -92,7 +91,6 @@ namespace Assets.Modules.Calibration
 
                     var cameraLocalRot = MatrixUtils.ExtractRotationFromMatrix(cameraMatrix);
                     var cameraWorldRot = cMarker.Marker.transform.TransformDirection(cameraLocalRot.eulerAngles);
-
 
                     var calibratedPose = new Pose
                     {
@@ -240,6 +238,7 @@ namespace Assets.Modules.Calibration
                 var end = start + (_ovrRot * Vector3.forward);
                 var up = start + (_ovrRot * Vector3.up * 0.01f);
                 Gizmos.DrawLine(start, end);
+                Gizmos.DrawLine(start, up);
 
                 Gizmos.color = Color.red;
                 foreach (var pose in _calibratedArucoPoses)
@@ -247,6 +246,7 @@ namespace Assets.Modules.Calibration
                     end = start + (pose.Value.Rotation * Vector3.forward);
                     up = start + (pose.Value.Rotation * Vector3.up * 0.01f);
                     Gizmos.DrawLine(start, end);
+                    Gizmos.DrawLine(start, up);
                 }
             }
         }
