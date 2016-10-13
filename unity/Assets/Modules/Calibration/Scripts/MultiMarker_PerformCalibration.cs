@@ -214,5 +214,39 @@ namespace Assets.Modules.Calibration
             CalibrationOffset.IsCalibrated = true;
             CalibrationOffset.LastCalibration = DateTime.Now;
         }
+
+
+        void OnDrawGizmos()
+        {
+            if (IsReadyForCalibration)
+            {
+                Quaternion avgRotOffset = Quaternion.identity;
+                var avgMarkerPos = Vector3.zero;
+                var arucoPosesCount = 0;
+
+                foreach (var pose in _calibratedArucoPoses)
+                {
+                    avgMarkerPos += pose.Value.Position;
+                    // TODO: rotation average!
+                    avgRotOffset = _ovrRot * Quaternion.Inverse(pose.Value.Rotation);
+                    arucoPosesCount++;
+                }
+
+                avgMarkerPos = avgMarkerPos / arucoPosesCount;
+                var avgPosOffset = (avgMarkerPos - _optitrackCameraPose.Position);
+
+                Gizmos.color = Color.green;
+                var start = _optitrackCameraPose.Position + avgPosOffset;
+                var end = start + (/*Quaternion.Inverse(avgRotOffset) * */ _ovrRot * Vector3.forward);
+                Gizmos.DrawLine(start, end);
+
+                Gizmos.color = Color.red;
+                foreach (var pose in _calibratedArucoPoses)
+                {
+                    end = start + (pose.Value.Rotation * Vector3.forward);
+                    Gizmos.DrawLine(start, end);
+                }
+            }
+        }
     }
 }

@@ -12,18 +12,19 @@ namespace Assets.Modules.Calibration
         {
             public DateTime DetectionTime;
             public Vector3 CameraPose;
-            public Color Color;
         }
 
         public int MarkerId = -1;
         public Transform Visuals;
         private List<TimedPose> _savedPoses = new List<TimedPose>();
+        private Color _indicationColor;
 
         void OnEnable()
         {
             ArucoListener.Instance.NewPoseDetected += OnArucoPose;
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
             Visuals.localScale = new Vector3(markerSize, 0.001f, markerSize);
+            _indicationColor = UnityEngine.Random.ColorHSV();
         }
 
         void OnDisable()
@@ -44,8 +45,7 @@ namespace Assets.Modules.Calibration
                 var camPose = new TimedPose
                 {
                     DetectionTime = DateTime.Now,
-                    CameraPose = cameraWorldPos,
-                    Color = UnityEngine.Random.ColorHSV()
+                    CameraPose = cameraWorldPos
                 };
 
                 _savedPoses.Add(camPose);
@@ -54,9 +54,10 @@ namespace Assets.Modules.Calibration
 
         void OnDrawGizmos()
         {
+            Gizmos.color = _indicationColor;
+
             foreach (var pose in _savedPoses)
             {
-                Gizmos.color = pose.Color;
                 Gizmos.DrawSphere(pose.CameraPose, 0.005f);
             }
 
