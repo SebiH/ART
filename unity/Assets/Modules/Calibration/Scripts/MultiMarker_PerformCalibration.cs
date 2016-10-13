@@ -237,13 +237,15 @@ namespace Assets.Modules.Calibration
 
                 Gizmos.color = Color.green;
                 var start = _optitrackCameraPose.Position + avgPosOffset;
-                var end = start + (/*Quaternion.Inverse(avgRotOffset) * */ _ovrRot * Vector3.forward);
+                var end = start + (_ovrRot * Vector3.forward);
+                var up = start + (_ovrRot * Vector3.up * 0.01f);
                 Gizmos.DrawLine(start, end);
 
                 Gizmos.color = Color.red;
                 foreach (var pose in _calibratedArucoPoses)
                 {
                     end = start + (pose.Value.Rotation * Vector3.forward);
+                    up = start + (pose.Value.Rotation * Vector3.up * 0.01f);
                     Gizmos.DrawLine(start, end);
                 }
             }
