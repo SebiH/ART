@@ -62,8 +62,6 @@ namespace Assets.Modules.Tracking
         // Cannot be changed once script is running
         public double MarkerSizeInMeter = 0.15;
 
-        public Vector3 RotationOffset;
-
         public delegate void NewPoseHandler(ArucoMarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
 
@@ -131,7 +129,7 @@ namespace Assets.Modules.Tracking
 
             // Rotation offset to match Optitrack's Calibration Helper
             //var rotOffset = Quaternion.Euler(RotationOffset);
-            var rotation = pose.rotation.ToUnityQuaternion().eulerAngles + RotationOffset;
+            var rotation = pose.rotation.ToUnityQuaternion().eulerAngles;
 
             return new ArucoMarkerPose
             {
