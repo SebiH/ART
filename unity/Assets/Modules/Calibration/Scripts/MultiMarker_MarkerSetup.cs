@@ -187,7 +187,7 @@ namespace Assets.Modules.Calibration
 
                 CalibratedMarkers.Add(new CalibratedMarkerObject
                 {
-                    Id = _currentCalibratingMarkerId,
+                    Id = marker.Id,
                     Marker = createdMarker
                 });
             }
