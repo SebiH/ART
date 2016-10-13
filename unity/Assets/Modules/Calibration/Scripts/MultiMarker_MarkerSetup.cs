@@ -1,6 +1,9 @@
+using Assets.Modules.Core.Code;
 using Assets.Modules.Tracking;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Assets.Modules.Calibration
@@ -113,6 +116,7 @@ namespace Assets.Modules.Calibration
             }
 
             var createdMarker = Instantiate(MarkerPrefab);
+            createdMarker.name = String.Format("Marker_{0}", _currentCalibratingMarkerId);
             createdMarker.GetComponent<MultiMarker_Debug_CameraIndicator>().MarkerId = _currentCalibratingMarkerId;
             createdMarker.transform.position = positionSamples;
             // TODO: rotation sampling!
@@ -126,6 +130,69 @@ namespace Assets.Modules.Calibration
                 Id = _currentCalibratingMarkerId,
                 Marker = createdMarker
             });
+        }
+
+
+        [Serializable]
+        private class SerializableCalibratedMarker
+        {
+            public int Id;
+            public Vector3 Position;
+            public Quaternion Rotation;
+            public Vector3 Scale;
+        }
+
+        [Serializable]
+        private class MarkerUnityWorkaround
+        {
+            public SerializableCalibratedMarker[] array;
+        }
+
+        public void SaveCalibratedMarkers(string relativeFilename)
+        {
+            MarkerUnityWorkaround workaround = new MarkerUnityWorkaround();
+            workaround.array = new SerializableCalibratedMarker[CalibratedMarkers.Count];
+
+            int i = 0;
+            foreach (var calibratedMarker in CalibratedMarkers)
+            {
+                workaround.array[i] = new SerializableCalibratedMarker
+                {
+                    Id = calibratedMarker.Id,
+                    Position = calibratedMarker.Marker.transform.position,
+                    Rotation = calibratedMarker.Marker.transform.rotation
+                };
+                ++i;
+            }
+
+            var absoluteFilename = Paths.GetAbsolutePath(relativeFilename);
+            File.WriteAllText(absoluteFilename, JsonUtility.ToJson(workaround));
+            Debug.Log(String.Format("Saved {0} markers to {1}", workaround.array.Length, absoluteFilename));
+        }
+
+        public void LoadCalibratedMarkers(string relativeFilename)
+        {
+            var absoluteFilename = Paths.GetAbsolutePath(relativeFilename);
+            Debug.Log(String.Format("Loading from {0}", absoluteFilename));
+            var contents = File.ReadAllText(absoluteFilename);
+            var markers = JsonUtility.FromJson<MarkerUnityWorkaround>(contents);
+
+            foreach (var marker in markers.array)
+            {
+                var createdMarker = Instantiate(MarkerPrefab);
+                createdMarker.name = String.Format("Marker_{0}", marker.Id);
+                createdMarker.GetComponent<MultiMarker_Debug_CameraIndicator>().MarkerId = marker.Id;
+                createdMarker.transform.position = marker.Position;
+                createdMarker.transform.rotation = marker.Rotation;
+
+                CalibratedMarkers.Add(new CalibratedMarkerObject
+                {
+                    Id = _currentCalibratingMarkerId,
+                    Marker = createdMarker
+                });
+            }
+
+            Debug.Log(String.Format("Loaded {0} Calibrated markers", markers.array.Length));
         }
     }
 }

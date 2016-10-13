@@ -7,6 +7,7 @@ namespace Assets.Modules.Calibration
     public class MultiMarker_MarkerSetupEditor : Editor
     {
         private string _calibrateMarkerId = "";
+        private string _filename = "";
 
         public override void OnInspectorGUI()
         {
@@ -31,6 +32,19 @@ namespace Assets.Modules.Calibration
                 GUILayout.Space(19);
                 EditorGUILayout.EndVertical();
                 Repaint();
+            }
+
+
+            GUILayout.Label("CalibrationOffsets filename");
+            _filename = GUILayout.TextField(_filename);
+            if (GUILayout.Button("Dump Markers to file") && Application.isPlaying)
+            {
+                script.SaveCalibratedMarkers(_filename);
+            }
+
+            if (GUILayout.Button("Load Markerdump") && Application.isPlaying)
+            {
+                script.LoadCalibratedMarkers(_filename);
             }
         }
     }
