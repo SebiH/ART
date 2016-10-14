@@ -75,8 +75,8 @@ namespace Assets.Modules.Calibration
                         _markerPreview.transform.position = marker.Position;
                     }
 
-                    _markerPreview.transform.position += CalibratorToMarkerPosOffset;
-                    _markerPreview.transform.rotation = pose.Rotation * Quaternion.Euler(CalibratorToMarkerRotOffset);
+                    _markerPreview.transform.rotation = Quaternion.Euler(CalibratorToMarkerRotOffset) * pose.Rotation;
+                    _markerPreview.transform.position += _markerPreview.transform.TransformDirection(CalibratorToMarkerPosOffset);
 
                     break;
                 }
