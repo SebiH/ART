@@ -24,7 +24,7 @@ namespace Assets.Modules.Calibration
 
         private Vector3 _arucoPos = Vector3.zero;
         private Quaternion _arucoRot = Quaternion.identity;
-        
+
         private struct Pose
         {
             public Vector3 Position;
@@ -86,12 +86,12 @@ namespace Assets.Modules.Calibration
                     // pose is marker's pose -> inverted we get camera pose
                     var markerMatrix = Matrix4x4.TRS(pose.Position, pose.Rotation, Vector3.one);
                     var cameraMatrix = markerMatrix.inverse;
-                    var cameraLocalPos = MatrixUtils.ExtractTranslationFromMatrix(cameraMatrix);
+                    var cameraLocalPos = cameraMatrix.GetPosition();
                     var cameraWorldPos = cMarker.Marker.transform.TransformPoint(cameraLocalPos);
 
-                    var cameraLocalRot = MatrixUtils.ExtractRotationFromMatrix(cameraMatrix);
-                    var cameraWorldForward = Quaternion.Inverse(cameraLocalRot) * cMarker.Marker.transform.forward;
-                    var cameraWorldUp = Quaternion.Inverse(cameraLocalRot) * cMarker.Marker.transform.up;
+                    var cameraLocalRot = cameraMatrix.GetRotation();
+                    var cameraWorldForward = cMarker.Marker.transform.TransformDirection(cameraLocalRot * Vector3.forward);
+                    var cameraWorldUp = cMarker.Marker.transform.TransformDirection(cameraLocalRot * Vector3.up);
                     var cameraWorldRot = Quaternion.LookRotation(cameraWorldForward, cameraWorldUp);
 
                     var calibratedPose = new Pose
@@ -198,21 +198,21 @@ namespace Assets.Modules.Calibration
 
                 avgMarkerPos = avgMarkerPos / arucoPosesCount;
                 avgPosOffset += (avgMarkerPos - _optitrackCameraPose.Position);
-                
+
                 samples++;
                 yield return new WaitForSeconds(0.1f);
             }
 
             avgPosOffset = avgPosOffset / samples;
             var avgRotation = QuaternionUtils.Average(arucoRotations);
-            avgRotation = Quaternion.Inverse(avgRotation);
-
-            var avgRotOffset = _ovrRot * Quaternion.Inverse(avgRotation);
+            var avgRotOffset = avgRotation * Quaternion.Inverse(_ovrRot);
 
             CalibrationOffset.OptitrackToCameraOffset = avgPosOffset;
             CalibrationOffset.OpenVrRotationOffset = avgRotOffset;
             CalibrationOffset.IsCalibrated = true;
             CalibrationOffset.LastCalibration = DateTime.Now;
+
+            Debug.Log("Calibration complete");
         }
 
 
@@ -232,7 +232,6 @@ namespace Assets.Modules.Calibration
                 }
 
                 var avgRotation = QuaternionUtils.Average(arucoRotations);
-                avgRotation = Quaternion.Inverse(avgRotation);
                 avgMarkerPos = avgMarkerPos / arucoPosesCount;
                 var avgPosOffset = (avgMarkerPos - _optitrackCameraPose.Position);
 
@@ -253,7 +252,7 @@ namespace Assets.Modules.Calibration
                 Gizmos.color = Color.red;
                 foreach (var pose in _calibratedArucoPoses)
                 {
-                    var rot = Quaternion.Inverse(pose.Value.Rotation);
+                    var rot = pose.Value.Rotation;
                     start = pose.Value.Position;
                     end = start + (rot * Vector3.forward);
                     up = start + (rot * Vector3.up * 0.03f);
