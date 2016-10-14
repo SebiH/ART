@@ -22,6 +22,8 @@ namespace Assets.Modules.Calibration
 
         public int BindToIndex = -1;
 
+        public bool LoadDefaultMarkers = false;
+
         public string OptitrackCalibratorName = "CalibrationHelper";
         public GameObject MarkerPreviewPrefab;
         public GameObject MarkerPrefab;
@@ -40,6 +42,11 @@ namespace Assets.Modules.Calibration
         void OnEnable()
         {
             CalibratedMarkers = new List<CalibratedMarkerObject>();
+
+            if (LoadDefaultMarkers)
+            {
+                LoadCalibratedMarkers("default_markers.json");
+            }
 
             CanSetMarker = true;
             SetMarkerProgress = 0f;
