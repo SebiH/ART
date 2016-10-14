@@ -90,12 +90,14 @@ namespace Assets.Modules.Calibration
                     var cameraWorldPos = cMarker.Marker.transform.TransformPoint(cameraLocalPos);
 
                     var cameraLocalRot = MatrixUtils.ExtractRotationFromMatrix(cameraMatrix);
-                    var cameraWorldRot = cMarker.Marker.transform.TransformDirection(cameraLocalRot.eulerAngles);
+                    var cameraWorldForward = Quaternion.Inverse(cameraLocalRot) * cMarker.Marker.transform.forward;
+                    var cameraWorldUp = Quaternion.Inverse(cameraLocalRot) * cMarker.Marker.transform.up;
+                    var cameraWorldRot = Quaternion.LookRotation(cameraWorldForward, cameraWorldUp);
 
                     var calibratedPose = new Pose
                     {
                         Position = cameraWorldPos,
-                        Rotation = Quaternion.Euler(cameraWorldRot)
+                        Rotation = cameraWorldRot
                     };
 
                     if (_calibratedArucoPoses.ContainsKey(pose.Id))
@@ -233,18 +235,23 @@ namespace Assets.Modules.Calibration
                 avgMarkerPos = avgMarkerPos / arucoPosesCount;
                 var avgPosOffset = (avgMarkerPos - _optitrackCameraPose.Position);
 
+                Gizmos.color = Color.blue;
+                Gizmos.DrawSphere(_optitrackCameraPose.Position + avgPosOffset, 0.01f);
+
                 Gizmos.color = Color.green;
                 var start = _optitrackCameraPose.Position + avgPosOffset;
                 var end = start + (_ovrRot * Vector3.forward);
-                var up = start + (_ovrRot * Vector3.up * 0.01f);
+                var up = start + (_ovrRot * Vector3.up * 0.03f);
                 Gizmos.DrawLine(start, end);
                 Gizmos.DrawLine(start, up);
 
                 Gizmos.color = Color.red;
                 foreach (var pose in _calibratedArucoPoses)
                 {
-                    end = start + (pose.Value.Rotation * Vector3.forward);
-                    up = start + (pose.Value.Rotation * Vector3.up * 0.01f);
+                    var rot = Quaternion.Inverse(pose.Value.Rotation);
+                    start = pose.Value.Position;
+                    end = start + (rot * Vector3.forward);
+                    up = start + (rot * Vector3.up * 0.03f);
                     Gizmos.DrawLine(start, end);
                     Gizmos.DrawLine(start, up);
                 }
