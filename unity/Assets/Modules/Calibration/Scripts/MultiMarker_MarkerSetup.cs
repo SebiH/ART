@@ -1,4 +1,5 @@
 using Assets.Modules.Core.Code;
+using Assets.Modules.Core.Util;
 using Assets.Modules.Tracking;
 using System;
 using System.Collections;
@@ -102,7 +103,7 @@ namespace Assets.Modules.Calibration
         private IEnumerator SetMarker()
         {
             var positionSamples = Vector3.zero;
-            var rotationSamples = Vector3.zero;
+            var rotationSamples = new List<Quaternion>();
             int sampleCount = 0;
 
             CanSetMarker = false;
@@ -111,23 +112,24 @@ namespace Assets.Modules.Calibration
             {
                 sampleCount++;
                 positionSamples += _markerPreview.transform.position;
-                //rotationSamples += _markerPreview.tran
+                rotationSamples.Add(_markerPreview.transform.rotation);
 
                 SetMarkerProgress += 0.05f;
                 yield return new WaitForSeconds(0.1f);
             }
 
+            var avgRotation = Quaternion.identity;
             if (sampleCount > 0)
             {
                 positionSamples = positionSamples / sampleCount;
+                avgRotation = QuaternionUtils.Average(rotationSamples);
             }
 
             var createdMarker = Instantiate(MarkerPrefab);
             createdMarker.name = String.Format("Marker_{0}", _currentCalibratingMarkerId);
             createdMarker.GetComponent<MultiMarker_Debug_CameraIndicator>().MarkerId = _currentCalibratingMarkerId;
             createdMarker.transform.position = positionSamples;
-            // TODO: rotation sampling!
-            createdMarker.transform.rotation = _markerPreview.transform.rotation;
+            createdMarker.transform.rotation = avgRotation;
 
             CanSetMarker = true;
             SetMarkerProgress = 0f;
