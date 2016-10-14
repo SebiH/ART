@@ -110,6 +110,8 @@ namespace Assets.Modules.Tracking
             _trackedPoses.Enqueue(new DelayedPose(pose));
         }
 
+        public int method = 0;
+
         private void ApplyPose(SteamVR_Utils.RigidTransform pose)
         {
             if (TrackPosition)
@@ -119,7 +121,9 @@ namespace Assets.Modules.Tracking
 
             if (TrackRotation)
             {
-                transform.rotation = Quaternion.Inverse(CalibrationOffset.OpenVrRotationOffset) * pose.rot;
+                // TODO: should probably be offset * pose.rot ?
+                // diff * ovr = aruco   <=>   diff = aruco * inverse(ovr)
+                transform.rotation = pose.rot * CalibrationOffset.OpenVrRotationOffset;
             }
         }
 
