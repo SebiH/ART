@@ -179,8 +179,7 @@ namespace Assets.Modules.Calibration
         private IEnumerator DoCalibration()
         {
             var avgPosOffset = Vector3.zero;
-            // TODO: rotation average!
-            var avgRotOffset = Quaternion.identity;
+            var arucoRotations = new List<Quaternion>();
 
             var samples = 0;
             var maxSamples = 10;
@@ -193,8 +192,7 @@ namespace Assets.Modules.Calibration
                 foreach (var pose in _calibratedArucoPoses)
                 {
                     avgMarkerPos += pose.Value.Position;
-                    // TODO: rotation average!
-                    avgRotOffset = _ovrRot * Quaternion.Inverse(pose.Value.Rotation);
+                    arucoRotations.Add(pose.Value.Rotation);
                     arucoPosesCount++;
                 }
 
@@ -206,8 +204,10 @@ namespace Assets.Modules.Calibration
             }
 
             avgPosOffset = avgPosOffset / samples;
-            // TODO: rotation average!
+            var avgRotation = QuaternionUtils.Average(arucoRotations);
+            avgRotation = Quaternion.Inverse(avgRotation);
 
+            var avgRotOffset = _ovrRot * Quaternion.Inverse(avgRotation);
 
             CalibrationOffset.OptitrackToCameraOffset = avgPosOffset;
             CalibrationOffset.OpenVrRotationOffset = avgRotOffset;
@@ -220,28 +220,33 @@ namespace Assets.Modules.Calibration
         {
             if (IsReadyForCalibration)
             {
-                Quaternion avgRotOffset = Quaternion.identity;
                 var avgMarkerPos = Vector3.zero;
                 var arucoPosesCount = 0;
+                var arucoRotations = new List<Quaternion>();
 
                 foreach (var pose in _calibratedArucoPoses)
                 {
                     avgMarkerPos += pose.Value.Position;
-                    // TODO: rotation average!
-                    avgRotOffset = _ovrRot * Quaternion.Inverse(pose.Value.Rotation);
+                    arucoRotations.Add(pose.Value.Rotation);
                     arucoPosesCount++;
                 }
 
+                var avgRotation = QuaternionUtils.Average(arucoRotations);
+                avgRotation = Quaternion.Inverse(avgRotation);
                 avgMarkerPos = avgMarkerPos / arucoPosesCount;
                 var avgPosOffset = (avgMarkerPos - _optitrackCameraPose.Position);
 
                 Gizmos.color = Color.blue;
                 Gizmos.DrawSphere(_optitrackCameraPose.Position + avgPosOffset, 0.01f);
+                var start = _optitrackCameraPose.Position + avgPosOffset;
+                var end = start + (avgRotation * Vector3.forward);
+                var up = start + (avgRotation * Vector3.up * 0.03f);
+                Gizmos.DrawLine(start, end);
+                Gizmos.DrawLine(start, up);
 
                 Gizmos.color = Color.green;
-                var start = _optitrackCameraPose.Position + avgPosOffset;
-                var end = start + (_ovrRot * Vector3.forward);
-                var up = start + (_ovrRot * Vector3.up * 0.03f);
+                end = start + (_ovrRot * Vector3.forward);
+                up = start + (_ovrRot * Vector3.up * 0.03f);
                 Gizmos.DrawLine(start, end);
                 Gizmos.DrawLine(start, up);
 
