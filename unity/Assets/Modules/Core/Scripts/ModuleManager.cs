@@ -24,9 +24,9 @@ namespace Assets.Modules.Core.Scripts
             }
 
 
-            for (int i = 0; i < transform.childCount; i++)
+            foreach (Transform child in transform)
             {
-                var module = transform.GetChild(i).gameObject;
+                var module = child.gameObject;
                 if (IsModuleLoaded(module))
                 {
                     DisableDuplicateModule(module);
