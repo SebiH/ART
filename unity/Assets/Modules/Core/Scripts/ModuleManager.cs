@@ -10,20 +10,37 @@ namespace Assets.Modules.Core.Scripts
      */
     public class ModuleManager : MonoBehaviour
     {
-        public GameObject[] Modules;
-
+        // we only ever need one instance
+        private static ModuleManager _instance;
         private static List<GameObject> _instantiatedModules = new List<GameObject>();
 
         void OnEnable()
         {
-            DontDestroyOnLoad(this);
-
-            foreach (var module in Modules)
+            if (_instance == null)
             {
-                if (!IsModuleLoaded(module))
+                // keep object alive for all scene transitions
+                DontDestroyOnLoad(this);
+                _instance = this;
+            }
+
+
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                var module = transform.GetChild(i).gameObject;
+                if (IsModuleLoaded(module))
                 {
-                    LoadModule(module);
+                    DisableDuplicateModule(module);
                 }
+                else
+                {
+                    RegisterModule(module);
+                }
+            }
+
+            if (_instance != this)
+            {
+                // script is already active from previous scene; we don't need this one
+                Destroy(this);
             }
         }
 
@@ -38,11 +55,21 @@ namespace Assets.Modules.Core.Scripts
             return _instantiatedModules.Any((go) => go.name == module.name);
         }
 
-        private void LoadModule(GameObject module)
+        private void RegisterModule(GameObject module)
         {
-            var instance = Instantiate(module);
-            instance.transform.parent = transform;
-            _instantiatedModules.Add(instance);
+            // move object to currently active instance
+            if (this != _instance)
+            {
+                module.transform.parent = _instance.transform;
+            }
+
+            _instantiatedModules.Add(module);
+        }
+
+        private void DisableDuplicateModule(GameObject module)
+        {
+            module.SetActive(false);
+            Destroy(module);
         }
     }
 }
