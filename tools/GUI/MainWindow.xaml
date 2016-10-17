@@ -32,6 +32,10 @@
             <Separator Margin="20"/>
 
             <Button Click="Optitrack_Click">Optitrack Server</Button>
+
+            <Separator Margin="20"/>
+
+            <Button Click="Surface_Click">InteractiveSurface Server</Button>
         </StackPanel>
     </Grid>
 </Window>

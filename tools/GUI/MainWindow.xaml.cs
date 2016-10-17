@@ -1,3 +1,4 @@
+using GUI.InteractiveSurface;
 using GUI.Optitrack;
 using Newtonsoft.Json.Linq;
 using System.IO;
@@ -123,6 +124,11 @@ namespace GUI
         private void Optitrack_Click(object sender, RoutedEventArgs e)
         {
             new OptitrackWindow().Show();
+        }
+
+        private void Surface_Click(object sender, RoutedEventArgs e)
+        {
+            new InteractiveSurfaceMainWindow().Show();
         }
     }
 }
