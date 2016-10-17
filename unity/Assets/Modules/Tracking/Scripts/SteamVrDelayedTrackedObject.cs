@@ -110,8 +110,6 @@ namespace Assets.Modules.Tracking
             _trackedPoses.Enqueue(new DelayedPose(pose));
         }
 
-        public int method = 0;
-
         private void ApplyPose(SteamVR_Utils.RigidTransform pose)
         {
             if (TrackPosition)
