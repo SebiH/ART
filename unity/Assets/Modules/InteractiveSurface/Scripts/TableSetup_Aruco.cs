@@ -119,7 +119,8 @@ namespace Assets.Modules.InteractiveSurface
             // invert rotation on diagonal so that forward == 0,0,1
             diagonal = Quaternion.Inverse(avgRotation) * diagonal;
 
-            var scale = new Vector3(diagonal.x + 2 * BorderWidthCm * 100, 1, diagonal.z + 2 * BorderWidthCm * 100);
+            var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+            var scale = new Vector3(diagonal.x + 2 * BorderWidthCm * 100 + markerSize / 2, 0.1f, diagonal.z + 2 * BorderWidthCm * 100 + markerSize / 2);
 
             var surface = Instantiate(InteractiveSurfaceTemplate);
             surface.transform.position = centerPos;
