@@ -110,10 +110,10 @@ namespace Assets.Modules.InteractiveSurface
 
             var rightVector = _poses[TOPRIGHT].GetAveragePosition() - _poses[TOPLEFT].GetAveragePosition();
             var forwardVector =  _poses[TOPLEFT].GetAveragePosition() - _poses[BOTTOMLEFT].GetAveragePosition();
-            var upVector = Vector3.Cross(rightVector, forwardVector);
+            var upVector = Vector3.Cross(forwardVector, rightVector);
             var avgRotation = Quaternion.LookRotation(forwardVector, upVector);
 
-            //var avgRotation = QuaternionUtils.Average(new[]
+            //var avgMarkerRotation = QuaternionUtils.Average(new[]
             //{
             //    _poses[TOPLEFT].GetAverageRotation(),
             //    _poses[TOPRIGHT].GetAverageRotation(),
@@ -190,7 +190,7 @@ namespace Assets.Modules.InteractiveSurface
 
                     var rightVector = _poses[TOPRIGHT].GetAveragePosition() - _poses[TOPLEFT].GetAveragePosition();
                     var forwardVector =  _poses[TOPLEFT].GetAveragePosition() - _poses[BOTTOMLEFT].GetAveragePosition();
-                    var upVector = Vector3.Cross(rightVector, forwardVector);
+                    var upVector = Vector3.Cross(forwardVector, rightVector);
                     var avgRotation = Quaternion.LookRotation(forwardVector, upVector);
 
                     var up = avgRotation * Vector3.up * 0.1f;
