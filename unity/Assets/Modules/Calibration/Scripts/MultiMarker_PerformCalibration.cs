@@ -1,4 +1,5 @@
-﻿using Assets.Modules.Core.Util;
+﻿using Assets.Modules.Core;
+using Assets.Modules.Core.Util;
 using Assets.Modules.Tracking;
 using System;
 using System.Collections;
@@ -28,6 +29,7 @@ namespace Assets.Modules.Calibration
 
         private struct Pose
         {
+            public int Id;
             public Vector3 Position;
             public Quaternion Rotation;
         }
@@ -97,6 +99,7 @@ namespace Assets.Modules.Calibration
 
                     var calibratedPose = new Pose
                     {
+                        Id = pose.Id,
                         Position = cameraWorldPos,
                         Rotation = cameraWorldRot
                     };
@@ -273,6 +276,48 @@ namespace Assets.Modules.Calibration
                     end = start + 2 * direction;
                     Gizmos.color = Color.yellow;
                     Gizmos.DrawLine(start, end);
+                }
+
+                var poses = _calibratedArucoPoses.Values.ToArray();
+                Gizmos.color = Color.black;
+                var closestPoints = new List<Vector3>();
+
+                for (int poseIndex = 0; poseIndex < poses.Length; poseIndex++)
+                {
+                    var pose = poses[poseIndex];
+                    var poseMarker = _markerSetupScript.CalibratedMarkers.First((m) => m.Id == pose.Id).Marker;
+                    var poseRay = new Ray(poseMarker.transform.position, pose.Position - poseMarker.transform.position);
+
+                    for (int intersectIndex = poseIndex + 1; intersectIndex < poses.Length; intersectIndex++)
+                    {
+                        var intersect = poses[intersectIndex];
+                        var intersectMarker = _markerSetupScript.CalibratedMarkers.First((m) => m.Id == intersect.Id).Marker;
+                        var intersectRay = new Ray(intersectMarker.transform.position, intersect.Position - intersectMarker.transform.position);
+
+                        Vector3 closestPoint1, closestPoint2;
+                        var success = Math3d.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
+
+                        if (success)
+                        {
+                            Gizmos.DrawSphere(closestPoint1, 0.005f);
+                            Gizmos.DrawSphere(closestPoint2, 0.005f);
+                            closestPoints.Add(closestPoint1);
+                            closestPoints.Add(closestPoint2);
+                        }
+                    }
+                }
+
+                if (closestPoints.Count > 0)
+                {
+                    var avgIntersect = Vector3.zero;
+                    foreach (var p in closestPoints)
+                    {
+                        avgIntersect += p;
+                    }
+
+                    avgIntersect = avgIntersect / closestPoints.Count;
+                    Gizmos.color = Color.white;
+                    Gizmos.DrawSphere(avgIntersect, 0.01f);
                 }
             }
         }
