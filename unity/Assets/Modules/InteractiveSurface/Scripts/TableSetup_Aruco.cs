@@ -122,7 +122,7 @@ namespace Assets.Modules.InteractiveSurface
 
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
             // add borderWidth + half marker size (since position is from marker center) once for both sides (*2)
-            var scale = new Vector3(diagonal.x + 2 * BorderWidthCm / 100 + markerSize, 0.1f, diagonal.z + 2 * BorderWidthCm / 100 + markerSize);
+            var scale = new Vector3(diagonal.x + 2 * BorderWidthCm / 100 + markerSize, 0.05f, diagonal.z + 2 * BorderWidthCm / 100 + markerSize);
 
             var surface = Instantiate(InteractiveSurfaceTemplate);
             surface.transform.position = centerPos;
@@ -143,7 +143,19 @@ namespace Assets.Modules.InteractiveSurface
                     if (avgPose.SampleSize > 0)
                     {
                         Gizmos.color = Color.Lerp(Color.red, Color.green, avgPose.SampleSize / 100f);
-                        Gizmos.DrawSphere(avgPose.GetAveragePosition(), 0.03f);
+                        var avgPosition = avgPose.GetAveragePosition();
+                        Gizmos.DrawSphere(avgPosition, 0.03f);
+
+                        var avgRotation = avgPose.GetAverageRotation();
+                        var up = avgRotation * Vector3.up * 0.1f;
+                        var forward = avgRotation * Vector3.forward * 0.1f;
+                        var right = avgRotation * Vector3.right * 0.1f;
+                        Gizmos.color = Color.green;
+                        Gizmos.DrawLine(avgPosition, avgPosition + up);
+                        Gizmos.color = Color.blue;
+                        Gizmos.DrawLine(avgPosition, avgPosition + forward);
+                        Gizmos.color = Color.red;
+                        Gizmos.DrawLine(avgPosition, avgPosition + right);
                     }
                     else
                     {
