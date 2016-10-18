@@ -15,7 +15,7 @@ namespace Assets.Modules.InteractiveSurface
 
         // Border between edge of Aruco Marker and display end
         public float BorderWidthCm = 0f;
-        public int SampleSize = 100;
+        public int MinSampleSize = 100;
 
         public GameObject InteractiveSurfaceTemplate;
 
@@ -97,7 +97,7 @@ namespace Assets.Modules.InteractiveSurface
             // TODO: show preview of currently calibrated surface
             foreach (var avgPose in _poses)
             {
-                if (avgPose.SampleSize < SampleSize)
+                if (avgPose.SampleSize < MinSampleSize)
                 {
                     // not yet ready
                     return;
