@@ -119,9 +119,7 @@ namespace Assets.Modules.Tracking
 
             if (TrackRotation)
             {
-                // TODO: should probably be offset * pose.rot ?
-                // diff * ovr = aruco   <=>   diff = aruco * inverse(ovr)
-                transform.rotation = pose.rot * CalibrationOffset.OpenVrRotationOffset;
+                transform.rotation = CalibrationOffset.OpenVrRotationOffset * pose.rot;
             }
         }
 
