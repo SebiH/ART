@@ -138,12 +138,12 @@ namespace Assets.Modules.InteractiveSurface
             if (Application.isPlaying)
             {
                 bool hasSamplesInAllEdges = true;
-                Gizmos.color = Color.red;
                 foreach (var avgPose in _poses)
                 {
                     if (avgPose.SampleSize > 0)
                     {
-                        Gizmos.DrawSphere(avgPose.GetAveragePosition(), 0.01f);
+                        Gizmos.color = Color.Lerp(Color.red, Color.green, avgPose.SampleSize / 100f);
+                        Gizmos.DrawSphere(avgPose.GetAveragePosition(), 0.03f);
                     }
                     else
                     {
