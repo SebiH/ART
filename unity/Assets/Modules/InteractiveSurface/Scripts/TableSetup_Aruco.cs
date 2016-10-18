@@ -147,7 +147,15 @@ namespace Assets.Modules.InteractiveSurface
                 {
                     if (avgPose.SampleSize > 0)
                     {
-                        Gizmos.color = Color.Lerp(Color.red, Color.green, avgPose.SampleSize / 100f);
+                        if (avgPose.SampleSize >= MinSampleSize)
+                        {
+                            Gizmos.color = Color.blue;
+                        }
+                        else
+                        {
+                            Gizmos.color = Color.Lerp(Color.red, Color.green, avgPose.SampleSize / MinSampleSize);
+                        }
+
                         var avgPosition = avgPose.GetAveragePosition();
                         Gizmos.DrawSphere(avgPosition, 0.03f);
 
