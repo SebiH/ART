@@ -15,7 +15,7 @@ namespace Assets.Modules.InteractiveSurface
 
         // Border between edge of Aruco Marker and display end
         public float BorderWidthCm = 0f;
-        public int SampleSize = 10;
+        public int SampleSize = 100;
 
         public GameObject InteractiveSurfaceTemplate;
 
@@ -47,10 +47,11 @@ namespace Assets.Modules.InteractiveSurface
                 return QuaternionUtils.Average(_rotations);
             }
         }
+
         private const int TOPLEFT = 0;
         private const int BOTTOMLEFT = 1;
-        private const int TOPRIGHT = 2;
-        private const int BOTTOMRIGHT = 3;
+        private const int BOTTOMRIGHT = 2;
+        private const int TOPRIGHT = 3;
         private AveragePose[] _poses = new AveragePose[4];
 
 
@@ -93,6 +94,7 @@ namespace Assets.Modules.InteractiveSurface
 
         private void Update()
         {
+            return;
             // TODO: show preview of currently calibrated surface
             foreach (var avgPose in _poses)
             {
@@ -129,6 +131,54 @@ namespace Assets.Modules.InteractiveSurface
 
             // this script has served its purpose
             enabled = false;
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (Application.isPlaying)
+            {
+                bool hasSamplesInAllEdges = true;
+                Gizmos.color = Color.red;
+                foreach (var avgPose in _poses)
+                {
+                    if (avgPose.SampleSize > 0)
+                    {
+                        Gizmos.DrawSphere(avgPose.GetAveragePosition(), 0.01f);
+                    }
+                    else
+                    {
+                        hasSamplesInAllEdges = false;
+                    }
+                }
+
+
+                if (hasSamplesInAllEdges)
+                {
+                    for (int i = 0; i < _poses.Length; i++)
+                    {
+                        Gizmos.DrawLine(_poses[i % _poses.Length].GetAveragePosition(), _poses[(i + 1) % _poses.Length].GetAveragePosition());
+                    }
+
+
+                    var centerPos = (_poses[TOPLEFT].GetAveragePosition() + _poses[TOPRIGHT].GetAveragePosition() +
+                        _poses[BOTTOMLEFT].GetAveragePosition() + _poses[BOTTOMRIGHT].GetAveragePosition()) / 4;
+
+                    var avgRotation = QuaternionUtils.Average(new[]
+                    {
+                        _poses[TOPLEFT].GetAverageRotation(),
+                        _poses[TOPRIGHT].GetAverageRotation(),
+                        _poses[BOTTOMLEFT].GetAverageRotation(),
+                        _poses[BOTTOMRIGHT].GetAverageRotation()
+                    });
+
+                    var up = avgRotation * Vector3.up * 0.02f;
+                    var forward = avgRotation * Vector3.forward * 0.1f;
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawLine(centerPos, centerPos + up);
+                    Gizmos.color = Color.blue;
+                    Gizmos.DrawLine(centerPos, centerPos + forward);
+                }
+            }
         }
     }
 }
