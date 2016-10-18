@@ -122,7 +122,7 @@ namespace Assets.Modules.InteractiveSurface
             diagonal = Quaternion.Inverse(avgRotation) * diagonal;
 
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
-            var scale = new Vector3(diagonal.x + 2 * BorderWidthCm * 100 + markerSize / 2, 0.1f, diagonal.z + 2 * BorderWidthCm * 100 + markerSize / 2);
+            var scale = new Vector3(diagonal.x + 2 * BorderWidthCm / 100 + markerSize, 0.1f, diagonal.z + 2 * BorderWidthCm / 100 + markerSize);
 
             var surface = Instantiate(InteractiveSurfaceTemplate);
             surface.transform.position = centerPos;
