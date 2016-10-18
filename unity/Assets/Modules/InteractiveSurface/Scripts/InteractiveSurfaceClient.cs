@@ -79,7 +79,6 @@ public class InteractiveSurfaceClient : MonoBehaviour
                 Cursor.transform.localPosition = new Vector3((_currentPosition.x - 0.5f) * DisplaySize.x, 0, (_currentPosition.y - 0.5f) * DisplaySize.y);
             }
 
-            Bar.Height = 0f;
             Bar.TargetHeight = UnityEngine.Random.value * 7.5f;
         }
     }

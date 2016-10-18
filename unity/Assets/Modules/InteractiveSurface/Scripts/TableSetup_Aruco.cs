@@ -94,7 +94,6 @@ namespace Assets.Modules.InteractiveSurface
 
         private void Update()
         {
-            return;
             // TODO: show preview of currently calibrated surface
             foreach (var avgPose in _poses)
             {
@@ -122,6 +121,7 @@ namespace Assets.Modules.InteractiveSurface
             diagonal = Quaternion.Inverse(avgRotation) * diagonal;
 
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+            // add borderWidth + half marker size (since position is from marker center) once for both sides (*2)
             var scale = new Vector3(diagonal.x + 2 * BorderWidthCm / 100 + markerSize, 0.1f, diagonal.z + 2 * BorderWidthCm / 100 + markerSize);
 
             var surface = Instantiate(InteractiveSurfaceTemplate);
