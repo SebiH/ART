@@ -108,13 +108,18 @@ namespace Assets.Modules.InteractiveSurface
             var centerPos = (_poses[TOPLEFT].GetAveragePosition() + _poses[TOPRIGHT].GetAveragePosition() +
                 _poses[BOTTOMLEFT].GetAveragePosition() + _poses[BOTTOMRIGHT].GetAveragePosition()) / 4;
 
-            var avgRotation = QuaternionUtils.Average(new[]
-            {
-                _poses[TOPLEFT].GetAverageRotation(),
-                _poses[TOPRIGHT].GetAverageRotation(),
-                _poses[BOTTOMLEFT].GetAverageRotation(),
-                _poses[BOTTOMRIGHT].GetAverageRotation()
-            });
+            var rightVector = _poses[TOPRIGHT].GetAveragePosition() - _poses[TOPLEFT].GetAveragePosition();
+            var forwardVector =  _poses[TOPLEFT].GetAveragePosition() - _poses[BOTTOMLEFT].GetAveragePosition();
+            var upVector = Vector3.Cross(rightVector, forwardVector);
+            var avgRotation = Quaternion.LookRotation(forwardVector, upVector);
+
+            //var avgRotation = QuaternionUtils.Average(new[]
+            //{
+            //    _poses[TOPLEFT].GetAverageRotation(),
+            //    _poses[TOPRIGHT].GetAverageRotation(),
+            //    _poses[BOTTOMLEFT].GetAverageRotation(),
+            //    _poses[BOTTOMRIGHT].GetAverageRotation()
+            //});
 
             var diagonal = _poses[BOTTOMRIGHT].GetAveragePosition() - _poses[TOPLEFT].GetAveragePosition();
             // invert rotation on diagonal so that forward == 0,0,1
@@ -122,7 +127,7 @@ namespace Assets.Modules.InteractiveSurface
 
             var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
             // add borderWidth + half marker size (since position is from marker center) once for both sides (*2)
-            var scale = new Vector3(diagonal.x + 2 * BorderWidthCm / 100 + markerSize, 0.05f, diagonal.z + 2 * BorderWidthCm / 100 + markerSize);
+            var scale = new Vector3(Mathf.Abs(diagonal.x) + 2 * BorderWidthCm / 100 + markerSize, 0.05f, Mathf.Abs(diagonal.z) + 2 * BorderWidthCm / 100 + markerSize);
 
             var surface = Instantiate(InteractiveSurfaceTemplate);
             surface.transform.position = centerPos;
@@ -175,20 +180,28 @@ namespace Assets.Modules.InteractiveSurface
                     var centerPos = (_poses[TOPLEFT].GetAveragePosition() + _poses[TOPRIGHT].GetAveragePosition() +
                         _poses[BOTTOMLEFT].GetAveragePosition() + _poses[BOTTOMRIGHT].GetAveragePosition()) / 4;
 
-                    var avgRotation = QuaternionUtils.Average(new[]
-                    {
-                        _poses[TOPLEFT].GetAverageRotation(),
-                        _poses[TOPRIGHT].GetAverageRotation(),
-                        _poses[BOTTOMLEFT].GetAverageRotation(),
-                        _poses[BOTTOMRIGHT].GetAverageRotation()
-                    });
+                    //var avgRotation = QuaternionUtils.Average(new[]
+                    //{
+                    //    _poses[TOPLEFT].GetAverageRotation(),
+                    //    _poses[TOPRIGHT].GetAverageRotation(),
+                    //    _poses[BOTTOMLEFT].GetAverageRotation(),
+                    //    _poses[BOTTOMRIGHT].GetAverageRotation()
+                    //});
 
-                    var up = avgRotation * Vector3.up * 0.02f;
+                    var rightVector = _poses[TOPRIGHT].GetAveragePosition() - _poses[TOPLEFT].GetAveragePosition();
+                    var forwardVector =  _poses[TOPLEFT].GetAveragePosition() - _poses[BOTTOMLEFT].GetAveragePosition();
+                    var upVector = Vector3.Cross(rightVector, forwardVector);
+                    var avgRotation = Quaternion.LookRotation(forwardVector, upVector);
+
+                    var up = avgRotation * Vector3.up * 0.1f;
                     var forward = avgRotation * Vector3.forward * 0.1f;
+                    var right = avgRotation * Vector3.right * 0.1f;
                     Gizmos.color = Color.green;
                     Gizmos.DrawLine(centerPos, centerPos + up);
                     Gizmos.color = Color.blue;
                     Gizmos.DrawLine(centerPos, centerPos + forward);
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(centerPos, centerPos + right);
                 }
             }
         }
