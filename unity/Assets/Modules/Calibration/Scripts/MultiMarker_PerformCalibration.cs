@@ -3,6 +3,7 @@ using Assets.Modules.Tracking;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Valve.VR;
 
@@ -239,25 +240,39 @@ namespace Assets.Modules.Calibration
                 Gizmos.DrawSphere(_optitrackCameraPose.Position + avgPosOffset, 0.01f);
                 var start = _optitrackCameraPose.Position + avgPosOffset;
                 var end = start + (avgRotation * Vector3.forward);
-                var up = start + (avgRotation * Vector3.up * 0.03f);
+                var up = start + (avgRotation * Vector3.up * 0.1f);
+                var right = start + (avgRotation * Vector3.right * 0.1f);
                 Gizmos.DrawLine(start, end);
                 Gizmos.DrawLine(start, up);
+                Gizmos.DrawLine(start, right);
 
                 Gizmos.color = Color.green;
                 end = start + (_ovrRot * Vector3.forward);
-                up = start + (_ovrRot * Vector3.up * 0.03f);
+                up = start + (_ovrRot * Vector3.up * 0.1f);
+                right = start + (_ovrRot * Vector3.right * 0.1f);
                 Gizmos.DrawLine(start, end);
                 Gizmos.DrawLine(start, up);
+                Gizmos.DrawLine(start, right);
 
-                Gizmos.color = Color.red;
                 foreach (var pose in _calibratedArucoPoses)
                 {
+                    Gizmos.color = Color.red;
                     var rot = pose.Value.Rotation;
                     start = pose.Value.Position;
                     end = start + (rot * Vector3.forward);
-                    up = start + (rot * Vector3.up * 0.03f);
+                    up = start + (rot * Vector3.up * 0.1f);
+                    right = start + (rot * Vector3.right * 0.1f);
                     Gizmos.DrawLine(start, end);
                     Gizmos.DrawLine(start, up);
+                    Gizmos.DrawLine(start, right);
+
+                    // draw ray from marker through possible camera location
+                    var marker = _markerSetupScript.CalibratedMarkers.First((m) => m.Id == pose.Key);
+                    start = marker.Marker.transform.position;
+                    var direction = pose.Value.Position - start;
+                    end = start + 2 * direction;
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawLine(start, end);
                 }
             }
         }
