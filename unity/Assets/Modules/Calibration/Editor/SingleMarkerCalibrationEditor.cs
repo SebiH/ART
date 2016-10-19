@@ -8,7 +8,6 @@ namespace Assets.Modules.Calibration
     [CustomEditor(typeof(PerformCalibrationSingleMarker))]
     class SingleMarkerCalibrationEditor : Editor
     {
-        private static string _calibrationFilename = "";
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -21,18 +20,6 @@ namespace Assets.Modules.Calibration
             if (GUILayout.Button("Switch to Calibrated Scene") && Application.isPlaying)
             {
                 SceneManager.LoadScene("Scenes/CalibratedTestScene");
-            }
-
-            GUILayout.Label("CalibrationOffsets filename");
-            _calibrationFilename = GUILayout.TextField(_calibrationFilename);
-            if (GUILayout.Button("Save CalibrationOffsets") && Application.isPlaying)
-            {
-                CalibrationOffset.SaveToFile(_calibrationFilename);
-            }
-
-            if (GUILayout.Button("Load CalibrationOffsets") && Application.isPlaying)
-            {
-                CalibrationOffset.LoadFromFile(_calibrationFilename);
             }
         }
     }

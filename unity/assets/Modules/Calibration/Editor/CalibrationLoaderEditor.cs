@@ -1,4 +1,4 @@
-﻿using Assets.Modules.Tracking;
+using Assets.Modules.Tracking;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ namespace Assets.Modules.Calibration
     [CustomEditor(typeof(CalibrationLoader))]
     class CalibrationLoaderEditor : Editor
     {
-        private string _filename = "";
+        private static string _filename = "";
 
         public override void OnInspectorGUI()
         {
@@ -20,6 +20,11 @@ namespace Assets.Modules.Calibration
             if (GUILayout.Button("Load Calibration Offsets") && Application.isPlaying)
             {
                 CalibrationOffset.LoadFromFile(_filename);
+            }
+
+            if (GUILayout.Button("Save current Offsets") && Application.isPlaying)
+            {
+                CalibrationOffset.SaveToFile(_filename);
             }
         }
     }
