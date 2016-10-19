@@ -35,6 +35,13 @@ namespace Assets.Modules.Calibration
         }
         private Dictionary<int, Pose> _calibratedArucoPoses = new Dictionary<int, Pose>();
 
+        public enum CalibrationMethod
+        {
+            Standard,
+            LineExtension
+        }
+
+        public CalibrationMethod CalibMethod;
         public int MaxCalibrationSamples = 10;
         public float CalibrationProgress { get; private set; }
         public bool IsCalibrating { get; private set; }
@@ -193,18 +200,66 @@ namespace Assets.Modules.Calibration
 
             while (samples < MaxCalibrationSamples)
             {
-                var avgMarkerPos = Vector3.zero;
-                var arucoPosesCount = 0;
-
                 foreach (var pose in _calibratedArucoPoses)
                 {
-                    avgMarkerPos += pose.Value.Position;
                     arucoRotations.Add(pose.Value.Rotation);
-                    arucoPosesCount++;
                 }
 
-                avgMarkerPos = avgMarkerPos / arucoPosesCount;
-                avgPosOffset += (avgMarkerPos - _optitrackCameraPose.Position);
+                if (CalibMethod == CalibrationMethod.Standard)
+                {
+                    var arucoPosesCount = 0;
+                    var avgMarkerPos = Vector3.zero;
+
+                    foreach (var pose in _calibratedArucoPoses)
+                    {
+                        avgMarkerPos += pose.Value.Position;
+                        arucoPosesCount++;
+                    }
+
+                    avgMarkerPos = avgMarkerPos / arucoPosesCount;
+                    avgPosOffset += (avgMarkerPos - _optitrackCameraPose.Position);
+                }
+                else if (CalibMethod == CalibrationMethod.LineExtension)
+                {
+                    var poses = _calibratedArucoPoses.Values.ToArray();
+                    var closestPoints = new List<Vector3>();
+
+                    for (int poseIndex = 0; poseIndex < poses.Length; poseIndex++)
+                    {
+                        var pose = poses[poseIndex];
+                        var poseMarker = _markerSetupScript.CalibratedMarkers.First((m) => m.Id == pose.Id).Marker;
+                        var poseRay = new Ray(poseMarker.transform.position, pose.Position - poseMarker.transform.position);
+
+                        for (int intersectIndex = poseIndex + 1; intersectIndex < poses.Length; intersectIndex++)
+                        {
+                            var intersect = poses[intersectIndex];
+                            var intersectMarker = _markerSetupScript.CalibratedMarkers.First((m) => m.Id == intersect.Id).Marker;
+                            var intersectRay = new Ray(intersectMarker.transform.position, intersect.Position - intersectMarker.transform.position);
+
+                            Vector3 closestPoint1, closestPoint2;
+                            var success = Math3d.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
+
+                            if (success)
+                            {
+                                closestPoints.Add(closestPoint1);
+                                closestPoints.Add(closestPoint2);
+                            }
+                        }
+                    }
+
+                    if (closestPoints.Count > 0)
+                    {
+                        var avgIntersect = Vector3.zero;
+                        foreach (var p in closestPoints)
+                        {
+                            avgIntersect += p;
+                        }
+
+                        avgIntersect = avgIntersect / closestPoints.Count;
+
+                        avgPosOffset += (avgIntersect - _optitrackCameraPose.Position);
+                    }
+                }
 
                 samples++;
                 CalibrationProgress = samples / MaxCalibrationSamples;
