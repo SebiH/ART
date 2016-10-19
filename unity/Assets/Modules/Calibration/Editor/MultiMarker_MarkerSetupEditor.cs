@@ -6,8 +6,8 @@ namespace Assets.Modules.Calibration
     [CustomEditor(typeof(MultiMarker_MarkerSetup))]
     public class MultiMarker_MarkerSetupEditor : Editor
     {
-        private string _calibrateMarkerId = "";
-        private string _filename = "";
+        private static string _calibrateMarkerId = "";
+        private static string _filename = "";
 
         public override void OnInspectorGUI()
         {
