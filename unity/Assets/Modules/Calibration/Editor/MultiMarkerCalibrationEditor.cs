@@ -12,11 +12,24 @@ namespace Assets.Modules.Calibration
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            if (GUILayout.Button("Perform Calibration") && Application.isPlaying)
+            var script = target as MultiMarker_PerformCalibration;
+
+            if (!script.IsCalibrating)
             {
-                var script = target as MultiMarker_PerformCalibration;
-                script.Calibrate();
+                if (GUILayout.Button("Perform Calibration") && Application.isPlaying)
+                {
+                    script.Calibrate();
+                }
             }
+            else
+            {
+                Rect r = EditorGUILayout.BeginVertical();
+                EditorGUI.ProgressBar(r, script.CalibrationProgress, "Calibrating...");
+                GUILayout.Space(19);
+                EditorGUILayout.EndVertical();
+                Repaint();
+            }
+
 
             if (GUILayout.Button("Switch to Calibrated Scene") && Application.isPlaying)
             {

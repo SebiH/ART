@@ -1,4 +1,4 @@
-﻿using Assets.Modules.Core;
+using Assets.Modules.Core;
 using Assets.Modules.Core.Util;
 using Assets.Modules.Tracking;
 using System;
@@ -35,6 +35,9 @@ namespace Assets.Modules.Calibration
         }
         private Dictionary<int, Pose> _calibratedArucoPoses = new Dictionary<int, Pose>();
 
+        public int MaxCalibrationSamples = 10;
+        public float CalibrationProgress { get; private set; }
+        public bool IsCalibrating { get; private set; }
 
 
         public List<OptitrackPose.Marker> CalibrationOffsets = new List<OptitrackPose.Marker>();
@@ -186,9 +189,9 @@ namespace Assets.Modules.Calibration
             var arucoRotations = new List<Quaternion>();
 
             var samples = 0;
-            var maxSamples = 10;
+            IsCalibrating = true;
 
-            while (samples < maxSamples)
+            while (samples < MaxCalibrationSamples)
             {
                 var avgMarkerPos = Vector3.zero;
                 var arucoPosesCount = 0;
@@ -204,6 +207,7 @@ namespace Assets.Modules.Calibration
                 avgPosOffset += (avgMarkerPos - _optitrackCameraPose.Position);
 
                 samples++;
+                CalibrationProgress = samples / MaxCalibrationSamples;
                 yield return new WaitForSeconds(0.1f);
             }
 
