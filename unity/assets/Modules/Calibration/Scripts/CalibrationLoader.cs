@@ -1,4 +1,4 @@
-﻿using Assets.Modules.Tracking;
+using Assets.Modules.Tracking;
 using UnityEngine;
 
 namespace Assets.Modules.Calibration
@@ -6,13 +6,13 @@ namespace Assets.Modules.Calibration
     // See relevant Editor script
     public class CalibrationLoader : MonoBehaviour
     {
-        public bool LoadDefaultOnStartup = false;
+        public string StartupFile = "";
 
         void OnEnable()
         {
-            if (LoadDefaultOnStartup)
+            if (StartupFile.Length > 0)
             {
-                CalibrationOffset.LoadFromFile("default_calib.json");
+                CalibrationOffset.LoadFromFile(StartupFile);
             }
         }
     }
