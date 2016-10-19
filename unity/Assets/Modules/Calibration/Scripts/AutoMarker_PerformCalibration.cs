@@ -1,4 +1,5 @@
 using Assets.Modules.Tracking;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
@@ -13,6 +14,7 @@ namespace Assets.Modules.Calibration
         public int MaxCalibrationSamples = 100;
         //public float CalibrationProgress { get; private set; }
 
+        [Serializable]
         public struct MarkerOffset
         {
             public enum Corner
