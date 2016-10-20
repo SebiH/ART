@@ -1,6 +1,8 @@
 using Assets.Modules.Tracking;
+using Assets.Modules.Tracking.Scripts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Valve.VR;
 
@@ -11,18 +13,17 @@ namespace Assets.Modules.Calibration
         const float SteadyPosThreshold = 0.2f;
         const float SteadyAngleThreshold = 2f;
 
-        public int MaxCalibrationSamples = 100;
-        //public float CalibrationProgress { get; private set; }
+        public float CalibrationStability { get; private set; }
 
         [Serializable]
         public struct MarkerOffset
         {
             public enum Corner
             {
-                TopLeft,
-                TopRight,
-                BottomLeft,
-                BottomRight
+                TopLeft = 0,
+                TopRight = 1,
+                BottomRight = 2,
+                BottomLeft = 3
             }
 
             // set in editor
@@ -40,7 +41,6 @@ namespace Assets.Modules.Calibration
 
             public bool HasOptitrackPose { get; set; }
             public Vector3 OptitrackMarkerPosition { get; set; }
-            public Quaternion OptitrackMarkerRotation { get; set; }
         }
 
         public List<MarkerOffset> CalibrationOffsets = new List<MarkerOffset>();
@@ -234,107 +234,111 @@ namespace Assets.Modules.Calibration
         //    Debug.Log("Calibration complete");
         //}
 
+        private Quaternion CalculateTableRotation()
+        {
+            var markerBottomLeft = CalibrationOffsets.First((m) => m.OptitrackCorner == MarkerOffset.Corner.BottomLeft);
+            var markerTopLeft = CalibrationOffsets.First((m) => m.OptitrackCorner == MarkerOffset.Corner.TopLeft);
+            var markerBottomRight = CalibrationOffsets.First((m) => m.OptitrackCorner == MarkerOffset.Corner.BottomRight);
+
+            var forward = Vector3.Normalize(markerTopLeft.OptitrackMarkerPosition - markerBottomLeft.OptitrackMarkerPosition);
+            var right = Vector3.Normalize(markerBottomRight.OptitrackMarkerPosition - markerBottomLeft.OptitrackMarkerPosition);
+            var up = Vector3.Cross(right, forward);
+
+            return Quaternion.LookRotation(forward, up);
+        }
+
+        private Vector3 GetMarkerWorldPosition(MarkerOffset marker, Quaternion tableRotation)
+        {
+            // start at optitrack marker, add offset to marker's corner, then
+            // add markersize to get center - in table's coordinate system (tableRotation)
+            var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+            var cornerOffset = Vector3.zero;
+
+            switch (marker.OptitrackCorner)
+            {
+                case MarkerOffset.Corner.BottomLeft:
+                    cornerOffset = new Vector3(markerSize / 2, 0, markerSize / 2);
+                    break;
+
+                case MarkerOffset.Corner.BottomRight:
+                    cornerOffset = new Vector3(-markerSize / 2, 0, markerSize / 2);
+                    break;
+
+                case MarkerOffset.Corner.TopLeft:
+                    cornerOffset = new Vector3(markerSize / 2, 0, -markerSize / 2);
+                    break;
+
+                case MarkerOffset.Corner.TopRight:
+                    cornerOffset = new Vector3(-markerSize / 2, 0, -markerSize / 2);
+                    break;
+            }
+
+
+            var start = marker.OptitrackMarkerPosition;
+            return start + tableRotation * (marker.OtToArOffset + cornerOffset);
+        }
 
         void OnDrawGizmos()
         {
-            //if (IsReadyForCalibration)
-            //{
-            //    var avgMarkerPos = Vector3.zero;
-            //    var arucoPosesCount = 0;
-            //    var arucoRotations = new List<Quaternion>();
+            if (!Application.isPlaying)
+            {
+                return;
+            }
 
-            //    foreach (var pose in _calibratedArucoPoses)
-            //    {
-            //        avgMarkerPos += pose.Value.Position;
-            //        arucoRotations.Add(pose.Value.Rotation);
-            //        arucoPosesCount++;
-            //    }
+            // Draw OpenVR rotation
+            {
+                Gizmos.color = Color.green;
+                var start = SceneCameraTracker.Instance.transform.position;
+                var end = start + (_ovrRot * Vector3.forward);
+                var up = start + (_ovrRot * Vector3.up * 0.1f);
+                var right = start + (_ovrRot * Vector3.right * 0.1f);
+                Gizmos.DrawLine(start, end);
+                Gizmos.DrawLine(start, up);
+                Gizmos.DrawLine(start, right);
+            }
 
-            //    var avgRotation = QuaternionUtils.Average(arucoRotations);
-            //    avgMarkerPos = avgMarkerPos / arucoPosesCount;
-            //    var avgPosOffset = (avgMarkerPos - _optitrackCameraPose.Position);
+            // this only works if we have optitrack coordinates for all markers
+            if (CalibrationOffsets.All((m) => m.HasOptitrackPose))
+            {
+                var tableRotation = CalculateTableRotation();
 
-            //    Gizmos.color = Color.blue;
-            //    Gizmos.DrawSphere(_optitrackCameraPose.Position + avgPosOffset, 0.01f);
-            //    var start = _optitrackCameraPose.Position + avgPosOffset;
-            //    var end = start + (avgRotation * Vector3.forward);
-            //    var up = start + (avgRotation * Vector3.up * 0.1f);
-            //    var right = start + (avgRotation * Vector3.right * 0.1f);
-            //    Gizmos.DrawLine(start, end);
-            //    Gizmos.DrawLine(start, up);
-            //    Gizmos.DrawLine(start, right);
+                // draw table's orientation in center of table
+                {
+                    Vector3 tableCenter = Vector3.zero;
+                    foreach (var marker in CalibrationOffsets)
+                    {
+                        tableCenter += marker.OptitrackMarkerPosition;
+                    }
+                    tableCenter /= CalibrationOffsets.Count;
 
-            //    Gizmos.color = Color.green;
-            //    end = start + (_ovrRot * Vector3.forward);
-            //    up = start + (_ovrRot * Vector3.up * 0.1f);
-            //    right = start + (_ovrRot * Vector3.right * 0.1f);
-            //    Gizmos.DrawLine(start, end);
-            //    Gizmos.DrawLine(start, up);
-            //    Gizmos.DrawLine(start, right);
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawLine(tableCenter, tableCenter + tableRotation * Vector3.up * 0.1f);
+                    Gizmos.color = Color.blue;
+                    Gizmos.DrawLine(tableCenter, tableCenter + tableRotation * Vector3.forward * 0.1f);
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(tableCenter, tableCenter + tableRotation * Vector3.right * 0.1f);
+                }
 
-            //    foreach (var pose in _calibratedArucoPoses)
-            //    {
-            //        Gizmos.color = Color.red;
-            //        var rot = pose.Value.Rotation;
-            //        start = pose.Value.Position;
-            //        end = start + (rot * Vector3.forward);
-            //        up = start + (rot * Vector3.up * 0.1f);
-            //        right = start + (rot * Vector3.right * 0.1f);
-            //        Gizmos.DrawLine(start, end);
-            //        Gizmos.DrawLine(start, up);
-            //        Gizmos.DrawLine(start, right);
+                foreach (var marker in CalibrationOffsets)
+                {
+                    var nextMarkerCorner = ((MarkerOffset.Corner)(((int)marker.OptitrackCorner + 1) % Enum.GetNames(typeof(MarkerOffset.Corner)).Length));
+                    var nextMarker = CalibrationOffsets.Find((m) => m.OptitrackCorner == nextMarkerCorner);
 
-            //        // draw ray from marker through possible camera location
-            //        var marker = _markerSetupScript.CalibratedMarkers.First((m) => m.Id == pose.Key);
-            //        start = marker.Marker.transform.position;
-            //        var direction = pose.Value.Position - start;
-            //        end = start + 2 * direction;
-            //        Gizmos.color = Color.yellow;
-            //        Gizmos.DrawLine(start, end);
-            //    }
+                    // draw lines around optitrack plane
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(marker.OptitrackMarkerPosition, nextMarker.OptitrackMarkerPosition);
 
-            //    var poses = _calibratedArucoPoses.Values.ToArray();
-            //    Gizmos.color = Color.black;
-            //    var closestPoints = new List<Vector3>();
-
-            //    for (int poseIndex = 0; poseIndex < poses.Length; poseIndex++)
-            //    {
-            //        var pose = poses[poseIndex];
-            //        var poseMarker = _markerSetupScript.CalibratedMarkers.First((m) => m.Id == pose.Id).Marker;
-            //        var poseRay = new Ray(poseMarker.transform.position, pose.Position - poseMarker.transform.position);
-
-            //        for (int intersectIndex = poseIndex + 1; intersectIndex < poses.Length; intersectIndex++)
-            //        {
-            //            var intersect = poses[intersectIndex];
-            //            var intersectMarker = _markerSetupScript.CalibratedMarkers.First((m) => m.Id == intersect.Id).Marker;
-            //            var intersectRay = new Ray(intersectMarker.transform.position, intersect.Position - intersectMarker.transform.position);
-
-            //            Vector3 closestPoint1, closestPoint2;
-            //            var success = Math3d.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
-
-            //            if (success)
-            //            {
-            //                Gizmos.DrawSphere(closestPoint1, 0.005f);
-            //                Gizmos.DrawSphere(closestPoint2, 0.005f);
-            //                closestPoints.Add(closestPoint1);
-            //                closestPoints.Add(closestPoint2);
-            //            }
-            //        }
-            //    }
-
-            //    if (closestPoints.Count > 0)
-            //    {
-            //        var avgIntersect = Vector3.zero;
-            //        foreach (var p in closestPoints)
-            //        {
-            //            avgIntersect += p;
-            //        }
-
-            //        avgIntersect = avgIntersect / closestPoints.Count;
-            //        Gizmos.color = Color.white;
-            //        Gizmos.DrawSphere(avgIntersect, 0.01f);
-            //    }
-            //}
+                    // draw virtual position of calibrated markers, based on optitrack + measurements
+                    Gizmos.color = Color.cyan;
+                    var markerPosWorld = GetMarkerWorldPosition(marker, tableRotation);
+                    var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+                    Gizmos.DrawWireSphere(markerPosWorld, 0.01f);
+                    Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, markerSize / 2), markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, markerSize / 2));
+                    Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, markerSize / 2), markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, -markerSize / 2));
+                    Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, -markerSize / 2), markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, -markerSize / 2));
+                    Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, -markerSize / 2), markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, markerSize / 2));
+                }
+            }
         }
     }
 }
