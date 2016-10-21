@@ -275,6 +275,9 @@ namespace Assets.Modules.Calibration
             CalibrationOffset.IsCalibrated = true;
             CalibrationOffset.LastCalibration = DateTime.Now;
 
+            IsCalibrating = false;
+            CalibrationProgress = 0;
+
             Debug.Log("Calibration complete");
         }
 
