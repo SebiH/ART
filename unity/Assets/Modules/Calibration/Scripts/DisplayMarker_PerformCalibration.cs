@@ -28,7 +28,6 @@ namespace Assets.Modules.Calibration
 
             // set in editor
             public int ArMarkerId;
-            public int OptitrackMarkerId;
             public Vector3 OtToArOffset;
             public Corner OptitrackCorner;
 
@@ -38,15 +37,13 @@ namespace Assets.Modules.Calibration
             public Quaternion ArMarkerRotation { get; set; }
             public Vector3 ArCameraPosition { get; set; }
             public Quaternion ArCameraRotation { get; set; }
-
-            public Vector3 OptitrackMarkerPosition { get; set; }
         }
 
         public List<MarkerOffset> CalibrationOffsets = new List<MarkerOffset>();
         public string OptitrackCameraName = "HMD";
-        public string OptitrackDisplayName = "Display";
         private OptitrackPose _optitrackCameraPose;
-        private OptitrackPose _optitrackDisplayPose;
+
+        public DisplayMarker_SetupDisplay DisplaySetupScript;
 
         private Quaternion _ovrRot = Quaternion.identity;
 
@@ -104,11 +101,6 @@ namespace Assets.Modules.Calibration
                 if (pose.RigidbodyName == OptitrackCameraName)
                 {
                     _optitrackCameraPose = pose;
-                }
-
-                if (pose.RigidbodyName == OptitrackDisplayName)
-                {
-                    _optitrackDisplayPose = pose;
                 }
             }
         }
@@ -233,14 +225,25 @@ namespace Assets.Modules.Calibration
         //    Debug.Log("Calibration complete");
         //}
 
+        private Vector3 GetOptitrackMarkerPosition(MarkerOffset marker)
+        {
+            var corner = DisplaySetupScript.CalibratedCorners.FirstOrDefault((c) => c.Corner == marker.OptitrackCorner);
+            if (corner == null)
+            {
+                Debug.LogWarning("Could not find matching marker for " + marker.OptitrackCorner.ToString());
+                return Vector3.zero;
+            }
+            return corner.Position;
+        }
+
         private Quaternion CalculateTableRotation()
         {
             var markerBottomLeft = CalibrationOffsets.First((m) => m.OptitrackCorner == MarkerOffset.Corner.BottomLeft);
             var markerTopLeft = CalibrationOffsets.First((m) => m.OptitrackCorner == MarkerOffset.Corner.TopLeft);
             var markerBottomRight = CalibrationOffsets.First((m) => m.OptitrackCorner == MarkerOffset.Corner.BottomRight);
 
-            var forward = Vector3.Normalize(markerTopLeft.OptitrackMarkerPosition - markerBottomLeft.OptitrackMarkerPosition);
-            var right = Vector3.Normalize(markerBottomRight.OptitrackMarkerPosition - markerBottomLeft.OptitrackMarkerPosition);
+            var forward = Vector3.Normalize(GetOptitrackMarkerPosition(markerTopLeft) - GetOptitrackMarkerPosition(markerBottomLeft));
+            var right = Vector3.Normalize(GetOptitrackMarkerPosition(markerBottomRight) - GetOptitrackMarkerPosition(markerBottomLeft));
             var up = Vector3.Cross(right, forward);
 
             return Quaternion.LookRotation(forward, up);
@@ -273,7 +276,7 @@ namespace Assets.Modules.Calibration
             }
 
 
-            var start = marker.OptitrackMarkerPosition;
+            var start = GetOptitrackMarkerPosition(marker);
             return start + tableRotation * (marker.OtToArOffset + cornerOffset);
         }
 
@@ -297,7 +300,7 @@ namespace Assets.Modules.Calibration
             }
 
             // this only works if we have optitrack coordinates for all markers
-            if (_optitrackDisplayPose != null)
+            if (DisplaySetupScript.CalibratedCorners.Count >= 4)
             {
                 var tableRotation = CalculateTableRotation();
 
@@ -306,7 +309,7 @@ namespace Assets.Modules.Calibration
                     Vector3 tableCenter = Vector3.zero;
                     foreach (var marker in CalibrationOffsets)
                     {
-                        tableCenter += marker.OptitrackMarkerPosition;
+                        tableCenter += GetOptitrackMarkerPosition(marker);
                     }
                     tableCenter /= CalibrationOffsets.Count;
 
@@ -325,7 +328,7 @@ namespace Assets.Modules.Calibration
 
                     // draw lines around optitrack plane
                     Gizmos.color = Color.red;
-                    Gizmos.DrawLine(marker.OptitrackMarkerPosition, nextMarker.OptitrackMarkerPosition);
+                    Gizmos.DrawLine(GetOptitrackMarkerPosition(marker), GetOptitrackMarkerPosition(nextMarker));
 
                     // draw virtual position of calibrated markers, based on optitrack + measurements
                     Gizmos.color = Color.cyan;
