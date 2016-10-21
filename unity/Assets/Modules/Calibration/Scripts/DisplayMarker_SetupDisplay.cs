@@ -22,6 +22,7 @@ namespace Assets.Modules.Calibration
 
         public List<DisplayCorner> CalibratedCorners { get; private set; }
         public float CalibrationProgress { get; private set; }
+        public bool CanCalibrate { get; private set; }
 
         private bool _hasCalibratorPosition = false;
         private Vector3 _currentCalibratorPosition;
@@ -48,6 +49,11 @@ namespace Assets.Modules.Calibration
                     {
                         if (marker.Id == CalibratorMarkerIndex)
                         {
+                            if (!_hasCalibratorPosition)
+                            {
+                                CanCalibrate = true;
+                            }
+
                             _currentCalibratorPosition = marker.Position;
                             _hasCalibratorPosition = true;
                         }
@@ -59,7 +65,7 @@ namespace Assets.Modules.Calibration
 
         public void StartCalibration()
         {
-            if (_hasCalibratorPosition)
+            if (CanCalibrate)
             {
                 StartCoroutine(Calibrate());
             }
@@ -71,10 +77,14 @@ namespace Assets.Modules.Calibration
             var maxSamples = 100;
             var totalPositions = Vector3.zero;
 
+            CanCalibrate = false;
+            CalibrationProgress = 0f;
+
             while (samples < maxSamples)
             {
                 totalPositions += _currentCalibratorPosition;
                 ++samples;
+                CalibrationProgress = (float)samples / maxSamples;
                 yield return new WaitForSeconds(0.01f);
             }
 
@@ -85,6 +95,8 @@ namespace Assets.Modules.Calibration
                 Position = avgPosition,
                 Corner = CurrentCorner
             });
+
+            CanCalibrate = true;
         }
 
 
@@ -101,7 +113,7 @@ namespace Assets.Modules.Calibration
                 foreach (var cc in CalibratedCorners)
                 {
                     Gizmos.color = Color.magenta;
-                    Gizmos.DrawWireSphere(cc.Position, 0.1f);
+                    Gizmos.DrawWireSphere(cc.Position, 0.01f);
                 }
             }
         }

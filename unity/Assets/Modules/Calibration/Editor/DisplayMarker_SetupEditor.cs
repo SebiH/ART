@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Calibration
 {
-    [CustomEditor(typeof(MultiMarker_MarkerSetup))]
+    [CustomEditor(typeof(DisplayMarker_SetupDisplay))]
     public class DisplayMarker_SetupEditor : Editor
     {
         private static string _calibrateMarkerId = "";
@@ -14,11 +14,10 @@ namespace Assets.Modules.Calibration
             base.OnInspectorGUI();
             var script = target as DisplayMarker_SetupDisplay;
 
-            if (script.CalibrationProgress < Mathf.Epsilon)
+            if (script.CanCalibrate)
             {
                 if (GUILayout.Button("Set Marker") && Application.isPlaying)
                 {
-                    int id = int.Parse(_calibrateMarkerId);
                     script.StartCalibration();
                 }
             }
