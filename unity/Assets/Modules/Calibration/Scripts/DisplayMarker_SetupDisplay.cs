@@ -8,9 +8,9 @@ namespace Assets.Modules.Calibration
     public class DisplayMarker_SetupDisplay : MonoBehaviour
     {
         // Editor
-        public DisplayMarker_PerformCalibration.MarkerOffset.Corner CurrentCorner;
         public string CalibratorName = "CalibrationHelper";
         public int CalibratorMarkerIndex = 4;
+        public DisplayMarker_PerformCalibration.MarkerOffset.Corner CurrentCorner;
 
 
         // For other scripts
