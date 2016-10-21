@@ -17,7 +17,7 @@ namespace Assets.Modules.Calibration
         public bool InvertUpDirection = false;
 
         [Serializable]
-        public struct MarkerOffset
+        public class MarkerOffset
         {
             public enum Corner
             {
@@ -34,6 +34,7 @@ namespace Assets.Modules.Calibration
 
             // public getters & setters so that they don't show up in unity's editor
             public bool HasArPose { get; set; }
+            public DateTime ArPoseDetectionTime { get; set; }
             public Vector3 ArMarkerPosition { get; set; }
             public Quaternion ArMarkerRotation { get; set; }
             public Vector3 ArCameraPosition { get; set; }
@@ -43,6 +44,7 @@ namespace Assets.Modules.Calibration
         public List<MarkerOffset> CalibrationOffsets = new List<MarkerOffset>();
         public string OptitrackCameraName = "HMD";
         private OptitrackPose _optitrackCameraPose;
+        private DateTime _optitrackCameraDetectionTime;
 
         public DisplayMarker_SetupDisplay DisplaySetupScript;
 
@@ -83,10 +85,12 @@ namespace Assets.Modules.Calibration
                     var cameraLocalRot = cameraMatrix.GetRotation();
 
                     markerOffset.HasArPose = true;
+                    markerOffset.ArPoseDetectionTime = DateTime.Now;
                     markerOffset.ArMarkerPosition = pose.Position;
                     markerOffset.ArMarkerRotation = pose.Rotation;
                     markerOffset.ArCameraPosition = cameraMatrix.GetPosition();
                     markerOffset.ArCameraRotation = cameraMatrix.GetRotation();
+
 
                     break;
                 }
@@ -102,6 +106,7 @@ namespace Assets.Modules.Calibration
                 if (pose.RigidbodyName == OptitrackCameraName)
                 {
                     _optitrackCameraPose = pose;
+                    _optitrackCameraDetectionTime = DateTime.Now;
                 }
             }
         }
@@ -347,7 +352,32 @@ namespace Assets.Modules.Calibration
                     // if available, draw world position of camera based on marker
                     if (marker.HasArPose)
                     {
+                        Debug.Log((marker.ArPoseDetectionTime - DateTime.Now).TotalMilliseconds);
+                    }
+                    if (marker.HasArPose && (DateTime.Now - marker.ArPoseDetectionTime ).TotalMilliseconds < 300)
+                    {
+                        var localPos = marker.ArCameraPosition;
+                        var worldPos = markerPosWorld + tableRotation * localPos;
 
+                        var localRot = marker.ArCameraRotation;
+                        var localForward = localRot * Vector3.forward;
+                        var localRight = localRot * Vector3.right;
+                        var localUp = localRot * Vector3.up;
+
+                        var worldForward = tableRotation * localForward;
+                        var worldRight = tableRotation * localRight;
+                        var worldUp = tableRotation * localUp;
+                        var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+                        Gizmos.color = Color.white;
+                        Gizmos.DrawWireSphere(worldPos, 0.01f);
+
+                        Gizmos.color = Color.green;
+                        Gizmos.DrawLine(worldPos, worldPos + worldUp * 0.1f);
+                        Gizmos.color = Color.blue;
+                        Gizmos.DrawLine(worldPos, worldPos + worldForward * 0.1f);
+                        Gizmos.color = Color.red;
+                        Gizmos.DrawLine(worldPos, worldPos + worldRight * 0.1f);
                     }
                 }
             }
