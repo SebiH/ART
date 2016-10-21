@@ -14,6 +14,7 @@ namespace Assets.Modules.Calibration
         const float SteadyAngleThreshold = 2f;
 
         public float CalibrationStability { get; private set; }
+        public bool InvertUpDirection = false;
 
         [Serializable]
         public struct MarkerOffset
@@ -244,7 +245,9 @@ namespace Assets.Modules.Calibration
 
             var forward = Vector3.Normalize(GetOptitrackMarkerPosition(markerTopLeft) - GetOptitrackMarkerPosition(markerBottomLeft));
             var right = Vector3.Normalize(GetOptitrackMarkerPosition(markerBottomRight) - GetOptitrackMarkerPosition(markerBottomLeft));
-            var up = Vector3.Cross(right, forward);
+            var up = Vector3.Cross(forward, right);
+            // Cross product doesn't always point int the correct direction
+            if (InvertUpDirection) { up = -up; }
 
             return Quaternion.LookRotation(forward, up);
         }
