@@ -16,7 +16,7 @@ namespace Assets.Modules.Calibration
 
             if (script.CanCalibrate)
             {
-                if (GUILayout.Button("Set Marker") && Application.isPlaying)
+                if (GUILayout.Button("Set Corner") && Application.isPlaying)
                 {
                     script.StartCalibration();
                 }
@@ -31,17 +31,17 @@ namespace Assets.Modules.Calibration
             }
 
 
-            //GUILayout.Label("CalibrationOffsets filename");
-            //_filename = GUILayout.TextField(_filename);
-            //if (GUILayout.Button("Dump Markers to file") && Application.isPlaying)
-            //{
-            //    script.SaveCalibratedMarkers(_filename);
-            //}
+            GUILayout.Label("CalibrationOffsets filename");
+            _filename = GUILayout.TextField(_filename);
+            if (GUILayout.Button("Dump Markers to file") && Application.isPlaying)
+            {
+                script.SaveCalibratedCorners(_filename);
+            }
 
-            //if (GUILayout.Button("Load Markerdump") && Application.isPlaying)
-            //{
-            //    script.LoadCalibratedMarkers(_filename);
-            //}
+            if (GUILayout.Button("Load Markerdump") && Application.isPlaying)
+            {
+                script.LoadCalibratedCorners(_filename);
+            }
         }
     }
 }
