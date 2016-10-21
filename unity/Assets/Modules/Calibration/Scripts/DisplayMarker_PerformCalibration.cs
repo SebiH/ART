@@ -16,6 +16,8 @@ namespace Assets.Modules.Calibration
         public float CalibrationStability { get; private set; }
         public bool InvertUpDirection = false;
 
+        public Transform TestCamera;
+
         [Serializable]
         public class MarkerOffset
         {
@@ -69,6 +71,31 @@ namespace Assets.Modules.Calibration
         void Update()
         {
             UpdateCalibration();
+
+            if (TestCamera != null)
+            {
+                var marker = CalibrationOffsets.FirstOrDefault((m) => m.HasArPose && (DateTime.Now - m.ArPoseDetectionTime).TotalMilliseconds < 300);
+
+                if (marker != null)
+                {
+                    var tableRotation = CalculateTableRotation();
+                    var markerPosWorld = GetMarkerWorldPosition(marker, tableRotation);
+
+                    var localPos = marker.ArCameraPosition;
+                    var worldPos = markerPosWorld + tableRotation * localPos;
+
+                    var localRot = marker.ArCameraRotation;
+                    var localForward = localRot * Vector3.forward;
+                    var localUp = localRot * Vector3.up;
+
+                    var worldForward = tableRotation * localForward;
+                    var worldUp = tableRotation * localUp;
+                    var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+                    TestCamera.transform.position = worldPos;
+                    TestCamera.transform.rotation = worldRot;
+                }
+            }
         }
 
         private void OnArucoPose(ArucoMarkerPose pose)
@@ -350,10 +377,6 @@ namespace Assets.Modules.Calibration
 
 
                     // if available, draw world position of camera based on marker
-                    if (marker.HasArPose)
-                    {
-                        Debug.Log((marker.ArPoseDetectionTime - DateTime.Now).TotalMilliseconds);
-                    }
                     if (marker.HasArPose && (DateTime.Now - marker.ArPoseDetectionTime ).TotalMilliseconds < 300)
                     {
                         var localPos = marker.ArCameraPosition;
