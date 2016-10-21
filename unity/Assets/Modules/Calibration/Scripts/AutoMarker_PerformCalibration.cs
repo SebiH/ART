@@ -39,7 +39,6 @@ namespace Assets.Modules.Calibration
             public Vector3 ArCameraPosition { get; set; }
             public Quaternion ArCameraRotation { get; set; }
 
-            public bool HasOptitrackPose { get; set; }
             public Vector3 OptitrackMarkerPosition { get; set; }
         }
 
@@ -137,7 +136,7 @@ namespace Assets.Modules.Calibration
 
         private void UpdateCalibration()
         {
-
+            
         }
 
 
@@ -298,7 +297,7 @@ namespace Assets.Modules.Calibration
             }
 
             // this only works if we have optitrack coordinates for all markers
-            if (CalibrationOffsets.All((m) => m.HasOptitrackPose))
+            if (_optitrackDisplayPose != null)
             {
                 var tableRotation = CalculateTableRotation();
 
@@ -337,6 +336,13 @@ namespace Assets.Modules.Calibration
                     Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, markerSize / 2), markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, -markerSize / 2));
                     Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, -markerSize / 2), markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, -markerSize / 2));
                     Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, -markerSize / 2), markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, markerSize / 2));
+
+
+                    // if available, draw world position of camera based on marker
+                    if (marker.HasArPose)
+                    {
+
+                    }
                 }
             }
         }
