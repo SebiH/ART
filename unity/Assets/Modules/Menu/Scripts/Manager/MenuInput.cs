@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Menu
 {
-    public class Input : MonoBehaviour
+    public class MenuInput : MonoBehaviour
     {
         void OnEnable()
         {

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Menu
 {
-    public class Renderer : MonoBehaviour
+    public class MenuRenderer : MonoBehaviour
     {
         public Camera AttachedCamera;
         public Vector3 PositionOffset;
