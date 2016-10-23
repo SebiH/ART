@@ -22,6 +22,7 @@ namespace Assets.Modules.Menu
 
         public override void HandleInput(InputType input)
         {
+            MenuToast.Instance.Info(input.ToString());
             if (input == InputType.Confirm && ButtonClicked != null)
             {
                 ButtonClicked.Invoke();
