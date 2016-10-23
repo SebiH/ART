@@ -84,7 +84,6 @@ namespace Assets.Modules.Menu
 
             while (entryIndex < _uiElements.Count)
             {
-                Debug.Log("Y");
                 var el = _uiElements[entryIndex];
 
                 if (_uiElements[entryIndex].IsSelectable)
@@ -103,7 +102,6 @@ namespace Assets.Modules.Menu
 
             while (entryIndex >= 0)
             {
-                Debug.Log("X");
                 var el = _uiElements[entryIndex];
 
                 if (_uiElements[entryIndex].IsSelectable)

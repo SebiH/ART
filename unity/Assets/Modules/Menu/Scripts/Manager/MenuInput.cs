@@ -4,8 +4,12 @@ namespace Assets.Modules.Menu
 {
     public class MenuInput : MonoBehaviour
     {
+        public float ThrottlePeriod = 0.1f;
+
         public delegate void OnInputHandler(InputType input);
         public event OnInputHandler OnButtonPress;
+
+        private float _lastEventTime = 0;
 
         void OnEnable()
         {
@@ -21,6 +25,13 @@ namespace Assets.Modules.Menu
              * Current implementation restricted to win10 xbox controller
              * See http://wiki.unity3d.com/index.php?title=Xbox360Controller
              */
+
+            // throttle events
+            if (_lastEventTime + ThrottlePeriod > Time.time)
+            {
+                return;
+            }
+
 
             if (Input.GetKeyDown("joystick button 0"))
             {
@@ -89,6 +100,7 @@ namespace Assets.Modules.Menu
             if (OnButtonPress != null)
             {
                 OnButtonPress(input);
+                _lastEventTime = Time.time;
             }
         }
     }
