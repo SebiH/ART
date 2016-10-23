@@ -33,6 +33,8 @@ namespace Assets.Modules.Menu
             // build up UI
             _root = new GameObject();
             _root.name = "__UiRoot";
+            // start off as inactive
+            _root.SetActive(false);
 
             _container = Instantiate(ContainerTemplate);
             _container.name = "__uiPanel";
@@ -57,6 +59,11 @@ namespace Assets.Modules.Menu
             entryTransform.sizeDelta = new Vector2(0, entryHeight);
 
             _heightOffset -= entryHeight;
+        }
+
+        public void ToggleVisibility()
+        {
+            _root.SetActive(!_root.activeSelf);
         }
     }
 }

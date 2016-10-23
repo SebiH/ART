@@ -51,6 +51,8 @@ namespace Assets.Modules.Menu
             switch (input)
             {
                 case InputType.Start:
+                    MRenderer.ToggleVisibility();
+                    // TODO: ignore any other events, make buttons ignore all other events
                     break;
                 case InputType.Up:
                     SelectPrevEntry();
