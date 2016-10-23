@@ -5,8 +5,8 @@ namespace Assets.Modules.Menu
     public class MenuRenderer : MonoBehaviour
     {
         public Camera AttachedCamera;
-        public Vector3 PositionOffset;
         public GameObject ContainerTemplate;
+        public Vector3 PositionOffset;
 
         private GameObject _container;
         private GameObject _root;
