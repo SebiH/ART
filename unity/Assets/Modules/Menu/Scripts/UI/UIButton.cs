@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Assets.Modules.Menu
@@ -7,6 +8,7 @@ namespace Assets.Modules.Menu
     public class UIButton : UIElement
     {
         public string ButtonText;
+        public UnityEvent ButtonClicked;
 
         public override bool IsSelectable { get { return true; } }
 
