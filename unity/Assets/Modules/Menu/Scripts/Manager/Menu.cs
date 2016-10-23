@@ -5,25 +5,28 @@ namespace Assets.Modules.Menu
 {
     public class Menu : MonoBehaviour
     {
-        private List<UIElement> _uiElements = new List<UIElement>();
+        public static Menu Instance;
 
-        private MenuRenderer _renderer;
-        private MenuInput _input;
+        public MenuRenderer MRenderer;
+        public MenuInput MInput;
 
         private int _selectedEntryIndex = -1;
+        private List<UIElement> _uiElements = new List<UIElement>();
 
         void OnEnable()
         {
-            _input = GetComponent<MenuInput>();
-            _input.OnButtonPress += OnInput;
-            _renderer = GetComponent<MenuRenderer>();
+            Instance = this;
+
+            MInput.OnButtonPress += OnInput;
             bool hasSelectedEntry = false;
             var entryCounter = 0;
+
+            MRenderer.Initialise();
 
             foreach (Transform child in transform)
             {
                 var entry = child.GetComponent<UIElement>();
-                _renderer.AddElement(entry);
+                MRenderer.AddElement(entry);
                 _uiElements.Add(entry);
 
                 if (!hasSelectedEntry && entry.IsSelectable)
