@@ -22,6 +22,10 @@ namespace Assets.Modules.Menu
 
         public override void HandleInput(InputType input)
         {
+            if (input == InputType.Confirm && ButtonClicked != null)
+            {
+                ButtonClicked.Invoke();
+            }
         }
     }
 }
