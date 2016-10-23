@@ -4,14 +4,11 @@ namespace Assets.Modules.Menu
 {
     public class MenuInput : MonoBehaviour
     {
-        private Menu _menu;
-
         public delegate void OnInputHandler(InputType input);
         public event OnInputHandler OnButtonPress;
 
         void OnEnable()
         {
-            _menu = GetComponent<Menu>();
         }
 
         void OnDisable()

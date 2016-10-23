@@ -10,12 +10,15 @@ namespace Assets.Modules.Menu
         private MenuRenderer _renderer;
         private MenuInput _input;
 
+        private int _selectedEntryIndex = -1;
+
         void OnEnable()
         {
             _input = GetComponent<MenuInput>();
             _input.OnButtonPress += OnInput;
             _renderer = GetComponent<MenuRenderer>();
             bool hasSelectedEntry = false;
+            var entryCounter = 0;
 
             foreach (Transform child in transform)
             {
@@ -27,7 +30,10 @@ namespace Assets.Modules.Menu
                 {
                     SelectEntry(entry);
                     hasSelectedEntry = true;
+                    _selectedEntryIndex = entryCounter;
                 }
+
+                entryCounter++;
             }
         }
 
@@ -37,17 +43,77 @@ namespace Assets.Modules.Menu
 
         }
 
-        private void SelectEntry(UIElement entry)
+        private void OnInput(InputType input)
         {
-            foreach (var el in _uiElements)
+            switch (input)
             {
-                el.SetHighlight(el == entry, Color.green);
+                case InputType.Start:
+                    break;
+                case InputType.Up:
+                    SelectPrevEntry();
+                    break;
+                case InputType.Down:
+                    SelectNextEntry();
+                    break;
+                case InputType.Confirm:
+                    break;
+                case InputType.Cancel:
+                    break;
             }
         }
 
-        private void OnInput(InputType input)
+        private void SelectEntry(UIElement entry)
         {
-            Debug.Log("Received input " + input.ToString());
+            var indexCounter = 0;
+            foreach (var el in _uiElements)
+            {
+                el.SetHighlight(el == entry, Color.green);
+
+                if (el == entry)
+                {
+                    _selectedEntryIndex = indexCounter;
+                }
+
+                indexCounter++;
+            }
+        }
+
+        private void SelectNextEntry()
+        {
+            var entryIndex = _selectedEntryIndex + 1;
+
+            while (entryIndex < _uiElements.Count)
+            {
+                Debug.Log("Y");
+                var el = _uiElements[entryIndex];
+
+                if (_uiElements[entryIndex].IsSelectable)
+                {
+                    SelectEntry(el);
+                    break;
+                }
+
+                entryIndex++;
+            }
+        }
+
+        private void SelectPrevEntry()
+        {
+            var entryIndex = _selectedEntryIndex - 1;
+
+            while (entryIndex >= 0)
+            {
+                Debug.Log("X");
+                var el = _uiElements[entryIndex];
+
+                if (_uiElements[entryIndex].IsSelectable)
+                {
+                    SelectEntry(el);
+                    break;
+                }
+
+                entryIndex--;
+            }
         }
     }
 }
