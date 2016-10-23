@@ -1,14 +1,14 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Modules.Menu
 {
-    public class UIElement : MonoBehaviour
+    public abstract class UIElement : MonoBehaviour
     {
-        public bool IsSelectable;
         public Image Template;
         private Image _instance;
+
+        public abstract bool IsSelectable { get; }
 
         public virtual GameObject CreateElement()
         {
