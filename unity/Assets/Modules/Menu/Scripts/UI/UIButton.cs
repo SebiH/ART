@@ -19,5 +19,9 @@ namespace Assets.Modules.Menu
             textContainer.text = ButtonText;
             return element;
         }
+
+        public override void HandleInput(InputType input)
+        {
+        }
     }
 }

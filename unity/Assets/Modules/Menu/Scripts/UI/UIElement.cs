@@ -8,7 +8,10 @@ namespace Assets.Modules.Menu
         public Image Template;
         private Image _instance;
 
+        public bool IsSelected { get; protected set; }
+
         public abstract bool IsSelectable { get; }
+        public abstract void HandleInput(InputType input);
 
         public virtual GameObject CreateElement()
         {
@@ -18,6 +21,7 @@ namespace Assets.Modules.Menu
 
         public virtual void SetHighlight(bool isHighlighted, Color highlightColor)
         {
+            IsSelected = isHighlighted;
             if (isHighlighted)
             {
                 _instance.color = highlightColor;
@@ -25,6 +29,26 @@ namespace Assets.Modules.Menu
             else
             {
                 _instance.color = Template.color;
+            }
+        }
+
+
+
+        void OnEnable()
+        {
+            Menu.Instance.MInput.OnButtonPress += OnInput;
+        }
+
+        void OnDisable()
+        {
+            Menu.Instance.MInput.OnButtonPress -= OnInput;
+        }
+
+        private void OnInput(InputType input)
+        {
+            if (IsSelected)
+            {
+                HandleInput(input);
             }
         }
     }
