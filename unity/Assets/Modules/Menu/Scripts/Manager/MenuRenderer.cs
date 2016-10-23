@@ -28,23 +28,23 @@ namespace Assets.Modules.Menu
             _root.transform.localRotation *= Quaternion.Euler(0, 180, 0);
         }
 
+        public void Initialise()
+        {
+            // build up UI
+            _root = new GameObject();
+            _root.name = "__UiRoot";
+
+            _container = Instantiate(ContainerTemplate);
+            _container.name = "__uiPanel";
+            _container.transform.SetParent(_root.transform);
+            var _containerTransform = _container.transform as RectTransform;
+
+            _heightOffset = _containerTransform.sizeDelta.y / 2;
+        }
+
 
         public void AddElement(UIElement element)
         {
-            if (_root == null)
-            {
-                // build up UI
-                _root = new GameObject();
-                _root.name = "__UiRoot";
-
-                _container = Instantiate(ContainerTemplate);
-                _container.name = "__uiPanel";
-                _container.transform.SetParent(_root.transform);
-                var _containerTransform = _container.transform as RectTransform;
-
-                _heightOffset = _containerTransform.sizeDelta.y/2;
-            }
-
             var entryObject = element.CreateElement();
             entryObject.transform.SetParent(_container.transform);
             // container is usually scaled down due to being in world space
