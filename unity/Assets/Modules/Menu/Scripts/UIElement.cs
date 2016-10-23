@@ -6,32 +6,26 @@ namespace Assets.Modules.Menu
 {
     public class UIElement : MonoBehaviour
     {
-        public Text TextContainer;
-        public Image Panel;
-        public Color HighlightColor;
+        public bool IsSelectable;
+        public Image Template;
+        private Image _instance;
 
-        private Color _baseColor;
-
-        void OnEnable()
+        public virtual GameObject CreateElement()
         {
-            _baseColor = Panel.color;
+            _instance = Instantiate(Template);
+            return _instance.gameObject;
         }
 
-        public void SetHighlight(bool isHighlighted)
+        public virtual void SetHighlight(bool isHighlighted, Color highlightColor)
         {
             if (isHighlighted)
             {
-                Panel.color = HighlightColor;
+                _instance.color = highlightColor;
             }
             else
             {
-                Panel.color = _baseColor;
+                _instance.color = Template.color;
             }
-        }
-
-        public void SetText(string text)
-        {
-            TextContainer.text = text;
         }
     }
 }
