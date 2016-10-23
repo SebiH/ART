@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.Menu
@@ -9,7 +10,7 @@ namespace Assets.Modules.Menu
         public delegate void OnInputHandler(InputType input);
         public event OnInputHandler OnButtonPress;
 
-        private float _lastEventTime = 0;
+        private Dictionary<int,float> _lastEventTime = new Dictionary<int, float>();
 
         void OnEnable()
         {
@@ -25,13 +26,6 @@ namespace Assets.Modules.Menu
              * Current implementation restricted to win10 xbox controller
              * See http://wiki.unity3d.com/index.php?title=Xbox360Controller
              */
-
-            // throttle events
-            if (_lastEventTime + ThrottlePeriod > Time.time)
-            {
-                return;
-            }
-
 
             if (Input.GetKeyDown("joystick button 0"))
             {
@@ -97,10 +91,18 @@ namespace Assets.Modules.Menu
 
         private void RaiseInputEvent(InputType input)
         {
+            var inputIndex = (int)input;
+
+            // don't raise too many events of the same time too quickly
+            if (_lastEventTime.ContainsKey(inputIndex) && _lastEventTime[inputIndex] + ThrottlePeriod > Time.time)
+            {
+                return;
+            }
+
             if (OnButtonPress != null)
             {
                 OnButtonPress(input);
-                _lastEventTime = Time.time;
+                _lastEventTime[inputIndex] = Time.time;
             }
         }
     }
