@@ -20,6 +20,7 @@ ArucoProcessor::ArucoProcessor(const json &marker_config)
 
 	// detector settings
 	// TODO: deprecated! use setParams, allow settings via Get/SetProperties
+	detector_.setDictionary(aruco::Dictionary::ARTOOLKITPLUSBCH);
 	detector_.setCornerRefinementMethod(aruco::MarkerDetector::LINES);
 	detector_.setThresholdMethod(aruco::MarkerDetector::FIXED_THRES);
 	detector_.setThresholdParams(threshold_, 0.0);
