@@ -16,6 +16,7 @@ namespace Assets.Modules.Tracking
 
         public string IP = "127.0.0.1";
         public int Port = 16000;
+        public float Scaling = 0.8f;
 
         public event OptitrackPosesReceived PosesReceived;
 
@@ -111,7 +112,7 @@ namespace Assets.Modules.Tracking
 
                 //== coordinate system conversion (right to left handed) ==--
                 z = -z;
-                pose.Position = new Vector3(x, y, z);
+                pose.Position = new Vector3(x, y, z) * Scaling;
 
                 float qx = (float)Convert.ToDouble(rbList[index].Attributes["qx"].InnerText);
                 float qy = (float)Convert.ToDouble(rbList[index].Attributes["qy"].InnerText);
@@ -139,7 +140,7 @@ namespace Assets.Modules.Tracking
                     //== coordinate system conversion (right to left handed) ==--
                     mz = -mz;
 
-                    marker.Position = new Vector3(mx, my, mz);
+                    marker.Position = new Vector3(mx, my, mz) * Scaling;
 
                     pose.Markers.Add(marker);
                 }
