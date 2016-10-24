@@ -1,3 +1,5 @@
+using Assets.Modules.Core;
+using Assets.Modules.Core.Util;
 using Assets.Modules.Tracking;
 using Assets.Modules.Tracking.Scripts;
 using System;
@@ -171,7 +173,92 @@ namespace Assets.Modules.Calibration
 
         private void UpdateCalibration()
         {
-            
+            // this only works if we have optitrack coordinates for all markers
+            if (DisplaySetupScript.CalibratedCorners.Count >= 4)
+            {
+                var tableRotation = CalculateTableRotation();
+
+                var positions = new List<Vector3>();
+                var rotations = new List<Quaternion>();
+
+                var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+
+                for (int i = 0; i < CalibrationOffsets.Length; i++)
+                {
+                    if (CalibrationOffsets[i] == null)
+                    {
+                        continue;
+                    }
+
+                    var marker = CalibrationOffsets[i];
+                    var markerPosWorld = GetMarkerWorldPosition(i, tableRotation);
+
+                    // if available, draw world position of camera based on marker
+                    if (marker.HasArPose && (DateTime.Now - marker.ArPoseDetectionTime ).TotalMilliseconds < 300)
+                    {
+                        var localPos = marker.ArCameraPosition;
+                        var worldPos = markerPosWorld + tableRotation * localPos;
+
+                        var localRot = marker.ArCameraRotation;
+                        var localForward = localRot * Vector3.forward;
+                        var localRight = localRot * Vector3.right;
+                        var localUp = localRot * Vector3.up;
+
+                        var worldForward = tableRotation * localForward;
+                        var worldRight = tableRotation * localRight;
+                        var worldUp = tableRotation * localUp;
+                        var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+                        positions.Add(worldPos);
+                        rotations.Add(worldRot);
+                    }
+                }
+
+                if (positions.Count == 0)
+                {
+                    return;
+                }
+
+                var avgPositionWithOutliers = Vector3.zero;
+
+                foreach (var pos in positions)
+                {
+                    avgPositionWithOutliers += pos;
+                }
+
+                avgPositionWithOutliers = avgPositionWithOutliers / positions.Count;
+
+
+                var position_noOutlier = positions.Where((p) => (p - avgPositionWithOutliers).sqrMagnitude < 0.05f);
+                var avgPosition = Vector3.zero;
+                var rots = new List<Quaternion>();
+                var index = 0;
+
+                foreach (var pos in positions)
+                {
+                    if ((pos - avgPositionWithOutliers).sqrMagnitude < 0.05f)
+                    {
+                        // not an outlier.. probably
+                        avgPosition += pos;
+                        rots.Add(rotations[index]);
+                    }
+                    index++;
+                }
+
+                // need a few points to minimize errors
+                if (rots.Count > 4)
+                {
+                    var avgRotation = QuaternionUtils.Average(rots);
+                    avgPosition = avgPosition / rots.Count;
+
+                    CalibrationOffset.OpenVrRotationOffset = avgRotation * Quaternion.Inverse(_ovrRot);
+                    CalibrationOffset.OptitrackToCameraOffset = avgPosition - _optitrackCameraPose.Position;
+
+                    CalibrationOffset.IsCalibrated = true;
+                    CalibrationOffset.LastCalibration = DateTime.Now;
+                    Debug.Log("Applied calibration");
+                }
+            }
         }
 
 
@@ -385,6 +472,17 @@ namespace Assets.Modules.Calibration
                     Gizmos.DrawLine(tableCenter, tableCenter + tableRotation * Vector3.right * 0.1f);
                 }
 
+                foreach (var corner in DisplaySetupScript.CalibratedCorners)
+                {
+                    var nextMarkerCorner = ((MarkerOffset.Corner)(((int)corner.Corner + 1) % Enum.GetNames(typeof(MarkerOffset.Corner)).Length));
+                    var nextMarker = DisplaySetupScript.CalibratedCorners.Find((m) => m.Corner == nextMarkerCorner);
+
+                    //draw lines around optitrack plane
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(corner.Position, nextMarker.Position);
+
+                }
+
                 for (int i = 0; i < CalibrationOffsets.Length; i++)
                 {
                     if (CalibrationOffsets[i] == null)
@@ -393,12 +491,6 @@ namespace Assets.Modules.Calibration
                     }
 
                     var marker = CalibrationOffsets[i];
-                    //var nextMarkerCorner = ((MarkerOffset.Corner)(((int)marker.OptitrackCorner + 1) % Enum.GetNames(typeof(MarkerOffset.Corner)).Length));
-                    //var nextMarker = CalibrationOffsets.Find((m) => m.OptitrackCorner == nextMarkerCorner);
-
-                    // draw lines around optitrack plane
-                    //Gizmos.color = Color.red;
-                    //Gizmos.DrawLine(GetOptitrackMarkerPosition(marker), GetOptitrackMarkerPosition(nextMarker));
 
                     // draw virtual position of calibrated markers, based on optitrack + measurements
                     Gizmos.color = Color.cyan;
