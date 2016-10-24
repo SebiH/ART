@@ -153,7 +153,7 @@ namespace Assets.Modules.InteractiveSurface
                         }
                         else
                         {
-                            Gizmos.color = Color.Lerp(Color.red, Color.green, avgPose.SampleSize / MinSampleSize);
+                            Gizmos.color = Color.Lerp(Color.red, Color.green, avgPose.SampleSize / (float)MinSampleSize);
                         }
 
                         var avgPosition = avgPose.GetAveragePosition();
