@@ -8,10 +8,12 @@ std::vector<cv::Mat> ArucoTools::GenerateMarkers(std::string dictionary_name, in
 {
 	auto dictionary = aruco::Dictionary::loadPredefined(dictionary_name);
 	auto output = std::vector<cv::Mat>();
+	auto counter = 0;
 
 	for (const auto &m : dictionary.getMapCode())
 	{
-		output.push_back(dictionary.getMarkerImage_id(m.second, pixel_size));
+		output.push_back(dictionary.getMarkerImage_id(counter, pixel_size));
+		counter++;
 	}
 
 	return output;
