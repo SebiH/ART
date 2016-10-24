@@ -33,6 +33,7 @@ namespace Assets.Modules.Calibration
 
         void OnEnable()
         {
+            CanCalibrate = true;
             CalibrationProgress = 0;
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
 
