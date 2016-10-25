@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using Assets.Modules.Core.Util;
 using Assets.Modules.Tracking;
 using Assets.Modules.Tracking.Scripts;
@@ -185,6 +186,11 @@ namespace Assets.Modules.Calibration
             _ovrRot = pose.rot;
         }
 
+        private readonly List<Ray> _debugRays = new List<Ray>();
+        private readonly List<Vector3> _debugClosestPoints = new List<Vector3>();
+        private Vector3 _debugAvgPosition = Vector3.zero;
+        private Quaternion _debugAvgRotation = Quaternion.identity;
+
 
         public bool IsCalibrating { get; private set; }
         public float CalibrationProgress { get; private set; }
@@ -194,6 +200,13 @@ namespace Assets.Modules.Calibration
             {
                 StartCoroutine(UpdateCalibration());
             }
+        }
+
+        private class CalibPose
+        {
+            public Vector3 WorldMarkerPosition;
+            public Vector3 WorldCameraPosition;
+            public Quaternion WorldRotation;
         }
 
         private IEnumerator UpdateCalibration()
@@ -206,14 +219,15 @@ namespace Assets.Modules.Calibration
             const int maxSamples = 100;
             for (int sampleCount = 0; sampleCount < maxSamples; sampleCount++)
             {
+                CalibrationProgress = sampleCount / (float)maxSamples;
+                yield return new WaitForSeconds(0.01f);
+
                 // this only works if we have optitrack coordinates for all markers
                 if (DisplaySetupScript.CalibratedCorners.Count >= 4)
                 {
                     var tableRotation = CalculateTableRotation();
 
-                    var positions = new List<Vector3>();
-                    var rotations = new List<Quaternion>();
-
+                    var calibPoses = new List<CalibPose>();
                     var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
 
                     for (int i = 0; i < CalibrationOffsets.Length; i++)
@@ -241,54 +255,107 @@ namespace Assets.Modules.Calibration
                             var worldUp = tableRotation * localUp;
                             var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
-                            positions.Add(worldPos);
-                            rotations.Add(worldRot);
+                            calibPoses.Add(new CalibPose
+                            {
+                                WorldCameraPosition = worldPos,
+                                WorldMarkerPosition = markerPosWorld,
+                                WorldRotation = worldRot
+                            });
                         }
                     }
 
-                    if (positions.Count == 0)
+                    if (calibPoses.Count == 0)
                     {
                         continue;
                     }
 
                     var avgPositionWithOutliers = Vector3.zero;
 
-                    foreach (var pos in positions)
+                    foreach (var pose in calibPoses)
                     {
-                        avgPositionWithOutliers += pos;
+                        avgPositionWithOutliers += pose.WorldCameraPosition;
                     }
 
-                    avgPositionWithOutliers = avgPositionWithOutliers / positions.Count;
+                    avgPositionWithOutliers = avgPositionWithOutliers / calibPoses.Count;
 
 
-                    var position_noOutlier = positions.Where((p) => (p - avgPositionWithOutliers).sqrMagnitude < 0.05f);
+                    var poses_noOutlier = calibPoses.Where((p) => (p.WorldCameraPosition - avgPositionWithOutliers).sqrMagnitude < 0.01f);
+                    Debug.Log("Found " + (calibPoses.Count - poses_noOutlier.Count()) + " Outliers during calibration");
+
                     var avgPosition = Vector3.zero;
                     var rots = new List<Quaternion>();
-                    var index = 0;
 
-                    foreach (var pos in positions)
+                    foreach (var pose in poses_noOutlier)
                     {
-                        if ((pos - avgPositionWithOutliers).sqrMagnitude < 0.05f)
-                        {
-                            // not an outlier.. probably
-                            avgPosition += pos;
-                            rots.Add(rotations[index]);
-                        }
-                        index++;
+                        avgPosition += pose.WorldCameraPosition;
+                        rots.Add(pose.WorldRotation);
                     }
 
                     // need a few points to minimize errors
                     if (rots.Count > 4)
                     {
+                        if (CalibMethod == CalibrationMethod.Standard)
+                        {
+                            avgPosition = avgPosition / rots.Count;
+                            avgPos.Add(avgPosition - _optitrackCameraPose.Position);
+                            _debugAvgPosition = avgPosition;
+                        }
+                        else if (CalibMethod == CalibrationMethod.LineExtension)
+                        {
+                            var closestPoints = new List<Vector3>();
+                            var poses = poses_noOutlier.ToArray();
+
+                            _debugClosestPoints.Clear();
+                            _debugRays.Clear();
+
+                            for (int poseIndex = 0; poseIndex < poses.Length; poseIndex++)
+                            {
+                                var pose = poses[poseIndex];
+
+                                var poseRay = new Ray(pose.WorldMarkerPosition, pose.WorldCameraPosition - pose.WorldMarkerPosition);
+                                _debugRays.Add(poseRay);
+
+                                for (int intersectIndex = poseIndex + 1; intersectIndex < poses.Length; intersectIndex++)
+                                {
+                                    var intersect = poses[intersectIndex];
+                                    var intersectRay = new Ray(intersect.WorldMarkerPosition, intersect.WorldCameraPosition - intersect.WorldMarkerPosition);
+
+                                    Vector3 closestPoint1, closestPoint2;
+                                    var success = Math3d.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
+
+                                    if (success)
+                                    {
+                                        closestPoints.Add(closestPoint1);
+                                        closestPoints.Add(closestPoint2);
+
+                                        _debugClosestPoints.Add(closestPoint1);
+                                        _debugClosestPoints.Add(closestPoint2);
+                                    }
+                                }
+                            }
+
+                            if (closestPoints.Count > 0)
+                            {
+                                avgPosition = Vector3.zero;
+                                foreach (var p in closestPoints)
+                                {
+                                    avgPosition += p;
+                                }
+
+                                avgPosition = avgPosition / closestPoints.Count;
+                                avgPos.Add(avgPosition - _optitrackCameraPose.Position);
+                                _debugAvgPosition = avgPosition;
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Unknown calibration method " + CalibMethod.ToString());
+                        }
+
                         var avgRotation = QuaternionUtils.Average(rots);
-                        avgPosition = avgPosition / rots.Count;
-
-                        avgPos.Add(avgPosition - _optitrackCameraPose.Position);
                         avgRot.Add(avgRotation * Quaternion.Inverse(_ovrRot));
+                        _debugAvgRotation = avgRotation;
                     }
-
-                    CalibrationProgress = sampleCount / (float)maxSamples;
-                    yield return new WaitForSeconds(0.01f);
                 }
             }
 
@@ -442,14 +509,41 @@ namespace Assets.Modules.Calibration
                         var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
                         Gizmos.color = Color.white;
-                        Gizmos.DrawSphere(worldPos, 0.01f);
+                        Gizmos.DrawWireSphere(worldPos, 0.01f);
 
                         Gizmos.color = Color.green;
                         Gizmos.DrawLine(worldPos, worldPos + worldUp * 0.1f);
                         Gizmos.color = Color.blue;
-                        Gizmos.DrawLine(worldPos, worldPos + worldForward);
+                        Gizmos.DrawLine(worldPos, worldPos + worldForward * 0.5f);
                         Gizmos.color = Color.red;
                         Gizmos.DrawLine(worldPos, worldPos + worldRight * 0.1f);
+                    }
+                }
+
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawSphere(_debugAvgPosition, 0.01f);
+
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawLine(_debugAvgPosition, _debugAvgPosition + _debugAvgRotation * Vector3.up * 0.1f);
+                    Gizmos.color = Color.blue;
+                    Gizmos.DrawLine(_debugAvgPosition, _debugAvgPosition + _debugAvgRotation * Vector3.forward);
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(_debugAvgPosition, _debugAvgPosition + _debugAvgRotation * Vector3.right * 0.1f);
+                }
+
+                if (CalibMethod == CalibrationMethod.LineExtension)
+                {
+                    Gizmos.color = Color.yellow;
+                    foreach (var ray in _debugRays)
+                    {
+                        Gizmos.DrawLine(ray.origin, ray.origin + ray.direction);
+                    }
+
+                    Gizmos.color = Color.black;
+                    foreach (var pos in _debugClosestPoints)
+                    {
+                        Gizmos.DrawWireSphere(pos, 0.01f);
                     }
                 }
             }
