@@ -92,12 +92,11 @@ namespace Assets.Modules.Calibration
             SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
         }
 
-
         void Update()
         {
             if (TestCamera != null && CalibrationOffsets != null)
             {
-                var marker = CalibrationOffsets.FirstOrDefault((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < 1f);
+                var marker = CalibrationOffsets.FirstOrDefault((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < 0.3f);
 
                 if (marker != null)
                 {
@@ -220,7 +219,7 @@ namespace Assets.Modules.Calibration
             for (int sampleCount = 0; sampleCount < maxSamples; sampleCount++)
             {
                 CalibrationProgress = sampleCount / (float)maxSamples;
-                yield return new WaitForSeconds(0.01f);
+                yield return new WaitForSecondsRealtime(0.002f);
 
                 // this only works if we have optitrack coordinates for all markers
                 if (DisplaySetupScript.CalibratedCorners.Count >= 4)
@@ -239,7 +238,7 @@ namespace Assets.Modules.Calibration
 
                         var marker = CalibrationOffsets[i];
                         var markerPosWorld = GetMarkerWorldPosition(i, tableRotation);
-                        if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < 1f)
+                        if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < 0.3f)
                         {
                             var localPos = marker.ArCameraPosition;
                             var worldPos = markerPosWorld + tableRotation * localPos;
@@ -268,17 +267,8 @@ namespace Assets.Modules.Calibration
                         continue;
                     }
 
-                    var avgPositionWithOutliers = Vector3.zero;
-
-                    foreach (var pose in calibPoses)
-                    {
-                        avgPositionWithOutliers += pose.WorldCameraPosition;
-                    }
-
-                    avgPositionWithOutliers = avgPositionWithOutliers / calibPoses.Count;
-
-
-                    var poses_noOutlier = calibPoses.Where((p) => (p.WorldCameraPosition - avgPositionWithOutliers).sqrMagnitude < 0.01f);
+                    // camera *must* be near optitrack camera position
+                    var poses_noOutlier = calibPoses.Where((p) => (p.WorldCameraPosition - _optitrackCameraPose.Position).sqrMagnitude <= 0.025f);
                     Debug.Log("Found " + (calibPoses.Count - poses_noOutlier.Count()) + " Outliers during calibration");
 
                     var avgPosition = Vector3.zero;
@@ -287,6 +277,7 @@ namespace Assets.Modules.Calibration
                     foreach (var pose in poses_noOutlier)
                     {
                         avgPosition += pose.WorldCameraPosition;
+                        // marker/table rotation??
                         rots.Add(pose.WorldRotation);
                     }
 
@@ -296,7 +287,7 @@ namespace Assets.Modules.Calibration
                         if (CalibMethod == CalibrationMethod.Standard)
                         {
                             avgPosition = avgPosition / rots.Count;
-                            avgPos.Add(avgPosition - _optitrackCameraPose.Position);
+                            avgPos.Add(Quaternion.Inverse(_optitrackCameraPose.Rotation) * (avgPosition - _optitrackCameraPose.Position));
                             _debugAvgPosition = avgPosition;
                         }
                         else if (CalibMethod == CalibrationMethod.LineExtension)
@@ -342,7 +333,7 @@ namespace Assets.Modules.Calibration
                                 }
 
                                 avgPosition = avgPosition / closestPoints.Count;
-                                avgPos.Add(avgPosition - _optitrackCameraPose.Position);
+                                avgPos.Add(Quaternion.Inverse(_optitrackCameraPose.Rotation) * (avgPosition - _optitrackCameraPose.Position));
                                 _debugAvgPosition = avgPosition;
                             }
                         }
@@ -492,7 +483,7 @@ namespace Assets.Modules.Calibration
 
 
                     // if available, draw world position of camera based on marker
-                    if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < 1f)
+                    if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < 0.3f)
                     {
                         var localPos = marker.ArCameraPosition;
                         var worldPos = markerPosWorld + tableRotation * localPos;
@@ -507,14 +498,16 @@ namespace Assets.Modules.Calibration
                         var worldUp = tableRotation * localUp;
                         var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
+                        bool isOutlier = (worldPos - _optitrackCameraPose.Position).sqrMagnitude > 0.025f;
+
                         Gizmos.color = Color.white;
                         Gizmos.DrawWireSphere(worldPos, 0.01f);
 
-                        Gizmos.color = Color.green;
+                        Gizmos.color = isOutlier ? Color.grey : Color.green;
                         Gizmos.DrawLine(worldPos, worldPos + worldUp * 0.1f);
-                        Gizmos.color = Color.blue;
+                        Gizmos.color = isOutlier ? Color.grey : Color.blue;
                         Gizmos.DrawLine(worldPos, worldPos + worldForward * 0.5f);
-                        Gizmos.color = Color.red;
+                        Gizmos.color = isOutlier ? Color.grey : Color.red;
                         Gizmos.DrawLine(worldPos, worldPos + worldRight * 0.1f);
                     }
                 }
@@ -542,7 +535,7 @@ namespace Assets.Modules.Calibration
                     Gizmos.color = Color.black;
                     foreach (var pos in _debugClosestPoints)
                     {
-                        Gizmos.DrawWireSphere(pos, 0.01f);
+                        Gizmos.DrawSphere(pos, 0.001f);
                     }
                 }
             }
