@@ -49,7 +49,7 @@ namespace Assets.Modules.Calibration
 
             // public getters & setters so that they don't show up in unity's editor
             public bool HasArPose { get; set; }
-            public DateTime ArPoseDetectionTime { get; set; }
+            public float ArPoseDetectionTime { get; set; }
             public Vector3 ArMarkerPosition { get; set; }
             public Quaternion ArMarkerRotation { get; set; }
             public Vector3 ArCameraPosition { get; set; }
@@ -95,9 +95,9 @@ namespace Assets.Modules.Calibration
 
         void Update()
         {
-            if (TestCamera != null)
+            if (TestCamera != null && CalibrationOffsets != null)
             {
-                var marker = CalibrationOffsets.FirstOrDefault((m) => m.HasArPose && (DateTime.Now - m.ArPoseDetectionTime).TotalMilliseconds < 100);
+                var marker = CalibrationOffsets.FirstOrDefault((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < 1f);
 
                 if (marker != null)
                 {
@@ -145,7 +145,7 @@ namespace Assets.Modules.Calibration
             var cameraLocalRot = cameraMatrix.GetRotation();
 
             markerOffset.HasArPose = true;
-            markerOffset.ArPoseDetectionTime = DateTime.Now;
+            markerOffset.ArPoseDetectionTime = Time.unscaledTime;
             markerOffset.ArMarkerPosition = pose.Position;
             markerOffset.ArMarkerRotation = pose.Rotation;
             markerOffset.ArCameraPosition = cameraMatrix.GetPosition();
@@ -239,8 +239,7 @@ namespace Assets.Modules.Calibration
 
                         var marker = CalibrationOffsets[i];
                         var markerPosWorld = GetMarkerWorldPosition(i, tableRotation);
-
-                        if (marker.HasArPose && (DateTime.Now - marker.ArPoseDetectionTime).TotalMilliseconds < 100)
+                        if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < 1f)
                         {
                             var localPos = marker.ArCameraPosition;
                             var worldPos = markerPosWorld + tableRotation * localPos;
@@ -493,7 +492,7 @@ namespace Assets.Modules.Calibration
 
 
                     // if available, draw world position of camera based on marker
-                    if (marker.HasArPose && (DateTime.Now - marker.ArPoseDetectionTime ).TotalMilliseconds < 300)
+                    if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < 1f)
                     {
                         var localPos = marker.ArCameraPosition;
                         var worldPos = markerPosWorld + tableRotation * localPos;
