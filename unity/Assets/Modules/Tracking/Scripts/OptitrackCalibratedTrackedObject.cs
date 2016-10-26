@@ -24,7 +24,7 @@ namespace Assets.Modules.Tracking.Scripts
             {
                 if (pose.RigidbodyName == TrackedName)
                 {
-                    transform.position = pose.Position + CalibrationOffset.OptitrackToCameraOffset;
+                    transform.position = pose.Position + pose.Rotation * CalibrationOffset.OptitrackToCameraOffset;
                     break;
                 }
             }
