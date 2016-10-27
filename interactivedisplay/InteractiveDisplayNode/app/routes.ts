@@ -1,10 +1,14 @@
 import { Routes, RouterModule } from '@angular/router';
-import { AppComponent, MenuComponent } from './components/index';
+import { AppComponent, MenuComponent, DemoComponent } from './components/index';
 
 const routes: Routes = [
     {
         path: 'menu',
         component: MenuComponent
+    },
+    {
+        path: 'demo',
+        component: DemoComponent
     },
     {
         path: '',
