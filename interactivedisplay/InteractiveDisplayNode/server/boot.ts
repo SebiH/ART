@@ -53,11 +53,11 @@ app.use(bodyParser.json());
 
 app.post('/click', function (req, res) {
     // TODO: get rid of this terrible hack
-    var width = 1920 * 1.8; // width as defined in index.html
-    var height = 1080 * 1.8; // height as defined in index.html
+    var width = 1920; // width as defined in index.html
+    var height = 1080; // height as defined in index.html
 
     var x = req.body.x / width;
-    var y = 1 - req.body.y / height;
+    var y = req.body.y / height;
 
     // convert to proper format, aka. byte array of 2 floats
     var floatBuffer = new Buffer(2 * 4);
