@@ -69,6 +69,10 @@ app.post('/click', function (req, res) {
     res.end();
 });
 
+app.use(function(req, res, next) {
+    res.sendFile(path.join(__dirname + '/../index.html'));
+})
+
 var httpServer = http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
