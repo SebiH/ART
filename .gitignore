@@ -95,8 +95,8 @@ sysinfo.txt
 # ==========
 
 # Generated files
-/interactivedisplay/InteractiveDisplayNode/*.js
-/interactivedisplay/InteractiveDisplayNode/*.js.map
+/interactivedisplay/InteractiveDisplayNode/**/*.js
+/interactivedisplay/InteractiveDisplayNode/**/*.js.map
 /interactivedisplay/InteractiveDisplayNode/public/markers
 
 # NPM
