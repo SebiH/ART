@@ -29,5 +29,15 @@ namespace Assets.Modules.Core.Util
             float k = 1.0f / Mathf.Sqrt(x * x + y * y + z * z + w * w);
             return new Quaternion(x * k, y * k, z * k, w * k);
         }
+
+        public static Vector3 AverageV(IEnumerable<Vector3> vectors)
+        {
+            var avg = Vector3.zero;
+            foreach (var vec in vectors)
+            {
+                avg += vec;
+            }
+            return avg / (Mathf.Max(vectors.Count(), 1));
+        }
     }
 }

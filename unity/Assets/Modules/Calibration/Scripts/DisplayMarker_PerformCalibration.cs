@@ -15,6 +15,7 @@ namespace Assets.Modules.Calibration
     {
         const float SteadyPosThreshold = 0.2f;
         const float SteadyAngleThreshold = 2f;
+        const float ArCutoffTime = 0.1f;
 
         public float CalibrationStability { get; private set; }
         public bool InvertUpDirection = false;
@@ -79,6 +80,7 @@ namespace Assets.Modules.Calibration
         void OnEnable()
         {
             CalibrationOffsets = new MarkerOffset[MarkersPerRow * MarkersPerColumn];
+            for (int i = 0; i < CalibrationOffsets.Length; i++) CalibrationOffsets[i] = new MarkerOffset { ArMarkerId = i };
 
             ArucoListener.Instance.NewPoseDetected += OnArucoPose;
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
@@ -94,13 +96,41 @@ namespace Assets.Modules.Calibration
 
         void Update()
         {
-            if (TestCamera != null && CalibrationOffsets != null)
+            if (DisplaySetupScript.CalibratedCorners.Count >= 4)
             {
-                var marker = CalibrationOffsets.FirstOrDefault((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < 0.3f);
+                var lineRenderer = GetComponent<LineRenderer>();
 
-                if (marker != null)
+                if (lineRenderer != null)
                 {
                     var tableRotation = CalculateTableRotation();
+                    lineRenderer.SetVertexCount(5);
+                    var topleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == MarkerOffset.Corner.TopLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
+                    var bottomleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == MarkerOffset.Corner.BottomLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
+                    var bottomright = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == MarkerOffset.Corner.BottomRight).Position + tableRotation * new Vector3(0, OffsetY, 0);
+                    var topright = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == MarkerOffset.Corner.TopRight).Position + tableRotation * new Vector3(0, OffsetY, 0);
+
+                    lineRenderer.SetPosition(0, topleft);
+                    lineRenderer.SetPosition(1, bottomleft);
+                    lineRenderer.SetPosition(2, bottomright);
+                    lineRenderer.SetPosition(3, topright);
+                    lineRenderer.SetPosition(4, topleft);
+                }
+            }
+
+
+            if (TestCamera != null && CalibrationOffsets != null)
+            {
+                var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime && m.ArMarkerId == 212);
+                var tableRotation = CalculateTableRotation();
+
+                if (markers == null || markers.Count() != 1) return;
+
+                var marker = markers.First();
+                //var rotations = new List<Quaternion>();
+                //var positions = new List<Vector3>();
+
+                //foreach (var marker in markers)
+                //{
                     var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
 
                     var localPos = marker.ArCameraPosition;
@@ -108,14 +138,35 @@ namespace Assets.Modules.Calibration
 
                     var localRot = marker.ArCameraRotation;
                     var localForward = localRot * Vector3.forward;
+                    var localRight = localRot * Vector3.right;
                     var localUp = localRot * Vector3.up;
 
                     var worldForward = tableRotation * localForward;
+                    var worldRight = tableRotation * localRight;
                     var worldUp = tableRotation * localUp;
                     var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
-                    TestCamera.transform.position = worldPos;
-                    TestCamera.transform.rotation = worldRot;
+                //    rotations.Add(worldRot);
+                //    positions.Add(worldPos);
+                //}
+
+
+                //TestCamera.transform.position = QuaternionUtils.AverageV(positions);
+                //TestCamera.transform.rotation = QuaternionUtils.Average(rotations);
+                TestCamera.transform.position = worldPos;
+                TestCamera.transform.rotation = worldRot;
+
+
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    Debug.Log("Calibrating...");
+                    CalibrationOffset.IsCalibrated = true;
+                    CalibrationOffset.LastCalibration = DateTime.Now;
+                    CalibrationOffset.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (_optitrackCameraPose.Position - worldPos);
+                    // c = b * inv(a)
+                    // => b = c * a?
+                    // from ovrRot to worldRot
+                    CalibrationOffset.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
                 }
             }
         }
@@ -133,7 +184,10 @@ namespace Assets.Modules.Calibration
 
             if (markerOffset == null)
             {
-                markerOffset = new MarkerOffset();
+                markerOffset = new MarkerOffset
+                {
+                    ArMarkerId = pose.Id
+                };
                 CalibrationOffsets[pose.Id] = markerOffset;
             }
 
@@ -238,7 +292,7 @@ namespace Assets.Modules.Calibration
 
                         var marker = CalibrationOffsets[i];
                         var markerPosWorld = GetMarkerWorldPosition(i, tableRotation);
-                        if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < 0.3f)
+                        if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < ArCutoffTime)
                         {
                             var localPos = marker.ArCameraPosition;
                             var worldPos = markerPosWorld + tableRotation * localPos;
@@ -483,7 +537,7 @@ namespace Assets.Modules.Calibration
 
 
                     // if available, draw world position of camera based on marker
-                    if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < 0.3f)
+                    if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < ArCutoffTime)
                     {
                         var localPos = marker.ArCameraPosition;
                         var worldPos = markerPosWorld + tableRotation * localPos;
