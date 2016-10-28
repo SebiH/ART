@@ -48,6 +48,12 @@ namespace Assets.Modules.Calibration
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
         }
 
+        // for use within menu
+        public void SetCornerTopLeft() { CurrentCorner = DisplayMarker_PerformCalibration.MarkerOffset.Corner.TopLeft; }
+        public void SetCornerTopRight() { CurrentCorner = DisplayMarker_PerformCalibration.MarkerOffset.Corner.TopRight; }
+        public void SetCornerBottomLeft() { CurrentCorner = DisplayMarker_PerformCalibration.MarkerOffset.Corner.BottomLeft; }
+        public void SetCornerBottomRight() { CurrentCorner = DisplayMarker_PerformCalibration.MarkerOffset.Corner.BottomRight; }
+
         private void OnOptitrackPose(List<OptitrackPose> poses)
         {
             foreach (var pose in poses)
