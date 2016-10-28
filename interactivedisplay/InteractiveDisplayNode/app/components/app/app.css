@@ -1,1 +1,7 @@
-/* WIP */
+.back {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: #eee;
+    font-size: 10;
+}
