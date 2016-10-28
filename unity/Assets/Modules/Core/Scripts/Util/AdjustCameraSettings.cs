@@ -11,6 +11,6 @@ public class AdjustCameraSettings : MonoBehaviour {
 	void Update ()
     {
         GetComponent<Camera>().fieldOfView = TargetFieldOfView;
-        Destroy(GetComponent<AdjustCameraSettings>());
+        //Destroy(GetComponent<AdjustCameraSettings>());
 	}
 }
