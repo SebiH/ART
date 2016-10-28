@@ -99,7 +99,7 @@ sysinfo.txt
 /interactivedisplay/InteractiveDisplayNode/app/**/*.js.map
 /interactivedisplay/InteractiveDisplayNode/server/**/*.js
 /interactivedisplay/InteractiveDisplayNode/server/**/*.js.map
-/interactivedisplay/InteractiveDisplayNode/public/markers
+/interactivedisplay/InteractiveDisplayNode/markers
 
 # NPM
 /interactivedisplay/InteractiveDisplayNode/node_modules
