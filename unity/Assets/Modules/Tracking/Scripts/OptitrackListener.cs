@@ -101,6 +101,7 @@ namespace Assets.Modules.Tracking
             for (int index = 0; index < rbList.Count; index++)
             {
                 var pose = new OptitrackPose();
+                pose.DetectionTime = Time.unscaledTime;
 
                 pose.Id = Convert.ToInt32(rbList[index].Attributes["ID"].InnerText);
                 var rbName = rbList[index].Attributes["Name"].InnerText;

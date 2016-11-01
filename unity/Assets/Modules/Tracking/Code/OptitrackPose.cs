@@ -21,5 +21,7 @@ namespace Assets.Modules.Tracking
         public Quaternion Rotation;
 
         public List<Marker> Markers = new List<Marker>();
+
+        public float DetectionTime;
     }
 }
