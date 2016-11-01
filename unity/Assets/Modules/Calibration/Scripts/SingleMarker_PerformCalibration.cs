@@ -10,7 +10,7 @@ using Valve.VR;
 
 namespace Assets.Modules.Calibration
 {
-    public class PerformCalibrationSingleMarker : MonoBehaviour
+    public class SingleMarker_PerformCalibration : MonoBehaviour
     {
         const float SteadyPosThreshold = 0.2f;
         const float SteadyAngleThreshold = 2f;
