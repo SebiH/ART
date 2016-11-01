@@ -14,13 +14,13 @@ namespace Assets.Modules.Calibration
         public string LoadFile = "default_corners.json";
         public string CalibratorName = "CalibrationHelper";
         public int CalibratorMarkerIndex = 4;
-        public DisplayMarker_PerformCalibration.MarkerOffset.Corner CurrentCorner;
+        public Corner CurrentCorner;
 
         // For other scripts
         [Serializable]
         public class DisplayCorner
         {
-            public DisplayMarker_PerformCalibration.MarkerOffset.Corner Corner;
+            public Corner Corner;
             public Vector3 Position;
         }
 
@@ -49,10 +49,10 @@ namespace Assets.Modules.Calibration
         }
 
         // for use within menu
-        public void SetCornerTopLeft() { CurrentCorner = DisplayMarker_PerformCalibration.MarkerOffset.Corner.TopLeft; }
-        public void SetCornerTopRight() { CurrentCorner = DisplayMarker_PerformCalibration.MarkerOffset.Corner.TopRight; }
-        public void SetCornerBottomLeft() { CurrentCorner = DisplayMarker_PerformCalibration.MarkerOffset.Corner.BottomLeft; }
-        public void SetCornerBottomRight() { CurrentCorner = DisplayMarker_PerformCalibration.MarkerOffset.Corner.BottomRight; }
+        public void SetCornerTopLeft() { CurrentCorner = Corner.TopLeft; }
+        public void SetCornerTopRight() { CurrentCorner = Corner.TopRight; }
+        public void SetCornerBottomLeft() { CurrentCorner = Corner.BottomLeft; }
+        public void SetCornerBottomRight() { CurrentCorner = Corner.BottomRight; }
 
         private void OnOptitrackPose(List<OptitrackPose> poses)
         {

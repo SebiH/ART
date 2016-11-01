@@ -36,14 +36,6 @@ namespace Assets.Modules.Calibration
         [Serializable]
         public class MarkerOffset
         {
-            public enum Corner
-            {
-                TopLeft = 0,
-                TopRight = 1,
-                BottomRight = 2,
-                BottomLeft = 3
-            }
-
             // set in editor
             public int ArMarkerId;
             public Corner OptitrackCorner;
@@ -104,10 +96,10 @@ namespace Assets.Modules.Calibration
                 {
                     var tableRotation = CalculateTableRotation();
                     lineRenderer.SetVertexCount(5);
-                    var topleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == MarkerOffset.Corner.TopLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
-                    var bottomleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == MarkerOffset.Corner.BottomLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
-                    var bottomright = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == MarkerOffset.Corner.BottomRight).Position + tableRotation * new Vector3(0, OffsetY, 0);
-                    var topright = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == MarkerOffset.Corner.TopRight).Position + tableRotation * new Vector3(0, OffsetY, 0);
+                    var topleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.TopLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
+                    var bottomleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.BottomLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
+                    var bottomright = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.BottomRight).Position + tableRotation * new Vector3(0, OffsetY, 0);
+                    var topright = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.TopRight).Position + tableRotation * new Vector3(0, OffsetY, 0);
 
                     lineRenderer.SetPosition(0, topleft);
                     lineRenderer.SetPosition(1, bottomleft);
@@ -435,9 +427,9 @@ namespace Assets.Modules.Calibration
 
         private Quaternion CalculateTableRotation()
         {
-            var markerBottomLeft = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == MarkerOffset.Corner.BottomLeft);
-            var markerTopLeft = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == MarkerOffset.Corner.TopLeft);
-            var markerBottomRight = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == MarkerOffset.Corner.BottomRight);
+            var markerBottomLeft = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.BottomLeft);
+            var markerTopLeft = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.TopLeft);
+            var markerBottomRight = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.BottomRight);
 
             var forward = Vector3.Normalize(markerTopLeft.Position - markerBottomLeft.Position);
             var right = Vector3.Normalize(markerBottomRight.Position - markerBottomLeft.Position);
@@ -450,7 +442,7 @@ namespace Assets.Modules.Calibration
 
         private Vector3 GetMarkerWorldPosition(int markerIndex, Quaternion tableRotation)
         {
-            var otmTopLeft = DisplaySetupScript.CalibratedCorners.FirstOrDefault((c) => c.Corner == MarkerOffset.Corner.TopLeft);
+            var otmTopLeft = DisplaySetupScript.CalibratedCorners.FirstOrDefault((c) => c.Corner == Corner.TopLeft);
             if (otmTopLeft == null) { return Vector3.zero; }
 
             int row = markerIndex / MarkersPerRow;
@@ -507,7 +499,7 @@ namespace Assets.Modules.Calibration
 
                 foreach (var corner in DisplaySetupScript.CalibratedCorners)
                 {
-                    var nextMarkerCorner = ((MarkerOffset.Corner)(((int)corner.Corner + 1) % Enum.GetNames(typeof(MarkerOffset.Corner)).Length));
+                    var nextMarkerCorner = ((Corner)(((int)corner.Corner + 1) % Enum.GetNames(typeof(Corner)).Length));
                     var nextMarker = DisplaySetupScript.CalibratedCorners.Find((m) => m.Corner == nextMarkerCorner);
 
                     //draw lines around optitrack plane
