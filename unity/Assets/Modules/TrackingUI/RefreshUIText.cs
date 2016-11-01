@@ -7,7 +7,7 @@ namespace Assets.Modules.TrackingUI
 {
     public class RefreshUIText : MonoBehaviour
     {
-        public PerformCalibrationSingleMarker CalibrationScript;
+        public SingleMarker_PerformCalibration CalibrationScript;
         private Text _textbox;
 
         void Start()

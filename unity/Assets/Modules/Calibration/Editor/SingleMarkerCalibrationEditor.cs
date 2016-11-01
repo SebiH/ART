@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace Assets.Modules.Calibration
 {
-    [CustomEditor(typeof(PerformCalibrationSingleMarker))]
+    [CustomEditor(typeof(SingleMarker_PerformCalibration))]
     class SingleMarkerCalibrationEditor : Editor
     {
         public override void OnInspectorGUI()
@@ -13,7 +13,7 @@ namespace Assets.Modules.Calibration
             base.OnInspectorGUI();
             if (GUILayout.Button("Perform Calibration") && Application.isPlaying)
             {
-                var script = target as PerformCalibrationSingleMarker;
+                var script = target as SingleMarker_PerformCalibration;
                 script.Calibrate();
             }
 
