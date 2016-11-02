@@ -62,7 +62,7 @@ namespace Assets.Modules.Calibration
         private OptitrackPose _optitrackCameraPose;
         private DateTime _optitrackCameraDetectionTime;
 
-        public DisplayMarker_SetupDisplay DisplaySetupScript;
+        public string DisplayName = "Surface";
 
         private Quaternion _ovrRot = Quaternion.identity;
 
@@ -413,32 +413,6 @@ namespace Assets.Modules.Calibration
             IsCalibrating = false;
         }
 
-
-        private Vector3 GetOptitrackMarkerPosition(MarkerOffset marker)
-        {
-            var corner = DisplaySetupScript.CalibratedCorners.FirstOrDefault((c) => c.Corner == marker.OptitrackCorner);
-            if (corner == null)
-            {
-                Debug.LogWarning("Could not find matching marker for " + marker.OptitrackCorner.ToString());
-                return Vector3.zero;
-            }
-            return corner.Position;
-        }
-
-        private Quaternion CalculateTableRotation()
-        {
-            var markerBottomLeft = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.BottomLeft);
-            var markerTopLeft = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.TopLeft);
-            var markerBottomRight = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.BottomRight);
-
-            var forward = Vector3.Normalize(markerTopLeft.Position - markerBottomLeft.Position);
-            var right = Vector3.Normalize(markerBottomRight.Position - markerBottomLeft.Position);
-            var up = Vector3.Cross(forward, right);
-            // Cross product doesn't always point in the correct direction
-            if (InvertUpDirection) { up = -up; }
-
-            return Quaternion.LookRotation(forward, up);
-        }
 
         private Vector3 GetMarkerWorldPosition(int markerIndex, Quaternion tableRotation)
         {
