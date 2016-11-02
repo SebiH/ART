@@ -61,6 +61,7 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		marker.Rvec.at<float>(2, 0) = -marker.Rvec.at<float>(2, 0);
 		cv::Mat rotation(3, 3, CV_32FC1);
 		cv::Rodrigues(marker.Rvec, rotation);
+		marker.draw(img_left, cv::Scalar(0, 0, 255, 255));
 
 		float rotation_matrix[16];
 		rotation_matrix[0] = rotation.at<float>(0);
@@ -87,9 +88,6 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		quat.w = -quat.w;
 		Quaternion adjustment{ 1.0f, 0.0f, 0.0f, 0.0f };
 		quat = MultiplyQuaternion(&quat, &adjustment);
-
-		// Draw markers on image
-		cv::circle(img_left, marker.getCenter(), 5, cv::Scalar(0, 0, 255, 255), 1);
 
 		// Save JSON info about marker
 		processed_markers["markers_left"].push_back(json{
