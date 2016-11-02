@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Assets.Modules.Core.Util
 {
-    public static class QuaternionUtils
+    public static class MathUtils
     {
-        public static Quaternion Average(IEnumerable<Quaternion> rotationlist)
+        public static Quaternion AverageQuaternion(IEnumerable<Quaternion> quats)
         {
-            if (rotationlist.Count() == 0)
+            if (quats.Count() == 0)
             {
                 return Quaternion.identity;
             }
@@ -18,7 +18,7 @@ namespace Assets.Modules.Core.Util
             float z = 0;
             float w = 0;
 
-            foreach (var quat in rotationlist)
+            foreach (var quat in quats)
             {
                 x += quat.x;
                 y += quat.y;
@@ -30,7 +30,7 @@ namespace Assets.Modules.Core.Util
             return new Quaternion(x * k, y * k, z * k, w * k);
         }
 
-        public static Vector3 AverageV(IEnumerable<Vector3> vectors)
+        public static Vector3 AverageVector(IEnumerable<Vector3> vectors)
         {
             var avg = Vector3.zero;
             foreach (var vec in vectors)

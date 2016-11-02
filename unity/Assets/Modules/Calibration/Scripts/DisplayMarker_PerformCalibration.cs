@@ -388,7 +388,7 @@ namespace Assets.Modules.Calibration
                             Debug.LogWarning("Unknown calibration method " + CalibMethod.ToString());
                         }
 
-                        var avgRotation = QuaternionUtils.Average(rots);
+                        var avgRotation = MathUtils.AverageQuaternion(rots);
                         avgRot.Add(avgRotation * Quaternion.Inverse(_ovrRot));
                         _debugAvgRotation = avgRotation;
                     }
@@ -399,13 +399,13 @@ namespace Assets.Modules.Calibration
             foreach (var pos in avgPos) { avgPosOffset += pos; }
 
             _avgCalibrationPosOffsets.Add(avgPosOffset / avgPos.Count);
-            _avgCalibrationRotOffsets.Add(QuaternionUtils.Average(avgRot));
+            _avgCalibrationRotOffsets.Add(MathUtils.AverageQuaternion(avgRot));
 
             var totalAvgPosOffset = Vector3.zero;
             foreach (var offset in _avgCalibrationPosOffsets) { totalAvgPosOffset += offset; }
 
             CalibrationOffset.OptitrackToCameraOffset = totalAvgPosOffset / _avgCalibrationPosOffsets.Count;
-            CalibrationOffset.OpenVrRotationOffset = QuaternionUtils.Average(_avgCalibrationRotOffsets);
+            CalibrationOffset.OpenVrRotationOffset = MathUtils.AverageQuaternion(_avgCalibrationRotOffsets);
 
             CalibrationOffset.IsCalibrated = true;
             CalibrationOffset.LastCalibration = DateTime.Now;

@@ -44,7 +44,7 @@ namespace Assets.Modules.InteractiveSurface
 
             public Quaternion GetAverageRotation()
             {
-                return QuaternionUtils.Average(_rotations);
+                return MathUtils.AverageQuaternion(_rotations);
             }
         }
 
