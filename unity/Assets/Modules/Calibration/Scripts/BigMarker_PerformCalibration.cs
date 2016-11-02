@@ -1,9 +1,6 @@
-using Assets.Modules.Core;
-using Assets.Modules.Core.Util;
-using Assets.Modules.Tracking;
+﻿using Assets.Modules.Tracking;
 using Assets.Modules.Tracking.Scripts;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,24 +8,16 @@ using Valve.VR;
 
 namespace Assets.Modules.Calibration
 {
-    public class DisplayMarker_PerformCalibration : MonoBehaviour
+    public class BigMarker_PerformCalibration : MonoBehaviour
     {
         const float SteadyPosThreshold = 0.2f;
         const float SteadyAngleThreshold = 2f;
-        const float ArCutoffTime = 1f/120f;
+        const float ArCutoffTime = 1f / 120f;
 
         public float CalibrationStability { get; private set; }
         public bool InvertUpDirection = false;
 
         public Transform TestCamera;
-
-        public enum CalibrationMethod
-        {
-            Standard,
-            LineExtension
-        }
-
-        public CalibrationMethod CalibMethod;
 
         private readonly List<Vector3> _avgCalibrationPosOffsets = new List<Vector3>();
         private readonly List<Quaternion> _avgCalibrationRotOffsets = new List<Quaternion>();
@@ -49,11 +38,11 @@ namespace Assets.Modules.Calibration
             public Quaternion ArCameraRotation { get; set; }
         }
 
-        public float MarginLeft = 0.047f;
-        public float MarginTop = 0.046f;
+        public float MarginLeft = 0.036f;
+        public float MarginTop = 0.03f;
         public float OffsetY = -0.03f;
 
-        public float MarginMarker = 0.036f;
+        public float MarginMarker = 0.05f;
         public int MarkersPerRow = 21;
         public int MarkersPerColumn = 12;
 
@@ -88,13 +77,13 @@ namespace Assets.Modules.Calibration
 
         void Update()
         {
+            var tableRotation = CalculateTableRotation();
             if (DisplaySetupScript.CalibratedCorners.Count >= 4)
             {
                 var lineRenderer = GetComponent<LineRenderer>();
 
                 if (lineRenderer != null)
                 {
-                    var tableRotation = CalculateTableRotation();
                     lineRenderer.SetVertexCount(5);
                     var topleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.TopLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
                     var bottomleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.BottomLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
@@ -110,57 +99,43 @@ namespace Assets.Modules.Calibration
             }
 
 
-            if (TestCamera != null && CalibrationOffsets != null)
-            {
-                var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime && m.ArMarkerId == 212);
-                var tableRotation = CalculateTableRotation();
+            var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime);
 
-                if (markers == null || markers.Count() != 1) return;
+            if (markers == null || markers.Count() != 1) return;
 
-                var marker = markers.First();
-                //var rotations = new List<Quaternion>();
-                //var positions = new List<Vector3>();
+            var marker = markers.First();
+            //var rotations = new List<Quaternion>();
+            //var positions = new List<Vector3>();
 
-                //foreach (var marker in markers)
-                //{
-                    var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
+            //foreach (var marker in markers)
+            //{
+            var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
 
-                    var localPos = marker.ArCameraPosition;
-                    var worldPos = markerPosWorld + tableRotation * localPos;
+            var localPos = marker.ArCameraPosition;
+            var worldPos = markerPosWorld + tableRotation * localPos;
 
-                    var localRot = marker.ArCameraRotation;
-                    var localForward = localRot * Vector3.forward;
-                    var localRight = localRot * Vector3.right;
-                    var localUp = localRot * Vector3.up;
+            var localRot = marker.ArCameraRotation;
+            var localForward = localRot * Vector3.forward;
+            var localRight = localRot * Vector3.right;
+            var localUp = localRot * Vector3.up;
 
-                    var worldForward = tableRotation * localForward;
-                    var worldRight = tableRotation * localRight;
-                    var worldUp = tableRotation * localUp;
-                    var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+            var worldForward = tableRotation * localForward;
+            var worldRight = tableRotation * localRight;
+            var worldUp = tableRotation * localUp;
+            var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
-                //    rotations.Add(worldRot);
-                //    positions.Add(worldPos);
-                //}
+            //    rotations.Add(worldRot);
+            //    positions.Add(worldPos);
+            //}
 
-
-                //TestCamera.transform.position = QuaternionUtils.AverageV(positions);
-                //TestCamera.transform.rotation = QuaternionUtils.Average(rotations);
-                TestCamera.transform.position = worldPos;
-                TestCamera.transform.rotation = worldRot;
-
-
-                if (Input.GetKeyDown(KeyCode.Space))
-                {
-                    Debug.Log("Calibrating...");
-                    CalibrationOffset.IsCalibrated = true;
-                    CalibrationOffset.LastCalibration = DateTime.Now;
-                    CalibrationOffset.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
-                    // c = b * inv(a)
-                    // => b = c * a?
-                    // from ovrRot to worldRot
-                    CalibrationOffset.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
-                }
-            }
+            Debug.Log("Calibrating...");
+            CalibrationOffset.IsCalibrated = true;
+            CalibrationOffset.LastCalibration = DateTime.Now;
+            CalibrationOffset.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
+            // c = b * inv(a)
+            // => b = c * a?
+            // from ovrRot to worldRot
+            CalibrationOffset.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
         }
 
 
@@ -241,10 +216,40 @@ namespace Assets.Modules.Calibration
         public float CalibrationProgress { get; private set; }
         public void StartCalibration()
         {
-            if (!IsCalibrating)
-            {
-                StartCoroutine(UpdateCalibration());
-            }
+            var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime);
+            var tableRotation = CalculateTableRotation();
+
+            if (markers == null || markers.Count() != 1) return;
+
+            var marker = markers.First();
+            //var rotations = new List<Quaternion>();
+            //var positions = new List<Vector3>();
+
+            //foreach (var marker in markers)
+            //{
+            var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
+
+            var localPos = marker.ArCameraPosition;
+            var worldPos = markerPosWorld + tableRotation * localPos;
+
+            var localRot = marker.ArCameraRotation;
+            var localForward = localRot * Vector3.forward;
+            var localRight = localRot * Vector3.right;
+            var localUp = localRot * Vector3.up;
+
+            var worldForward = tableRotation * localForward;
+            var worldRight = tableRotation * localRight;
+            var worldUp = tableRotation * localUp;
+            var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+            Debug.Log("Calibrating...");
+            CalibrationOffset.IsCalibrated = true;
+            CalibrationOffset.LastCalibration = DateTime.Now;
+            CalibrationOffset.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
+            // c = b * inv(a)
+            // => b = c * a?
+            // from ovrRot to worldRot
+            CalibrationOffset.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
         }
 
         private class CalibPose
@@ -252,165 +257,6 @@ namespace Assets.Modules.Calibration
             public Vector3 WorldMarkerPosition;
             public Vector3 WorldCameraPosition;
             public Quaternion WorldRotation;
-        }
-
-        private IEnumerator UpdateCalibration()
-        {
-
-            var avgPos = new List<Vector3>();
-            var avgRot = new List<Quaternion>();
-
-            IsCalibrating = true;
-
-            const int maxSamples = 100;
-            for (int sampleCount = 0; sampleCount < maxSamples; sampleCount++)
-            {
-                CalibrationProgress = sampleCount / (float)maxSamples;
-                yield return new WaitForSecondsRealtime(0.002f);
-
-                // this only works if we have optitrack coordinates for all markers
-                if (DisplaySetupScript.CalibratedCorners.Count >= 4)
-                {
-                    var tableRotation = CalculateTableRotation();
-
-                    var calibPoses = new List<CalibPose>();
-                    var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
-
-                    for (int i = 0; i < CalibrationOffsets.Length; i++)
-                    {
-                        if (CalibrationOffsets[i] == null)
-                        {
-                            continue;
-                        }
-
-                        var marker = CalibrationOffsets[i];
-                        var markerPosWorld = GetMarkerWorldPosition(i, tableRotation);
-                        if (marker.HasArPose && (Time.unscaledTime - marker.ArPoseDetectionTime) < ArCutoffTime)
-                        {
-                            var localPos = marker.ArCameraPosition;
-                            var worldPos = markerPosWorld + tableRotation * localPos;
-
-                            var localRot = marker.ArCameraRotation;
-                            var localForward = localRot * Vector3.forward;
-                            var localRight = localRot * Vector3.right;
-                            var localUp = localRot * Vector3.up;
-
-                            var worldForward = tableRotation * localForward;
-                            var worldRight = tableRotation * localRight;
-                            var worldUp = tableRotation * localUp;
-                            var worldRot = Quaternion.LookRotation(worldForward, worldUp);
-
-                            calibPoses.Add(new CalibPose
-                            {
-                                WorldCameraPosition = worldPos,
-                                WorldMarkerPosition = markerPosWorld,
-                                WorldRotation = worldRot
-                            });
-                        }
-                    }
-
-                    if (calibPoses.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    // camera *must* be near optitrack camera position
-                    var poses_noOutlier = calibPoses.Where((p) => (p.WorldCameraPosition - _optitrackCameraPose.Position).sqrMagnitude <= 0.025f);
-                    Debug.Log("Found " + (calibPoses.Count - poses_noOutlier.Count()) + " Outliers during calibration");
-
-                    var avgPosition = Vector3.zero;
-                    var rots = new List<Quaternion>();
-
-                    foreach (var pose in poses_noOutlier)
-                    {
-                        avgPosition += pose.WorldCameraPosition;
-                        rots.Add(pose.WorldRotation);
-                    }
-
-                    // need a few points to minimize errors
-                    //if (rots.Count > 4)
-                    {
-                        if (CalibMethod == CalibrationMethod.Standard)
-                        {
-                            avgPosition = avgPosition / rots.Count;
-                            avgPos.Add(Quaternion.Inverse(_optitrackCameraPose.Rotation) * (avgPosition - _optitrackCameraPose.Position));
-                            _debugAvgPosition = avgPosition;
-                        }
-                        else if (CalibMethod == CalibrationMethod.LineExtension)
-                        {
-                            var closestPoints = new List<Vector3>();
-                            var poses = poses_noOutlier.ToArray();
-
-                            _debugClosestPoints.Clear();
-                            _debugRays.Clear();
-
-                            for (int poseIndex = 0; poseIndex < poses.Length; poseIndex++)
-                            {
-                                var pose = poses[poseIndex];
-
-                                var poseRay = new Ray(pose.WorldMarkerPosition, pose.WorldCameraPosition - pose.WorldMarkerPosition);
-                                _debugRays.Add(poseRay);
-
-                                for (int intersectIndex = poseIndex + 1; intersectIndex < poses.Length; intersectIndex++)
-                                {
-                                    var intersect = poses[intersectIndex];
-                                    var intersectRay = new Ray(intersect.WorldMarkerPosition, intersect.WorldCameraPosition - intersect.WorldMarkerPosition);
-
-                                    Vector3 closestPoint1, closestPoint2;
-                                    var success = Math3d.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
-
-                                    if (success)
-                                    {
-                                        closestPoints.Add(closestPoint1);
-                                        closestPoints.Add(closestPoint2);
-
-                                        _debugClosestPoints.Add(closestPoint1);
-                                        _debugClosestPoints.Add(closestPoint2);
-                                    }
-                                }
-                            }
-
-                            if (closestPoints.Count > 0)
-                            {
-                                avgPosition = Vector3.zero;
-                                foreach (var p in closestPoints)
-                                {
-                                    avgPosition += p;
-                                }
-
-                                avgPosition = avgPosition / closestPoints.Count;
-                                avgPos.Add(Quaternion.Inverse(_optitrackCameraPose.Rotation) * (avgPosition - _optitrackCameraPose.Position));
-                                _debugAvgPosition = avgPosition;
-                            }
-                        }
-                        else
-                        {
-                            Debug.LogWarning("Unknown calibration method " + CalibMethod.ToString());
-                        }
-
-                        var avgRotation = QuaternionUtils.Average(rots);
-                        avgRot.Add(avgRotation * Quaternion.Inverse(_ovrRot));
-                        _debugAvgRotation = avgRotation;
-                    }
-                }
-            }
-
-            var avgPosOffset = Vector3.zero;
-            foreach (var pos in avgPos) { avgPosOffset += pos; }
-
-            _avgCalibrationPosOffsets.Add(avgPosOffset / avgPos.Count);
-            _avgCalibrationRotOffsets.Add(QuaternionUtils.Average(avgRot));
-
-            var totalAvgPosOffset = Vector3.zero;
-            foreach (var offset in _avgCalibrationPosOffsets) { totalAvgPosOffset += offset; }
-
-            CalibrationOffset.OptitrackToCameraOffset = totalAvgPosOffset / _avgCalibrationPosOffsets.Count;
-            CalibrationOffset.OpenVrRotationOffset = QuaternionUtils.Average(_avgCalibrationRotOffsets);
-
-            CalibrationOffset.IsCalibrated = true;
-            CalibrationOffset.LastCalibration = DateTime.Now;
-
-            IsCalibrating = false;
         }
 
 
@@ -570,20 +416,6 @@ namespace Assets.Modules.Calibration
                     Gizmos.DrawLine(_debugAvgPosition, _debugAvgPosition + _debugAvgRotation * Vector3.right * 0.1f);
                 }
 
-                if (CalibMethod == CalibrationMethod.LineExtension)
-                {
-                    Gizmos.color = Color.yellow;
-                    foreach (var ray in _debugRays)
-                    {
-                        Gizmos.DrawLine(ray.origin, ray.origin + ray.direction);
-                    }
-
-                    Gizmos.color = Color.black;
-                    foreach (var pos in _debugClosestPoints)
-                    {
-                        Gizmos.DrawSphere(pos, 0.001f);
-                    }
-                }
             }
         }
     }
