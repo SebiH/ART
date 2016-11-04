@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Assets.Modules.Core
 {
-    public class Math3d
+    public class MathUtility
     {
         public static Quaternion Average(IEnumerable<Quaternion> quats)
         {

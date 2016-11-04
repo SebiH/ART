@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Core
 {
-    public static class FileUtil
+    public static class FileUtility
     {
         private static string GetPath(string relativePath)
         {
