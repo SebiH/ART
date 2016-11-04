@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEngine;
 
-namespace Assets.Modules.Core.Code
+namespace Assets.Modules.Core
 {
     public static class Paths
     {
