@@ -1,17 +1,47 @@
-using Assets.Modules.Core.Code;
+using Assets.Modules.Core;
 using System;
 using System.IO;
 using UnityEngine;
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Tracking.Scripts
 {
-    public static class CalibrationOffset
+    public class CalibrationParams : MonoBehaviour
     {
-        public static bool IsCalibrated = false;
-        public static DateTime LastCalibration;
+        private static CalibrationParams Instance;
+        public static float LastCalibrationTime { get; private set; }
 
-        public static Quaternion OpenVrRotationOffset = Quaternion.identity;
-        public static Vector3 OptitrackToCameraOffset;
+        private static Quaternion _rotationOffset = Quaternion.identity;
+        public static Quaternion OpenVrRotationOffset
+        {
+            get { return _rotationOffset; }
+            set
+            {
+                _rotationOffset = value;
+                UpdateCalibration();
+            }
+        }
+
+        private static Vector3 _camOffset = Vector3.zero;
+        public static Vector3 OptitrackToCameraOffset
+        {
+            get { return _camOffset; }
+            set
+            {
+                _camOffset = value;
+                UpdateCalibration();
+            }
+        }
+
+        private static void UpdateCalibration()
+        {
+            LastCalibrationTime = Time.unscaledTime;
+        }
+
+
+        void OnEnable()
+        {
+            Instance = this;
+        }
 
 
         [Serializable]
@@ -44,9 +74,8 @@ namespace Assets.Modules.Tracking
 
             OpenVrRotationOffset = offsets.Rotation;
             OptitrackToCameraOffset = offsets.Position;
-            IsCalibrated = true;
-            LastCalibration = DateTime.Now;
             Debug.Log(String.Format("Loaded CalibrationOffsets: Rotation: {0}   Position: {1}", offsets.Rotation.ToString(), offsets.Position.ToString()));
         }
+    
     }
 }
