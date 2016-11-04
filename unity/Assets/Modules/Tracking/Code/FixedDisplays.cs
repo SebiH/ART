@@ -1,3 +1,5 @@
+using Assets.Modules.Core;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,8 +14,15 @@ namespace Assets.Modules.Tracking
             return _calibratedDisplays.ContainsKey(name);
         }
 
+        public static FixedDisplay Get(string name)
+        {
+            return _calibratedDisplays[name];
+        }
+
         public static void Set(string name, Vector3 topLeft, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topRight)
         {
+            var display = new FixedDisplay(topLeft, bottomLeft, bottomRight, topRight);
+
             if (Has(name))
             {
                 // overwrite existing instance
@@ -27,14 +36,49 @@ namespace Assets.Modules.Tracking
 
         #region Serializing
 
-        public static void SaveToFile(string relativeFilename)
+        [Serializable]
+        private class SavedDisplay
         {
-
+            public string Name;
+            public FixedDisplay Display;
         }
 
-        public static void LoadFromFile(string relativeFilename)
+        [Serializable]
+        private class SavedDisplays
         {
+            // unity serializing workaround
+            public SavedDisplay[] Displays;
+        }
 
+        public static void SaveToFile(string filename)
+        {
+            var displays = new SavedDisplays();
+            displays.Displays = new SavedDisplay[_calibratedDisplays.Count];
+            int counter = 0;
+
+            foreach (var pair in _calibratedDisplays)
+            {
+                displays.Displays[counter] = new SavedDisplay
+                {
+                    Name = pair.Key,
+                    Display = pair.Value
+                };
+
+                counter++;
+            }
+
+            FileUtil.SaveToFile(filename, JsonUtility.ToJson(displays));
+        }
+
+        public static void LoadFromFile(string filename)
+        {
+            var content = FileUtil.LoadFromFile(filename);
+            var displays = JsonUtility.FromJson<SavedDisplays>(content);
+
+            foreach (var display in displays.Displays)
+            {
+                _calibratedDisplays.Add(display.Name, display.Display);
+            }
         }
 
         #endregion

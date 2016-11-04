@@ -1,6 +1,4 @@
-using Assets.Modules.Core.Util;
-using System.Collections;
-using System.Linq;
+using Assets.Modules.Core;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
@@ -9,9 +7,10 @@ namespace Assets.Modules.Tracking
     {
         private Vector3[] _calibratedCorners = new Vector3[4];
 
-        public Vector3 CenterPosition
+        // Returns position of center to match Unity
+        public Vector3 Position
         {
-            get { return MathUtils.AverageVector(_calibratedCorners); }
+            get { return Math3d.Average(_calibratedCorners); }
         }
 
         public Quaternion Rotation
@@ -31,16 +30,29 @@ namespace Assets.Modules.Tracking
             {
                 var diagonal = _calibratedCorners[(int)Corner.BottomRight] - _calibratedCorners[(int)Corner.TopLeft];
 
+                // invert rotation on diagonal so that forward == 0,0,1
+                diagonal = Quaternion.Inverse(Rotation) * diagonal;
+
+                var scale = new Vector3(Mathf.Abs(diagonal.x), 0.05f, Mathf.Abs(diagonal.z));
+                return scale;
             }
         }
 
-
-        public void SetCorner(Corner c, Vector3 pos)
+        public FixedDisplay(Vector3 topleft, Vector3 bottomleft, Vector3 bottomright, Vector3 topright)
         {
-
+            _calibratedCorners[(int)Corner.TopLeft] = topleft;
+            _calibratedCorners[(int)Corner.BottomLeft] = bottomleft;
+            _calibratedCorners[(int)Corner.BottomRight] = bottomright;
+            _calibratedCorners[(int)Corner.TopRight] = topright;
         }
 
-        public Vector3 GetCorner(Corner c)
+
+        public void SetCornerPosition(Corner c, Vector3 pos)
+        {
+            _calibratedCorners[(int)c] = pos;
+        }
+
+        public Vector3 GetCornerPosition(Corner c)
         {
             return _calibratedCorners[(int)c];
         }
