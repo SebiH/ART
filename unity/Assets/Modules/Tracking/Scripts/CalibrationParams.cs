@@ -1,9 +1,8 @@
 using Assets.Modules.Core;
 using System;
-using System.IO;
 using UnityEngine;
 
-namespace Assets.Modules.Tracking.Scripts
+namespace Assets.Modules.Tracking
 {
     public class CalibrationParams : MonoBehaviour
     {
@@ -38,11 +37,41 @@ namespace Assets.Modules.Tracking.Scripts
         }
 
 
+
+        public string StartupFile = "";
+        public bool OverrideCalibration = false;
+
+        public Vector3 OverrideRotation;
+        public Vector3 OverridePosition;
+
         void OnEnable()
         {
             Instance = this;
+
+            if (StartupFile.Length > 0)
+            {
+                LoadFromFile(StartupFile);
+            }
         }
 
+#if UNITY_EDITOR
+        void Update()
+        {
+            if (OverrideCalibration)
+            {
+                OptitrackToCameraOffset = OverridePosition;
+                OpenVrRotationOffset = Quaternion.Euler(OverrideRotation);
+            }
+            else
+            {
+                OverridePosition = OptitrackToCameraOffset;
+                OverrideRotation = OpenVrRotationOffset.eulerAngles;
+            }
+        }
+#endif
+
+
+        #region Serializing
 
         [Serializable]
         private class Offsets
@@ -51,7 +80,7 @@ namespace Assets.Modules.Tracking.Scripts
             public Vector3 Position;
         }
 
-        public static void SaveToFile(string relativeFilename)
+        public void SaveToFile(string filename)
         {
             var offsets = new Offsets
             {
@@ -59,23 +88,19 @@ namespace Assets.Modules.Tracking.Scripts
                 Position = OptitrackToCameraOffset
             };
 
-            var absoluteFilename = Paths.GetAbsolutePath(relativeFilename);
-
-            File.WriteAllText(absoluteFilename, JsonUtility.ToJson(offsets));
-            Debug.Log(String.Format("Saved to {0}", absoluteFilename));
+            FileUtility.SaveToFile(filename, JsonUtility.ToJson(offsets));
         }
 
-        public static void LoadFromFile(string relativeFilename)
+        public void LoadFromFile(string filename)
         {
-            var absoluteFilename = Paths.GetAbsolutePath(relativeFilename);
-            Debug.Log(String.Format("Loading from {0}", absoluteFilename));
-            var contents = File.ReadAllText(absoluteFilename);
+            var contents = FileUtility.LoadFromFile(filename);
             var offsets = JsonUtility.FromJson<Offsets>(contents);
 
             OpenVrRotationOffset = offsets.Rotation;
             OptitrackToCameraOffset = offsets.Position;
             Debug.Log(String.Format("Loaded CalibrationOffsets: Rotation: {0}   Position: {1}", offsets.Rotation.ToString(), offsets.Position.ToString()));
         }
-    
+
+        #endregion
     }
 }
