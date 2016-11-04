@@ -1,13 +1,51 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets.Modules.Core
 {
-    /**
-     *  Taken from http://wiki.unity3d.com/index.php/3d_Math_functions
-     */
     public class Math3d
     {
+        public static Quaternion Average(IEnumerable<Quaternion> quats)
+        {
+            if (quats.Count() == 0)
+            {
+                return Quaternion.identity;
+            }
+
+            float x = 0;
+            float y = 0;
+            float z = 0;
+            float w = 0;
+
+            foreach (var quat in quats)
+            {
+                x += quat.x;
+                y += quat.y;
+                z += quat.z;
+                w += quat.w;
+            }
+
+            float k = 1.0f / Mathf.Sqrt(x * x + y * y + z * z + w * w);
+            return new Quaternion(x * k, y * k, z * k, w * k);
+        }
+
+
+        public static Vector3 Average(IEnumerable<Vector3> vectors)
+        {
+            var avg = Vector3.zero;
+            foreach (var vec in vectors)
+            {
+                avg += vec;
+            }
+            return avg / (Mathf.Max(vectors.Count(), 1));
+        }
+
+
+        /**
+         *  Functions below taken from http://wiki.unity3d.com/index.php/3d_Math_functions
+         */
 
         private static Transform tempChild = null;
         private static Transform tempParent = null;
