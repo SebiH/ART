@@ -67,12 +67,12 @@ namespace Assets.Modules.Tracking
                 counter++;
             }
 
-            FileUtil.SaveToFile(filename, JsonUtility.ToJson(displays));
+            FileUtility.SaveToFile(filename, JsonUtility.ToJson(displays));
         }
 
         public static void LoadFromFile(string filename)
         {
-            var content = FileUtil.LoadFromFile(filename);
+            var content = FileUtility.LoadFromFile(filename);
             var displays = JsonUtility.FromJson<SavedDisplays>(content);
 
             foreach (var display in displays.Displays)

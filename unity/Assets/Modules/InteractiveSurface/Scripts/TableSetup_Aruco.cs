@@ -1,4 +1,4 @@
-using Assets.Modules.Core.Util;
+using Assets.Modules.Core;
 using Assets.Modules.Tracking;
 using Assets.Modules.Tracking.Scripts;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace Assets.Modules.InteractiveSurface
 
             public Quaternion GetAverageRotation()
             {
-                return MathUtils.AverageQuaternion(_rotations);
+                return MathUtility.Average(_rotations);
             }
         }
 

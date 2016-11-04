@@ -1,4 +1,3 @@
-using Assets.Modules.Core.Util;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
@@ -13,7 +12,7 @@ namespace Assets.Modules.Tracking
         {
             get
             {
-                var pos = MatrixUtils.ExtractTranslationFromMatrix(PoseMatrix);
+                var pos = PoseMatrix.GetPosition();
                 // invert to match camera
                 pos.y = -pos.y;
                 return pos;
@@ -24,7 +23,7 @@ namespace Assets.Modules.Tracking
         {
             get
             {
-                var eulerRot = MatrixUtils.ExtractRotationFromMatrix(PoseMatrix).eulerAngles;
+                var eulerRot = PoseMatrix.GetRotation().eulerAngles;
                 eulerRot.x = -eulerRot.x;
                 //eulerRot.y = -eulerRot.y;
                 eulerRot.z = -eulerRot.z;
@@ -38,7 +37,7 @@ namespace Assets.Modules.Tracking
         {
             get
             {
-                return MatrixUtils.ExtractScaleFromMatrix(PoseMatrix);
+                return PoseMatrix.GetScale();
             }
         }
 

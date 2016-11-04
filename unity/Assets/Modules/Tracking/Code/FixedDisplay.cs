@@ -10,7 +10,7 @@ namespace Assets.Modules.Tracking
         // Returns position of center to match Unity
         public Vector3 Position
         {
-            get { return Math3d.Average(_calibratedCorners); }
+            get { return MathUtility.Average(_calibratedCorners); }
         }
 
         public Quaternion Rotation
