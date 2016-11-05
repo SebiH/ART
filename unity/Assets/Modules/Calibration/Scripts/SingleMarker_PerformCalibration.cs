@@ -122,7 +122,7 @@ namespace Assets.Modules.Calibration
         }
 #else
 
-        private void OnArucoPose(ArucoMarkerPose pose)
+        private void OnArucoPose(MarkerPose pose)
         {
             if (pose.Id == ArucoCalibrationId)
             {

@@ -134,7 +134,7 @@ namespace Assets.Modules.Calibration
             _avgCalibrationRotOffsets.Clear();
         }
 
-        private void OnArucoPose(ArucoMarkerPose pose)
+        private void OnArucoPose(MarkerPose pose)
         {
             var markerOffset = CalibrationOffsets[pose.Id];
 

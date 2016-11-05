@@ -62,7 +62,7 @@ namespace Assets.Modules.Tracking
         // Cannot be changed once script is running
         public double MarkerSizeInMeter = 0.15;
 
-        public delegate void NewPoseHandler(ArucoMarkerPose pose);
+        public delegate void NewPoseHandler(MarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
 
         private ArucoProcessor _arProcessor;
@@ -124,7 +124,7 @@ namespace Assets.Modules.Tracking
 
         public bool UseOffset = true;
 
-        private ArucoMarkerPose ProcessOutput(ArucoPose pose)
+        private MarkerPose ProcessOutput(ArucoPose pose)
         {
             // TODO: should be HMDGap from OvrVision..?
             var posOffset = new Vector3(-0.032f, 0.0f, 0.0f);
@@ -138,7 +138,7 @@ namespace Assets.Modules.Tracking
             //var rotOffset = Quaternion.Euler(RotationOffset);
             var rotation = pose.rotation.ToUnityQuaternion().eulerAngles;
 
-            return new ArucoMarkerPose
+            return new MarkerPose
             {
                 Id = pose.id,
                 Position = pose.position.ToUnityVec3() + posOffset,

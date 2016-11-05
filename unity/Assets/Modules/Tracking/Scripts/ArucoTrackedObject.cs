@@ -17,7 +17,7 @@ namespace Assets.Modules.Tracking.Scripts
             ArucoListener.Instance.NewPoseDetected -= OnNewPose;
         }
 
-        void OnNewPose(ArucoMarkerPose pose)
+        void OnNewPose(MarkerPose pose)
         {
             if (pose.Id == TrackedId)
             {

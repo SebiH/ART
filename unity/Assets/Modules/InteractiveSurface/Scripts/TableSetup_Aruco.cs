@@ -70,7 +70,7 @@ namespace Assets.Modules.InteractiveSurface
         }
 
 
-        private void OnArucoPose(ArucoMarkerPose pose)
+        private void OnArucoPose(MarkerPose pose)
         {
             var sceneCamTransform = SceneCameraTracker.Instance.transform;
             int index = -1;

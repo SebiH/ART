@@ -31,7 +31,7 @@ namespace Assets.Modules.Calibration
             ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
         }
 
-        void OnArucoPose(ArucoMarkerPose pose)
+        void OnArucoPose(MarkerPose pose)
         {
             if (pose.Id == MarkerId)
             {

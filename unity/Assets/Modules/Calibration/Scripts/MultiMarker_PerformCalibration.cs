@@ -89,7 +89,7 @@ namespace Assets.Modules.Calibration
             }
         }
 
-        private void OnArucoPose(ArucoMarkerPose pose)
+        private void OnArucoPose(MarkerPose pose)
         {
             foreach (var cMarker in _markerSetupScript.CalibratedMarkers)
             {

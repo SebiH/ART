@@ -149,7 +149,13 @@ namespace Assets.Modules.Tracking
 
             if (NewPoseDetected != null)
             {
-                NewPoseDetected(new MarkerPose(marker.id, marker.name, transformMatrix));
+                NewPoseDetected(new MarkerPose
+                {
+                    Id = marker.id,
+                    Name = marker.name,
+                    Position = transformMatrix.GetPosition(),
+                    Rotation = transformMatrix.GetRotation()
+                });
             }
         }
     }
