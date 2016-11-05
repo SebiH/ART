@@ -1,5 +1,4 @@
 using Assets.Modules.Core;
-using Assets.Modules.Core.Util;
 using Assets.Modules.Tracking;
 using System;
 using System.Collections;
@@ -83,7 +82,7 @@ namespace Assets.Modules.Calibration
         {
             IsReadyForCalibration = HasSteadyOptitrackCameraPose && HasSteadyOpenVrPose && HasSteadyArucoPose;
 
-            if (ArucoCamera != null && !CalibrationOffset.IsCalibrated)
+            if (ArucoCamera != null)
             {
                 ArucoCamera.transform.position = _arucoPos;
                 ArucoCamera.transform.rotation = _arucoRot;
@@ -237,7 +236,7 @@ namespace Assets.Modules.Calibration
                             var intersectRay = new Ray(intersectMarker.transform.position, intersect.Position - intersectMarker.transform.position);
 
                             Vector3 closestPoint1, closestPoint2;
-                            var success = Math3d.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
+                            var success = MathUtility.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
 
                             if (success)
                             {
@@ -267,13 +266,11 @@ namespace Assets.Modules.Calibration
             }
 
             avgPosOffset = avgPosOffset / samples;
-            var avgRotation = QuaternionUtils.Average(arucoRotations);
+            var avgRotation = MathUtility.Average(arucoRotations);
             var avgRotOffset = avgRotation * Quaternion.Inverse(_ovrRot);
 
-            CalibrationOffset.OptitrackToCameraOffset = avgPosOffset;
-            CalibrationOffset.OpenVrRotationOffset = avgRotOffset;
-            CalibrationOffset.IsCalibrated = true;
-            CalibrationOffset.LastCalibration = DateTime.Now;
+            CalibrationParams.OptitrackToCameraOffset = avgPosOffset;
+            CalibrationParams.OpenVrRotationOffset = avgRotOffset;
 
             IsCalibrating = false;
             CalibrationProgress = 0;
@@ -297,7 +294,7 @@ namespace Assets.Modules.Calibration
                     arucoPosesCount++;
                 }
 
-                var avgRotation = QuaternionUtils.Average(arucoRotations);
+                var avgRotation = MathUtility.Average(arucoRotations);
                 avgMarkerPos = avgMarkerPos / arucoPosesCount;
                 var avgPosOffset = (avgMarkerPos - _optitrackCameraPose.Position);
 
@@ -357,7 +354,7 @@ namespace Assets.Modules.Calibration
                         var intersectRay = new Ray(intersectMarker.transform.position, intersect.Position - intersectMarker.transform.position);
 
                         Vector3 closestPoint1, closestPoint2;
-                        var success = Math3d.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
+                        var success = MathUtility.ClosestPointsOnTwoLines(out closestPoint1, out closestPoint2, poseRay.origin, poseRay.direction, intersectRay.origin, intersectRay.direction);
 
                         if (success)
                         {

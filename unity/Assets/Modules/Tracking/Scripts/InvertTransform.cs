@@ -1,4 +1,3 @@
-﻿using Assets.Modules.Core.Util;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking

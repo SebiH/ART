@@ -1,4 +1,4 @@
-﻿using Assets.Modules.Tracking;
+using Assets.Modules.Tracking;
 using Assets.Modules.Tracking.Scripts;
 using System;
 using System.Collections.Generic;
@@ -46,12 +46,12 @@ namespace Assets.Modules.Calibration
         public int MarkersPerRow = 21;
         public int MarkersPerColumn = 12;
 
+        public string DisplayName = "Surface";
+
         public MarkerOffset[] CalibrationOffsets;
         public string OptitrackCameraName = "HMD";
         private OptitrackPose _optitrackCameraPose;
         private DateTime _optitrackCameraDetectionTime;
-
-        public DisplayMarker_SetupDisplay DisplaySetupScript;
 
         private Quaternion _ovrRot = Quaternion.identity;
 
@@ -77,65 +77,54 @@ namespace Assets.Modules.Calibration
 
         void Update()
         {
-            var tableRotation = CalculateTableRotation();
-            if (DisplaySetupScript.CalibratedCorners.Count >= 4)
+            if (FixedDisplays.Has(DisplayName))
             {
+                var display = FixedDisplays.Get(DisplayName);
+                var tableRotation = display.Rotation;
+
+
                 var lineRenderer = GetComponent<LineRenderer>();
 
                 if (lineRenderer != null)
                 {
                     lineRenderer.SetVertexCount(5);
-                    var topleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.TopLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
-                    var bottomleft = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.BottomLeft).Position + tableRotation * new Vector3(0, OffsetY, 0);
-                    var bottomright = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.BottomRight).Position + tableRotation * new Vector3(0, OffsetY, 0);
-                    var topright = DisplaySetupScript.CalibratedCorners.First((c) => c.Corner == Corner.TopRight).Position + tableRotation * new Vector3(0, OffsetY, 0);
-
-                    lineRenderer.SetPosition(0, topleft);
-                    lineRenderer.SetPosition(1, bottomleft);
-                    lineRenderer.SetPosition(2, bottomright);
-                    lineRenderer.SetPosition(3, topright);
-                    lineRenderer.SetPosition(4, topleft);
+                    lineRenderer.SetPosition(0, display.GetCornerPosition(Corner.TopLeft));
+                    lineRenderer.SetPosition(1, display.GetCornerPosition(Corner.BottomLeft));
+                    lineRenderer.SetPosition(2, display.GetCornerPosition(Corner.BottomRight));
+                    lineRenderer.SetPosition(3, display.GetCornerPosition(Corner.TopRight));
+                    lineRenderer.SetPosition(4, display.GetCornerPosition(Corner.TopLeft));
                 }
+
+
+                var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime);
+
+                if (markers == null || markers.Count() != 1) return;
+
+                var marker = markers.First();
+
+                var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
+
+                var localPos = marker.ArCameraPosition;
+                var worldPos = markerPosWorld + tableRotation * localPos;
+
+                var localRot = marker.ArCameraRotation;
+                var localForward = localRot * Vector3.forward;
+                var localRight = localRot * Vector3.right;
+                var localUp = localRot * Vector3.up;
+
+                var worldForward = tableRotation * localForward;
+                var worldRight = tableRotation * localRight;
+                var worldUp = tableRotation * localUp;
+                var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+                Debug.Log("Calibrating...");
+                CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
+                // c = b * inv(a)
+                // => b = c * a?
+                // from ovrRot to worldRot
+                CalibrationParams.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
+
             }
-
-
-            var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime);
-
-            if (markers == null || markers.Count() != 1) return;
-
-            var marker = markers.First();
-            //var rotations = new List<Quaternion>();
-            //var positions = new List<Vector3>();
-
-            //foreach (var marker in markers)
-            //{
-            var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
-
-            var localPos = marker.ArCameraPosition;
-            var worldPos = markerPosWorld + tableRotation * localPos;
-
-            var localRot = marker.ArCameraRotation;
-            var localForward = localRot * Vector3.forward;
-            var localRight = localRot * Vector3.right;
-            var localUp = localRot * Vector3.up;
-
-            var worldForward = tableRotation * localForward;
-            var worldRight = tableRotation * localRight;
-            var worldUp = tableRotation * localUp;
-            var worldRot = Quaternion.LookRotation(worldForward, worldUp);
-
-            //    rotations.Add(worldRot);
-            //    positions.Add(worldPos);
-            //}
-
-            Debug.Log("Calibrating...");
-            CalibrationOffset.IsCalibrated = true;
-            CalibrationOffset.LastCalibration = DateTime.Now;
-            CalibrationOffset.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
-            // c = b * inv(a)
-            // => b = c * a?
-            // from ovrRot to worldRot
-            CalibrationOffset.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
         }
 
 
@@ -217,7 +206,8 @@ namespace Assets.Modules.Calibration
         public void StartCalibration()
         {
             var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime);
-            var tableRotation = CalculateTableRotation();
+            var display = FixedDisplays.Get(DisplayName);
+            var tableRotation = display.Rotation;
 
             if (markers == null || markers.Count() != 1) return;
 
@@ -243,13 +233,11 @@ namespace Assets.Modules.Calibration
             var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
             Debug.Log("Calibrating...");
-            CalibrationOffset.IsCalibrated = true;
-            CalibrationOffset.LastCalibration = DateTime.Now;
-            CalibrationOffset.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
+            CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
             // c = b * inv(a)
             // => b = c * a?
             // from ovrRot to worldRot
-            CalibrationOffset.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
+            CalibrationParams.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
         }
 
         private class CalibPose
@@ -260,36 +248,9 @@ namespace Assets.Modules.Calibration
         }
 
 
-        private Vector3 GetOptitrackMarkerPosition(MarkerOffset marker)
-        {
-            var corner = DisplaySetupScript.CalibratedCorners.FirstOrDefault((c) => c.Corner == marker.OptitrackCorner);
-            if (corner == null)
-            {
-                Debug.LogWarning("Could not find matching marker for " + marker.OptitrackCorner.ToString());
-                return Vector3.zero;
-            }
-            return corner.Position;
-        }
-
-        private Quaternion CalculateTableRotation()
-        {
-            var markerBottomLeft = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.BottomLeft);
-            var markerTopLeft = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.TopLeft);
-            var markerBottomRight = DisplaySetupScript.CalibratedCorners.First((m) => m.Corner == Corner.BottomRight);
-
-            var forward = Vector3.Normalize(markerTopLeft.Position - markerBottomLeft.Position);
-            var right = Vector3.Normalize(markerBottomRight.Position - markerBottomLeft.Position);
-            var up = Vector3.Cross(forward, right);
-            // Cross product doesn't always point in the correct direction
-            if (InvertUpDirection) { up = -up; }
-
-            return Quaternion.LookRotation(forward, up);
-        }
-
         private Vector3 GetMarkerWorldPosition(int markerIndex, Quaternion tableRotation)
         {
-            var otmTopLeft = DisplaySetupScript.CalibratedCorners.FirstOrDefault((c) => c.Corner == Corner.TopLeft);
-            if (otmTopLeft == null) { return Vector3.zero; }
+            var display = FixedDisplays.Get(DisplayName);
 
             int row = markerIndex / MarkersPerRow;
             int column = markerIndex % MarkersPerRow;
@@ -299,7 +260,7 @@ namespace Assets.Modules.Calibration
             var markerOffsetZ = -MarginTop - row * (MarginMarker + markerSize) - markerSize / 2f;
 
             var markerOffset = new Vector3(markerOffsetX, OffsetY, markerOffsetZ);
-            return otmTopLeft.Position + tableRotation * markerOffset;
+            return display.GetCornerPosition(Corner.TopLeft) + tableRotation * markerOffset;
         }
 
         void OnDrawGizmos()
@@ -322,36 +283,20 @@ namespace Assets.Modules.Calibration
             }
 
             // this only works if we have optitrack coordinates for all markers
-            if (DisplaySetupScript.CalibratedCorners.Count >= 4)
+            if (FixedDisplays.Has(DisplayName))
             {
-                var tableRotation = CalculateTableRotation();
+                var display = FixedDisplays.Get(DisplayName);
+                var tableRotation = display.Rotation;
 
                 // draw table's orientation in center of table
                 {
-                    Vector3 tableCenter = Vector3.zero;
-                    foreach (var marker in DisplaySetupScript.CalibratedCorners)
-                    {
-                        tableCenter += marker.Position;
-                    }
-                    tableCenter /= DisplaySetupScript.CalibratedCorners.Count;
-
+                    var tableCenter = display.Position;
                     Gizmos.color = Color.green;
                     Gizmos.DrawLine(tableCenter, tableCenter + tableRotation * Vector3.up * 0.1f);
                     Gizmos.color = Color.blue;
                     Gizmos.DrawLine(tableCenter, tableCenter + tableRotation * Vector3.forward * 0.1f);
                     Gizmos.color = Color.red;
                     Gizmos.DrawLine(tableCenter, tableCenter + tableRotation * Vector3.right * 0.1f);
-                }
-
-                foreach (var corner in DisplaySetupScript.CalibratedCorners)
-                {
-                    var nextMarkerCorner = ((Corner)(((int)corner.Corner + 1) % Enum.GetNames(typeof(Corner)).Length));
-                    var nextMarker = DisplaySetupScript.CalibratedCorners.Find((m) => m.Corner == nextMarkerCorner);
-
-                    //draw lines around optitrack plane
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawLine(corner.Position, nextMarker.Position);
-
                 }
 
                 for (int i = 0; i < CalibrationOffsets.Length; i++)

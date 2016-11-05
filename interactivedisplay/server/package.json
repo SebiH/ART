@@ -1,0 +1,23 @@
+{
+  "name": "InteractiveDisplayServer",
+  "version": "0.0.0",
+  "scripts": {
+    "start": "tsc && node boot.js"
+  },
+  "description": "InteractiveDisplayNode",
+  "main": "boot.js",
+  "author": {
+    "name": "Sebastian Hubenschmid",
+    "email": ""
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  },
+  "devDependencies": {
+    "@types/node": "^6.0.46",
+    "codelyzer": "^1.0.0-beta.3",
+    "tslint": "^3.15.1",
+    "typescript": "^2.0.6"
+  }
+}

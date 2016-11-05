@@ -1,5 +1,4 @@
-using Assets.Modules.Core.Code;
-using Assets.Modules.Core.Util;
+using Assets.Modules.Core;
 using Assets.Modules.Tracking;
 using System;
 using System.Collections;
@@ -122,7 +121,7 @@ namespace Assets.Modules.Calibration
             if (sampleCount > 0)
             {
                 positionSamples = positionSamples / sampleCount;
-                avgRotation = QuaternionUtils.Average(rotationSamples);
+                avgRotation = MathUtility.Average(rotationSamples);
             }
 
             var createdMarker = Instantiate(MarkerPrefab);
@@ -157,7 +156,7 @@ namespace Assets.Modules.Calibration
             public SerializableCalibratedMarker[] array;
         }
 
-        public void SaveCalibratedMarkers(string relativeFilename)
+        public void SaveCalibratedMarkers(string filename)
         {
             MarkerUnityWorkaround workaround = new MarkerUnityWorkaround();
             workaround.array = new SerializableCalibratedMarker[CalibratedMarkers.Count];
@@ -174,16 +173,12 @@ namespace Assets.Modules.Calibration
                 ++i;
             }
 
-            var absoluteFilename = Paths.GetAbsolutePath(relativeFilename);
-            File.WriteAllText(absoluteFilename, JsonUtility.ToJson(workaround));
-            Debug.Log(String.Format("Saved {0} markers to {1}", workaround.array.Length, absoluteFilename));
+            FileUtility.SaveToFile(filename, JsonUtility.ToJson(workaround));
         }
 
-        public void LoadCalibratedMarkers(string relativeFilename)
+        public void LoadCalibratedMarkers(string filename)
         {
-            var absoluteFilename = Paths.GetAbsolutePath(relativeFilename);
-            Debug.Log(String.Format("Loading from {0}", absoluteFilename));
-            var contents = File.ReadAllText(absoluteFilename);
+            var contents = FileUtility.LoadFromFile(filename);
             var markers = JsonUtility.FromJson<MarkerUnityWorkaround>(contents);
 
             foreach (var marker in markers.array)
