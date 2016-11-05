@@ -12,7 +12,8 @@ namespace Assets.Modules.Calibration
     {
         const float SteadyPosThreshold = 0.2f;
         const float SteadyAngleThreshold = 2f;
-        const float ArCutoffTime = 1f / 120f;
+        const float ArCutoffTime = 1f / 30f;
+        const float OptitrackCutoffTime = 1f / 30f;
 
         public float CalibrationStability { get; private set; }
         public bool InvertUpDirection = false;
@@ -51,7 +52,7 @@ namespace Assets.Modules.Calibration
         public MarkerOffset[] CalibrationOffsets;
         public string OptitrackCameraName = "HMD";
         private OptitrackPose _optitrackCameraPose;
-        private DateTime _optitrackCameraDetectionTime;
+        private float _optitrackCameraDetectionTime;
 
         private Quaternion _ovrRot = Quaternion.identity;
 
@@ -77,7 +78,7 @@ namespace Assets.Modules.Calibration
 
         void Update()
         {
-            if (FixedDisplays.Has(DisplayName))
+            if (FixedDisplays.Has(DisplayName) && (Time.unscaledTime - _optitrackCameraDetectionTime) < OptitrackCutoffTime)
             {
                 var display = FixedDisplays.Get(DisplayName);
                 var tableRotation = display.Rotation;
@@ -170,7 +171,7 @@ namespace Assets.Modules.Calibration
                 if (pose.RigidbodyName == OptitrackCameraName)
                 {
                     _optitrackCameraPose = pose;
-                    _optitrackCameraDetectionTime = DateTime.Now;
+                    _optitrackCameraDetectionTime = Time.unscaledTime;
                 }
             }
         }
