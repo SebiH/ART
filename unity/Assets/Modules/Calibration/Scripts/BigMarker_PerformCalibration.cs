@@ -56,8 +56,6 @@ namespace Assets.Modules.Calibration
 
         private Quaternion _ovrRot = Quaternion.identity;
 
-        private Dictionary<int, MarkerOffset> ArMarkers = new Dictionary<int, MarkerOffset>();
-
 
         void OnEnable()
         {
@@ -82,7 +80,6 @@ namespace Assets.Modules.Calibration
             {
                 var display = FixedDisplays.Get(DisplayName);
                 var tableRotation = display.Rotation;
-
 
                 var lineRenderer = GetComponent<LineRenderer>();
 
@@ -110,11 +107,9 @@ namespace Assets.Modules.Calibration
 
                 var localRot = marker.ArCameraRotation;
                 var localForward = localRot * Vector3.forward;
-                var localRight = localRot * Vector3.right;
                 var localUp = localRot * Vector3.up;
 
                 var worldForward = tableRotation * localForward;
-                var worldRight = tableRotation * localRight;
                 var worldUp = tableRotation * localUp;
                 var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
@@ -151,8 +146,6 @@ namespace Assets.Modules.Calibration
             // pose is marker's pose -> inverted we get camera pose
             var markerMatrix = Matrix4x4.TRS(pose.Position, pose.Rotation, Vector3.one);
             var cameraMatrix = markerMatrix.inverse;
-            var cameraLocalPos = cameraMatrix.GetPosition();
-            var cameraLocalRot = cameraMatrix.GetRotation();
 
             markerOffset.HasArPose = true;
             markerOffset.ArPoseDetectionTime = Time.unscaledTime;
@@ -196,8 +189,6 @@ namespace Assets.Modules.Calibration
             _ovrRot = pose.rot;
         }
 
-        private readonly List<Ray> _debugRays = new List<Ray>();
-        private readonly List<Vector3> _debugClosestPoints = new List<Vector3>();
         private Vector3 _debugAvgPosition = Vector3.zero;
         private Quaternion _debugAvgRotation = Quaternion.identity;
 
@@ -225,11 +216,9 @@ namespace Assets.Modules.Calibration
 
             var localRot = marker.ArCameraRotation;
             var localForward = localRot * Vector3.forward;
-            var localRight = localRot * Vector3.right;
             var localUp = localRot * Vector3.up;
 
             var worldForward = tableRotation * localForward;
-            var worldRight = tableRotation * localRight;
             var worldUp = tableRotation * localUp;
             var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
@@ -240,14 +229,6 @@ namespace Assets.Modules.Calibration
             // from ovrRot to worldRot
             CalibrationParams.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
         }
-
-        private class CalibPose
-        {
-            public Vector3 WorldMarkerPosition;
-            public Vector3 WorldCameraPosition;
-            public Quaternion WorldRotation;
-        }
-
 
         private Vector3 GetMarkerWorldPosition(int markerIndex, Quaternion tableRotation)
         {
@@ -334,7 +315,6 @@ namespace Assets.Modules.Calibration
                         var worldForward = tableRotation * localForward;
                         var worldRight = tableRotation * localRight;
                         var worldUp = tableRotation * localUp;
-                        var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
                         bool isOutlier = (worldPos - _optitrackCameraPose.Position).sqrMagnitude > 0.025f;
 

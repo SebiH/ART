@@ -45,7 +45,6 @@ namespace Assets.Modules.Vision
                 if (ovrCam != null)
                 {
                     var IMAGE_ZOFFSET = 0.02f;
-                    var offset = ovrCam.GetHMDRightGap();
                     float xOffset = (Eye == DirectXOutput.Eye.Left) ? -0.032f : ovrCam.GetHMDRightGap().x - 0.040f;
                     transform.localPosition = new Vector3(xOffset, 0, ovrCam.GetFocalPoint() + IMAGE_ZOFFSET);
 

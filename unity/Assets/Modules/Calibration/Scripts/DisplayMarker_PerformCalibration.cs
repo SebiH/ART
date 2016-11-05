@@ -59,13 +59,10 @@ namespace Assets.Modules.Calibration
         public MarkerOffset[] CalibrationOffsets;
         public string OptitrackCameraName = "HMD";
         private OptitrackPose _optitrackCameraPose;
-        private DateTime _optitrackCameraDetectionTime;
 
         public string DisplayName = "Surface";
 
         private Quaternion _ovrRot = Quaternion.identity;
-
-        private Dictionary<int, MarkerOffset> ArMarkers = new Dictionary<int, MarkerOffset>();
 
 
         void OnEnable()
@@ -111,11 +108,7 @@ namespace Assets.Modules.Calibration
                     if (markers == null || markers.Count() != 1) return;
 
                     var marker = markers.First();
-                    //var rotations = new List<Quaternion>();
-                    //var positions = new List<Vector3>();
 
-                    //foreach (var marker in markers)
-                    //{
                     var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
 
                     var localPos = marker.ArCameraPosition;
@@ -123,21 +116,12 @@ namespace Assets.Modules.Calibration
 
                     var localRot = marker.ArCameraRotation;
                     var localForward = localRot * Vector3.forward;
-                    var localRight = localRot * Vector3.right;
                     var localUp = localRot * Vector3.up;
 
                     var worldForward = tableRotation * localForward;
-                    var worldRight = tableRotation * localRight;
                     var worldUp = tableRotation * localUp;
                     var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
-                    //    rotations.Add(worldRot);
-                    //    positions.Add(worldPos);
-                    //}
-
-
-                    //TestCamera.transform.position = QuaternionUtils.AverageV(positions);
-                    //TestCamera.transform.rotation = QuaternionUtils.Average(rotations);
                     TestCamera.transform.position = worldPos;
                     TestCamera.transform.rotation = worldRot;
 
@@ -177,8 +161,6 @@ namespace Assets.Modules.Calibration
             // pose is marker's pose -> inverted we get camera pose
             var markerMatrix = Matrix4x4.TRS(pose.Position, pose.Rotation, Vector3.one);
             var cameraMatrix = markerMatrix.inverse;
-            var cameraLocalPos = cameraMatrix.GetPosition();
-            var cameraLocalRot = cameraMatrix.GetRotation();
 
             markerOffset.HasArPose = true;
             markerOffset.ArPoseDetectionTime = Time.unscaledTime;
@@ -197,7 +179,6 @@ namespace Assets.Modules.Calibration
                 if (pose.RigidbodyName == OptitrackCameraName)
                 {
                     _optitrackCameraPose = pose;
-                    _optitrackCameraDetectionTime = DateTime.Now;
                 }
             }
         }
@@ -265,7 +246,6 @@ namespace Assets.Modules.Calibration
                     var tableRotation = display.Rotation;
 
                     var calibPoses = new List<CalibPose>();
-                    var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
 
                     for (int i = 0; i < CalibrationOffsets.Length; i++)
                     {
@@ -283,11 +263,9 @@ namespace Assets.Modules.Calibration
 
                             var localRot = marker.ArCameraRotation;
                             var localForward = localRot * Vector3.forward;
-                            var localRight = localRot * Vector3.right;
                             var localUp = localRot * Vector3.up;
 
                             var worldForward = tableRotation * localForward;
-                            var worldRight = tableRotation * localRight;
                             var worldUp = tableRotation * localUp;
                             var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
@@ -485,7 +463,6 @@ namespace Assets.Modules.Calibration
                         var worldForward = tableRotation * localForward;
                         var worldRight = tableRotation * localRight;
                         var worldUp = tableRotation * localUp;
-                        var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
                         bool isOutlier = (worldPos - _optitrackCameraPose.Position).sqrMagnitude > 0.025f;
 

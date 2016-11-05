@@ -43,7 +43,6 @@ namespace Assets.Modules.Calibration
             var anchorMarker = pose.Markers.First((m) => m.Id == AnchorId);
             var span1Marker = pose.Markers.First((m) => m.Id == Span1Id);
             var span2Marker = pose.Markers.First((m) => m.Id == Span2Id);
-            var upMarker = pose.Markers.First((m) => m.Id == UpId);
 
             var normalVector = Vector3.Normalize(Vector3.Cross(span1Marker.Position - anchorMarker.Position, span2Marker.Position - anchorMarker.Position));
             var rotationAxis = Vector3.Normalize(Vector3.Cross(normalVector, -OptitrackCalibratorObject.up));
