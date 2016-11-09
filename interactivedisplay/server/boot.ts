@@ -48,7 +48,7 @@ var path = require('path');
 
 var app = express();
 app.set('port', process.env.PORT || 81);
-app.use(express.static(path.join(__dirname + '/../')));
+app.use(express.static(path.join(__dirname + '/../client/')));
 app.use(bodyParser.json());
 
 app.post('/click', function (req, res) {
@@ -70,7 +70,7 @@ app.post('/click', function (req, res) {
 });
 
 app.use(function(req, res, next) {
-    res.sendFile(path.join(__dirname + '/../index.html'));
+    res.sendFile(path.join(__dirname + '/../client/index.html'));
 })
 
 var httpServer = http.createServer(app).listen(app.get('port'), function () {
