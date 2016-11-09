@@ -9,10 +9,12 @@ namespace Assets.Modules.Vision.Processors
         private int _id = -1;
 
         private double _markerSizeInMeter;
+        private bool _useTracker;
 
-        public ArucoProcessor(double markerSizeInMeter)
+        public ArucoProcessor(double markerSizeInMeter, bool useTracker)
         {
             _markerSizeInMeter = markerSizeInMeter;
+            _useTracker = useTracker;
         }
 
         public void Register(int pipelineId)
@@ -21,8 +23,9 @@ namespace Assets.Modules.Vision.Processors
             // Double braces in json due to String.Format
             _id = ImageProcessing.AddArucoProcessor(pipelineId, String.Format(@"
                 {{
-                    ""marker_size_m"": {0}
-                }}", _markerSizeInMeter));
+                    ""marker_size_m"": {0},
+                    ""use_tracker"": {1}
+                }}", _markerSizeInMeter, _useTracker));
 
             ImageProcessing.GetProcessorProperties(_registeredPipelineId, _id, GetPropertyCallback);
         }

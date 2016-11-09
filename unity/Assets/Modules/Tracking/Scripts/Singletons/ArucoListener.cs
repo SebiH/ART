@@ -61,6 +61,7 @@ namespace Assets.Modules.Tracking
         public Pipeline ArucoPipeline;
         // Cannot be changed once script is running
         public double MarkerSizeInMeter = 0.15;
+        public bool UseTracker = false;
 
         public delegate void NewPoseHandler(MarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
@@ -75,7 +76,7 @@ namespace Assets.Modules.Tracking
         {
             Instance = this;
 
-            _arProcessor = new ArucoProcessor(MarkerSizeInMeter);
+            _arProcessor = new ArucoProcessor(MarkerSizeInMeter, UseTracker);
             ArucoPipeline.AddProcessor(_arProcessor);
 
             _arOutput = new JsonOutput(OnPoseChanged);
