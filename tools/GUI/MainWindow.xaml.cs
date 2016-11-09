@@ -54,8 +54,9 @@ namespace GUI
 
                 int pipeline = ImageProcessing.CreatePipeline();
                 int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
-                int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
-                int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.048 } ");
+                //int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
+                //int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.048 } ");
+                int processor = ImageProcessing.AddCudaStereoProcessor(pipeline);
 
                 char keyPressed;
                 int counter = 0;
@@ -85,7 +86,7 @@ namespace GUI
                     {
                         ImageProcessing.RemoveProcessor(pipeline, processor);
                         ImageProcessing.RemoveOutput(pipeline, output);
-                        ImageProcessing.RemoveOutput(pipeline, output2);
+                        //ImageProcessing.RemoveOutput(pipeline, output2);
                         ImageProcessing.RemovePipeline(pipeline);
                         ImageProcessing.StopImageProcessing();
                         break;

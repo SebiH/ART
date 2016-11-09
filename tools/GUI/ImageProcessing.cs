@@ -96,6 +96,9 @@ namespace GUI
         public static extern int AddArucoProcessor(int pipeline_id, string json_config);
 
         [DllImport("ImageProcessing")]
+        public static extern int AddCudaStereoProcessor(int pipeline_id);
+
+        [DllImport("ImageProcessing")]
         public static extern int RemoveProcessor(int pipeline_id, int processor_id);
 
         public delegate void ProcessorPropertyCallback(string json_properties);

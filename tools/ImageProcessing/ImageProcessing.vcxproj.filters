@@ -87,7 +87,7 @@
     <ClCompile Include="src\tools\ArucoTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\processors\Stereo3DProcessor.cpp">
+    <ClCompile Include="src\processors\Stereo3dProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

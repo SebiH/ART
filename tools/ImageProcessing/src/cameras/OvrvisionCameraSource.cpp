@@ -34,9 +34,16 @@ void OvrvisionCameraSource::PrepareNextFrame()
 
 void OvrvisionCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
 {
+	static bool first = true;
 	std::lock_guard<std::mutex> lock(mutex_);
 	if (IsOpen())
 	{
+		if (first)
+		{
+			first = false;
+			ovr_camera_->SetCameraGain(40);
+		}
+
 		ovr_camera_->GetCamImageBGRA(left_buffer, OVR::Cameye::OV_CAMEYE_LEFT);
 		ovr_camera_->GetCamImageBGRA(right_buffer, OVR::Cameye::OV_CAMEYE_RIGHT);
 	}

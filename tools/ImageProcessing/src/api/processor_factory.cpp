@@ -6,9 +6,27 @@
 #include "processors/Processor.h"
 #include "processors/ArToolkitProcessor.h"
 #include "processors/ArucoProcessor.h"
+#include "processors/Stereo3dProcessor.h"
 #include "utils/Logger.h"
 
 using namespace ImageProcessing;
+
+extern "C" UNITY_INTERFACE_EXPORT int AddCudaStereoProcessor(const int pipeline_id)
+{
+	try
+	{
+		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
+		std::shared_ptr<Processor> cuda_stereo_processor = std::make_shared<Stereo3dProcessor>();
+		pipeline->AddProcessor(cuda_stereo_processor);
+		return cuda_stereo_processor->Id();
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to add CUDA Stereo Processor: ") + e.what());
+	}
+
+	return -1;
+}
 
 extern "C" UNITY_INTERFACE_EXPORT int AddArToolkitProcessor(const int pipeline_id, const char *json_config)
 {
