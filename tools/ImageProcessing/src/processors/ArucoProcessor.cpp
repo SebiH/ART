@@ -13,9 +13,10 @@ using json = nlohmann::json;
 ArucoProcessor::ArucoProcessor(const json &marker_config)
 	: initialized_size_(-1, -1, -1)
 {
-	if (marker_config.count("marker_size_m"))
+	const auto param_marker_size = "marker_size_m";
+	if (marker_config.count(param_marker_size))
 	{
-		marker_size_m_ = marker_config["marker_size_m"].get<float>();
+		marker_size_m_ = marker_config[param_marker_size].get<float>();
 	}
 
 	const auto param_use_tracker = "use_tracker";
@@ -119,7 +120,7 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		quat = MultiplyQuaternion(&quat, &adjustment);
 
 		// Draw markers on image
-		cv::circle(img_left, marker.getCenter(), 5, cv::Scalar(0, 0, 255, 255), 1);
+		marker.draw(img_left, cv::Scalar(0, 0, 255, 255));
 
 		// Save JSON info about marker
 		processed_markers["markers_left"].push_back(json{
