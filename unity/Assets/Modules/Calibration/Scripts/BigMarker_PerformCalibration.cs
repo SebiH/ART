@@ -113,7 +113,6 @@ namespace Assets.Modules.Calibration
                 var worldUp = tableRotation * localUp;
                 var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
-                Debug.Log("Calibrating...");
                 CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
                 // c = b * inv(a)
                 // => b = c * a?
