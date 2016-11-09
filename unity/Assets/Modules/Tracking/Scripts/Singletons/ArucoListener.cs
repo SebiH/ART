@@ -2,6 +2,7 @@ using Assets.Modules.Vision;
 using Assets.Modules.Vision.Outputs;
 using Assets.Modules.Vision.Processors;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
@@ -63,6 +64,8 @@ namespace Assets.Modules.Tracking
         public double MarkerSizeInMeter = 0.15;
         public bool UseTracker = false;
 
+        public readonly Dictionary<int, MarkerPose> DetectedPoses;
+
         public delegate void NewPoseHandler(MarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
 
@@ -91,15 +94,8 @@ namespace Assets.Modules.Tracking
 
         private void OnPoseChanged(string json_msg)
         {
-            try
-            {
-                _currentOutput = JsonUtility.FromJson<ArucoOutput>(json_msg);
-                _hasNewOutput = true;
-            }
-            catch
-            {
-                Debug.LogError("Error deserializing message: \n" + json_msg);
-            }
+            _currentOutput = JsonUtility.FromJson<ArucoOutput>(json_msg);
+            _hasNewOutput = true;
         }
 
         void Update()
@@ -113,11 +109,14 @@ namespace Assets.Modules.Tracking
                 foreach (var marker in output.markers_left)
                 {
                     var markerPose = ProcessOutput(marker);
+
+                    if (DetectedPoses.ContainsKey(marker.id))
+                        DetectedPoses[marker.id] = markerPose;
+                    else
+                        DetectedPoses.Add(marker.id, markerPose);
                     
                     if (NewPoseDetected != null)
-                    {
                         NewPoseDetected(markerPose);
-                    }
                 }
             }
         }
