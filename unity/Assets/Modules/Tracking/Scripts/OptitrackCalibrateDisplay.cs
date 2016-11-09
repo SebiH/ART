@@ -16,6 +16,7 @@ namespace Assets.Modules.Tracking.Scripts
         public float MaxPoseLag = 0.1f;
 
         public string DisplayName = "Surface";
+        public Vector2 DisplayResolution = new Vector2(3840, 2160);
 
         public float BorderTop;
         public float BorderLeft;
@@ -114,11 +115,16 @@ namespace Assets.Modules.Tracking.Scripts
                 return;
             }
 
+            var resolution = new Resolution();
+            resolution.width = (int)DisplayResolution.x;
+            resolution.height = (int)DisplayResolution.y;
+
             FixedDisplays.Set(DisplayName,
                 _calibratedCorners[(int)Corner.TopLeft] + new Vector3(BorderLeft, HeightOffset, -BorderTop),
                 _calibratedCorners[(int)Corner.BottomLeft] + new Vector3(BorderLeft, HeightOffset, BorderBottom),
                 _calibratedCorners[(int)Corner.BottomRight] + new Vector3(-BorderRight, HeightOffset, BorderBottom),
-                _calibratedCorners[(int)Corner.TopRight] + new Vector3(-BorderRight, HeightOffset, -BorderTop));
+                _calibratedCorners[(int)Corner.TopRight] + new Vector3(-BorderRight, HeightOffset, -BorderTop),
+                resolution);
 
             for (int i = 0; i < _isCornerCalibrated.Length; i++)
             {

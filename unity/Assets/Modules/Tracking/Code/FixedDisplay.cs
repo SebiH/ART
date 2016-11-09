@@ -7,6 +7,8 @@ namespace Assets.Modules.Tracking
     {
         private Vector3[] _calibratedCorners = new Vector3[4];
 
+        public Resolution DisplayResolution { get; private set; }
+
         // Returns position of center to match Unity
         public Vector3 Position
         {
@@ -38,12 +40,13 @@ namespace Assets.Modules.Tracking
             }
         }
 
-        public FixedDisplay(Vector3 topleft, Vector3 bottomleft, Vector3 bottomright, Vector3 topright)
+        public FixedDisplay(Vector3 topleft, Vector3 bottomleft, Vector3 bottomright, Vector3 topright, Resolution resolution)
         {
             _calibratedCorners[(int)Corner.TopLeft] = topleft;
             _calibratedCorners[(int)Corner.BottomLeft] = bottomleft;
             _calibratedCorners[(int)Corner.BottomRight] = bottomright;
             _calibratedCorners[(int)Corner.TopRight] = topright;
+            DisplayResolution = resolution;
         }
 
 

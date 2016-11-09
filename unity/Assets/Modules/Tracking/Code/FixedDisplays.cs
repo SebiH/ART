@@ -19,13 +19,13 @@ namespace Assets.Modules.Tracking
             return _calibratedDisplays[name];
         }
 
-        public static void Set(string name, Vector3 topLeft, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topRight)
+        public static void Set(string name, Vector3 topLeft, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topRight, Resolution resolution)
         {
-            var display = new FixedDisplay(topLeft, bottomLeft, bottomRight, topRight);
+            var display = new FixedDisplay(topLeft, bottomLeft, bottomRight, topRight, resolution);
 
             if (Has(name))
             {
-                // overwrite existing instance
+                // TODO (?) overwrite existing instance
                 _calibratedDisplays[name] = display;
             }
             else
