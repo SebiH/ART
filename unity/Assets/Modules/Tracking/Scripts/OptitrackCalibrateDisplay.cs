@@ -17,6 +17,12 @@ namespace Assets.Modules.Tracking.Scripts
 
         public string DisplayName = "Surface";
 
+        public float BorderTop;
+        public float BorderLeft;
+        public float BorderRight;
+        public float BorderBottom;
+        public float HeightOffset;
+
         // for use within menu
         public void SetCornerTopLeft() { CurrentCorner = Corner.TopLeft; }
         public void SetCornerTopRight() { CurrentCorner = Corner.TopRight; }
@@ -109,10 +115,10 @@ namespace Assets.Modules.Tracking.Scripts
             }
 
             FixedDisplays.Set(DisplayName,
-                _calibratedCorners[(int)Corner.TopLeft],
-                _calibratedCorners[(int)Corner.BottomLeft],
-                _calibratedCorners[(int)Corner.BottomRight],
-                _calibratedCorners[(int)Corner.TopRight]);
+                _calibratedCorners[(int)Corner.TopLeft] + new Vector3(BorderLeft, HeightOffset, -BorderTop),
+                _calibratedCorners[(int)Corner.BottomLeft] + new Vector3(BorderLeft, HeightOffset, BorderBottom),
+                _calibratedCorners[(int)Corner.BottomRight] + new Vector3(-BorderRight, HeightOffset, BorderBottom),
+                _calibratedCorners[(int)Corner.TopRight] + new Vector3(-BorderRight, HeightOffset, -BorderTop));
 
             for (int i = 0; i < _isCornerCalibrated.Length; i++)
             {
