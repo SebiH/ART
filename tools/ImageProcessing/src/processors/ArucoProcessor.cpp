@@ -18,6 +18,12 @@ ArucoProcessor::ArucoProcessor(const json &marker_config)
 		marker_size_m_ = marker_config["marker_size_m"].get<float>();
 	}
 
+	const auto param_use_tracker = "use_tracker";
+	if (marker_config.count(param_use_tracker))
+	{
+		use_tracker_ = marker_config[param_use_tracker].get<bool>();
+	}
+
 	// detector settings
 	// TODO: deprecated! use setParams, allow settings via Get/SetProperties
 	detector_.setDictionary(aruco::Dictionary::ARTOOLKITPLUSBCH);
@@ -56,11 +62,35 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 
 	for (auto &marker : detected_markers)
 	{
+		if (!marker.isValid())
+		{
+			continue;
+		}
+
+		cv::Mat rvec;
+
+		if (use_tracker_)
+		{
+			if (pose_tracker_.estimatePose(marker, camera_params_, marker_size_m_))
+			{
+				rvec = pose_tracker_.getRvec();
+			}
+			else
+			{
+				continue;
+			}
+		}
+		else
+		{
+			marker.Rvec = rvec;
+		}
+
+
 		// Conversion to unity coordinate system
-		marker.Rvec.at<float>(0, 0) = -marker.Rvec.at<float>(0, 0);
-		marker.Rvec.at<float>(2, 0) = -marker.Rvec.at<float>(2, 0);
+		rvec.at<float>(0, 0) = -rvec.at<float>(0, 0);
+		rvec.at<float>(2, 0) = -rvec.at<float>(2, 0);
 		cv::Mat rotation(3, 3, CV_32FC1);
-		cv::Rodrigues(marker.Rvec, rotation);
+		cv::Rodrigues(rvec, rotation);
 
 		float rotation_matrix[16];
 		rotation_matrix[0] = rotation.at<float>(0);
@@ -107,7 +137,6 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 			}}
 		});
 	}
-
 
 	if (detected_markers.size() > 0)
 	{

@@ -23,6 +23,10 @@ namespace ImageProcessing
 
 		aruco::MarkerDetector detector_;
 		aruco::CameraParameters camera_params_;
+
+		bool use_tracker_ = false;
+		aruco::MarkerPoseTracker pose_tracker_;
+
 		FrameSize initialized_size_;
 		float marker_size_m_;
 
