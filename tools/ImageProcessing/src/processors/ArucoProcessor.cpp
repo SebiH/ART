@@ -68,13 +68,14 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 			continue;
 		}
 
-		cv::Mat rvec;
+		cv::Mat rvec, tvec;
 
 		if (use_tracker_)
 		{
 			if (pose_tracker_.estimatePose(marker, camera_params_, marker_size_m_))
 			{
 				rvec = pose_tracker_.getRvec();
+				tvec = pose_tracker_.getTvec();
 			}
 			else
 			{
@@ -83,7 +84,8 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		}
 		else
 		{
-			marker.Rvec = rvec;
+			rvec = marker.Rvec;
+			tvec = marker.Tvec;
 		}
 
 
@@ -126,9 +128,9 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		processed_markers["markers_left"].push_back(json{
 			{ "id", marker.id },
 			{ "position", {
-				{ "x", marker.Tvec.at<float>(0, 0) },
-				{ "y", marker.Tvec.at<float>(1, 0) },
-				{ "z", marker.Tvec.at<float>(2, 0) }
+				{ "x", tvec.at<float>(0, 0) },
+				{ "y", tvec.at<float>(1, 0) },
+				{ "z", tvec.at<float>(2, 0) }
 			}},
 			{ "rotation", {
 				{ "x", quat.x },
