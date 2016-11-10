@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using Assets.Modules.Tracking;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,27 +39,65 @@ namespace Assets.Modules.Calibration
         {
             if (FixedDisplays.Has(DisplayName) && Time.unscaledTime - _optitrackPoseTime < OptitrackCutoffTime)
             {
+                var display = FixedDisplays.Get(DisplayName);
+
                 // get nearest marker (from center) with up-to-date ar marker pose
                 MarkerPose nearestMarker = null;
-                foreach (var marker in ArucoListener.Instance.DetectedPoses.Values)
-                {
-                    bool isCurrent = (Time.unscaledTime - marker.DetectionTime) < ArCutoffTime;
-                    if (!isCurrent) { continue; } // shave off a few calculations
-                    bool isNearest = (nearestMarker == null) || (false /* TODO compare distances */);
+                var nearestDistance = 0f;
 
-                    if (isCurrent && isNearest)
+                // get intersection between camera ray and display plane
+                Vector3 intersection = new Vector3();
+                var hasIntersection = MathUtility.LinePlaneIntersection(out intersection, TrackedCamera.position, TrackedCamera.forward, display.Normal, display.GetCornerPosition(Corner.TopLeft));
+                if (hasIntersection)
+                {
+                    foreach (var marker in ArucoListener.Instance.DetectedPoses.Values)
                     {
-                        nearestMarker = marker;
+                        bool isCurrent = (Time.unscaledTime - marker.DetectionTime) < ArCutoffTime;
+                        if (!isCurrent) { continue; } // shave off a few calculations
+
+                        // calculate distance between intersection and marker
+                        var markerWorldPosition = GetMarkerWorldPosition(marker.Id);
+                        var distance = (intersection - markerWorldPosition).sqrMagnitude;
+                        bool isNearest = (nearestMarker == null) || (distance < nearestDistance);
+
+                        if (isCurrent && isNearest)
+                        {
+                            nearestMarker = marker;
+                        }
                     }
                 }
 
                 if (nearestMarker != null)
                 {
                     // apply calibration
+                    var markerMatrix = Matrix4x4.TRS(nearestMarker.Position, nearestMarker.Rotation, Vector3.one);
+                    var cameraMatrix = markerMatrix.inverse;
+
+                    var localPos = cameraMatrix.GetPosition();
+                    var worldPos = GetMarkerWorldPosition(nearestMarker.Id) + display.Rotation * localPos;
+
+                    var localRot = cameraMatrix.GetRotation();
+                    var localForward = localRot * Vector3.forward;
+                    var localUp = localRot * Vector3.up;
+
+                    var worldForward = display.Rotation * localForward;
+                    var worldUp = display.Rotation * localUp;
+                    var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+                    CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackPose.Rotation) * (worldPos - _optitrackPose.Position);
+                    // c = b * inv(a)
+                    // => b = c * a?
+                    // from ovrRot to worldRot
+                    CalibrationParams.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRotation);
                 }
             }
         }
 
+        private Vector3 GetMarkerWorldPosition(int id)
+        {
+            // TODO.
+            return Vector3.zero;
+        }
 
         private void OnOptitrackPose(List<OptitrackPose> poses)
         {

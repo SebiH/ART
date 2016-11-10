@@ -40,6 +40,17 @@ namespace Assets.Modules.Tracking
             }
         }
 
+        public Vector3 Normal
+        {
+            get
+            {
+                var forward = Vector3.Normalize(_calibratedCorners[(int)Corner.TopLeft] - _calibratedCorners[(int)Corner.BottomLeft]);
+                var right = Vector3.Normalize(_calibratedCorners[(int)Corner.BottomRight] - _calibratedCorners[(int)Corner.BottomLeft]);
+                var up = Vector3.Cross(forward, right);
+                return up;
+            }
+        }
+
         public FixedDisplay(Vector3 topleft, Vector3 bottomleft, Vector3 bottomright, Vector3 topright, Resolution resolution)
         {
             _calibratedCorners[(int)Corner.TopLeft] = topleft;
