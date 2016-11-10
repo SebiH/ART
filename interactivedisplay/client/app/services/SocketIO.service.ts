@@ -20,7 +20,5 @@ export class SocketIO {
 
     public sendMessage(channel: string, data: any): void {
         this.socket.emit(channel, data);
-        console.log(channel);
-        console.log(data);
     }
 }
