@@ -18,7 +18,7 @@ export class SocketIoServer {
         this.ioServer = socketio(webserver.getServer());
 
         this.ioServer.on('connection', (socket) => {
-            console.log("New socket.io client");
+            this.handleConnection(socket);
         });
 
         console.log("Successfully attached SocketIO to webserver");
