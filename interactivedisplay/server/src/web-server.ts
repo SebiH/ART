@@ -7,6 +7,8 @@ import { Util } from './util';
 
 export class WebServer {
 
+    private _server: http.Server;
+
     public Start(port: number): void {
         var app = express();
         app.set('port', port);
@@ -31,24 +33,22 @@ export class WebServer {
             res.end();
         });
 
+        // send clients to index page on 404
         app.use((req, res, next) => {
             res.sendFile(path.join(__dirname, '../../client/index.html'));
         })
 
-        var httpServer = http.createServer(app).listen(port, () => {
+        this._server = http.createServer(app);
+        this._server.listen(port, () => {
             console.log('Web server listening on ' + Util.GetIp() + ':' + port);
         });
     }
 
+    public GetServer(): any {
+        return this._server;
+    }
+
     public Stop(): void {
-
-    }
-
-    public Broadcast(msg: string): void {
-
-    }
-
-    public OnMessageReceived(): void {
 
     }
 }
