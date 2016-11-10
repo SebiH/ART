@@ -47,6 +47,10 @@ export class SocketIoServer {
     private handleConnection(socket: SocketIO.Socket): void {
         this.handleNewConnection(socket);
 
+        socket.on('command', (data) => {
+            this.handleCommand(socket, data);
+        });
+
         socket.on('disconnect', () => {
             this.handleSocketDisconnect(socket);
         });
@@ -55,6 +59,14 @@ export class SocketIoServer {
     private handleNewConnection(socket: SocketIO.Socket): void {
         console.log(LOG_PREFIX + "New SocketIO client connected from " + socket.id);
         this.clients.push(socket);
+    }
+
+    private handleCommand(socket: SocketIO.Socket, data: any): void {
+        this.raiseMessageReceivedEvent({
+            command: data.command,
+            origin: 'TODO', // TODO
+            payload: data.payload
+        });
     }
 
     private handleSocketDisconnect(socket: SocketIO.Socket): void {

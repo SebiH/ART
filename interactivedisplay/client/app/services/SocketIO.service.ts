@@ -18,7 +18,10 @@ export class SocketIO {
         this.socket.off(name, onMsgReceived);
     }
 
-    public sendMessage(channel: string, data: any): void {
-        this.socket.emit(channel, data);
+    public sendMessage(command: string, data: any): void {
+        this.socket.emit('command', {
+            command: command,
+            payload: data
+        });
     }
 }
