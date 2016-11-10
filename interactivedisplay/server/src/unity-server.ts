@@ -30,7 +30,11 @@ export class UnityServer {
         }
     }
 
-    public OnMessageReceived(msg: UnityMessage): void {
+    public OnMessageReceived(listener: UnityMessageListener): void {
+        this._msgListeners.push(listener);
+    }
+
+    private RaiseMessageReceivedEvent(msg: UnityMessage): void {
         for (let listener of this._msgListeners) {
             listener.handler(msg);
         }
@@ -60,6 +64,7 @@ export class UnityServer {
 
     private HandleSocketData(socket: net.Socket, data: Buffer) {
         console.log(LOG_PREFIX + "" + data);
+        // TODO.
     }
 
     private HandleSocketError(socket: net.Socket, error: Error) {
