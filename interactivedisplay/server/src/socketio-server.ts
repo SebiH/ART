@@ -1,4 +1,5 @@
 import * as socketio from 'socket.io';
+import * as _ from 'lodash';
 
 import { SocketIOMessage } from './socketio-message';
 import { SocketIOMessageListener } from './socketio-message-listener';
