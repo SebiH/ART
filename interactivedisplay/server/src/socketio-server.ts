@@ -1,11 +1,17 @@
 import * as socketio from 'socket.io';
 
+import { SocketIOMessage } from './socketio-message';
+import { SocketIOMessageListener } from './socketio-message-listener';
 import { WebServer } from './web-server';
 import { Util } from './util';
 
+const LOG_PREFIX = "[Display] ";
+
 export class SocketIoServer {
 
-    private _ioServer;
+    private _ioServer: SocketIO.Server;
+    private _clients: SocketIO.Socket[] = [];
+    private _msgListeners: SocketIOMessageListener[] = [];
 
     public Start(webserver: WebServer): void {
         this._ioServer = socketio(webserver.GetServer());
@@ -18,14 +24,40 @@ export class SocketIoServer {
     }
 
     public Stop(): void {
-
+        this._ioServer.close();
     }
 
-    public Broadcast(msg: string): void {
-
+    public Broadcast(channel: string, msg: any): void {
+        for (let client of this._clients) {
+            client.emit(channel, msg);
+        }
     }
 
-    public OnMessageReceived(): void {
+    public OnMessageReceived(listener: SocketIOMessageListener): void {
+        this._msgListeners.push(listener);
+    }
 
+    private RaiseMessageReceivedEvent(msg: SocketIOMessage): void {
+        for (let listener of this._msgListeners) {
+            listener.handler(msg);
+        }
+    }
+
+    private HandleConnection(socket: SocketIO.Socket) {
+        this.HandleNewConnection(socket);
+
+        socket.on('disconnect', () => {
+            this.HandleSocketDisconnect(socket);
+        });
+    }
+
+    private HandleNewConnection(socket: SocketIO.Socket) {
+        console.log(LOG_PREFIX + "New SocketIO client connected from " + socket.id);
+        this._clients.push(socket);
+    }
+
+    private HandleSocketDisconnect(socket: SocketIO.Socket) {
+        console.log(LOG_PREFIX + "Client " + socket.id +  " disconnect");
+        _.pull(this._clients, socket);
     }
 }
