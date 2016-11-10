@@ -5,11 +5,11 @@ import { SocketIoServer } from './socketio-server';
 const UNITY_PORT = 8835;
 const WEB_PORT = 81; // 80 might already be in use, thanks skype!
 
-var g_unityServer = new UnityServer();
+let g_unityServer = new UnityServer();
 g_unityServer.Start(UNITY_PORT);
 
-var g_webServer = new WebServer();
+let g_webServer = new WebServer();
 g_webServer.Start(WEB_PORT);
 
-var g_sioServer = new SocketIoServer();
+let g_sioServer = new SocketIoServer();
 g_sioServer.Start(g_webServer);
