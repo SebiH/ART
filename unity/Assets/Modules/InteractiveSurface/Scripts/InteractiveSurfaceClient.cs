@@ -1,91 +1,78 @@
-using Assets.Code.Graph;
 using System;
-using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Threading;
 using UnityEngine;
 
 public class InteractiveSurfaceClient : MonoBehaviour
 {
+    public static InteractiveSurfaceClient Instance { get; private set; }
+
     public string ServerIp = "127.0.0.1";
     public int ServerPort = 8835;
 
-    public GameObject Screen;
-    public GameObject Cursor;
-    public DataPoint Bar;
+    public delegate void MessageHandler(string jsonContent);
+    public event MessageHandler OnMessageReceived;
 
-    public bool IsVertical = false;
+    // see: https://forum.unity3d.com/threads/c-tcp-ip-socket-how-to-receive-from-server.227259/
+    private Socket _socket;
+    private byte[] _receiveBuffer = new byte[256 * 256];
 
-    private Vector2 DisplaySize;
-
-    private TcpClient _client;
-    private bool _isRunning;
-    private Vector2 _currentPosition = Vector2.zero;
-    private bool _hasNewPosition;
-
-    void Start()
+    void OnEnable()
     {
-        _client = new TcpClient();
-        _client.Connect(ServerIp, ServerPort);
-        _isRunning = true;
+        _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        Thread t = new Thread(new ThreadStart(ReceiveData));
-        t.Start();
-
-        if (IsVertical)
+        try
         {
-            DisplaySize = new Vector2(transform.localScale.z, transform.localScale.y);
+            _socket.Connect(ServerIp, ServerPort);
+            _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
         }
-        else
+        catch (SocketException ex)
         {
-            DisplaySize = new Vector2(transform.localScale.x, transform.localScale.z);
-        }
-
-        var oldScale = transform.localScale;
-        transform.localScale = Vector3.one;
-        Cursor.transform.localScale = Vector3.one * 0.04f;
-        Screen.transform.localScale = oldScale;
-    }
-
-    private void ReceiveData()
-    {
-        var stream = _client.GetStream();
-
-        var expectedFloats = 2;
-        var byteBuffer = new byte[expectedFloats * sizeof(float)];
-        var floatBuffer = new float[expectedFloats];
-
-        while (_isRunning)
-        {
-            stream.Read(byteBuffer, 0, byteBuffer.Length);
-            Buffer.BlockCopy(byteBuffer, 0, floatBuffer, 0, byteBuffer.Length);
-            _currentPosition = new Vector2(floatBuffer[0], floatBuffer[1]);
-            _hasNewPosition = true;
+            Debug.Log(ex.Message);
         }
     }
 
-    void Update()
+    void OnDisable()
     {
-        if (_hasNewPosition)
+        try
         {
-            _hasNewPosition = false;
-
-            if (IsVertical)
-            {
-                Cursor.transform.localPosition = new Vector3(0, (_currentPosition.y - 0.5f) * DisplaySize.y, (_currentPosition.x - 0.5f) * DisplaySize.x);
-            }
-            else
-            {
-                Cursor.transform.localPosition = new Vector3((_currentPosition.x - 0.5f) * DisplaySize.x, 0, (_currentPosition.y - 0.5f) * DisplaySize.y);
-            }
-
-            Bar.TargetHeight = UnityEngine.Random.value * 7.5f;
+            _socket.Disconnect(false);
+        }
+        catch (SocketException ex)
+        {
+            Debug.Log(ex.Message);
         }
     }
 
-    void OnDestroy()
+    private void ReceiveData(IAsyncResult asyncResult)
     {
-        _isRunning = false;
-        _client.Close();
+        // Check how much bytes are received and call Endreceive to finalize handshake
+        int received = _socket.EndReceive(asyncResult);
+
+        if (received <= 0)
+            return;
+
+        // Copy the received data into new buffer , to avoid null bytes
+        byte[] receivedData = new byte[received];
+        Buffer.BlockCopy(_receiveBuffer, 0, receivedData, 0, received);
+
+        // Process data
+        System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+        var receivedText = encoding.GetString(receivedData);
+        Debug.Log(receivedText);
+
+        // Start receiving again
+        _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
+    }
+
+    private void SendData(byte[] data)
+    {
+        SocketAsyncEventArgs socketAsyncData = new SocketAsyncEventArgs();
+        socketAsyncData.SetBuffer(data, 0, data.Length);
+        _socket.SendAsync(socketAsyncData);
+    }
+
+    public void SendCommand(string jsonData)
+    {
+
     }
 }
