@@ -11,11 +11,11 @@ export class WebServer {
     public start(port: number): void {
         let app = express();
         app.set('port', port);
-        app.use(express.static(path.join(path.dirname, '../../client/')));
+        app.use(express.static(path.join(__dirname, '../../client/')));
 
         // send clients to index page on 404
         app.use((req, res, next) => {
-            res.sendFile(path.join(path.dirname, '../../client/index.html'));
+            res.sendFile(path.join(__dirname, '../../client/index.html'));
         })
 
         this.server = http.createServer(app);
