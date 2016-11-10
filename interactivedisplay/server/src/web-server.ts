@@ -3,6 +3,8 @@ import * as path from 'path';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
 
+import { Util } from './util';
+
 export class WebServer {
 
     public Start(port: number): void {
@@ -34,7 +36,7 @@ export class WebServer {
         })
 
         var httpServer = http.createServer(app).listen(port, () => {
-            console.log('Express server listening on port ' + port);
+            console.log('Web server listening on ' + Util.GetIp() + ':' + port);
         });
     }
 

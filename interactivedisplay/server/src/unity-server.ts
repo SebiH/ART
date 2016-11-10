@@ -1,6 +1,8 @@
 import * as net from 'net';
 import * as _ from 'lodash';
 
+import { Util } from './util';
+
 export class UnityServer {
 
     private clients: net.Socket[] = [];
@@ -23,7 +25,7 @@ export class UnityServer {
 
         }).listen(port);
 
-        console.log('TCP Server listening on ' + port);
+        console.log('Unity server listening on ' + Util.GetIp() + ':' + port);
     }
 
 
