@@ -2,7 +2,7 @@
   "name": "InteractiveDisplayServer",
   "version": "0.1.0",
   "scripts": {
-    "start": "tsc && node bin/boot.js"
+    "start": "npm install && tsc && node bin/boot.js"
   },
   "description": "InteractiveDisplayNode",
   "main": "bin/boot.js",
