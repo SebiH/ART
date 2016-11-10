@@ -1,5 +1,6 @@
 using System;
 using System.Net.Sockets;
+using System.Text;
 using UnityEngine;
 
 public class InteractiveSurfaceClient : MonoBehaviour
@@ -56,7 +57,7 @@ public class InteractiveSurfaceClient : MonoBehaviour
         Buffer.BlockCopy(_receiveBuffer, 0, receivedData, 0, received);
 
         // Process data
-        System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+        UTF8Encoding encoding = new UTF8Encoding();
         var receivedText = encoding.GetString(receivedData);
         Debug.Log(receivedText);
 
@@ -73,6 +74,8 @@ public class InteractiveSurfaceClient : MonoBehaviour
 
     public void SendCommand(string jsonData)
     {
-
+        UTF8Encoding encoding = new UTF8Encoding();
+        var rawData = encoding.GetBytes(jsonData);
+        SendData(rawData);
     }
 }
