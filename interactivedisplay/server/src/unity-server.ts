@@ -8,73 +8,73 @@ import { Util } from './util';
 const LOG_PREFIX = "[Unity] ";
 
 export class UnityServer {
-    private _msgListeners: UnityMessageListener[] = [];
-    private _clients: net.Socket[] = [];
-    private _server: net.Server;
+    private msgListeners: UnityMessageListener[] = [];
+    private clients: net.Socket[] = [];
+    private server: net.Server;
 
-    public Start(port: number): void {
-        this._server = net.createServer((socket) => this.HandleConnection(socket));
-        this._server.listen(port);
-        console.log('Unity server listening on ' + Util.GetIp() + ':' + port);
+    public start(port: number): void {
+        this.server = net.createServer((socket) => this.handleConnection(socket));
+        this.server.listen(port);
+        console.log('Unity server listening on ' + Util.getIp() + ':' + port);
     }
 
 
-    public Stop(): void {
-        this._server.close();
+    public stop(): void {
+        this.server.close();
     }
 
 
-    public Broadcast(msg: string) {
-        for (let client of this._clients) {
+    public broadcast(msg: string): void {
+        for (let client of this.clients) {
             client.write(msg);
         }
     }
 
-    public OnMessageReceived(listener: UnityMessageListener): void {
-        this._msgListeners.push(listener);
+    public onMessageReceived(listener: UnityMessageListener): void {
+        this.msgListeners.push(listener);
     }
 
-    private RaiseMessageReceivedEvent(msg: UnityMessage): void {
-        for (let listener of this._msgListeners) {
+    private raiseMessageReceivedEvent(msg: UnityMessage): void {
+        for (let listener of this.msgListeners) {
             listener.handler(msg);
         }
     }
 
 
-    private HandleConnection(socket: net.Socket) {
-        this.HandleNewConnection(socket);
+    private handleConnection(socket: net.Socket): void {
+        this.handleNewConnection(socket);
 
         socket.on('data', (data) => {
-            this.HandleSocketData(socket, data);
+            this.handleSocketData(socket, data);
         });
 
         socket.on('error', (error) => {
-            this.HandleSocketError(socket, error);
+            this.handleSocketError(socket, error);
         });
 
         socket.on('end', () => {
-            this.HandleSocketDisconnect(socket);
+            this.handleSocketDisconnect(socket);
         });
     }
 
-    private HandleNewConnection(socket: net.Socket) {
+    private handleNewConnection(socket: net.Socket): void {
         console.log(LOG_PREFIX + "New unity client connected from " + socket.address);
-        this._clients.push(socket);
+        this.clients.push(socket);
     }
 
-    private HandleSocketData(socket: net.Socket, data: Buffer) {
+    private handleSocketData(socket: net.Socket, data: Buffer): void {
         console.log(LOG_PREFIX + "" + data);
         // TODO.
     }
 
-    private HandleSocketError(socket: net.Socket, error: Error) {
+    private handleSocketError(socket: net.Socket, error: Error): void {
         console.error(LOG_PREFIX + error.message);
         console.error(LOG_PREFIX + error.stack);
-        _.pull(this._clients, socket);
+        _.pull(this.clients, socket);
     }
 
-    private HandleSocketDisconnect(socket: net.Socket) {
+    private handleSocketDisconnect(socket: net.Socket): void {
         console.log(LOG_PREFIX + "Client " + socket.address +  " disconnect");
-        _.pull(this._clients, socket);
+        _.pull(this.clients, socket);
     }
 }

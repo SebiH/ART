@@ -2,7 +2,7 @@ import * as os from 'os';
 
 export class Util {
 
-    public static GetIp(): string {
+    public static getIp(): string {
         // see https://stackoverflow.com/a/8440736/4090817
         var address = "";
         var hasAddress = false;

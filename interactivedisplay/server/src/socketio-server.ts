@@ -10,55 +10,55 @@ const LOG_PREFIX = "[Display] ";
 
 export class SocketIoServer {
 
-    private _ioServer: SocketIO.Server;
-    private _clients: SocketIO.Socket[] = [];
-    private _msgListeners: SocketIOMessageListener[] = [];
+    private ioServer: SocketIO.Server;
+    private clients: SocketIO.Socket[] = [];
+    private msgListeners: SocketIOMessageListener[] = [];
 
-    public Start(webserver: WebServer): void {
-        this._ioServer = socketio(webserver.GetServer());
+    public start(webserver: WebServer): void {
+        this.ioServer = socketio(webserver.getServer());
 
-        this._ioServer.on('connection', (socket) => {
+        this.ioServer.on('connection', (socket) => {
             console.log("New socket.io client");
         });
 
         console.log("Successfully attached SocketIO to webserver");
     }
 
-    public Stop(): void {
-        this._ioServer.close();
+    public stop(): void {
+        this.ioServer.close();
     }
 
-    public Broadcast(channel: string, msg: any): void {
-        for (let client of this._clients) {
+    public broadcast(channel: string, msg: any): void {
+        for (let client of this.clients) {
             client.emit(channel, msg);
         }
     }
 
-    public OnMessageReceived(listener: SocketIOMessageListener): void {
-        this._msgListeners.push(listener);
+    public onMessageReceived(listener: SocketIOMessageListener): void {
+        this.msgListeners.push(listener);
     }
 
-    private RaiseMessageReceivedEvent(msg: SocketIOMessage): void {
-        for (let listener of this._msgListeners) {
+    private raiseMessageReceivedEvent(msg: SocketIOMessage): void {
+        for (let listener of this.msgListeners) {
             listener.handler(msg);
         }
     }
 
-    private HandleConnection(socket: SocketIO.Socket) {
-        this.HandleNewConnection(socket);
+    private handleConnection(socket: SocketIO.Socket): void {
+        this.handleNewConnection(socket);
 
         socket.on('disconnect', () => {
-            this.HandleSocketDisconnect(socket);
+            this.handleSocketDisconnect(socket);
         });
     }
 
-    private HandleNewConnection(socket: SocketIO.Socket) {
+    private handleNewConnection(socket: SocketIO.Socket): void {
         console.log(LOG_PREFIX + "New SocketIO client connected from " + socket.id);
-        this._clients.push(socket);
+        this.clients.push(socket);
     }
 
-    private HandleSocketDisconnect(socket: SocketIO.Socket) {
+    private handleSocketDisconnect(socket: SocketIO.Socket): void {
         console.log(LOG_PREFIX + "Client " + socket.id +  " disconnect");
-        _.pull(this._clients, socket);
+        _.pull(this.clients, socket);
     }
 }

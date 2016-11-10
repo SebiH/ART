@@ -1,5 +1,5 @@
 export interface SocketIOMessage {
-    Command: string;
-    Origin: string;
-    Payload: any;
+    command: string;
+    origin: string;
+    payload: any;
 }
