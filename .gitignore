@@ -107,3 +107,6 @@ sysinfo.txt
 # Visual Studio files
 .ntvs_analysis.dat
 /interactivedisplay/**/*.dll
+
+# Sublime workspaces contain user data
+*.sublime-workspace
