@@ -42,7 +42,7 @@ namespace Assets.Modules.Tracking
             mListener.ReceiveBufferSize = 128 * 1024;
         }
 
-        public void UDPRead()
+        private void UDPRead()
         {
             try
             {
