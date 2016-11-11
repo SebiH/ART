@@ -60,9 +60,16 @@ namespace Assets.Modules.Tracking
 
         // Cannot be changed once script is running
         public Pipeline ArucoPipeline;
-        // Cannot be changed once script is running
+
         public float MarkerSizeInMeter = 0.15f;
+        private float _prevMarkerSize;
+
         public bool UseTracker = false;
+        private bool _prevUseTracker;
+
+        [Range(1.0f, 5.0f)]
+        public float TrackerErrorRatio = 4.0f;
+        private float _prevTrackerErrorRatio;
 
         public readonly Dictionary<int, MarkerPose> DetectedPoses = new Dictionary<int, MarkerPose>();
 
@@ -79,11 +86,20 @@ namespace Assets.Modules.Tracking
         {
             Instance = this;
 
-            _arProcessor = new ArucoProcessor(MarkerSizeInMeter, UseTracker);
+            _arProcessor = new ArucoProcessor(MarkerSizeInMeter)
+            {
+                UseTracker = UseTracker,
+                TrackerErrorRatio = TrackerErrorRatio
+            };
+
             ArucoPipeline.AddProcessor(_arProcessor);
 
             _arOutput = new JsonOutput(OnPoseChanged);
             ArucoPipeline.AddOutput(_arOutput);
+
+            _prevMarkerSize = MarkerSizeInMeter;
+            _prevUseTracker = UseTracker;
+            _prevTrackerErrorRatio = TrackerErrorRatio;
         }
 
         void OnDisable()
@@ -118,6 +134,25 @@ namespace Assets.Modules.Tracking
                     if (NewPoseDetected != null)
                         NewPoseDetected(markerPose);
                 }
+            }
+
+            // TODO: refactor
+            bool hasPropertyChanged =
+                (_prevMarkerSize != MarkerSizeInMeter) ||
+                (_prevUseTracker != UseTracker) ||
+                (_prevTrackerErrorRatio != TrackerErrorRatio);
+
+            if (hasPropertyChanged)
+            {
+                _arProcessor.MarkerSizeInMeter = MarkerSizeInMeter;
+                _arProcessor.UseTracker = UseTracker;
+                _arProcessor.TrackerErrorRatio = TrackerErrorRatio;
+
+                _arProcessor.UpdateProperties();
+
+                _prevMarkerSize = MarkerSizeInMeter;
+                _prevUseTracker = UseTracker;
+                _prevTrackerErrorRatio = TrackerErrorRatio;
             }
         }
 

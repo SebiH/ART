@@ -8,24 +8,20 @@ namespace Assets.Modules.Vision.Processors
         private int _registeredPipelineId = -1;
         private int _id = -1;
 
-        private double _markerSizeInMeter;
-        private bool _useTracker;
+        public float MarkerSizeInMeter;
+        public bool UseTracker = false;
+        public float TrackerErrorRatio = 4.0f;
 
-        public ArucoProcessor(double markerSizeInMeter, bool useTracker)
+        public ArucoProcessor(float markerSizeInMeter)
         {
-            _markerSizeInMeter = markerSizeInMeter;
-            _useTracker = useTracker;
+            MarkerSizeInMeter = markerSizeInMeter;
         }
 
         public void Register(int pipelineId)
         {
             _registeredPipelineId = pipelineId;
             // Double braces in json due to String.Format
-            _id = ImageProcessing.AddArucoProcessor(pipelineId, String.Format(@"
-                {{
-                    ""marker_size_m"": {0},
-                    ""use_tracker"": {1}
-                }}", _markerSizeInMeter, _useTracker));
+            _id = ImageProcessing.AddArucoProcessor(pipelineId, GetJsonProperties());
 
             ImageProcessing.GetProcessorProperties(_registeredPipelineId, _id, GetPropertyCallback);
         }
@@ -40,11 +36,19 @@ namespace Assets.Modules.Vision.Processors
 
         #region Processor Properties
 
-        // TODO.
+        private string GetJsonProperties()
+        {
+            return String.Format(@"
+                {{
+                    ""marker_size_m"": {0},
+                    ""use_tracker"": {1},
+                    ""tracker_error_ratio"": {2}
+                }}", MarkerSizeInMeter, UseTracker.ToString().ToLower(), TrackerErrorRatio);
+        }
 
         public void UpdateProperties()
         {
-            //ImageProcessing.SetProcessorProperties(_registeredPipelineId, _id, JsonUtility.ToJson())
+            ImageProcessing.SetProcessorProperties(_registeredPipelineId, _id, GetJsonProperties());
             ImageProcessing.GetProcessorProperties(_registeredPipelineId, _id, GetPropertyCallback);
         }
 
