@@ -2,6 +2,7 @@ import {Component, ViewEncapsulation, OnInit, HostListener} from '@angular/core'
 import {Router} from '@angular/router';
 
 import {MenuComponent} from '../menu/menu';
+import {MarkerOverlayComponent} from '../marker-overlay/marker-overlay';
 import {SocketIO} from '../../services/index';
 
 @Component({
