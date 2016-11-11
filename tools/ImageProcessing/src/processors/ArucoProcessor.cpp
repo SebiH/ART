@@ -68,10 +68,10 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 
 		if (use_tracker_)
 		{
-			if (pose_tracker_.estimatePose(marker, camera_params_, marker_size_m_, pt_min_error_ratio_))
+			if (pose_trackers_[marker.id].estimatePose(marker, camera_params_, marker_size_m_, pt_min_error_ratio_))
 			{
-				rvec = pose_tracker_.getRvec();
-				tvec = pose_tracker_.getTvec();
+				rvec = pose_trackers_[marker.id].getRvec();
+				tvec = pose_trackers_[marker.id].getTvec();
 			}
 			else
 			{
@@ -175,6 +175,9 @@ void ArucoProcessor::SetProperties(const json &config)
 	{
 		pt_min_error_ratio_ = config[Params::tracker_error].get<float>();
 	}
+
+	// reset all trackers to remove any existing data
+	pose_trackers_ = std::map<int, aruco::MarkerPoseTracker>();
 
 	// TODO detector_->getParams(); and move methods from constructor to here
 }
