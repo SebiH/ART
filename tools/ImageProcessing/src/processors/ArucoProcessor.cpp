@@ -12,7 +12,7 @@ using json = nlohmann::json;
 
 namespace Params {
 	static const auto use_tracker = "use_tracker";
-	static const auto tracker_error = "use_tracker";
+	static const auto tracker_error = "tracker_error_ratio";
 	static const auto marker_size = "marker_size_m";
 }
 

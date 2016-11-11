@@ -64,7 +64,7 @@ namespace Assets.Modules.Tracking
         public float MarkerSizeInMeter = 0.15f;
         public bool UseTracker = false;
 
-        public readonly Dictionary<int, MarkerPose> DetectedPoses;
+        public readonly Dictionary<int, MarkerPose> DetectedPoses = new Dictionary<int, MarkerPose>();
 
         public delegate void NewPoseHandler(MarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
