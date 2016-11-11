@@ -10,20 +10,16 @@
 using namespace ImageProcessing;
 using json = nlohmann::json;
 
+namespace Params {
+	static const auto use_tracker = "use_tracker";
+	static const auto tracker_error = "use_tracker";
+	static const auto marker_size = "marker_size_m";
+}
+
 ArucoProcessor::ArucoProcessor(const json &marker_config)
 	: initialized_size_(-1, -1, -1)
 {
-	const auto param_marker_size = "marker_size_m";
-	if (marker_config.count(param_marker_size))
-	{
-		marker_size_m_ = marker_config[param_marker_size].get<float>();
-	}
-
-	const auto param_use_tracker = "use_tracker";
-	if (marker_config.count(param_use_tracker))
-	{
-		use_tracker_ = marker_config[param_use_tracker].get<bool>();
-	}
+	SetProperties(marker_config);
 
 	// detector settings
 	// TODO: deprecated! use setParams, allow settings via Get/SetProperties
@@ -72,7 +68,7 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 
 		if (use_tracker_)
 		{
-			if (pose_tracker_.estimatePose(marker, camera_params_, marker_size_m_))
+			if (pose_tracker_.estimatePose(marker, camera_params_, marker_size_m_, pt_min_error_ratio_))
 			{
 				rvec = pose_tracker_.getRvec();
 				tvec = pose_tracker_.getTvec();
@@ -156,12 +152,31 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 json ArucoProcessor::GetProperties()
 {
 	// TODO detector_->getParams();
-	return json();
+	return json{
+		{ Params::marker_size, marker_size_m_ },
+		{ Params::use_tracker, use_tracker_ },
+		{ Params::tracker_error, pt_min_error_ratio_ }
+	};
 }
 
 void ArucoProcessor::SetProperties(const json &config)
 {
-	// TODO detector_->setParmas();
+	if (config.count(Params::marker_size))
+	{
+		marker_size_m_ = config[Params::marker_size].get<float>();
+	}
+
+	if (config.count(Params::use_tracker))
+	{
+		use_tracker_ = config[Params::use_tracker].get<bool>();
+	}
+
+	if (config.count(Params::tracker_error))
+	{
+		pt_min_error_ratio_ = config[Params::tracker_error].get<float>();
+	}
+
+	// TODO detector_->getParams(); and move methods from constructor to here
 }
 
 

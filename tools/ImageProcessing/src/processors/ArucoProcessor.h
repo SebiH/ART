@@ -26,6 +26,7 @@ namespace ImageProcessing
 
 		bool use_tracker_ = false;
 		aruco::MarkerPoseTracker pose_tracker_;
+		float pt_min_error_ratio_ = 4.0f;
 
 		FrameSize initialized_size_;
 		float marker_size_m_;
