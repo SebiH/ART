@@ -386,7 +386,7 @@ namespace Assets.Modules.Calibration
 
             int row = markerIndex / MarkersPerRow;
             int column = markerIndex % MarkersPerRow;
-            var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+            var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
 
             var markerOffsetX = MarginLeft + column * (MarginMarker + markerSize) + markerSize / 2f;
             var markerOffsetZ = -MarginTop - row * (MarginMarker + markerSize) - markerSize / 2f;
@@ -441,7 +441,7 @@ namespace Assets.Modules.Calibration
                     // draw virtual position of calibrated markers, based on optitrack + measurements
                     Gizmos.color = Color.cyan;
                     var markerPosWorld = GetMarkerWorldPosition(i, tableRotation);
-                    var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+                    var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
                     Gizmos.DrawWireSphere(markerPosWorld, 0.01f);
                     Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, markerSize / 2), markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, markerSize / 2));
                     Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, markerSize / 2), markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, -markerSize / 2));

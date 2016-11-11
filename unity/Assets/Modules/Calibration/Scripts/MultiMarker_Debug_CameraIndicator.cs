@@ -21,7 +21,7 @@ namespace Assets.Modules.Calibration
         void OnEnable()
         {
             ArucoListener.Instance.NewPoseDetected += OnArucoPose;
-            var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+            var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
             Visuals.localScale = new Vector3(markerSize, 0.001f, markerSize);
             _indicationColor = UnityEngine.Random.ColorHSV();
         }

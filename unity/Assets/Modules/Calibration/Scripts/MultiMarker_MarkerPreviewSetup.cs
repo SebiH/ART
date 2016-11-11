@@ -70,7 +70,7 @@ namespace Assets.Modules.Calibration
             var markerSetup = GetComponent<MultiMarker_MarkerSetup>();
             markerSetup.CalibratorToMarkerRotOffset = rotation.eulerAngles;
 
-            var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+            var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
             markerSetup.CalibratorToMarkerPosOffset = new Vector3(-markerSize/2f, 0, -markerSize/2f);
         }
     }

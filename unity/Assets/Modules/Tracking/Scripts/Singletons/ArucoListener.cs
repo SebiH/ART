@@ -61,7 +61,7 @@ namespace Assets.Modules.Tracking
         // Cannot be changed once script is running
         public Pipeline ArucoPipeline;
         // Cannot be changed once script is running
-        public double MarkerSizeInMeter = 0.15;
+        public float MarkerSizeInMeter = 0.15f;
         public bool UseTracker = false;
 
         public readonly Dictionary<int, MarkerPose> DetectedPoses;
