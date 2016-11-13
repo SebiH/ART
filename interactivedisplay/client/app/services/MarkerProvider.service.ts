@@ -16,7 +16,7 @@ export class MarkerProvider {
     public initMarkers() {
         while (this.markers.length > 0) {
             let marker = this.markers.pop();
-             marker.offPropertyChanged((marker) => this.syncMarker(marker));
+            marker.offPropertyChanged((marker) => this.syncMarker(marker));
         }
 
         let markerSize = 100;

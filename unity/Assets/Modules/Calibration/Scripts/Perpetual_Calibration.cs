@@ -1,6 +1,8 @@
 using Assets.Modules.Core;
+using Assets.Modules.InteractiveSurface;
 using Assets.Modules.Tracking;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Valve.VR;
 
@@ -22,16 +24,20 @@ namespace Assets.Modules.Calibration
 
         private Quaternion _ovrRotation;
 
+        private List<Marker> _markers = new List<Marker>();
+
         void OnEnable()
         {
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
             SteamVR_Utils.Event.Listen("new_poses", OnSteamVrPose);
+            InteractiveSurfaceClient.Instance.OnMessageReceived += HandleMarkerMessage;
         }
 
         void OnDisable()
         {
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
             SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
+            InteractiveSurfaceClient.Instance.OnMessageReceived -= HandleMarkerMessage;
         }
 
 
@@ -128,6 +134,27 @@ namespace Assets.Modules.Calibration
             var pose = new SteamVR_Utils.RigidTransform(poses[i].mDeviceToAbsoluteTracking);
 
             _ovrRotation = pose.rot;
+        }
+
+
+        private void HandleMarkerMessage(IncomingCommand cmd)
+        {
+            if (cmd.command == "marker")
+            {
+                var payload = JsonUtility.FromJson<Marker>(cmd.payload);
+                var existingMarker = _markers.FirstOrDefault((m) => m.id == payload.id);
+
+                if (existingMarker == null)
+                {
+                    _markers.Add(payload);
+                }
+                else
+                {
+                    existingMarker.posX = payload.posX;
+                    existingMarker.posY = payload.posY;
+                    existingMarker.size = payload.size;
+                }
+            }
         }
     }
 }
