@@ -4,7 +4,6 @@ import { Marker } from '../models/index';
 
 /**
  *    TODO: 
- *        - Send marker data to unity
  *        - Get marker arrangement from unity (low priority)
  */
 
@@ -12,53 +11,48 @@ import { Marker } from '../models/index';
 export class MarkerProvider {
     private markers: Marker[] = [];
 
-    constructor(private socketio: SocketIO) {
-        // socketio.on('marker', (markers) => { this.updateMarkers(markers) });
-    }
+    constructor(private socketio: SocketIO) { }
 
     public initMarkers() {
         while (this.markers.length > 0) {
-            this.markers.pop();
+            let marker = this.markers.pop();
+             marker.offPropertyChanged((marker) => this.syncMarker(marker));
         }
 
         let markerSize = 100;
-        let borderSize = 20 * 2;
-        // topleft
-        this.markers.push({
-            id: 0,
-            posX: 0,
-            posY: 0,
-            size: markerSize
-        });
-        // bottom left
-        this.markers.push({
-            id: 1,
-            posX: 0,
-            posY: window.innerHeight - markerSize - borderSize,
-            size: markerSize
-        });
+        let borderSize = 20;
+        let currentId = 0;
+        let markerCount = 5;
 
-        // bottom right
-        this.markers.push({
-            id: 2,
-            posX: window.innerWidth - markerSize - borderSize,
-            posY: window.innerHeight - markerSize - borderSize,
-            size: markerSize
-        });
+        let width = window.innerWidth - borderSize * 2;
+        let height = window.innerHeight - borderSize * 2;
 
-        // top right
-        this.markers.push({
-            id: 3,
-            posX: window.innerWidth - markerSize - borderSize,
-            posY: 0,
-            size: markerSize
-        });
+        // distribute markers on top
+        for (let i = 0; i < markerCount; i++) {
+            let marker = new Marker();
+            marker.id = currentId++;
+            marker.posX = Math.max(i / (markerCount - 1) * width - markerSize, 0) + borderSize;
+            marker.posY = borderSize;
+            marker.size = markerSize;
+            marker.onPropertyChanged((marker) => this.syncMarker(marker));
+            this.markers.push(marker);
+        }
+
+        // distribute markers on bottom
+        for (let i = 0; i < markerCount; i++) {
+            let marker = new Marker();
+            marker.id = currentId++;
+            marker.posX = Math.max(i / (markerCount - 1) * width - markerSize, 0) + borderSize;
+            marker.posY = window.innerHeight - markerSize - borderSize;
+            marker.size = markerSize;
+            marker.onPropertyChanged((marker) => this.syncMarker(marker));
+            this.markers.push(marker);
+        }
+
     }
 
-    private updateMarkers(markers) {
-        while (this.markers.length > 0) {
-            this.markers.pop();
-        }
+    private syncMarker(marker: Marker) {
+        this.socketio.sendMessage('marker', marker.toJson());
     }
 
     public getMarkers(): Marker[] {
