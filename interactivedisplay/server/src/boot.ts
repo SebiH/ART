@@ -18,7 +18,7 @@ sioServer.start(webServer);
 
 sioServer.onMessageReceived({
     handler: (msg) => {
-        unityServer.broadcast(msg.toString());
+        unityServer.broadcast(JSON.stringify(msg));
     }
 });
 

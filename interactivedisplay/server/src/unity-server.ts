@@ -35,7 +35,7 @@ export class UnityServer {
     }
 
     private raiseMessageReceivedEvent(msg: UnityMessage): void {
-        console.log(msg.toString());
+        console.log(JSON.stringify(msg));
         for (let listener of this.msgListeners) {
             listener.handler(msg);
         }
