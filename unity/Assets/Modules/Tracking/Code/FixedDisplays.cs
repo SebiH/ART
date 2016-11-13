@@ -19,9 +19,9 @@ namespace Assets.Modules.Tracking
             return _calibratedDisplays[name];
         }
 
-        public static void Set(string name, Vector3 topLeft, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topRight, Resolution resolution)
+        public static void Set(string name, Vector3 topLeft, Vector3 bottomLeft, Vector3 bottomRight, Vector3 topRight)
         {
-            var display = new FixedDisplay(topLeft, bottomLeft, bottomRight, topRight, resolution);
+            var display = new FixedDisplay(topLeft, bottomLeft, bottomRight, topRight);
 
             if (Has(name))
             {
