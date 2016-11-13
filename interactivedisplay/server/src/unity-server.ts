@@ -59,7 +59,7 @@ export class UnityServer {
     }
 
     private handleNewConnection(socket: net.Socket): void {
-        console.log(LOG_PREFIX + "New unity client connected from " + socket.address);
+        console.log(LOG_PREFIX + "New unity client connected from " + socket.address().address);
         this.clients.push(socket);
     }
 
@@ -75,7 +75,7 @@ export class UnityServer {
     }
 
     private handleSocketDisconnect(socket: net.Socket): void {
-        console.log(LOG_PREFIX + "Client " + socket.address +  " disconnect");
+        console.log(LOG_PREFIX + "Client " + socket.address().address +  " disconnect");
         _.pull(this.clients, socket);
     }
 }
