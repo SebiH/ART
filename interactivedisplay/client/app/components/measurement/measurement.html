@@ -1,0 +1,10 @@
+<div class="measure-container">
+    <div>
+        <div class="measure-bar"></div><br/>
+
+        <span>100px = {{ pixelCmRatio }} cm</span><br/>
+        <input type="number" [value]="pixelCmRatio" (input)="pixelCmRatio = $event.target.value">
+        <br/>
+        <button (click)="sendMeasurement()">Confirm</button>
+    </div>
+</div>

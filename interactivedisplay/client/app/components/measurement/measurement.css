@@ -1,0 +1,33 @@
+.measure-container {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.measure-container > div {
+    max-width: 50%;
+    background: #eee;
+    padding: 15px;
+    display: inline-block;
+    text-align: center;
+}
+
+.measure-bar {
+    border-top: solid 1px black;
+    margin-bottom: 20px;
+    width: 100px;
+    display: inline-block;
+}
+
+.measure-container > div > span {
+    font-family: monospace;
+    font-size: 2em;
+    line-height: 2em;
+    color: #222;
+}

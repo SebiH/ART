@@ -1,5 +1,5 @@
 import { Routes, RouterModule } from '@angular/router';
-import { AppComponent, MenuComponent, DemoComponent } from './components/index';
+import { AppComponent, MenuComponent, DemoComponent, MeasurementComponent } from './components/index';
 
 const routes: Routes = [
     {
@@ -9,6 +9,10 @@ const routes: Routes = [
     {
         path: 'demo',
         component: DemoComponent
+    },
+    {
+        path: 'measurement',
+        component: MeasurementComponent
     },
     {
         path: '',
