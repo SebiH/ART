@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent, MenuComponent, DemoComponent, MarkerOverlayComponent } from './components/index';
-import { SocketIO } from './services/index';
+import { MarkerProvider, SocketIO } from './services/index';
 
 import { routing } from './routes';
 
@@ -11,6 +11,6 @@ import { routing } from './routes';
   imports:      [ BrowserModule, HttpModule, routing ],
   declarations: [ AppComponent, MenuComponent, DemoComponent, MarkerOverlayComponent ],
   bootstrap:    [ AppComponent ],
-  providers:    [ SocketIO ]
+  providers:    [ SocketIO, MarkerProvider ]
 })
 export class AppModule { }
