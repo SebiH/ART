@@ -8,7 +8,7 @@ import { Util } from './util';
 
 const LOG_PREFIX = "[Display] ";
 
-export class SocketIoServer {
+export class SocketIOServer {
 
     private ioServer: SocketIO.Server;
     private clients: SocketIO.Socket[] = [];
@@ -28,8 +28,9 @@ export class SocketIoServer {
         this.ioServer.close();
     }
 
-    public broadcast(channel: string, msg: any): void {
+    public broadcast(channel: string, msg: any, target?: string): void {
         for (let client of this.clients) {
+            // TODO: check target
             client.emit(channel, msg);
         }
     }
