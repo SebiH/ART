@@ -6,8 +6,6 @@ namespace Assets.Modules.InteractiveSurface
 {
     public class RemoteDisplayManager : MonoBehaviour
     {
-        private float pixelCmRatio = 1;
-
         void OnEnable()
         {
             InteractiveSurfaceClient.Instance.OnMessageReceived += HandleCommand;
@@ -23,8 +21,8 @@ namespace Assets.Modules.InteractiveSurface
             switch (cmd.command)
             {
                 case "pixelCmRatio":
-                    pixelCmRatio = float.Parse(cmd.payload);
-                    Debug.Log("Setting PixelCmRatio to " + pixelCmRatio);
+                    DisplayUtility.PixelToCmRatio = float.Parse(cmd.payload);
+                    Debug.Log("Setting PixelCmRatio to " + DisplayUtility.PixelToCmRatio);
                     break;
 
                 case "window-size":
