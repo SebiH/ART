@@ -22,6 +22,8 @@ namespace Assets.Modules.InteractiveSurface
 
         void OnEnable()
         {
+            Instance = this;
+
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             try
