@@ -1,5 +1,11 @@
 import { Routes, RouterModule } from '@angular/router';
-import { AppComponent, MenuComponent, DemoComponent, MeasurementComponent } from './components/index';
+import {
+    AppComponent,
+    MenuComponent,
+    DemoComponent,
+    MeasurementComponent,
+    PanZoomComponent
+} from './components/index';
 
 const routes: Routes = [
     {
@@ -13,6 +19,10 @@ const routes: Routes = [
     {
         path: 'measurement',
         component: MeasurementComponent
+    },
+    {
+        path: 'panzoom',
+        component: PanZoomComponent
     },
     {
         path: '',
