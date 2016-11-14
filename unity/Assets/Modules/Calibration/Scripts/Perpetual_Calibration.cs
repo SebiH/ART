@@ -24,7 +24,7 @@ namespace Assets.Modules.Calibration
 
         private Quaternion _ovrRotation;
 
-        private List<Marker> _markers = new List<Marker>();
+        private List<DisplayMarker> _markers = new List<DisplayMarker>();
 
         void OnEnable()
         {
@@ -186,7 +186,7 @@ namespace Assets.Modules.Calibration
         {
             if (cmd.command == "marker")
             {
-                var payload = JsonUtility.FromJson<Marker>(cmd.payload);
+                var payload = JsonUtility.FromJson<DisplayMarker>(cmd.payload);
                 var existingMarker = _markers.FirstOrDefault((m) => m.id == payload.id);
 
                 if (existingMarker == null)

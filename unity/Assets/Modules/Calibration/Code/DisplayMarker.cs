@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Assets.Modules.Calibration
 {
     [Serializable]
-    public class Marker
+    public class DisplayMarker
     {
         public int id;
         public int posX;
