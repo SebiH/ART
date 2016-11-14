@@ -21,7 +21,7 @@ namespace Assets.Modules.InteractiveSurface
             switch (cmd.command)
             {
                 case "pixelCmRatio":
-                    DisplayUtility.PixelToCmRatio = float.Parse(cmd.payload);
+                    DisplayUtility.PixelToCmRatio = float.Parse(cmd.payload.Trim('"'));
                     Debug.Log("Setting PixelCmRatio to " + DisplayUtility.PixelToCmRatio);
                     break;
 
