@@ -69,6 +69,7 @@ namespace Assets.Modules.Calibration
                         if (isCurrent && isNearest)
                         {
                             nearestMarker = marker;
+                            nearestDistance = distance;
                         }
                     }
                 }
