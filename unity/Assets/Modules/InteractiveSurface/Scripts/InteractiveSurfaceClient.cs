@@ -16,6 +16,8 @@ namespace Assets.Modules.InteractiveSurface
         public delegate void MessageHandler(IncomingCommand cmd);
         public event MessageHandler OnMessageReceived;
 
+        public Queue<IncomingCommand> _queuedCommands = new Queue<IncomingCommand>();
+
         // see: https://forum.unity3d.com/threads/c-tcp-ip-socket-how-to-receive-from-server.227259/
         private Socket _socket;
         private byte[] _receiveBuffer = new byte[256 * 256];
@@ -49,6 +51,17 @@ namespace Assets.Modules.InteractiveSurface
             }
         }
 
+        void FixedUpdate()
+        {
+            if (OnMessageReceived != null)
+            {
+                while (_queuedCommands.Count > 0)
+                {
+                    OnMessageReceived(_queuedCommands.Dequeue());
+                }
+            }
+        }
+
         private void ReceiveData(IAsyncResult asyncResult)
         {
             // Check how much bytes are received and call Endreceive to finalize handshake
@@ -68,13 +81,13 @@ namespace Assets.Modules.InteractiveSurface
             // Split up json classes, in case multiple classes got sent in one batch
             var receivedJsonMsgs = SplitJson(receivedText);
 
-            if (OnMessageReceived != null)
+            foreach (var msg in receivedJsonMsgs)
             {
-                foreach (var msg in receivedJsonMsgs)
-                {
-                    OnMessageReceived(JsonUtility.FromJson<IncomingCommand>(msg));
-                }
+                var incomingCmd = JsonUtility.FromJson<IncomingCommand>(msg);
+                // messages have to be handled in main update() thread, to avoid possible threading issues in handlers
+                _queuedCommands.Enqueue(incomingCmd);
             }
+
 
             // Start receiving again
             _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
