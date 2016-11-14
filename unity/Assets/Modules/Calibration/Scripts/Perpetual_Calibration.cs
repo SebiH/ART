@@ -75,6 +75,9 @@ namespace Assets.Modules.Calibration
 
                 if (nearestMarker != null)
                 {
+                    // debugging
+                    __nearestMarkerId = nearestMarker.Id;
+
                     // apply calibration
                     var markerMatrix = Matrix4x4.TRS(nearestMarker.Position, nearestMarker.Rotation, Vector3.one);
                     var cameraMatrix = markerMatrix.inverse;
@@ -132,10 +135,13 @@ namespace Assets.Modules.Calibration
              * (x,-z) (unity) (display assumed to be horizontal in unity coords)
              */
 
-            // origin of marker coordinates is top-left corner
-            var unityPosX = DisplayUtility.PixelToUnityCoord(marker.posX);
+            // posX/Y points to topleft corner of marker; we need center for calibration purposes
+            var markerOffset = DisplayUtility.PixelToUnityCoord(marker.size) / 2f;
+
+            // origin of marker coordinates is top-left corner;
+            var unityPosX = DisplayUtility.PixelToUnityCoord(marker.posX) + markerOffset;
             var unityPosY = 0f; // marker lies directly on display
-            var unityPosZ = -DisplayUtility.PixelToUnityCoord(marker.posY);
+            var unityPosZ = -(DisplayUtility.PixelToUnityCoord(marker.posY) + markerOffset);
 
             var worldOffsetFromTopLeft = new Vector3(unityPosX, unityPosY, unityPosZ);
             var localOffsetFromTopLeft = display.Rotation * worldOffsetFromTopLeft;
@@ -197,5 +203,47 @@ namespace Assets.Modules.Calibration
                 ArucoListener.Instance.MarkerSizeInMeter = unitySize * 100;
             }
         }
+
+
+        #region Debugging
+
+        private int __nearestMarkerId = -1;
+
+        void OnDrawGizmos()
+        {
+            if (!Application.isPlaying)
+                return;
+
+            if (!FixedDisplays.Has(DisplayName))
+                return;
+
+            var display = FixedDisplays.Get(DisplayName);
+            var displayRotation = display.Rotation;
+
+            foreach (var marker in _markers)
+            {
+                if (marker.id == __nearestMarkerId)
+                    Gizmos.color = Color.green;
+                else
+                    Gizmos.color = Color.blue;
+
+                var markerPos = GetMarkerWorldPosition(marker.id);
+
+                Gizmos.DrawWireSphere(markerPos, 0.01f);
+
+                var offset = DisplayUtility.PixelToUnityCoord(marker.size) / 2;
+                var topleft = markerPos - displayRotation * new Vector3(-offset, 0, offset);
+                var bottomleft = markerPos - displayRotation * new Vector3(-offset, 0, -offset);
+                var bottomright = markerPos - displayRotation * new Vector3(offset, 0, -offset);
+                var topright = markerPos - displayRotation * new Vector3(offset, 0, offset);
+
+                Gizmos.DrawLine(topleft, bottomleft);
+                Gizmos.DrawLine(bottomleft, bottomright);
+                Gizmos.DrawLine(bottomright, topright);
+                Gizmos.DrawLine(topright, topleft);
+            }
+        }
+
+        #endregion
     }
 }
