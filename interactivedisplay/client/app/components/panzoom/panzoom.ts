@@ -12,11 +12,42 @@ import { InteractionData } from './InteractionData';
 })
 export class PanZoomComponent implements OnInit, OnDestroy {
 
-    posX: number = 0;
-    posY: number = 0;
-    zoom: number = 1;
+    private _posX: number = 0;
+    get posX(): number {
+        return this._posX;
+    }
 
-    constructor(private socketio: SocketIO, private elementref: ElementRef) {}
+    set posX(val: number) {
+        this._posX = val;
+        this.delayedSync();
+    }
+
+    private _posY: number = 0;
+    get posY(): number {
+        return this._posY;
+    }
+
+    set posY(val: number) {
+        this._posY = val;
+        this.delayedSync();
+    }
+
+
+    private _zoom: number = 1;
+    get zoom(): number {
+        return this._zoom;
+    }
+
+    set zoom(val: number) {
+        this._zoom = val;
+        this.delayedSync();
+    }
+
+    private delayedSync: Function;
+
+    constructor(private socketio: SocketIO, private elementref: ElementRef) {
+        this.delayedSync = _.debounce(() => {this.sync();});
+    }
 
     ngOnInit() {
         let el = this.elementref.nativeElement;
@@ -38,10 +69,18 @@ export class PanZoomComponent implements OnInit, OnDestroy {
         el.onmouseup = null;
     }
 
+    private sync() {
+        this.socketio.sendMessage('panzoom', {
+            posX: this.posX,
+            posY: this.posY,
+            zoom: this.zoom
+        });
+    }
+
 
     private viewStyle = {
         transform: 'scale(1)',
-        'transform-origin': '0px 0px 0px',
+        'transform-origin': '0px 0px 0px'
     };
 
     getViewStyle() {
