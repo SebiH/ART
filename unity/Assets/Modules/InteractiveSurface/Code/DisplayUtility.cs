@@ -8,12 +8,14 @@ namespace Assets.Modules.InteractiveSurface
 
         public static float PixelToUnityCoord(int pixelLocation)
         {
-            return PixelToCmRatio * pixelLocation;           
+            // pixel coords uses cm, unity uses m
+            return PixelToCmRatio * pixelLocation * 100;           
         }
 
         public static int UnityToPixelLocation(float unityCoord)
         {
-            return Mathf.RoundToInt((1 / PixelToCmRatio) * unityCoord);
+            // pixel coords uses cm, unity uses m
+            return Mathf.RoundToInt((1 / PixelToCmRatio) * (unityCoord / 100f));
         }
     }
 }
