@@ -10,8 +10,8 @@ namespace Assets.Modules.Calibration
 {
     public class Perpetual_Calibration : MonoBehaviour
     {
-        public float ArCutoffTime = 1 / 30f;
-        public float OptitrackCutoffTime = 1 / 30f;
+        public float ArCutoffTime = 0.2f;
+        public float OptitrackCutoffTime = 0.2f;
 
         public string DisplayName = "Surface";
 
