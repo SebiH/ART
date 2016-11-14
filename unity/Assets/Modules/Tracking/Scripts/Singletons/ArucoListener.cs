@@ -79,8 +79,7 @@ namespace Assets.Modules.Tracking
         private ArucoProcessor _arProcessor;
         private JsonOutput _arOutput;
 
-        private bool _hasNewOutput = false;
-        private ArucoOutput _currentOutput;
+        private Queue<ArucoOutput> _currentOutput = new Queue<ArucoOutput>();
 
         void OnEnable()
         {
@@ -110,16 +109,14 @@ namespace Assets.Modules.Tracking
 
         private void OnPoseChanged(string json_msg)
         {
-            _currentOutput = JsonUtility.FromJson<ArucoOutput>(json_msg);
-            _hasNewOutput = true;
+            _currentOutput.Enqueue(JsonUtility.FromJson<ArucoOutput>(json_msg));
         }
 
         void Update()
         {
-            if (_hasNewOutput)
+            while (_currentOutput.Count > 0)
             {
-                _hasNewOutput = false;
-                var output = _currentOutput;
+                var output = _currentOutput.Dequeue();
 
                 // TODO: processor only processes markers on left image at the moment!
                 foreach (var marker in output.markers_left)
