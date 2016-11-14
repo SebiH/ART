@@ -101,8 +101,46 @@ namespace Assets.Modules.Calibration
 
         private Vector3 GetMarkerWorldPosition(int id)
         {
-            // TODO.
-            return Vector3.zero;
+            var marker = _markers.FirstOrDefault((m) => m.id == id);
+            var display = FixedDisplays.Get(DisplayName);
+
+            if (marker == null)
+            {
+                // should never happen, in theory
+                Debug.Log("Unable to find marker " + id);
+                return Vector3.zero;
+            }
+
+            /*
+             * Display:
+             *       x
+             *   +------->
+             *   |
+             *  y|
+             *   v
+             *
+             * Unity:
+             *  ^   /
+             * y|  /z
+             *  | /
+             *  +--------
+             *    x
+             *
+             *
+             * (x,y) (display)
+             * =
+             * (x,-z) (unity) (display assumed to be horizontal in unity coords)
+             */
+
+            // origin of marker coordinates is top-left corner
+            var unityPosX = DisplayUtility.PixelToUnityCoord(marker.posX);
+            var unityPosY = 0f; // marker lies directly on display
+            var unityPosZ = -DisplayUtility.PixelToUnityCoord(marker.posY);
+
+            var worldOffsetFromTopLeft = new Vector3(unityPosX, unityPosY, unityPosZ);
+            var localOffsetFromTopLeft = display.Rotation * worldOffsetFromTopLeft;
+
+            return display.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
         }
 
         private void OnOptitrackPose(List<OptitrackPose> poses)
@@ -154,6 +192,9 @@ namespace Assets.Modules.Calibration
                     existingMarker.posY = payload.posY;
                     existingMarker.size = payload.size;
                 }
+
+                var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
+                ArucoListener.Instance.MarkerSizeInMeter = unitySize * 100;
             }
         }
     }

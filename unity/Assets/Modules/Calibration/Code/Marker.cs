@@ -7,8 +7,8 @@ namespace Assets.Modules.Calibration
     public class Marker
     {
         public int id;
-        public float posX;
-        public float posY;
-        public float size;
+        public int posX;
+        public int posY;
+        public int size;
     }
 }
