@@ -40,8 +40,6 @@ export class PanZoomComponent implements OnInit, OnDestroy {
 
 
     private viewStyle = {
-        '-webkit-transform': 'scale(1)',
-        '-webkit-transform-origin': '0px 0px 0px',
         transform: 'scale(1)',
         'transform-origin': '0px 0px 0px',
     };
@@ -53,10 +51,7 @@ export class PanZoomComponent implements OnInit, OnDestroy {
         ];
 
         this.viewStyle.transform = values.join(' ');
-        this.viewStyle['-webkit-transform'] = values.join(' ');
-
         this.viewStyle['transform-origin'] = this.posX + 'px ' + this.posY + 'px 0px';
-        this.viewStyle['-webkit-transform-origin'] = values.join(' ');
 
         return this.viewStyle;
     }
