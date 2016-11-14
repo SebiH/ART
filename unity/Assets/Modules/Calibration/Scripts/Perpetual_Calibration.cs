@@ -200,7 +200,7 @@ namespace Assets.Modules.Calibration
                 }
 
                 var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
-                ArucoListener.Instance.MarkerSizeInMeter = unitySize * 100;
+                ArucoListener.Instance.MarkerSizeInMeter = unitySize;
             }
         }
 
