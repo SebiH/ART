@@ -1,4 +1,5 @@
-﻿using Assets.Modules.Tracking;
+﻿using Assets.Modules.Core.Util;
+using Assets.Modules.Tracking;
 using Assets.Modules.Tracking.Scripts;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace Assets.Modules.Calibration
 
         public float CalibrationStability { get; private set; }
         public bool InvertUpDirection = false;
+
+        public bool UseAverage = false;
 
         public Transform TestCamera;
 
@@ -103,39 +106,40 @@ namespace Assets.Modules.Calibration
 
             if (markers == null || markers.Count() != 1) return;
 
-            var marker = markers.First();
-            //var rotations = new List<Quaternion>();
-            //var positions = new List<Vector3>();
+            if (UseAverage) { markers = new[] { markers.First() }; }
 
-            //foreach (var marker in markers)
-            //{
-            var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
+            var rotations = new List<Quaternion>();
+            var positions = new List<Vector3>();
 
-            var localPos = marker.ArCameraPosition;
-            var worldPos = markerPosWorld + tableRotation * localPos;
+            foreach (var marker in markers)
+            {
+                var markerPosWorld = GetMarkerWorldPosition(marker.ArMarkerId, tableRotation);
 
-            var localRot = marker.ArCameraRotation;
-            var localForward = localRot * Vector3.forward;
-            var localRight = localRot * Vector3.right;
-            var localUp = localRot * Vector3.up;
+                var localPos = marker.ArCameraPosition;
+                var worldPos = markerPosWorld + tableRotation * localPos;
 
-            var worldForward = tableRotation * localForward;
-            var worldRight = tableRotation * localRight;
-            var worldUp = tableRotation * localUp;
-            var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+                var localRot = marker.ArCameraRotation;
+                var localForward = localRot * Vector3.forward;
+                var localRight = localRot * Vector3.right;
+                var localUp = localRot * Vector3.up;
 
-            //    rotations.Add(worldRot);
-            //    positions.Add(worldPos);
-            //}
+                var worldForward = tableRotation * localForward;
+                var worldRight = tableRotation * localRight;
+                var worldUp = tableRotation * localUp;
+                var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+                rotations.Add(worldRot);
+                positions.Add(worldPos);
+            }
 
             Debug.Log("Calibrating...");
             CalibrationOffset.IsCalibrated = true;
             CalibrationOffset.LastCalibration = DateTime.Now;
-            CalibrationOffset.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
+            CalibrationOffset.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (QuaternionUtils.AverageV(positions) - _optitrackCameraPose.Position);
             // c = b * inv(a)
             // => b = c * a?
             // from ovrRot to worldRot
-            CalibrationOffset.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
+            CalibrationOffset.OpenVrRotationOffset = QuaternionUtils.Average(rotations) * Quaternion.Inverse(_ovrRot);
         }
 
 
