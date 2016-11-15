@@ -13,6 +13,9 @@ namespace Assets.Modules.Calibration
         public float ArCutoffTime = 0.2f;
         public float OptitrackCutoffTime = 0.2f;
 
+        public float NearestDistanceThreshold = 0.3f;
+        public float MinMarkerAngle = 35f;
+
         public string DisplayName = "Surface";
 
         // Camera used to determine which marker should be selected for calibration
@@ -40,6 +43,8 @@ namespace Assets.Modules.Calibration
             InteractiveSurfaceClient.Instance.OnMessageReceived -= HandleMarkerMessage;
         }
 
+        private List<Vector3> _perMarkerPosCalib = new List<Vector3>();
+        private List<Quaternion> _perMarkerRotCalib = new List<Quaternion>();
 
         void Update()
         {
@@ -74,8 +79,15 @@ namespace Assets.Modules.Calibration
                     }
                 }
 
-                if (nearestMarker != null)
+                if (nearestMarker != null && nearestDistance < NearestDistanceThreshold)
                 {
+                    if (__nearestMarkerId != nearestMarker.Id)
+                    {
+                        _perMarkerPosCalib.Clear();
+                        _perMarkerRotCalib.Clear();
+                    }
+
+
                     // debugging
                     __nearestMarkerId = nearestMarker.Id;
 
@@ -94,11 +106,17 @@ namespace Assets.Modules.Calibration
                     var worldUp = display.Rotation * localUp;
                     var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
-                    CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackPose.Rotation) * (worldPos - _optitrackPose.Position);
-                    // c = b * inv(a)
-                    // => b = c * a?
-                    // from ovrRot to worldRot
-                    CalibrationParams.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRotation);
+                    _perMarkerPosCalib.Add(Quaternion.Inverse(_optitrackPose.Rotation) * (worldPos - _optitrackPose.Position));
+                    _perMarkerRotCalib.Add(worldRot * Quaternion.Inverse(_ovrRotation));
+
+                    if (_perMarkerPosCalib.Count > 5 && _perMarkerPosCalib.Count < 50)
+                    {
+                        CalibrationParams.OptitrackToCameraOffset = MathUtility.Average(_perMarkerPosCalib);
+                        // c = b * inv(a)
+                        // => b = c * a?
+                        // from ovrRot to worldRot
+                        CalibrationParams.OpenVrRotationOffset = MathUtility.Average(_perMarkerRotCalib);
+                    }
                 }
             }
         }

@@ -19,8 +19,8 @@ export class MarkerProvider {
             marker.offPropertyChanged((marker) => this.syncMarker(marker));
         }
 
-        let markerSize = 100;
-        let borderSize = 20;
+        let markerSize = 200;
+        let borderSize = 50;
         let currentId = 0;
         let markerCount = 5;
 
@@ -29,26 +29,16 @@ export class MarkerProvider {
 
         // distribute markers on top
         for (let i = 0; i < markerCount; i++) {
-            let marker = new Marker();
-            marker.id = currentId++;
-            marker.posX = Math.max(i / (markerCount - 1) * width - markerSize, 0) + borderSize;
-            marker.posY = borderSize;
-            marker.size = markerSize;
-            marker.onPropertyChanged((marker) => this.syncMarker(marker));
-            this.markers.push(marker);
+            for (let j = 0; j < markerCount; j++) {
+                let marker = new Marker();
+                marker.id = currentId++;
+                marker.posX = Math.max(i / (markerCount - 1) * width - markerSize, 0) + borderSize;
+                marker.posY = Math.max(j / (markerCount - 1) * height - markerSize, 0) + borderSize;
+                marker.size = markerSize;
+                marker.onPropertyChanged((marker) => this.syncMarker(marker));
+                this.markers.push(marker);
+            }
         }
-
-        // distribute markers on bottom
-        for (let i = 0; i < markerCount; i++) {
-            let marker = new Marker();
-            marker.id = currentId++;
-            marker.posX = Math.max(i / (markerCount - 1) * width - markerSize, 0) + borderSize;
-            marker.posY = window.innerHeight - markerSize - borderSize;
-            marker.size = markerSize;
-            marker.onPropertyChanged((marker) => this.syncMarker(marker));
-            this.markers.push(marker);
-        }
-
     }
 
     private syncMarker(marker: Marker) {

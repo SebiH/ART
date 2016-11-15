@@ -4,7 +4,7 @@ namespace Assets.Modules.InteractiveSurface
 {
     public static class DisplayUtility
     {
-        public static float PixelToCmRatio = 0.01f;
+        public static float PixelToCmRatio = 0.0485f; // measured 2016-11-15
 
         public static float PixelToUnityCoord(float pixelLocation)
         {

@@ -18,7 +18,6 @@ namespace Assets.Modules.InteractiveSurface
 
         void OnTriggerEnter(Collider col)
         {
-            Debug.Log("collision");
             if (col.gameObject.name == "SurfaceHitbox")
             {
                 GetComponent<Renderer>().enabled = true;

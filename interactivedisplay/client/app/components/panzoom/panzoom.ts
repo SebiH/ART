@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { SocketIO } from '../../services/index';
@@ -45,7 +45,7 @@ export class PanZoomComponent implements OnInit, OnDestroy {
 
     private delayedSync: Function;
 
-    constructor(private socketio: SocketIO, private elementref: ElementRef) {
+    constructor(private socketio: SocketIO, private elementref: ElementRef, private zone: NgZone) {
         this.delayedSync = _.debounce(() => {this.sync();});
     }
 
@@ -134,24 +134,28 @@ export class PanZoomComponent implements OnInit, OnDestroy {
             ev.preventDefault();
             ev.stopPropagation();
             this.onMouseDown(el, ev);
+            this.zone.run(() => {});
         }
 
         el.onmousemove = (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
             this.onMouseMove(el, ev);
+            this.zone.run(() => {});
         }
 
         el.onmouseup = (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
             this.onMouseUp(el, ev);
+            this.zone.run(() => {});
         }
 
         el.onmousewheel = (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
             this.onMouseWheel(el, ev);
+            this.zone.run(() => {});
         }
     }
 
@@ -216,24 +220,28 @@ export class PanZoomComponent implements OnInit, OnDestroy {
             ev.preventDefault();
             ev.stopPropagation();
             this.onTouchStart(el, ev);
+            this.zone.run(() => {});
         };
 
         el.ontouchmove = (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
             this.onTouchMove(ev);
+            this.zone.run(() => {});
         }
 
         el.ontouchend = (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
             this.onTouchEnd(ev);
+            this.zone.run(() => {});
         }
 
         el.ontouchcancel = (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
             this.onTouchEnd(ev);
+            this.zone.run(() => {});
         }
     }
 
