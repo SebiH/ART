@@ -10,23 +10,29 @@ namespace Assets.Modules.Tracking
         public static float LastCalibrationTime { get; private set; }
 
         private static Quaternion _rotationOffset = Quaternion.identity;
+        private static Quaternion _targetRotationOffset = Quaternion.identity;
+        private static Quaternion _startRotationOffset = Quaternion.identity;
         public static Quaternion OpenVrRotationOffset
         {
             get { return _rotationOffset; }
             set
             {
-                _rotationOffset = value;
+                _startRotationOffset = _rotationOffset;
+                _targetRotationOffset = value;
                 UpdateCalibration();
             }
         }
 
         private static Vector3 _camOffset = Vector3.zero;
+        private static Vector3 _targetCamOffset = Vector3.zero;
+        private static Vector3 _startCamOffset = Vector3.zero;
         public static Vector3 OptitrackToCameraOffset
         {
             get { return _camOffset; }
             set
             {
-                _camOffset = value;
+                _startCamOffset = _camOffset;
+                _targetCamOffset = value;
                 UpdateCalibration();
             }
         }
@@ -37,8 +43,9 @@ namespace Assets.Modules.Tracking
         }
 
 
-
         public string StartupFile = "";
+        [Range(0.1f, 10f)]
+        public float Smoothing = 5f;
         public bool OverrideCalibration = false;
 
         public Vector3 OverrideRotation;
@@ -54,9 +61,9 @@ namespace Assets.Modules.Tracking
             }
         }
 
-#if UNITY_EDITOR
         void Update()
         {
+#if UNITY_EDITOR
             if (OverrideCalibration)
             {
                 OptitrackToCameraOffset = OverridePosition;
@@ -67,8 +74,14 @@ namespace Assets.Modules.Tracking
                 OverridePosition = OptitrackToCameraOffset;
                 OverrideRotation = OpenVrRotationOffset.eulerAngles;
             }
-        }
 #endif
+
+            if ((_targetCamOffset - _camOffset).sqrMagnitude > 0.0001f)
+            {
+                _camOffset = Vector3.Lerp(_startCamOffset, _targetCamOffset, (Time.unscaledTime - LastCalibrationTime) * 1 / Smoothing);
+                _rotationOffset = Quaternion.Lerp(_startRotationOffset, _targetRotationOffset, (Time.unscaledTime - LastCalibrationTime) * (1 / Smoothing));
+            }
+        }
 
 
         #region Serializing
