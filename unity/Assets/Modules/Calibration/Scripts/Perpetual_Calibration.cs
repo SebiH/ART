@@ -60,6 +60,10 @@ namespace Assets.Modules.Calibration
                 // get intersection between camera ray and display plane
                 Vector3 intersection = new Vector3();
                 var hasIntersection = MathUtility.LinePlaneIntersection(out intersection, TrackedCamera.position, TrackedCamera.forward, display.Normal, display.GetCornerPosition(Corner.TopLeft));
+
+                var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, display.Normal);
+                Debug.Log(angle);
+
                 if (hasIntersection)
                 {
                     foreach (var marker in ArucoListener.Instance.DetectedPoses.Values)
