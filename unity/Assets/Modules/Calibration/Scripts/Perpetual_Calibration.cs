@@ -15,6 +15,7 @@ namespace Assets.Modules.Calibration
 
         public float NearestDistanceThreshold = 0.3f;
         public float MinMarkerAngle = 35f;
+        public float MaxMarkerCameraDistance = 0.6f;
 
         public string DisplayName = "Surface";
 
@@ -69,7 +70,7 @@ namespace Assets.Modules.Calibration
                         // calculate distance between intersection and marker
                         var markerWorldPosition = GetMarkerWorldPosition(marker.Id);
                         var distance = (intersection - markerWorldPosition).sqrMagnitude;
-                        bool isNearest = (nearestMarker == null) || (distance < nearestDistance);
+                        bool isNearest = (nearestMarker == null) || ((distance < nearestDistance));
 
                         if (isCurrent && isNearest)
                         {
@@ -81,6 +82,14 @@ namespace Assets.Modules.Calibration
 
                 if (nearestMarker != null && nearestDistance < NearestDistanceThreshold)
                 {
+                    var markerWorldPos = GetMarkerWorldPosition(nearestMarker.Id);
+                    var distMarkerToCamera = (markerWorldPos - TrackedCamera.position).sqrMagnitude;
+
+                    if (distMarkerToCamera > MaxMarkerCameraDistance)
+                    {
+                        return;
+                    }
+
                     if (__nearestMarkerId != nearestMarker.Id)
                     {
                         _perMarkerPosCalib.Clear();
@@ -96,7 +105,7 @@ namespace Assets.Modules.Calibration
                     var cameraMatrix = markerMatrix.inverse;
 
                     var localPos = cameraMatrix.GetPosition();
-                    var worldPos = GetMarkerWorldPosition(nearestMarker.Id) + display.Rotation * localPos;
+                    var worldPos = markerWorldPos + display.Rotation * localPos;
 
                     var localRot = cameraMatrix.GetRotation();
                     var localForward = localRot * Vector3.forward;
