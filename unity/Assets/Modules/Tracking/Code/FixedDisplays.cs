@@ -40,7 +40,7 @@ namespace Assets.Modules.Tracking
         private class SavedDisplay
         {
             public string Name;
-            public FixedDisplay Display;
+            public Vector3[] DisplayCorners;
         }
 
         [Serializable]
@@ -61,7 +61,12 @@ namespace Assets.Modules.Tracking
                 displays.Displays[counter] = new SavedDisplay
                 {
                     Name = pair.Key,
-                    Display = pair.Value
+                    DisplayCorners = new[] {
+                        pair.Value.GetCornerPosition(Corner.TopLeft),
+                        pair.Value.GetCornerPosition(Corner.BottomLeft),
+                        pair.Value.GetCornerPosition(Corner.BottomRight),
+                        pair.Value.GetCornerPosition(Corner.TopRight),
+                    }
                 };
 
                 counter++;
@@ -77,7 +82,7 @@ namespace Assets.Modules.Tracking
 
             foreach (var display in displays.Displays)
             {
-                _calibratedDisplays.Add(display.Name, display.Display);
+                Set(display.Name, display.DisplayCorners[0], display.DisplayCorners[1], display.DisplayCorners[2], display.DisplayCorners[3]);
             }
         }
 
