@@ -8,7 +8,7 @@ namespace Assets.Modules.Tracking
     public class OptitrackPose
     {
         [Serializable]
-        public struct Marker
+        public class Marker
         {
             public int Id;
             public Vector3 Position;

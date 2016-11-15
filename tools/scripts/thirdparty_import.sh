@@ -10,6 +10,6 @@ function fail {
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR/../
 
-curl -o $ZIPFILE dl.sebi.sh/$ZIPFILE
+curl -o $ZIPFILE https://dl.sebi.sh/$ZIPFILE
 unzip $ZIPFILE
 rm $ZIPFILE

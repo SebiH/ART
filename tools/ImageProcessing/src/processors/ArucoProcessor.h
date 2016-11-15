@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <aruco/aruco.h>
 #include "processors/Processor.h"
 
@@ -23,6 +24,12 @@ namespace ImageProcessing
 
 		aruco::MarkerDetector detector_;
 		aruco::CameraParameters camera_params_;
+
+		bool use_tracker_ = false;
+		// each marker has its own tracker
+		std::map<int,aruco::MarkerPoseTracker> pose_trackers_;
+		float pt_min_error_ratio_ = 4.0f;
+
 		FrameSize initialized_size_;
 		float marker_size_m_;
 

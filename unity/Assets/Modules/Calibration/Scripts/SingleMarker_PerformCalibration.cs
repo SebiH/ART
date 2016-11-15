@@ -38,7 +38,7 @@ namespace Assets.Modules.Calibration
         private Quaternion _arucoRot = Quaternion.identity;
 #endif
 
-        public List<OptitrackPose.Marker> CalibrationOffsets = new List<OptitrackPose.Marker>();
+        public List<OptitrackPose.Marker> CalibrationParamss = new List<OptitrackPose.Marker>();
         public string OptitrackCalibrationName = "CalibrationHelper";
         public string OptitrackCameraName = "HMD";
         // will be set by script
@@ -90,7 +90,7 @@ namespace Assets.Modules.Calibration
 #else
             IsReadyForCalibration = HasSteadyOptitrackCameraPose && HasSteadyOptitrackCalibrationPose && HasSteadyOpenVrPose && HasSteadyArucoPose;
 
-            if (ArucoCamera != null && !CalibrationOffset.IsCalibrated)
+            if (ArucoCamera != null)
             {
                 ArucoCamera.transform.localPosition = _arucoPos;
                 ArucoCamera.transform.localRotation = _arucoRot;
@@ -122,7 +122,7 @@ namespace Assets.Modules.Calibration
         }
 #else
 
-        private void OnArucoPose(ArucoMarkerPose pose)
+        private void OnArucoPose(MarkerPose pose)
         {
             if (pose.Id == ArucoCalibrationId)
             {
@@ -209,9 +209,6 @@ namespace Assets.Modules.Calibration
                 return;
             }
 
-            CalibrationOffset.IsCalibrated = true;
-            CalibrationOffset.LastCalibration = DateTime.Now;
-
             /*
              *  Position
              */
@@ -219,16 +216,16 @@ namespace Assets.Modules.Calibration
             // offset optitrack -> marker
             var markerPosInRoom = Vector3.zero;
 
-            if (CalibrationOffsets.Count != 0)
+            if (CalibrationParamss.Count != 0)
             {
                 // build average over all given offsets
-                foreach (var calibOffset in CalibrationOffsets)
+                foreach (var calibOffset in CalibrationParamss)
                 {
                     var matchingMarker = _optitrackCalibrationPose.Markers.First(m => m.Id == calibOffset.Id);
                     markerPosInRoom += (matchingMarker.Position + _optitrackCalibrationPose.Rotation * calibOffset.Position);
                 }
 
-                markerPosInRoom = markerPosInRoom / CalibrationOffsets.Count;
+                markerPosInRoom = markerPosInRoom / CalibrationParamss.Count;
             }
 
 #if (USE_ARTOOLKIT)
@@ -237,7 +234,7 @@ namespace Assets.Modules.Calibration
             var artkCameraPosInRoom = _arucoPos + markerPosInRoom; // TODO: could be '-' instead of '+' ?
 #endif
 
-            CalibrationOffset.OptitrackToCameraOffset = (artkCameraPosInRoom - _optitrackCameraPose.Position);
+            CalibrationParams.OptitrackToCameraOffset = (artkCameraPosInRoom - _optitrackCameraPose.Position);
 
 
             /*
@@ -259,7 +256,7 @@ namespace Assets.Modules.Calibration
 
             // this should be the direction in which the OpenVR headset *should*
             // be looking - anything else we'll save as offset
-            CalibrationOffset.OpenVrRotationOffset  = _ovrRot * Quaternion.Inverse(cameraRotationInRoom);
+            CalibrationParams.OpenVrRotationOffset  = _ovrRot * Quaternion.Inverse(cameraRotationInRoom);
         }
     }
 }

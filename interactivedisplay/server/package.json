@@ -1,0 +1,28 @@
+{
+  "name": "InteractiveDisplayServer",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "npm install && tsc && node bin/boot.js"
+  },
+  "description": "InteractiveDisplayNode",
+  "main": "bin/boot.js",
+  "private": true,
+  "author": {
+    "name": "Sebastian Hubenschmid",
+    "email": ""
+  },
+  "dependencies": {
+    "@types/express": "^4.0.33",
+    "@types/lodash": "^4.14.38",
+    "@types/node": "^6.0.46",
+    "@types/socket.io": "^1.4.27",
+    "express": "^4.14.0",
+    "lodash": "^4.16.6",
+    "socket.io": "^1.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^6.0.46",
+    "tslint": "^3.15.1",
+    "typescript": "^2.0.6"
+  }
+}

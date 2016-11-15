@@ -10,13 +10,16 @@
 using namespace ImageProcessing;
 using json = nlohmann::json;
 
+namespace Params {
+	static const auto use_tracker = "use_tracker";
+	static const auto tracker_error = "tracker_error_ratio";
+	static const auto marker_size = "marker_size_m";
+}
+
 ArucoProcessor::ArucoProcessor(const json &marker_config)
 	: initialized_size_(-1, -1, -1)
 {
-	if (marker_config.count("marker_size_m"))
-	{
-		marker_size_m_ = marker_config["marker_size_m"].get<float>();
-	}
+	SetProperties(marker_config);
 
 	// detector settings
 	// TODO: deprecated! use setParams, allow settings via Get/SetProperties
@@ -56,12 +59,37 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 
 	for (auto &marker : detected_markers)
 	{
+		if (!marker.isValid())
+		{
+			continue;
+		}
+
+		cv::Mat rvec, tvec;
+
+		if (use_tracker_)
+		{
+			if (pose_trackers_[marker.id].estimatePose(marker, camera_params_, marker_size_m_, pt_min_error_ratio_))
+			{
+				rvec = pose_trackers_[marker.id].getRvec();
+				tvec = pose_trackers_[marker.id].getTvec();
+			}
+			else
+			{
+				continue;
+			}
+		}
+		else
+		{
+			rvec = marker.Rvec;
+			tvec = marker.Tvec;
+		}
+
+
 		// Conversion to unity coordinate system
-		marker.Rvec.at<float>(0, 0) = -marker.Rvec.at<float>(0, 0);
-		marker.Rvec.at<float>(2, 0) = -marker.Rvec.at<float>(2, 0);
+		rvec.at<float>(0, 0) = -rvec.at<float>(0, 0);
+		rvec.at<float>(2, 0) = -rvec.at<float>(2, 0);
 		cv::Mat rotation(3, 3, CV_32FC1);
-		cv::Rodrigues(marker.Rvec, rotation);
-		marker.draw(img_left, cv::Scalar(0, 0, 255, 255));
+		cv::Rodrigues(rvec, rotation);
 
 		float rotation_matrix[16];
 		rotation_matrix[0] = rotation.at<float>(0);
@@ -89,13 +117,16 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		Quaternion adjustment{ 1.0f, 0.0f, 0.0f, 0.0f };
 		quat = MultiplyQuaternion(&quat, &adjustment);
 
+		// Draw markers on image
+		marker.draw(img_left, cv::Scalar(0, 0, 255, 255));
+
 		// Save JSON info about marker
 		processed_markers["markers_left"].push_back(json{
 			{ "id", marker.id },
 			{ "position", {
-				{ "x", marker.Tvec.at<float>(0, 0) },
-				{ "y", marker.Tvec.at<float>(1, 0) },
-				{ "z", marker.Tvec.at<float>(2, 0) }
+				{ "x", tvec.at<float>(0, 0) },
+				{ "y", tvec.at<float>(1, 0) },
+				{ "z", tvec.at<float>(2, 0) }
 			}},
 			{ "rotation", {
 				{ "x", quat.x },
@@ -105,7 +136,6 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 			}}
 		});
 	}
-
 
 	if (detected_markers.size() > 0)
 	{
@@ -122,12 +152,34 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 json ArucoProcessor::GetProperties()
 {
 	// TODO detector_->getParams();
-	return json();
+	return json{
+		{ Params::marker_size, marker_size_m_ },
+		{ Params::use_tracker, use_tracker_ },
+		{ Params::tracker_error, pt_min_error_ratio_ }
+	};
 }
 
 void ArucoProcessor::SetProperties(const json &config)
 {
-	// TODO detector_->setParmas();
+	if (config.count(Params::marker_size))
+	{
+		marker_size_m_ = config[Params::marker_size].get<float>();
+	}
+
+	if (config.count(Params::use_tracker))
+	{
+		use_tracker_ = config[Params::use_tracker].get<bool>();
+	}
+
+	if (config.count(Params::tracker_error))
+	{
+		pt_min_error_ratio_ = config[Params::tracker_error].get<float>();
+	}
+
+	// reset all trackers to remove any existing data
+	pose_trackers_ = std::map<int, aruco::MarkerPoseTracker>();
+
+	// TODO detector_->getParams(); and move methods from constructor to here
 }
 
 

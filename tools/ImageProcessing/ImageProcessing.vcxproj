@@ -112,6 +112,7 @@
     <ClCompile Include="src\pipelines\PipelineManager.cpp" />
     <ClCompile Include="src\processors\ArToolkitProcessor.cpp" />
     <ClCompile Include="src\processors\ArucoProcessor.cpp" />
+    <ClCompile Include="src\processors\Stereo3DProcessor.cpp" />
     <ClCompile Include="src\processors\_stereo_detection.cpp" />
     <ClCompile Include="src\pipelines\ThreadedPipeline.cpp" />
     <ClCompile Include="src\tools\ArucoTools.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="src\processors\ArucoProcessor.h" />
     <ClInclude Include="src\processors\Processor.h" />
     <ClInclude Include="src\api\unity_plugin.h" />
+    <ClInclude Include="src\processors\Stereo3dProcessor.h" />
     <ClInclude Include="src\tools\ArucoTools.h" />
     <ClInclude Include="src\utils\Event.h" />
     <ClInclude Include="src\utils\Logger.h" />

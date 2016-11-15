@@ -1,4 +1,3 @@
-using Assets.Modules.Core.Util;
 using Assets.Modules.Tracking;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ namespace Assets.Modules.Calibration
         void OnEnable()
         {
             ArucoListener.Instance.NewPoseDetected += OnArucoPose;
-            var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+            var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
             Visuals.localScale = new Vector3(markerSize, 0.001f, markerSize);
             _indicationColor = UnityEngine.Random.ColorHSV();
         }
@@ -32,14 +31,14 @@ namespace Assets.Modules.Calibration
             ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
         }
 
-        void OnArucoPose(ArucoMarkerPose pose)
+        void OnArucoPose(MarkerPose pose)
         {
             if (pose.Id == MarkerId)
             {
                 // pose is marker's pose -> inverted we get camera pose
                 var markerMatrix = Matrix4x4.TRS(pose.Position, pose.Rotation, Vector3.one);
                 var cameraMatrix = markerMatrix.inverse;
-                var cameraLocalPos = MatrixUtils.ExtractTranslationFromMatrix(cameraMatrix);
+                var cameraLocalPos = cameraMatrix.GetPosition();
                 var cameraWorldPos = transform.TransformPoint(cameraLocalPos);
 
                 var camPose = new TimedPose

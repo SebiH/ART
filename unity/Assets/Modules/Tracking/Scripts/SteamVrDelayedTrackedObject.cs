@@ -119,7 +119,7 @@ namespace Assets.Modules.Tracking
 
             if (TrackRotation)
             {
-                transform.rotation = CalibrationOffset.OpenVrRotationOffset * pose.rot;
+                transform.rotation = CalibrationParams.OpenVrRotationOffset * pose.rot;
             }
         }
 

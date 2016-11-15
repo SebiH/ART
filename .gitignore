@@ -95,15 +95,18 @@ sysinfo.txt
 # ==========
 
 # Generated files
-/interactivedisplay/InteractiveDisplayNode/app/**/*.js
-/interactivedisplay/InteractiveDisplayNode/app/**/*.js.map
-/interactivedisplay/InteractiveDisplayNode/server/**/*.js
-/interactivedisplay/InteractiveDisplayNode/server/**/*.js.map
-/interactivedisplay/InteractiveDisplayNode/markers
+/interactivedisplay/client/app/**/*.js
+/interactivedisplay/client/app/**/*.js.map
+/interactivedisplay/client/markers
+/interactivedisplay/server/**/*.js
+/interactivedisplay/server/**/*.js.map
 
 # NPM
-/interactivedisplay/InteractiveDisplayNode/node_modules
+/interactivedisplay/*/node_modules
 
 # Visual Studio files
 .ntvs_analysis.dat
-/interactivedisplay/InteractiveDisplayNode/**/*.dll
+/interactivedisplay/**/*.dll
+
+# Sublime workspaces contain user data
+*.sublime-workspace

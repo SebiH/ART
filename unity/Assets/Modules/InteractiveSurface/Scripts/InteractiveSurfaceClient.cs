@@ -1,91 +1,157 @@
-using Assets.Code.Graph;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Threading;
+using System.Text;
 using UnityEngine;
 
-public class InteractiveSurfaceClient : MonoBehaviour
+namespace Assets.Modules.InteractiveSurface
 {
-    public string ServerIp = "127.0.0.1";
-    public int ServerPort = 8835;
-
-    public GameObject Screen;
-    public GameObject Cursor;
-    public DataPoint Bar;
-
-    public bool IsVertical = false;
-
-    private Vector2 DisplaySize;
-
-    private TcpClient _client;
-    private bool _isRunning;
-    private Vector2 _currentPosition = Vector2.zero;
-    private bool _hasNewPosition;
-
-    void Start()
+    public class InteractiveSurfaceClient : MonoBehaviour
     {
-        _client = new TcpClient();
-        _client.Connect(ServerIp, ServerPort);
-        _isRunning = true;
+        public static InteractiveSurfaceClient Instance { get; private set; }
 
-        Thread t = new Thread(new ThreadStart(ReceiveData));
-        t.Start();
+        public string ServerIp = "127.0.0.1";
+        public int ServerPort = 8835;
 
-        if (IsVertical)
+        public delegate void MessageHandler(IncomingCommand cmd);
+        public event MessageHandler OnMessageReceived;
+
+        public Queue<IncomingCommand> _queuedCommands = new Queue<IncomingCommand>();
+
+        // see: https://forum.unity3d.com/threads/c-tcp-ip-socket-how-to-receive-from-server.227259/
+        private Socket _socket;
+        private byte[] _receiveBuffer = new byte[256 * 256];
+
+        void OnEnable()
         {
-            DisplaySize = new Vector2(transform.localScale.z, transform.localScale.y);
-        }
-        else
-        {
-            DisplaySize = new Vector2(transform.localScale.x, transform.localScale.z);
-        }
+            Instance = this;
 
-        var oldScale = transform.localScale;
-        transform.localScale = Vector3.one;
-        Cursor.transform.localScale = Vector3.one * 0.04f;
-        Screen.transform.localScale = oldScale;
-    }
+            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-    private void ReceiveData()
-    {
-        var stream = _client.GetStream();
-
-        var expectedFloats = 2;
-        var byteBuffer = new byte[expectedFloats * sizeof(float)];
-        var floatBuffer = new float[expectedFloats];
-
-        while (_isRunning)
-        {
-            stream.Read(byteBuffer, 0, byteBuffer.Length);
-            Buffer.BlockCopy(byteBuffer, 0, floatBuffer, 0, byteBuffer.Length);
-            _currentPosition = new Vector2(floatBuffer[0], floatBuffer[1]);
-            _hasNewPosition = true;
-        }
-    }
-
-    void Update()
-    {
-        if (_hasNewPosition)
-        {
-            _hasNewPosition = false;
-
-            if (IsVertical)
+            try
             {
-                Cursor.transform.localPosition = new Vector3(0, (_currentPosition.y - 0.5f) * DisplaySize.y, (_currentPosition.x - 0.5f) * DisplaySize.x);
+                _socket.Connect(ServerIp, ServerPort);
+                _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
             }
-            else
+            catch (SocketException ex)
             {
-                Cursor.transform.localPosition = new Vector3((_currentPosition.x - 0.5f) * DisplaySize.x, 0, (_currentPosition.y - 0.5f) * DisplaySize.y);
+                Debug.Log(ex.Message);
+            }
+        }
+
+        void OnDisable()
+        {
+            try
+            {
+                _socket.Disconnect(false);
+            }
+            catch (SocketException ex)
+            {
+                Debug.Log(ex.Message);
+            }
+        }
+
+        void FixedUpdate()
+        {
+            if (OnMessageReceived != null)
+            {
+                while (_queuedCommands.Count > 0)
+                {
+                    OnMessageReceived(_queuedCommands.Dequeue());
+                }
+            }
+        }
+
+        private void ReceiveData(IAsyncResult asyncResult)
+        {
+            // Check how much bytes are received and call Endreceive to finalize handshake
+            int received = _socket.EndReceive(asyncResult);
+
+            if (received <= 0)
+                return;
+
+            // Copy the received data into new buffer , to avoid null bytes
+            byte[] receivedData = new byte[received];
+            Buffer.BlockCopy(_receiveBuffer, 0, receivedData, 0, received);
+
+            // Process data
+            UTF8Encoding encoding = new UTF8Encoding();
+            var receivedText = encoding.GetString(receivedData);
+
+            // Split up json classes, in case multiple classes got sent in one batch
+            var receivedJsonMsgs = SplitJson(receivedText);
+
+            foreach (var msg in receivedJsonMsgs)
+            {
+                var incomingCmd = JsonUtility.FromJson<IncomingCommand>(msg);
+                // messages have to be handled in main update() thread, to avoid possible threading issues in handlers
+                _queuedCommands.Enqueue(incomingCmd);
             }
 
-            Bar.TargetHeight = UnityEngine.Random.value * 7.5f;
-        }
-    }
 
-    void OnDestroy()
-    {
-        _isRunning = false;
-        _client.Close();
+            // Start receiving again
+            _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
+        }
+
+        private void SendData(byte[] data)
+        {
+            SocketAsyncEventArgs socketAsyncData = new SocketAsyncEventArgs();
+            socketAsyncData.SetBuffer(data, 0, data.Length);
+            _socket.SendAsync(socketAsyncData);
+        }
+
+        public void SendCommand(WebCommand cmd)
+        {
+            UTF8Encoding encoding = new UTF8Encoding();
+            var rawData = encoding.GetBytes(JsonUtility.ToJson(cmd));
+            SendData(rawData);
+            Debug.Log(JsonUtility.ToJson(cmd));
+        }
+
+
+        // TODO: breaks easily, but sufficient for current purpose
+        private IEnumerable<string> SplitJson(string text)
+        {
+            var jsonPackets = new List<string>();
+
+            int leftBracketIndex = -1;
+            int rightBracketIndex = -1;
+
+            int bracketCounter = 0;
+            var chars = text.ToCharArray();
+
+            for (int i = 0; i < chars.Length; i++)
+            {
+                char ch = chars[i];
+
+                if (ch == '{')
+                {
+                    if (bracketCounter == 0)
+                    {
+                        leftBracketIndex = i;
+                    }
+
+                    bracketCounter++;
+                }
+                else if (ch == '}')
+                {
+                    bracketCounter--;
+
+                    if (bracketCounter <= 0)
+                    {
+                        rightBracketIndex = i;
+                        bracketCounter = 0;
+
+                        jsonPackets.Add(text.Substring(leftBracketIndex, rightBracketIndex - leftBracketIndex + 1));
+
+                        leftBracketIndex = -1;
+                        rightBracketIndex = -1;
+                    }
+                }
+
+            }
+
+            return jsonPackets;
+        }
     }
 }

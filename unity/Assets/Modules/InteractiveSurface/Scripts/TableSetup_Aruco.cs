@@ -1,4 +1,4 @@
-using Assets.Modules.Core.Util;
+using Assets.Modules.Core;
 using Assets.Modules.Tracking;
 using Assets.Modules.Tracking.Scripts;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace Assets.Modules.InteractiveSurface
 
             public Quaternion GetAverageRotation()
             {
-                return QuaternionUtils.Average(_rotations);
+                return MathUtility.Average(_rotations);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Assets.Modules.InteractiveSurface
         }
 
 
-        private void OnArucoPose(ArucoMarkerPose pose)
+        private void OnArucoPose(MarkerPose pose)
         {
             var sceneCamTransform = SceneCameraTracker.Instance.transform;
             int index = -1;
@@ -125,7 +125,7 @@ namespace Assets.Modules.InteractiveSurface
             // invert rotation on diagonal so that forward == 0,0,1
             diagonal = Quaternion.Inverse(avgRotation) * diagonal;
 
-            var markerSize = (float)ArucoListener.Instance.MarkerSizeInMeter;
+            var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
             // add borderWidth + half marker size (since position is from marker center) once for both sides (*2)
             var scale = new Vector3(Mathf.Abs(diagonal.x) + 2 * BorderWidthCm / 100 + markerSize, 0.05f, Mathf.Abs(diagonal.z) + 2 * BorderWidthCm / 100 + markerSize);
 

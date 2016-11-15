@@ -1,0 +1,14 @@
+{
+	"folders":
+	[
+		{
+			"path": "server",
+            "folder_exclude_patterns": [
+                "node_modules",
+                "bin"
+            ],
+            "file_exclude_patterns": [
+            ]
+		}
+	]
+}
