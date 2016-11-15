@@ -11,7 +11,13 @@ import { Marker } from '../models/index';
 export class MarkerProvider {
     private markers: Marker[] = [];
 
-    constructor(private socketio: SocketIO) { }
+    constructor(private socketio: SocketIO) {
+        this.socketio.on('get-marker', () => {
+            for (var marker of this.markers) {
+                this.syncMarker(marker);
+            }
+        });
+    }
 
     public initMarkers() {
         while (this.markers.length > 0) {

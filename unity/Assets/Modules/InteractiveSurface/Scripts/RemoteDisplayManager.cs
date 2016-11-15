@@ -6,6 +6,8 @@ namespace Assets.Modules.InteractiveSurface
 {
     public class RemoteDisplayManager : MonoBehaviour
     {
+        public string DisplayName = "Surface";
+
         void OnEnable()
         {
             InteractiveSurfaceClient.Instance.OnMessageReceived += HandleCommand;
@@ -14,6 +16,25 @@ namespace Assets.Modules.InteractiveSurface
         void OnDisable()
         {
             InteractiveSurfaceClient.Instance.OnMessageReceived -= HandleCommand;
+        }
+
+
+        private bool _isInitialised = false;
+        void Update()
+        {
+            if (!_isInitialised)
+            {
+                if (FixedDisplays.Has(DisplayName))
+                {
+                    // fetch markers once display is initialised
+                    InteractiveSurfaceClient.Instance.SendCommand(new WebCommand
+                    {
+                        command = "get-marker",
+                        payload = null,
+                        target = DisplayName
+                    });
+                }
+            }
         }
 
         private void HandleCommand(IncomingCommand cmd)
@@ -27,9 +48,9 @@ namespace Assets.Modules.InteractiveSurface
 
                 case "window-size":
                     // TODO: use cmd.origin
-                    if (FixedDisplays.Has("Surface"))
+                    if (FixedDisplays.Has(DisplayName))
                     {
-                        var display = FixedDisplays.Get("Surface");
+                        var display = FixedDisplays.Get(DisplayName);
                         var windowSize = JsonUtility.FromJson<WindowSize>(cmd.payload);
                         display.DisplayResolution = new Resolution
                         {
