@@ -2,7 +2,7 @@
   "name": "InteractiveDisplayClient",
   "version": "0.0.0",
   "scripts": {
-    "start": "tsc -w"
+    "start": "npm install && tsc -w"
   },
   "description": "InteractiveDisplayNode",
   "main": "app/boot.js",
