@@ -79,10 +79,19 @@ namespace Assets.Modules.Calibration
                 var hasIntersection = MathUtility.LinePlaneIntersection(out intersection, TrackedCamera.position, TrackedCamera.forward, display.Normal, display.GetCornerPosition(Corner.TopLeft));
 
                 var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, display.Normal);
-                Debug.Log(angle);
+
+                // use <, as we want the camera to be perpendicular to the table ( | camera, _ table)
+                if (Mathf.Abs(angle) < MinMarkerAngle)
+                {
+                    __hasWrongAngle = true;
+                    return;
+                }
+                __hasWrongAngle = false;
 
                 if (hasIntersection)
                 {
+                    __intersection = intersection;
+
                     foreach (var marker in ArucoListener.Instance.DetectedPoses.Values)
                     {
                         bool isCurrent = (Time.unscaledTime - marker.DetectionTime) < ArCutoffTime;
@@ -106,10 +115,14 @@ namespace Assets.Modules.Calibration
                     var markerWorldPos = GetMarkerWorldPosition(nearestMarker.Id);
                     var distMarkerToCamera = (markerWorldPos - TrackedCamera.position).sqrMagnitude;
 
+                    __camMarkerDistance = distMarkerToCamera;
+
                     if (distMarkerToCamera > MaxMarkerCameraDistance)
                     {
+                        __isTooFarAway = true;
                         return;
                     }
+                    __isTooFarAway = false;
 
                     if (__nearestMarkerId != nearestMarker.Id)
                     {
@@ -256,7 +269,13 @@ namespace Assets.Modules.Calibration
 
         #region Debugging
 
-        private int __nearestMarkerId = -1;
+        // public for external debug menu/display
+        public int __nearestMarkerId = -1;
+        public bool __hasWrongAngle = false;
+        public bool __isTooFarAway = false;
+        public float __camTableAngle = 0;
+        public float __camMarkerDistance = 0;
+        public Vector3 __intersection;
 
         void OnDrawGizmos()
         {
@@ -269,10 +288,17 @@ namespace Assets.Modules.Calibration
             var display = FixedDisplays.Get(DisplayName);
             var displayRotation = display.Rotation;
 
+            Gizmos.DrawWireCube(__intersection, Vector3.one * 0.01f);
+
             foreach (var marker in _markers)
             {
                 if (marker.id == __nearestMarkerId)
-                    Gizmos.color = Color.green;
+                {
+                    if (__hasWrongAngle || __isTooFarAway)
+                        Gizmos.color = Color.red;
+                    else
+                        Gizmos.color = Color.green;
+                }
                 else
                     Gizmos.color = Color.blue;
 
