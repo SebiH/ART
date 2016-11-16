@@ -55,7 +55,7 @@ namespace GUI
                 int pipeline = ImageProcessing.CreatePipeline();
                 int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
                 int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
-                int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.048 } ");
+                int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.29, ""use_tracker"": true } ");
 
                 char keyPressed;
                 int counter = 0;
