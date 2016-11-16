@@ -35,7 +35,6 @@ export class UnityServer {
     }
 
     private raiseMessageReceivedEvent(msg: UnityMessage): void {
-        console.log(JSON.stringify(msg));
         for (let listener of this.msgListeners) {
             listener.handler(msg);
         }
@@ -65,7 +64,8 @@ export class UnityServer {
 
     private handleSocketData(socket: net.Socket, data: Buffer): void {
         console.log(LOG_PREFIX + "" + data);
-        // TODO.
+        let msg = <UnityMessage>JSON.parse(data + '');
+        this.raiseMessageReceivedEvent(msg)
     }
 
     private handleSocketError(socket: net.Socket, error: Error): void {
