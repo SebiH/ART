@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
-        Title="MarkerMapGenerator" Height="500" Width="300">
+        Title="MarkerMapGenerator" Height="550" Width="300">
     <StackPanel>
         <Label>Nr. Markers Horizontally</Label>
         <TextBox x:Name="SizeXBox">4</TextBox>
@@ -14,7 +14,7 @@
         <TextBox x:Name="SizeYBox">3</TextBox>
 
         <Label>Marker Start Id</Label>
-        <TextBox x:Name="MarkerIdsBox"></TextBox>
+        <TextBox x:Name="MarkerIdsBox">0</TextBox>
 
         <Label>Dictionary</Label>
         <ComboBox x:Name="ArucoDictionaries" />
@@ -31,8 +31,14 @@
         <Label>InterMarkerDistance [0,1]</Label>
         <TextBox x:Name="InterMarkerDistanceBox">0.2</TextBox>
 
-        <Separator Margin="20"></Separator>
+        <Separator Margin="10"></Separator>
 
-        <Button Height="50" Click="Button_Click">Generate</Button>
+        <Button Height="30" Click="Button_Click">Generate</Button>
+
+        <Separator Margin="10"></Separator>
+
+        <TextBox x:Name="SetBox">20</TextBox>
+        <Button Height="30" Click="AutoGenerate_Click">Auto Generate x sets</Button>
+        
     </StackPanel>
 </Window>
