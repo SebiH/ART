@@ -130,5 +130,10 @@ namespace GUI
         {
             new InteractiveSurfaceMainWindow().Show();
         }
+
+        private void GenerateArucoMarkerMapClick(object sender, RoutedEventArgs e)
+        {
+            new MarkerMapGenerator().Show();
+        }
     }
 }

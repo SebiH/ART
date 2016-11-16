@@ -1,27 +1,67 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace GUI
 {
-    /// <summary>
-    /// Interaction logic for MarkerMapGenerator.xaml
-    /// </summary>
     public partial class MarkerMapGenerator : Window
     {
+        private string _currentToolOutput;
+        private void ToolCallback(string json_msg)
+        {
+            _currentToolOutput = json_msg;
+        }
+
         public MarkerMapGenerator()
         {
             InitializeComponent();
+            Loaded += (s, e) => PopulateArucoDictionaries();
+        }
+
+        private void PopulateArucoDictionaries()
+        {
+            ImageProcessing.GetArucoDictionaries(ToolCallback);
+            dynamic output = JArray.Parse(_currentToolOutput);
+
+            foreach (var entry in output)
+            {
+                ArucoDictionaries.Items.Add(((JToken)entry).ToString());
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                dynamic jsonConfig = new JObject();
+
+                var sizeX = int.Parse(SizeXBox.Text);
+                jsonConfig.sizeX = sizeX;
+                var sizeY = int.Parse(SizeYBox.Text);
+                jsonConfig.sizeY = sizeY;
+
+                var markerIds = new JArray();
+
+                var startId = int.Parse(MarkerIdsBox.Text);
+                for (int i = 0; i < sizeX * sizeY; i++)
+                {
+                    markerIds.Add(startId + i);
+                }
+
+                jsonConfig.markerIds = markerIds;
+                jsonConfig.imgFilename = ImgFilenameBox.Text;
+                jsonConfig.configFilename = ConfigFilenameBox.Text;
+                jsonConfig.dictionaryName = ArucoDictionaries.SelectedItem as string;
+                jsonConfig.pixelSize = int.Parse(PixelSizeBox.Text);
+                jsonConfig.interMarkerDistance = float.Parse(InterMarkerDistanceBox.Text);
+
+                ImageProcessing.GenerateMarkerMap(jsonConfig.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
         }
     }
 }

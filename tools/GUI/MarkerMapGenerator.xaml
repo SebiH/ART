@@ -1,12 +1,38 @@
-﻿<Window x:Class="GUI.MarkerMapGenerator"
+<Window x:Class="GUI.MarkerMapGenerator"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
-        Title="MarkerMapGenerator" Height="300" Width="300">
-    <Grid>
-        
-    </Grid>
+        Title="MarkerMapGenerator" Height="500" Width="300">
+    <StackPanel>
+        <Label>Nr. Markers Horizontally</Label>
+        <TextBox x:Name="SizeXBox">4</TextBox>
+
+        <Label>Nr. Markers Vertical</Label>
+        <TextBox x:Name="SizeYBox">3</TextBox>
+
+        <Label>Marker Start Id</Label>
+        <TextBox x:Name="MarkerIdsBox"></TextBox>
+
+        <Label>Dictionary</Label>
+        <ComboBox x:Name="ArucoDictionaries" />
+
+        <Label>Image Filename</Label>
+        <TextBox x:Name="ImgFilenameBox"></TextBox>
+
+        <Label>Config Filename</Label>
+        <TextBox x:Name="ConfigFilenameBox"></TextBox>
+
+        <Label>Pixel Size</Label>
+        <TextBox x:Name="PixelSizeBox">500</TextBox>
+
+        <Label>InterMarkerDistance [0,1]</Label>
+        <TextBox x:Name="InterMarkerDistanceBox">0.2</TextBox>
+
+        <Separator Margin="20"></Separator>
+
+        <Button Height="50" Click="Button_Click">Generate</Button>
+    </StackPanel>
 </Window>
