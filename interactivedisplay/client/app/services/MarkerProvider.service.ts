@@ -13,6 +13,7 @@ export class MarkerProvider {
 
     constructor(private socketio: SocketIO) {
         this.socketio.on('get-marker', () => {
+            console.log('get-marker');
             for (var marker of this.markers) {
                 this.syncMarker(marker);
             }
@@ -26,7 +27,7 @@ export class MarkerProvider {
         }
 
         let markerSize = 400;
-        let borderSize = 50;
+        let borderSize = 10;
         let currentId = 0;
         let markerCountHor = 3;
         let markerCountVer = 2;
@@ -37,13 +38,15 @@ export class MarkerProvider {
         // distribute markers on top
         for (let i = 0; i < markerCountHor; i++) {
             for (let j = 0; j < markerCountVer; j++) {
-                let marker = new Marker();
-                marker.id = currentId++;
-                marker.posX = Math.max(i / (markerCountHor - 1) * width - markerSize, 0) + borderSize;
-                marker.posY = Math.max(j / (markerCountVer - 1) * height - markerSize, 0) + borderSize;
-                marker.size = markerSize;
-                marker.onPropertyChanged((marker) => this.syncMarker(marker));
-                this.markers.push(marker);
+                for (let k = 0; k < 4; k++) {
+                    let marker = new Marker();
+                    marker.id = currentId++;
+                    marker.posX = Math.max(i / (markerCountHor - 1) * width - markerSize/2, 0) + (k % 2) * (markerSize/4 + borderSize/2) + borderSize / 4 ;
+                    marker.posY = Math.max(j / (markerCountVer - 1) * height - markerSize/2, 0) + Math.floor(k / 2) * (markerSize/4 + borderSize/2) + borderSize/4;
+                    marker.size = markerSize / 4 - borderSize;
+                    marker.onPropertyChanged((marker) => this.syncMarker(marker));
+                    this.markers.push(marker);
+                }
             }
         }
     }
