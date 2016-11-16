@@ -125,6 +125,10 @@ namespace GUI
 
         [DllImport("ImageProcessing")]
         public static extern void GenerateArucoMarkers(string dictionary_name, string output_dir, int pixel_size);
+
+        [DllImport("ImageProcessing")]
+        public static extern void GenerateArucoMarkerMap(string json_config_str);
+
         #endregion
     }
 }

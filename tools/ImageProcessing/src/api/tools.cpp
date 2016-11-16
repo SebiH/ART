@@ -5,6 +5,7 @@
 #include <json/json.hpp>
 #include <Unity/IUnityInterface.h>
 #include "tools/ArucoTools.h"
+#include "utils/Logger.h"
 
 using namespace ImageProcessing;
 using json = nlohmann::json;
@@ -36,5 +37,18 @@ extern "C" UNITY_INTERFACE_EXPORT void GenerateArucoMarkers(const char* dictiona
 		std::stringstream name;
 		name << output_dir << "/" << dictionary_filename << "_" << number << ".png";
 		cv::imwrite(name.str(), marker);
+	}
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void GenerateMarkerMap(const char* json_config_str)
+{
+	try
+	{
+		auto config = json::parse(json_config_str);
+		ArucoTools::GenerateMarkerMap(config);
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(e.what());
 	}
 }
