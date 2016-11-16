@@ -47,8 +47,25 @@ namespace Assets.Modules.Calibration
         private List<Vector3> _perMarkerPosCalib = new List<Vector3>();
         private List<Quaternion> _perMarkerRotCalib = new List<Quaternion>();
 
+
+        private bool _isInitialised = false;
         void Update()
         {
+            if (!_isInitialised)
+            {
+                if (FixedDisplays.Has(DisplayName))
+                {
+                    _isInitialised = true;
+                    // fetch markers once display is initialised
+                    InteractiveSurfaceClient.Instance.SendCommand(new WebCommand
+                    {
+                        command = "get-marker",
+                        payload = null,
+                        target = DisplayName
+                    });
+                }
+            }
+
             if (FixedDisplays.Has(DisplayName) && Time.unscaledTime - _optitrackPoseTime < OptitrackCutoffTime)
             {
                 var display = FixedDisplays.Get(DisplayName);

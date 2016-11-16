@@ -99,9 +99,9 @@ namespace Assets.Modules.Calibration
 
                 var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime);
 
-                if (markers == null || markers.Count() != 1) return;
+                if (markers == null) return;
 
-                if (UseAverage) { markers = new[] { markers.First() }; }
+                if (!UseAverage) { markers = new[] { markers.First() }; }
 
                 var rotations = new List<Quaternion>();
                 var positions = new List<Vector3>();
@@ -127,7 +127,6 @@ namespace Assets.Modules.Calibration
                     positions.Add(worldPos);
                 }
 
-                Debug.Log("Calibrating...");
                 CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (MathUtility.Average(positions) - _optitrackCameraPose.Position);
                 // c = b * inv(a)
                 // => b = c * a?

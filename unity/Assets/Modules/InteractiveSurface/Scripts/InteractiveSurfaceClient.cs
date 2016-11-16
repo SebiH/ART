@@ -105,7 +105,6 @@ namespace Assets.Modules.InteractiveSurface
             UTF8Encoding encoding = new UTF8Encoding();
             var rawData = encoding.GetBytes(JsonUtility.ToJson(cmd));
             SendData(rawData);
-            Debug.Log(JsonUtility.ToJson(cmd));
         }
 
 

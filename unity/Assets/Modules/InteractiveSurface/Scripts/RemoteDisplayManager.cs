@@ -18,25 +18,6 @@ namespace Assets.Modules.InteractiveSurface
             InteractiveSurfaceClient.Instance.OnMessageReceived -= HandleCommand;
         }
 
-
-        private bool _isInitialised = false;
-        void Update()
-        {
-            if (!_isInitialised)
-            {
-                if (FixedDisplays.Has(DisplayName))
-                {
-                    // fetch markers once display is initialised
-                    InteractiveSurfaceClient.Instance.SendCommand(new WebCommand
-                    {
-                        command = "get-marker",
-                        payload = null,
-                        target = DisplayName
-                    });
-                }
-            }
-        }
-
         private void HandleCommand(IncomingCommand cmd)
         {
             switch (cmd.command)
