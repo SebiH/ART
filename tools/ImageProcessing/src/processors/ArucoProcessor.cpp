@@ -54,8 +54,15 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 
 	if (frame_counter == 0)
 	{
-		// TODO: crashes with release version of aruco, works in debug?
-		detector_.detect(img_gray, detected_markers, camera_params_.CameraMatrix, cv::Mat(), marker_size_m_, true);
+		if (use_tracker_)
+		{
+			detected_markers = detector_.detect(img_gray);
+		}
+		else
+		{
+			// TODO: crashes with release version of aruco, works in debug?
+			detector_.detect(img_gray, detected_markers, camera_params_.CameraMatrix, cv::Mat(), marker_size_m_, true);
+		}
 	}
 
 	// skip every x frames
@@ -79,8 +86,10 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		{
 			if (pose_trackers_[marker.id].estimatePose(marker, camera_params_, marker_size_m_, pt_min_error_ratio_))
 			{
-				rvec = pose_trackers_[marker.id].getRvec();
-				tvec = pose_trackers_[marker.id].getTvec();
+				//rvec = pose_trackers_[marker.id].getRvec();
+				//tvec = pose_trackers_[marker.id].getTvec();
+				rvec = marker.Rvec;
+				tvec = marker.Tvec;
 			}
 			else
 			{
