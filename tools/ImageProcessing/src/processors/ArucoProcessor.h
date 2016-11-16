@@ -3,25 +3,13 @@
 #include <map>
 #include <aruco/aruco.h>
 #include "processors/Processor.h"
+#include "utils/Quaternion.h"
 
 namespace ImageProcessing
 {
 	class ArucoProcessor : public Processor
 	{
 	private:
-		// Adapted from OVRVision
-		struct Quaternion {
-			union {
-				float v[4];
-				struct {
-					float x;
-					float y;
-					float z;
-					float w;
-				};
-			};
-		};
-
 		aruco::MarkerDetector detector_;
 		aruco::CameraParameters camera_params_;
 
@@ -48,10 +36,5 @@ namespace ImageProcessing
 
 	private:
 		void Init(const FrameSize &size, const float focalpoint);
-
-		// Adapted from OVRVision
-		void RotMatToQuaternion(Quaternion *outQuat, const float *inMat);
-		Quaternion MultiplyQuaternion(Quaternion *a, Quaternion *b);
-
 	};
 }
