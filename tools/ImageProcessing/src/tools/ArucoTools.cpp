@@ -66,7 +66,7 @@ void ArucoTools::GenerateMarkerMap(nlohmann::json config)
 		throw std::exception("InterMarkerDistance has to be between 0 and 1");
 	}
 
-	auto marker_ids = config.get[Params::MarkerIds].get<std::vector<int>>();
+	auto marker_ids = config[Params::MarkerIds].get<std::vector<int>>();
 	aruco::MarkerMap markermap = dict.createMarkerMap(cv::Size(size_x, size_y), pixel_size, pixel_size * inter_marker_distance, marker_ids, type_markermap == 1);
 	//create a printable image to save
 	cv::Mat img_markermap = markermap.getImage();
