@@ -36,6 +36,7 @@ SubShader {
 				half4 c = tex2D(_MainTex, i.uv_MainTex);
 				c.rgb = 0.0;
 				c.a *= (1 - min(SHADOW_ATTENUATION(i), 1));
+				c.a *= 0.3;
 				return c;
 			}
 		ENDCG
