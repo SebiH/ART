@@ -30,8 +30,13 @@ namespace Assets.Modules.Tracking.Scripts
                 }
                 else
                 {
-                    transform.localPosition = pose.Position;
-                    transform.localRotation = pose.Rotation;
+                    //transform.localPosition = pose.Position;
+                    //transform.localRotation = pose.Rotation;
+                    var camPos = SceneCameraTracker.Instance.transform.position;
+                    var camRot = SceneCameraTracker.Instance.transform.rotation;
+
+                    transform.position = camPos + camRot * pose.Position + camRot * new Vector3(0, transform.localScale.y, 0) / 2f;
+                    transform.rotation = camRot * pose.Rotation;
                 }
             }
         }
