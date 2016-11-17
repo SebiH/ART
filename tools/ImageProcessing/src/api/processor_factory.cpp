@@ -6,6 +6,7 @@
 #include "processors/Processor.h"
 #include "processors/ArToolkitProcessor.h"
 #include "processors/ArucoProcessor.h"
+#include "processors/ArucoMapProcessor.h"
 #include "utils/Logger.h"
 
 using namespace ImageProcessing;
@@ -40,6 +41,24 @@ extern "C" UNITY_INTERFACE_EXPORT int AddArucoProcessor(const int pipeline_id, c
 	catch (const std::exception &e)
 	{
 		DebugLog(std::string("Unable to add ArucoProcessor: ") + e.what());
+	}
+
+	return -1;
+}
+
+extern "C" UNITY_INTERFACE_EXPORT int AddArucoMapProcessor(const int pipeline_id, const char *json_config)
+{
+	try
+	{
+		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
+		auto config = nlohmann::json::parse(std::string(json_config));
+		std::shared_ptr<Processor> aruco_processor = std::make_shared<ArucoMapProcessor>(config);
+		pipeline->AddProcessor(aruco_processor);
+		return aruco_processor->Id();
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to add ArucoMapProcessor: ") + e.what());
 	}
 
 	return -1;
