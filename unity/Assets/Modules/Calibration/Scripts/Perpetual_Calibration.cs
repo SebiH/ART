@@ -187,7 +187,89 @@ namespace Assets.Modules.Calibration
 
         private void DoMultiMarkerCalibration(FixedDisplay display)
         {
-            // TODO.
+            // get nearest marker (from center) with up-to-date ar marker pose
+            var nearestMarkers = new List<MarkerPose>();
+
+            // get intersection between camera ray and display plane
+            Vector3 intersection = new Vector3();
+            var hasIntersection = MathUtility.LinePlaneIntersection(out intersection, TrackedCamera.position, TrackedCamera.forward, display.Normal, display.GetCornerPosition(Corner.TopLeft));
+
+            var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, display.Normal);
+
+            // use <, as we want the camera to be perpendicular to the table ( | camera, _ table)
+            if (Mathf.Abs(angle) < MinMarkerAngle)
+            {
+                __hasWrongAngle = true;
+                return;
+            }
+            __hasWrongAngle = false;
+
+            if (hasIntersection)
+            {
+                __intersection = intersection;
+                var poses = UseMaps ? ArucoMapListener.Instance.DetectedPoses.Values : ArucoListener.Instance.DetectedPoses.Values;
+
+                foreach (var marker in poses)
+                {
+                    bool isCurrent = (Time.unscaledTime - marker.DetectionTime) < ArCutoffTime;
+                    if (!isCurrent) { continue; } // shave off a few calculations
+
+                    // calculate distance between intersection and marker
+                    var markerWorldPosition = GetMarkerWorldPosition(marker.Id);
+                    var distance = (intersection - markerWorldPosition).sqrMagnitude;
+                    bool isNear = distance < NearestDistanceThreshold;
+
+                    if (isCurrent && isNear)
+                    {
+                        nearestMarkers.Add(marker);
+                    }
+                }
+            }
+
+            __nearestMarkerIds.Clear();
+
+            var pOffsets = new List<Vector3>();
+            var rOffsets = new List<Quaternion>();
+
+            foreach (var nearestMarker in nearestMarkers)
+            {
+                __nearestMarkerIds.Add(nearestMarker.Id);
+
+                var markerWorldPos = GetMarkerWorldPosition(nearestMarker.Id);
+                var distMarkerToCamera = (markerWorldPos - TrackedCamera.position).sqrMagnitude;
+
+                __camMarkerDistance = distMarkerToCamera;
+
+                // debugging
+                __nearestMarkerId = nearestMarker.Id;
+
+                // apply calibration
+                var markerMatrix = Matrix4x4.TRS(nearestMarker.Position, nearestMarker.Rotation, Vector3.one);
+                var cameraMatrix = markerMatrix.inverse;
+
+                var localPos = cameraMatrix.GetPosition();
+                var worldPos = markerWorldPos + display.Rotation * localPos;
+
+                var localRot = cameraMatrix.GetRotation();
+                var localForward = localRot * Vector3.forward;
+                var localUp = localRot * Vector3.up;
+
+                var worldForward = display.Rotation * localForward;
+                var worldUp = display.Rotation * localUp;
+                var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+                pOffsets.Add(Quaternion.Inverse(_optitrackPose.Rotation) * (worldPos - _optitrackPose.Position));
+                rOffsets.Add(worldRot * Quaternion.Inverse(_ovrRotation));
+            }
+
+            if (nearestMarkers.Count > 0)
+            {
+                CalibrationParams.OptitrackToCameraOffset = MathUtility.Average(pOffsets);
+                // c = b * inv(a)
+                // => b = c * a?
+                // from ovrRot to worldRot
+                CalibrationParams.OpenVrRotationOffset = MathUtility.Average(rOffsets);
+            }
         }
 
         private void DoMapCalibration(FixedDisplay display)
@@ -323,6 +405,7 @@ namespace Assets.Modules.Calibration
 
         // public for external debug menu/display
         public int __nearestMarkerId = -1;
+        public List<int> __nearestMarkerIds = new List<int>();
         public bool __hasWrongAngle = false;
         public bool __isTooFarAway = false;
         public float __camTableAngle = 0;
@@ -344,7 +427,7 @@ namespace Assets.Modules.Calibration
 
             foreach (var marker in _markers)
             {
-                if (marker.id == __nearestMarkerId)
+                if (marker.id == __nearestMarkerId || __nearestMarkerIds.Contains(marker.id))
                 {
                     if (__hasWrongAngle || __isTooFarAway)
                         Gizmos.color = Color.red;
@@ -352,7 +435,14 @@ namespace Assets.Modules.Calibration
                         Gizmos.color = Color.green;
                 }
                 else
+                {
                     Gizmos.color = Color.blue;
+                    if (!UseMaps && ArucoListener.Instance.DetectedPoses.ContainsKey(marker.id)
+                        && Time.unscaledTime - ArucoListener.Instance.DetectedPoses[marker.id].DetectionTime < ArCutoffTime)
+                    {
+                        Gizmos.color = Color.yellow;
+                    }
+                }
 
                 var markerPos = GetMarkerWorldPosition(marker.id);
 
