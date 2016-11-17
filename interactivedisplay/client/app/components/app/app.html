@@ -1,4 +1,4 @@
 <router-outlet></router-outlet>
-<!-- <marker-overlay></marker-overlay> -->
-<map-overlay></map-overlay>
+<marker-overlay *ngIf="!useMaps"></marker-overlay>
+<map-overlay *ngIf="useMaps"></map-overlay>
 <a href="/" class="back">&lt; Back</a>

@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 
 import {MenuComponent} from '../menu/menu';
 import {MarkerOverlayComponent} from '../marker-overlay/marker-overlay';
-import {SocketIO, MarkerProvider} from '../../services/index';
+import {SocketIO, MarkerProvider, MapProvider} from '../../services/index';
 
 @Component({
     selector: 'main-app',
@@ -14,7 +14,9 @@ import {SocketIO, MarkerProvider} from '../../services/index';
 
 export class AppComponent implements OnInit
 {
-    constructor (private socketio: SocketIO, private markerProvider: MarkerProvider) { }
+    useMaps: boolean = true;
+
+    constructor (private socketio: SocketIO, private markerProvider: MarkerProvider, private mapProvider: MapProvider) { }
 
     ngOnInit() {
         this.sendWindowSize();
@@ -26,7 +28,11 @@ export class AppComponent implements OnInit
     }
 
     private sendWindowSize() {
-        this.markerProvider.initMarkers(); // TODO: not here.
+        if (this.useMaps)
+            this.mapProvider.initMaps(); // TODO: not here.
+        else
+            this.markerProvider.initMarkers(); // TODO: not here.
+        
         this.socketio.sendMessage('window-size', {
             width: window.innerWidth,
             height: window.innerHeight

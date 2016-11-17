@@ -1,10 +1,10 @@
-.marker-overlay {
+.map-overlay {
     position: absolute;
     top: 0;
     left: 0;
 }
 
-.marker-container {
+.map-container {
     position: relative;
 
     width: 100%;
@@ -13,10 +13,10 @@
     pointer-events: none;
 }
 
-.marker-border {
+.map-border {
     position: absolute;
     background: white;
 }
 
-.marker {
+.map {
 }
