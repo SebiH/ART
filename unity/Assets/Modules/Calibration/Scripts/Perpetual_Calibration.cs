@@ -19,6 +19,8 @@ namespace Assets.Modules.Calibration
 
         public string DisplayName = "Surface";
 
+        public bool UseMaps = false;
+
         // Use single nearest marker (true) or use multiple nearest marker/markercluster (false)
         public bool UseSingleMarker = false;
 
@@ -59,10 +61,11 @@ namespace Assets.Modules.Calibration
                 if (FixedDisplays.Has(DisplayName))
                 {
                     _isInitialised = true;
+                    var command = UseMaps ? "get-maps" : "get-marker";
                     // fetch markers once display is initialised
                     InteractiveSurfaceClient.Instance.SendCommand(new WebCommand
                     {
-                        command = "get-marker",
+                        command = command,
                         payload = null,
                         target = DisplayName
                     });
@@ -107,8 +110,9 @@ namespace Assets.Modules.Calibration
             if (hasIntersection)
             {
                 __intersection = intersection;
+                var poses = UseMaps ? ArucoMapListener.Instance.DetectedPoses.Values : ArucoListener.Instance.DetectedPoses.Values;
 
-                foreach (var marker in ArucoListener.Instance.DetectedPoses.Values)
+                foreach (var marker in poses)
                 {
                     bool isCurrent = (Time.unscaledTime - marker.DetectionTime) < ArCutoffTime;
                     if (!isCurrent) { continue; } // shave off a few calculations
@@ -265,6 +269,27 @@ namespace Assets.Modules.Calibration
 
         private void HandleMarkerMessage(IncomingCommand cmd)
         {
+            if (cmd.command == "maps" && UseMaps)
+            {
+                var payload = JsonUtility.FromJson<DisplayMarker>(cmd.payload);
+                var existingMarker = _markers.FirstOrDefault((m) => m.id == payload.id);
+
+                if (existingMarker == null)
+                {
+                    _markers.Add(payload);
+                }
+                else
+                {
+                    existingMarker.posX = payload.posX;
+                    existingMarker.posY = payload.posY;
+                    existingMarker.size = payload.size;
+                }
+
+                var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
+
+                ArucoMapListener.Instance.MarkerSizeInMeter = unitySize;
+            }
+
             if (cmd.command == "marker")
             {
                 var payload = JsonUtility.FromJson<DisplayMarker>(cmd.payload);
@@ -282,6 +307,7 @@ namespace Assets.Modules.Calibration
                 }
 
                 var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
+
                 ArucoListener.Instance.MarkerSizeInMeter = unitySize;
             }
         }
