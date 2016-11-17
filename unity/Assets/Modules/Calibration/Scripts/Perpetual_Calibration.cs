@@ -20,6 +20,7 @@ namespace Assets.Modules.Calibration
         public string DisplayName = "Surface";
 
         public bool UseMaps = false;
+        public bool UseMultiMarker = false;
 
         // Camera used to determine which marker should be selected for calibration
         public Transform TrackedCamera;
@@ -76,11 +77,14 @@ namespace Assets.Modules.Calibration
 
                 if (UseMaps)
                 {
-                    DoMultiMarkerCalibration(display);
+                    DoMapCalibration(display);
                 }
                 else
                 {
-                    DoSingleMarkerCalibration(display);
+                    if (UseMultiMarker)
+                        DoMultiMarkerCalibration(display);
+                    else
+                        DoSingleMarkerCalibration(display);
                 }
             }
         }
@@ -183,7 +187,12 @@ namespace Assets.Modules.Calibration
 
         private void DoMultiMarkerCalibration(FixedDisplay display)
         {
+            // TODO.
+        }
 
+        private void DoMapCalibration(FixedDisplay display)
+        {
+            // TODO.
         }
 
         private Vector3 GetMapWorldPosition(int id)

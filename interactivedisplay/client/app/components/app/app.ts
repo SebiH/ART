@@ -14,7 +14,7 @@ import {SocketIO, MarkerProvider, MapProvider} from '../../services/index';
 
 export class AppComponent implements OnInit
 {
-    useMaps: boolean = true;
+    useMaps: boolean = false;
 
     constructor (private socketio: SocketIO, private markerProvider: MarkerProvider, private mapProvider: MapProvider) { }
 
