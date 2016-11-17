@@ -3,7 +3,7 @@ Properties {
 	_MainTex ("Base (RGB) TransGloss (A)", 2D) = "white" {}
 } 
 SubShader { 
-	Tags {"RenderType"="Opaque" "Queue" = "Geometry" "LightMode" = "ForwardBase"}
+	Tags {"RenderType"="Opaque" "Queue" = "Geometry+1" "LightMode" = "ForwardBase"}
 	LOD 100
 	Pass {
 		Blend SrcAlpha OneMinusSrcAlpha 
