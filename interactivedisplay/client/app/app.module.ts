@@ -2,22 +2,23 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 
-import {
-    AppComponent,
-    MenuComponent,
-    DemoComponent,
-    MarkerOverlayComponent,
-    MeasurementComponent,
-    PanZoomComponent
-} from './components/index';
-import { MarkerProvider, SocketIO } from './services/index';
+import * as Components from './components/index';
+import * as Services from './services/index';
 
 import { routing } from './routes';
 
 @NgModule({
   imports:      [ BrowserModule, HttpModule, routing ],
-  declarations: [ AppComponent, MenuComponent, DemoComponent, MarkerOverlayComponent, MeasurementComponent, PanZoomComponent ],
-  bootstrap:    [ AppComponent ],
-  providers:    [ SocketIO, MarkerProvider ]
+  declarations: [
+    Components.AppComponent,
+    Components.MenuComponent,
+    Components.DemoComponent,
+    Components.MarkerOverlayComponent,
+    Components.MeasurementComponent,
+    Components.PanZoomComponent,
+    Components.MapOverlayComponent
+  ],
+  bootstrap:    [ Components.AppComponent ],
+  providers:    [ Services.SocketIO, Services.MarkerProvider, Services.MapProvider ]
 })
 export class AppModule { }

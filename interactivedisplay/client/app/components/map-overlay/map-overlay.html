@@ -1,0 +1,14 @@
+<div class="marker-overlay">
+    <div class="marker-container">
+        <div *ngFor="let marker of markers" class="marker-border"
+            [style.padding.px]="borderSize"
+            [style.top.px]="marker.posY - borderSize"
+            [style.left.px]="marker.posX - borderSize"
+            >
+            <img class="marker" src="{{ getMarkerImageSource(marker) }}"
+                [style.width.px]="marker.size"
+                [style.height.px]="marker.size"
+            />
+        </div>
+    </div>
+</div>
