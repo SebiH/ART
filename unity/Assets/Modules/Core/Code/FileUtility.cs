@@ -6,7 +6,7 @@ namespace Assets.Modules.Core
 {
     public static class FileUtility
     {
-        private static string GetPath(string relativePath)
+        public static string GetPath(string relativePath)
         {
             return Path.Combine(Application.dataPath, Path.Combine("../data/", relativePath));
         }

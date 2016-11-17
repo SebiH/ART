@@ -104,6 +104,7 @@ namespace Assets.Modules.Tracking
 
         private void OnPoseChanged(string json_msg)
         {
+            Debug.Log("aruco output " + json_msg);
             _currentOutput.Enqueue(JsonUtility.FromJson<ArucoOutput>(json_msg));
         }
 
@@ -143,6 +144,16 @@ namespace Assets.Modules.Tracking
                 _prevMarkerSize = MarkerSizeInMeter;
                 _prevTrackerErrorRatio = TrackerErrorRatio;
             }
+        }
+
+        public List<ArucoMapProcessor.Map> GetMaps()
+        {
+            return _arProcessor.Maps;
+        }
+
+        public void UpdateMaps()
+        {
+            _arProcessor.UpdateProperties();
         }
 
 

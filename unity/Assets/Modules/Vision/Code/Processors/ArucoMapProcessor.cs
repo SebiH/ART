@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -36,13 +37,15 @@ namespace Assets.Modules.Vision.Processors
 
         #region Processor Properties
 
+        [Serializable]
         public struct Map
         {
-            public string id;
+            public int id;
             public string path;
             public float marker_size_m;
         }
 
+        [Serializable]
         private struct Params
         {
             public float tracker_error_ratio;

@@ -21,9 +21,6 @@ namespace Assets.Modules.Calibration
 
         public bool UseMaps = false;
 
-        // Use single nearest marker (true) or use multiple nearest marker/markercluster (false)
-        public bool UseSingleMarker = false;
-
         // Camera used to determine which marker should be selected for calibration
         public Transform TrackedCamera;
 
@@ -34,6 +31,7 @@ namespace Assets.Modules.Calibration
         private Quaternion _ovrRotation;
 
         private List<DisplayMarker> _markers = new List<DisplayMarker>();
+        private List<DisplayMap> _maps = new List<DisplayMap>();
 
         void OnEnable()
         {
@@ -76,13 +74,13 @@ namespace Assets.Modules.Calibration
             {
                 var display = FixedDisplays.Get(DisplayName);
 
-                if (UseSingleMarker)
-                {
-                    DoSingleMarkerCalibration(display);
-                }
-                else // use multiple markers
+                if (UseMaps)
                 {
                     DoMultiMarkerCalibration(display);
+                }
+                else
+                {
+                    DoSingleMarkerCalibration(display);
                 }
             }
         }
@@ -188,6 +186,24 @@ namespace Assets.Modules.Calibration
 
         }
 
+        private Vector3 GetMapWorldPosition(int id)
+        {
+            var map = _maps.FirstOrDefault((m) => m.id == id);
+            var display = FixedDisplays.Get(DisplayName);
+
+            if (map == null)
+            {
+                // should never happen, in theory
+                Debug.Log("Unable to find map " + id);
+                return Vector3.zero;
+            }
+
+            var worldOffsetFromTopLeft = map.GetUnityPosition();
+            var localOffsetFromTopLeft = display.Rotation * worldOffsetFromTopLeft;
+
+            return display.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
+        }
+
         private Vector3 GetMarkerWorldPosition(int id)
         {
             var marker = _markers.FirstOrDefault((m) => m.id == id);
@@ -200,36 +216,7 @@ namespace Assets.Modules.Calibration
                 return Vector3.zero;
             }
 
-            /*
-             * Display:
-             *       x
-             *   +------->
-             *   |
-             *  y|
-             *   v
-             *
-             * Unity:
-             *  ^   /
-             * y|  /z
-             *  | /
-             *  +--------
-             *    x
-             *
-             *
-             * (x,y) (display)
-             * =
-             * (x,-z) (unity) (display assumed to be horizontal in unity coords)
-             */
-
-            // posX/Y points to topleft corner of marker; we need center for calibration purposes
-            var markerOffset = DisplayUtility.PixelToUnityCoord(marker.size) / 2f;
-
-            // origin of marker coordinates is top-left corner;
-            var unityPosX = DisplayUtility.PixelToUnityCoord(marker.posX) + markerOffset;
-            var unityPosY = 0f; // marker lies directly on display
-            var unityPosZ = -(DisplayUtility.PixelToUnityCoord(marker.posY) + markerOffset);
-
-            var worldOffsetFromTopLeft = new Vector3(unityPosX, unityPosY, unityPosZ);
+            var worldOffsetFromTopLeft = marker.GetUnityPosition();
             var localOffsetFromTopLeft = display.Rotation * worldOffsetFromTopLeft;
 
             return display.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
@@ -269,25 +256,35 @@ namespace Assets.Modules.Calibration
 
         private void HandleMarkerMessage(IncomingCommand cmd)
         {
-            if (cmd.command == "maps" && UseMaps)
+            if (cmd.command == "map" && UseMaps)
             {
-                var payload = JsonUtility.FromJson<DisplayMarker>(cmd.payload);
-                var existingMarker = _markers.FirstOrDefault((m) => m.id == payload.id);
+                var payload = JsonUtility.FromJson<DisplayMap>(cmd.payload);
+                var existingMap = _maps.FirstOrDefault((m) => m.id == payload.id);
 
-                if (existingMarker == null)
+                if (existingMap == null)
                 {
-                    _markers.Add(payload);
+                    _maps.Add(payload);
+                    var registeredMaps = ArucoMapListener.Instance.GetMaps();
+                    registeredMaps.Add(new Vision.Processors.ArucoMapProcessor.Map
+                    {
+                        id = payload.id,
+                        marker_size_m = 0.025f,
+                        path = payload.GetConfigurationPath()
+                    });
+                    ArucoMapListener.Instance.UpdateMaps();
+                    Debug.Log("registered map " + payload.id);
                 }
                 else
                 {
-                    existingMarker.posX = payload.posX;
-                    existingMarker.posY = payload.posY;
-                    existingMarker.size = payload.size;
+                    existingMap.posX = payload.posX;
+                    existingMap.posY = payload.posY;
+                    existingMap.sizeX = payload.sizeX;
+                    existingMap.sizeY = payload.sizeY;
                 }
 
-                var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
-
-                ArucoMapListener.Instance.MarkerSizeInMeter = unitySize;
+                // TODO.
+                //var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
+                //ArucoMapListener.Instance.MarkerSizeInMeter = unitySize;
             }
 
             if (cmd.command == "marker")

@@ -63,6 +63,7 @@ std::shared_ptr<const FrameData> ArucoMapProcessor::Process(const std::shared_pt
 		{ "markers_right", json::array() }
 	};
 
+	bool hasDetectedMap = false;
 
 	for (const auto &pair : pose_trackers_)
 	{
@@ -106,6 +107,8 @@ std::shared_ptr<const FrameData> ArucoMapProcessor::Process(const std::shared_pt
 			Quaternion adjustment{ 1.0f, 0.0f, 0.0f, 0.0f };
 			quat = Quaternion::MultiplyQuaternion(&quat, &adjustment);
 
+			hasDetectedMap = true;
+
 			// Save JSON info about marker
 			processed_markers["markers_left"].push_back(json{
 				{ "id", id },
@@ -124,7 +127,7 @@ std::shared_ptr<const FrameData> ArucoMapProcessor::Process(const std::shared_pt
 		}
 	}
 
-	if (detected_markers.size() > 0)
+	if (hasDetectedMap)
 	{
 		return std::make_shared<const JsonFrameData>(frame.get(), processed_markers);
 	}
@@ -157,9 +160,9 @@ void ArucoMapProcessor::SetProperties(const json &config)
 	{
 		for (const auto &map : config)
 		{
-			auto marker_map = aruco::MarkerMap(config[Params::Map::file_path].get<std::string>());
-			marker_map = marker_map.convertToMeters(config[Params::Map::marker_size].get<float>());
-			auto id = config[Params::Map::id].get<int>();
+			auto marker_map = aruco::MarkerMap(map[Params::Map::file_path].get<std::string>());
+			marker_map = marker_map.convertToMeters(map[Params::Map::marker_size].get<float>());
+			auto id = map[Params::Map::id].get<int>();
 			pose_trackers_[id].setParams(camera_params_, marker_map);
 
 			// TODO: make setting
