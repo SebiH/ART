@@ -102,6 +102,7 @@ namespace Assets.Modules.Calibration
             var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, display.Normal);
 
             // use <, as we want the camera to be perpendicular to the table ( | camera, _ table)
+            __camTableAngle = Mathf.Abs(angle);
             if (Mathf.Abs(angle) < MinMarkerAngle)
             {
                 __hasWrongAngle = true;
@@ -197,6 +198,7 @@ namespace Assets.Modules.Calibration
             var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, display.Normal);
 
             // use <, as we want the camera to be perpendicular to the table ( | camera, _ table)
+            __camTableAngle = Mathf.Abs(angle);
             if (Mathf.Abs(angle) < MinMarkerAngle)
             {
                 __hasWrongAngle = true;
