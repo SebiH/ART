@@ -18,7 +18,7 @@ namespace ImageProcessing
 		};
 
 	public:
-		void RotMatToQuaternion(Quaternion *outQuat, const float *inMat);
-		Quaternion MultiplyQuaternion(Quaternion *a, Quaternion *b);
+		static void RotMatToQuaternion(Quaternion *outQuat, const float *inMat);
+		static Quaternion MultiplyQuaternion(Quaternion *a, Quaternion *b);
 	};
 }

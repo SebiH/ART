@@ -10,7 +10,8 @@
 using namespace ImageProcessing;
 using json = nlohmann::json;
 
-namespace Params {
+namespace Params
+{
 	static const auto use_tracker = "use_tracker";
 	static const auto tracker_error = "tracker_error_ratio";
 	static const auto marker_size = "marker_size_m";
@@ -128,12 +129,12 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 		rotation_matrix[15] = 1.0f;
 
 		Quaternion quat;
-		RotMatToQuaternion(&quat, rotation_matrix);
+		Quaternion::RotMatToQuaternion(&quat, rotation_matrix);
 
 		// ??? (Taken from OvrVision Pro)
 		quat.w = -quat.w;
 		Quaternion adjustment{ 1.0f, 0.0f, 0.0f, 0.0f };
-		quat = MultiplyQuaternion(&quat, &adjustment);
+		quat = Quaternion::MultiplyQuaternion(&quat, &adjustment);
 
 		// Draw markers on image
 		marker.draw(img_left, cv::Scalar(0, 0, 255, 255));
