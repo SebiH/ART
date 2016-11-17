@@ -21,9 +21,7 @@ namespace Assets.Modules.Vision.Processors
         public void Register(int pipelineId)
         {
             _registeredPipelineId = pipelineId;
-            // Double braces in json due to String.Format
             _id = ImageProcessing.AddArucoMapProcessor(pipelineId, GetJsonProperties());
-
             ImageProcessing.GetProcessorProperties(_registeredPipelineId, _id, GetPropertyCallback);
         }
 

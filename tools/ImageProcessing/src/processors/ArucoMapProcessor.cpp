@@ -77,7 +77,7 @@ std::shared_ptr<const FrameData> ArucoMapProcessor::Process(const std::shared_pt
 
 			// Conversion to unity coordinate system
 			rvec.at<float>(0, 0) = -rvec.at<float>(0, 0);
-			rvec.at<float>(2, 0) = -rvec.at<float>(2, 0);
+			rvec.at<float>(0, 2) = -rvec.at<float>(0, 2);
 			cv::Mat rotation(3, 3, CV_32FC1);
 			cv::Rodrigues(rvec, rotation);
 
@@ -114,8 +114,8 @@ std::shared_ptr<const FrameData> ArucoMapProcessor::Process(const std::shared_pt
 				{ "id", id },
 				{ "position", {
 					{ "x", tvec.at<float>(0, 0) },
-					{ "y", tvec.at<float>(1, 0) },
-					{ "z", tvec.at<float>(2, 0) }
+					{ "y", tvec.at<float>(0, 1) },
+					{ "z", tvec.at<float>(0, 2) }
 				}},
 				{ "rotation", {
 					{ "x", quat.x },
@@ -158,7 +158,7 @@ void ArucoMapProcessor::SetProperties(const json &config)
 
 	if (config.count(Params::maps))
 	{
-		for (const auto &map : config)
+		for (const auto &map : config[Params::maps])
 		{
 			auto marker_map = aruco::MarkerMap(map[Params::Map::file_path].get<std::string>());
 			marker_map = marker_map.convertToMeters(map[Params::Map::marker_size].get<float>());
