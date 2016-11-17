@@ -1,3 +1,4 @@
+using Assets.Modules.InteractiveSurface;
 using System;
 using UnityEngine;
 
@@ -10,5 +11,39 @@ namespace Assets.Modules.Calibration
         public int posX;
         public int posY;
         public int size;
+
+        public Vector3 GetUnityPosition()
+        {
+            /*
+             * Display:
+             *       x
+             *   +------->
+             *   |
+             *  y|
+             *   v
+             *
+             * Unity:
+             *  ^   /
+             * y|  /z
+             *  | /
+             *  +--------
+             *    x
+             *
+             *
+             * (x,y)_display
+             * <=>
+             * (x,-z)_unity (display assumed to be horizontal in unity coords)
+             */
+
+            // posX/Y points to topleft corner of marker; we need center for calibration purposes
+            var markerOffset = DisplayUtility.PixelToUnityCoord(size) / 2f;
+
+            // origin of marker coordinates is top-left corner;
+            var unityPosX = DisplayUtility.PixelToUnityCoord(posX) + markerOffset;
+            var unityPosY = 0f; // marker lies directly on display
+            var unityPosZ = -(DisplayUtility.PixelToUnityCoord(posY) + markerOffset);
+
+            return new Vector3(unityPosX, unityPosY, unityPosZ);
+        }
     }
 }
