@@ -5,14 +5,15 @@ namespace Assets.Modules.Tracking.Scripts
     public class ArucoTrackedObject : MonoBehaviour
     {
         public int TrackedId;
+        public bool ApplyYOffset = false;
         public bool Invert = false;
 
-        void Start()
+        void OnEnable()
         {
             ArucoListener.Instance.NewPoseDetected += OnNewPose;
         }
 
-        void OnDestroy()
+        void OnDisable()
         {
             ArucoListener.Instance.NewPoseDetected -= OnNewPose;
         }
@@ -34,8 +35,12 @@ namespace Assets.Modules.Tracking.Scripts
                     //transform.localRotation = pose.Rotation;
                     var camPos = SceneCameraTracker.Instance.transform.position;
                     var camRot = SceneCameraTracker.Instance.transform.rotation;
+                    
+                    if (ApplyYOffset)
+                        transform.position = camPos + camRot * pose.Position + camRot * new Vector3(0, transform.localScale.y, 0) / 2f;
+                    else
+                        transform.position = camPos + camRot * pose.Position;
 
-                    transform.position = camPos + camRot * pose.Position + camRot * new Vector3(0, transform.localScale.y, 0) / 2f;
                     transform.rotation = camRot * pose.Rotation;
                 }
             }
