@@ -9,6 +9,7 @@ namespace Assets.Modules.Tracking
         private static CalibrationParams Instance;
         public static float LastCalibrationTime { get; private set; }
 
+        private static bool _isFirstRotation = true;
         private static Quaternion _rotationOffset = Quaternion.identity;
         private static Quaternion _targetRotationOffset = Quaternion.identity;
         private static Quaternion _startRotationOffset = Quaternion.identity;
@@ -17,12 +18,22 @@ namespace Assets.Modules.Tracking
             get { return _rotationOffset; }
             set
             {
-                _startRotationOffset = _rotationOffset;
-                _targetRotationOffset = value;
+                if (_isFirstRotation)
+                {
+                    _isFirstRotation = false;
+                    _rotationOffset = value;
+                }
+                else
+                {
+                    _startRotationOffset = _rotationOffset;
+                    _targetRotationOffset = value;
+                }
+
                 UpdateCalibration();
             }
         }
 
+        private static bool _isFirstPosition = true;
         private static Vector3 _camOffset = Vector3.zero;
         private static Vector3 _targetCamOffset = Vector3.zero;
         private static Vector3 _startCamOffset = Vector3.zero;
@@ -31,9 +42,17 @@ namespace Assets.Modules.Tracking
             get { return _camOffset; }
             set
             {
-                _startCamOffset = _camOffset;
-                _targetCamOffset = value;
-                UpdateCalibration();
+                if (_isFirstPosition)
+                {
+                    _isFirstPosition = false;
+                    _camOffset = value;
+                }
+                else
+                {
+                    _startCamOffset = _camOffset;
+                    _targetCamOffset = value;
+                    UpdateCalibration();
+                }
             }
         }
 
