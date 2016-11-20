@@ -12,7 +12,13 @@ namespace Assets.Modules.Heatmap
             filter.mesh = _mesh;
         }
 
-        public void SetMesh(Vector3[] vertices, int[] triangles)
+        public void UpdateMesh(ref Vector3[] vertices)
+        {
+            _mesh.RecalculateNormals();
+            _mesh.vertices = vertices;
+        }
+
+        public void SetMesh(ref Vector3[] vertices, ref int[] triangles)
         {
             _mesh.vertices = vertices;
             _mesh.triangles = triangles;

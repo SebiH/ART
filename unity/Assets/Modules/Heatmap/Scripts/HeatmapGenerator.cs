@@ -12,32 +12,35 @@ namespace Assets.Modules.Heatmap
         void OnEnable()
         {
             _model = GetComponent<HeatmapModel>();
-            _dataProvider = new RandomDataProvider(); //GetComponent<IDataProvider>();
+            _dataProvider = GetComponent<DataProvider>();
             Generate();
         }
 
 
         public void Generate()
         {
-            var vertices = new List<Vector3>();
-            var triangles = new List<int>();
-            int[,] vertexIndices = new int[50, 50];
+            var data = _dataProvider.GetData();
+            var dim = _dataProvider.GetDataDimensions();
+
+            var vertices = new Vector3[dim.Columns * dim.Rows];
+            var triangles = new int[(dim.Columns - 1) * (dim.Rows - 1) * 6];
+            int[,] vertexIndices = new int[dim.Columns, dim.Rows];
 
             int vertexIndicesCounter = 0;
+            int triangleCounter = 0;
 
-
-            for (int x = 0; x < 50; x++)
+            for (int col = 0; col < dim.Columns; col++)
             {
-                for (int y = 0; y < 50; y++)
+                for (int row = 0; row < dim.Rows; row++)
                 {
-                    var position = new Vector3(x, Random.Range(-1f, 2f), y);
-                    vertices.Add(position);
+                    var position = new Vector3(col, Random.Range(-1f, 2f), row);
+                    vertices[vertexIndicesCounter] = position;
 
-                    vertexIndices[x, y] = vertexIndicesCounter;
+                    vertexIndices[col, row] = vertexIndicesCounter;
                     vertexIndicesCounter++;
 
-                    bool isFirstRow = (y == 0);
-                    bool isFirstColumn = (x == 0);
+                    bool isFirstRow = (row == 0);
+                    bool isFirstColumn = (col == 0);
 
                     if (!isFirstRow && !isFirstColumn)
                     {
@@ -51,19 +54,19 @@ namespace Assets.Modules.Heatmap
                          */
 
                         // 0 1 2
-                        triangles.Add(vertexIndices[x - 1, y - 1]);
-                        triangles.Add(vertexIndices[x - 1, y]);
-                        triangles.Add(vertexIndices[x, y - 1]);
+                        triangles[triangleCounter++] = vertexIndices[col - 1, row - 1];
+                        triangles[triangleCounter++] = vertexIndices[col - 1, row];
+                        triangles[triangleCounter++] = vertexIndices[col, row - 1];
 
                         // 2 1 3
-                        triangles.Add(vertexIndices[x, y - 1]);
-                        triangles.Add(vertexIndices[x - 1, y]);
-                        triangles.Add(vertexIndices[x, y]);
+                        triangles[triangleCounter++] = vertexIndices[col, row - 1];
+                        triangles[triangleCounter++] = vertexIndices[col - 1, row];
+                        triangles[triangleCounter++] = vertexIndices[col, row];
                     }
                 }
             }
 
-            _model.SetMesh(vertices.ToArray(), triangles.ToArray());
+            _model.SetMesh(ref vertices, ref triangles);
         }
     }
 }
