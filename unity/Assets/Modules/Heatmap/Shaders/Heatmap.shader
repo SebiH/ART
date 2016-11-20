@@ -1,4 +1,4 @@
-﻿Shader "Custom/HeightColor" {
+Shader "Custom/Heatmap" {
 	Properties{
 		_Palette0("Palette0", Color) = (0, 0, 1, 1)
 		_Palette1("Palette1", Color) = (0, 1, 0, 1)
