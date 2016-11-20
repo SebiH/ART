@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Assets.Modules.Graph
@@ -15,11 +16,16 @@ namespace Assets.Modules.Graph
             {
                 for (int y = 0; y < data.GetLength(1); y++)
                 {
-                    data[x, y] = Random.Range(0f, 5f);
+                    data[x, y] = UnityEngine.Random.Range(0f, 5f);
                 }
             }
 
             return data;
+        }
+
+        public override Dimension GetDataDimensions()
+        {
+            throw new NotImplementedException();
         }
     }
 }

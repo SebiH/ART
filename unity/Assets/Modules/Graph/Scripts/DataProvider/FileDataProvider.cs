@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 namespace Assets.Modules.Graph
 {
@@ -53,6 +55,11 @@ namespace Assets.Modules.Graph
         public override float[,] GetData()
         {
             return data;
+        }
+
+        public override Dimension GetDataDimensions()
+        {
+            throw new NotImplementedException();
         }
     }
 }
