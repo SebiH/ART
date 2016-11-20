@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Assets.Code.DataProvider
+namespace Assets.Modules.Graph
 {
-    class FileDataProvider : IDataProvider
+    class FileDataProvider : DataProvider
     {
         private float[,] data;
 
@@ -50,7 +50,7 @@ namespace Assets.Code.DataProvider
         }
 
 
-        public float[,] GetData()
+        public override float[,] GetData()
         {
             return data;
         }

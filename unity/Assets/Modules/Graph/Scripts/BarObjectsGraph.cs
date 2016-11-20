@@ -1,42 +1,56 @@
 using UnityEngine;
-using Assets.Code.DataProvider;
-using System.Linq;
-using Assets.Code.Graph;
 
-public class BarObjectsGraph : MonoBehaviour
+namespace Assets.Modules.Graph
 {
-    // Prefab representing a single bar
-    // TODO: more requirements in the future? e.g., interfaces?
-    public GameObject prefabBar;
-
-    // data that will be visualised
-    private float[,] data;
-
-    // matching bars
-    private GameObject[,] ingameBars;
-
-    private IDataProvider dataProvider;
-
-	// Use this for initialization
-	void Start ()
+    public class BarObjectsGraph : MonoBehaviour
     {
-        dataProvider = new RandomDataProvider();
-        data = dataProvider.GetData();
-        RegenerateGraph();
-    }
-	
+        // Prefab representing a single bar
+        // TODO: more requirements in the future? e.g., interfaces?
+        public GameObject prefabBar;
 
-	// Update is called once per frame
-	void Update ()
-    {
-	    if (Input.GetKeyDown(KeyCode.Mouse0))
+        // data that will be visualised
+        private float[,] data;
+
+        // matching bars
+        private GameObject[,] ingameBars;
+
+        private DataProvider dataProvider;
+
+        // Use this for initialization
+        void Start()
         {
-            // use random data for this event only
-            data = new RandomDataProvider().GetData();
-
+            dataProvider = new RandomDataProvider();
+            data = dataProvider.GetData();
             RegenerateGraph();
+        }
 
-            // select a random amount of data
+
+        // Update is called once per frame
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                // use random data for this event only
+                data = new RandomDataProvider().GetData();
+
+                RegenerateGraph();
+
+                // select a random amount of data
+                var startPoint = new Vector2(Random.Range(0, data.GetLength(0)), Random.Range(0, data.GetLength(1)));
+                var selectedRadius = Random.Range(1f, Mathf.Max(data.GetLength(0), data.GetLength(1)) / 2);
+
+                for (int x = 0; x < ingameBars.GetLength(0); x++)
+                {
+                    for (int y = 0; y < ingameBars.GetLength(1); y++)
+                    {
+                        ingameBars[x, y].GetComponent<DataPoint>().IsHighlighted = ((new Vector2(x, y) - startPoint).magnitude < selectedRadius);
+                    }
+                }
+            }
+        }
+
+        public void HighlightRandomData()
+        {
             var startPoint = new Vector2(Random.Range(0, data.GetLength(0)), Random.Range(0, data.GetLength(1)));
             var selectedRadius = Random.Range(1f, Mathf.Max(data.GetLength(0), data.GetLength(1)) / 2);
 
@@ -48,81 +62,32 @@ public class BarObjectsGraph : MonoBehaviour
                 }
             }
         }
-	}
 
-    public void HighlightRandomData()
-    {
-        var startPoint = new Vector2(Random.Range(0, data.GetLength(0)), Random.Range(0, data.GetLength(1)));
-        var selectedRadius = Random.Range(1f, Mathf.Max(data.GetLength(0), data.GetLength(1)) / 2);
-
-        for (int x = 0; x < ingameBars.GetLength(0); x++)
+        public void ClearBars()
         {
-            for (int y = 0; y < ingameBars.GetLength(1); y++)
+            if (ingameBars != null)
             {
-                ingameBars[x, y].GetComponent<DataPoint>().IsHighlighted = ((new Vector2(x, y) - startPoint).magnitude < selectedRadius);
-            }
-        }
-    }
-
-    public void ClearBars()
-    {
-        if (ingameBars != null)
-        {
-            foreach (var bar in ingameBars)
-            {
-                Destroy(bar);
-            }
-        }
-
-        ingameBars = null;
-    }
-
-    private void GenerateGraph()
-    {
-        ClearBars();
-
-        ingameBars = new GameObject[data.GetLength(0), data.GetLength(1)];
-
-        for (int x = 0; x < ingameBars.GetLength(0); x++)
-        {
-            for (int y = 0; y < ingameBars.GetLength(1); y++)
-            {
-                var bar = Instantiate(prefabBar);
-                var dataPoint = bar.GetComponent<DataPoint>();
-
-                if (!dataPoint)
+                foreach (var bar in ingameBars)
                 {
-                    print("Error: Attach DataPoint script to graph prefab object!");
+                    Destroy(bar);
                 }
-                else
-                {
-                    bar.transform.parent = transform;
-                    dataPoint.TargetHeight = data[x, y];
-                    dataPoint.SetPosition(2 * x, 2 * y);
-                }
-
-                ingameBars[x, y] = bar;
             }
+
+            ingameBars = null;
         }
-    }
 
-    /**
-     *  Reuses existing bars, if possible.
-     */
-    public void RegenerateGraph()
-    {
-        data = new RandomDataProvider().GetData();
-
-        var isInitialised = (ingameBars != null);
-        var hasSameDimensions = (isInitialised && ingameBars.GetLength(0) == data.GetLength(0) && ingameBars.GetLength(1) == data.GetLength(1));
-
-        if (isInitialised && hasSameDimensions)
+        private void GenerateGraph()
         {
-            for (int x = 0; x < data.GetLength(0); x++)
+            ClearBars();
+
+            ingameBars = new GameObject[data.GetLength(0), data.GetLength(1)];
+
+            for (int x = 0; x < ingameBars.GetLength(0); x++)
             {
-                for (int y = 0; y < data.GetLength(1); y++)
+                for (int y = 0; y < ingameBars.GetLength(1); y++)
                 {
-                    var dataPoint = ingameBars[x, y].GetComponent<DataPoint>();
+                    var bar = Instantiate(prefabBar);
+                    var dataPoint = bar.GetComponent<DataPoint>();
 
                     if (!dataPoint)
                     {
@@ -130,15 +95,50 @@ public class BarObjectsGraph : MonoBehaviour
                     }
                     else
                     {
+                        bar.transform.parent = transform;
                         dataPoint.TargetHeight = data[x, y];
+                        dataPoint.SetPosition(2 * x, 2 * y);
                     }
+
+                    ingameBars[x, y] = bar;
                 }
             }
         }
-        else
-        {
-            GenerateGraph();
-        }
 
+        /**
+         *  Reuses existing bars, if possible.
+         */
+        public void RegenerateGraph()
+        {
+            data = new RandomDataProvider().GetData();
+
+            var isInitialised = (ingameBars != null);
+            var hasSameDimensions = (isInitialised && ingameBars.GetLength(0) == data.GetLength(0) && ingameBars.GetLength(1) == data.GetLength(1));
+
+            if (isInitialised && hasSameDimensions)
+            {
+                for (int x = 0; x < data.GetLength(0); x++)
+                {
+                    for (int y = 0; y < data.GetLength(1); y++)
+                    {
+                        var dataPoint = ingameBars[x, y].GetComponent<DataPoint>();
+
+                        if (!dataPoint)
+                        {
+                            print("Error: Attach DataPoint script to graph prefab object!");
+                        }
+                        else
+                        {
+                            dataPoint.TargetHeight = data[x, y];
+                        }
+                    }
+                }
+            }
+            else
+            {
+                GenerateGraph();
+            }
+
+        }
     }
 }

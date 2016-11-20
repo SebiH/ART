@@ -1,13 +1,13 @@
 using UnityEngine;
 
-namespace Assets.Code.DataProvider
+namespace Assets.Modules.Graph
 {
-    class RandomDataProvider : IDataProvider
+    class RandomDataProvider : DataProvider
     {
         public int width = 10;
         public int height = 10;
 
-        public float[,] GetData()
+        public override float[,] GetData()
         {
             var data = new float[width, height];
 

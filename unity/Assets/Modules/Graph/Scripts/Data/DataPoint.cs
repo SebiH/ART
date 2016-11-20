@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Assets.Code.Graph
+namespace Assets.Modules.Graph
 {
     public abstract class DataPoint : MonoBehaviour
     {

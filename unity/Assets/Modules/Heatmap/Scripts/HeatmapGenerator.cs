@@ -1,4 +1,4 @@
-using Assets.Code.DataProvider;
+using Assets.Modules.Graph;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ namespace Assets.Modules.Heatmap
     public class HeatmapGenerator : MonoBehaviour
     {
         private HeatmapModel _model;
-        private IDataProvider _dataProvider;
+        private DataProvider _dataProvider;
 
         void OnEnable()
         {
