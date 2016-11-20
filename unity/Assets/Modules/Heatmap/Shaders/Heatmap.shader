@@ -8,12 +8,13 @@ Shader "Custom/Heatmap" {
 		_Alpha("Alpha", Float) = 0.8
 	}
 		SubShader{
-		Tags{ "Queue" = "Transparent" "RenderType" = "Transparent" }
-		LOD 200
+		Tags{ "Queue" = "Geometry" "RenderType" = "Transparent" }
+		Cull Off
 
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-#pragma surface surf Standard fullforwardshadows alpha:fade vertex:vert
+//#pragma surface surf Standard fullforwardshadows alpha:fade vertex:vert
+#pragma surface surf Standard fullforwardshadows vertex:vert
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 #pragma target 3.0
