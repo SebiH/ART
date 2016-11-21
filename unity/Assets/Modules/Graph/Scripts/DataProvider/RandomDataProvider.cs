@@ -5,12 +5,12 @@ namespace Assets.Modules.Graph
 {
     class RandomDataProvider : DataProvider
     {
-        public int width = 10;
-        public int height = 10;
+        public int Columns = 10;
+        public int Rows = 10;
 
         public override float[,] GetData()
         {
-            var data = new float[width, height];
+            var data = new float[Rows, Columns];
 
             for (int x = 0; x < data.GetLength(0); x++)
             {
