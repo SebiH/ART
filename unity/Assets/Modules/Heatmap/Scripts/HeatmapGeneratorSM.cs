@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace Assets.Modules.Heatmap
 {
-    public class HeatmapGenerator : MonoBehaviour
+    public class HeatmapGeneratorSM : MonoBehaviour
     {
-        private HeatmapModel _model;
+        private HeatmapModelSM _model;
         private DataProvider _dataProvider;
 
         void OnEnable()
         {
-            _model = GetComponent<HeatmapModel>();
+            _model = GetComponent<HeatmapModelSM>();
             _dataProvider = GetComponent<DataProvider>();
             Generate();
         }

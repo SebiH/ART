@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Heatmap
 {
-    public class HeatmapModel : MonoBehaviour
+    public class HeatmapModelSM : MonoBehaviour
     {
         private Mesh _mesh;
         void OnEnable()
