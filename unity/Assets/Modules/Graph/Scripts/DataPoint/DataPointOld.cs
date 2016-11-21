@@ -1,9 +1,9 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 namespace Assets.Modules.Graph
 {
-    public abstract class DataPoint : MonoBehaviour
+    public abstract class DataPointOld : MonoBehaviour
     {
         protected bool _isHighlighted;
         public bool IsHighlighted

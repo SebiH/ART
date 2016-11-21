@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Graph
 {
-    public class BarDataPoint : DataPoint
+    public class BarDataPoint : DataPointOld
     {
         protected override void OnHeightChange(float height)
         {

@@ -43,7 +43,7 @@ namespace Assets.Modules.Graph
                 {
                     for (int y = 0; y < ingameBars.GetLength(1); y++)
                     {
-                        ingameBars[x, y].GetComponent<DataPoint>().IsHighlighted = ((new Vector2(x, y) - startPoint).magnitude < selectedRadius);
+                        ingameBars[x, y].GetComponent<DataPointOld>().IsHighlighted = ((new Vector2(x, y) - startPoint).magnitude < selectedRadius);
                     }
                 }
             }
@@ -58,7 +58,7 @@ namespace Assets.Modules.Graph
             {
                 for (int y = 0; y < ingameBars.GetLength(1); y++)
                 {
-                    ingameBars[x, y].GetComponent<DataPoint>().IsHighlighted = ((new Vector2(x, y) - startPoint).magnitude < selectedRadius);
+                    ingameBars[x, y].GetComponent<DataPointOld>().IsHighlighted = ((new Vector2(x, y) - startPoint).magnitude < selectedRadius);
                 }
             }
         }
@@ -87,11 +87,11 @@ namespace Assets.Modules.Graph
                 for (int y = 0; y < ingameBars.GetLength(1); y++)
                 {
                     var bar = Instantiate(prefabBar);
-                    var dataPoint = bar.GetComponent<DataPoint>();
+                    var dataPoint = bar.GetComponent<DataPointOld>();
 
                     if (!dataPoint)
                     {
-                        print("Error: Attach DataPoint script to graph prefab object!");
+                        print("Error: Attach DataPointOld script to graph prefab object!");
                     }
                     else
                     {
@@ -121,11 +121,11 @@ namespace Assets.Modules.Graph
                 {
                     for (int y = 0; y < data.GetLength(1); y++)
                     {
-                        var dataPoint = ingameBars[x, y].GetComponent<DataPoint>();
+                        var dataPoint = ingameBars[x, y].GetComponent<DataPointOld>();
 
                         if (!dataPoint)
                         {
-                            print("Error: Attach DataPoint script to graph prefab object!");
+                            print("Error: Attach DataPointOld script to graph prefab object!");
                         }
                         else
                         {
