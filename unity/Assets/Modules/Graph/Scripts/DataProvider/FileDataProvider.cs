@@ -56,10 +56,5 @@ namespace Assets.Modules.Graph
         {
             return data;
         }
-
-        public override Dimension GetDataDimensions()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

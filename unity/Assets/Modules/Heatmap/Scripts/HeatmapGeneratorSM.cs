@@ -1,5 +1,4 @@
 using Assets.Modules.Graph;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.Heatmap
@@ -20,18 +19,19 @@ namespace Assets.Modules.Heatmap
         public void Generate()
         {
             var data = _dataProvider.GetData();
-            var dim = _dataProvider.GetDataDimensions();
+            var rows = data.GetLength(0);
+            var cols = data.GetLength(1);
 
-            var vertices = new Vector3[dim.Columns * dim.Rows];
-            var triangles = new int[(dim.Columns - 1) * (dim.Rows - 1) * 6];
-            int[,] vertexIndices = new int[dim.Columns, dim.Rows];
+            var vertices = new Vector3[cols * rows];
+            var triangles = new int[(cols - 1) * (rows - 1) * 6];
+            int[,] vertexIndices = new int[cols, rows];
 
             int vertexIndicesCounter = 0;
             int triangleCounter = 0;
 
-            for (int col = 0; col < dim.Columns; col++)
+            for (int col = 0; col < cols; col++)
             {
-                for (int row = 0; row < dim.Rows; row++)
+                for (int row = 0; row < rows; row++)
                 {
                     var position = new Vector3(col, Random.Range(-1f, 2f), row);
                     vertices[vertexIndicesCounter] = position;

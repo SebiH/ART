@@ -12,7 +12,6 @@ namespace Assets.Modules.Graph
         private string[] _columnNames;
         private string[] _rowNames;
         private float[,] _values;
-        private Dimension _dimensions;
 
         void OnEnable()
         {
@@ -53,7 +52,6 @@ namespace Assets.Modules.Graph
             var totalRows = values.Count / totalColumns;
             _values = new float[totalRows, totalColumns];
             _rowNames = rowNames.ToArray();
-            _dimensions = new Dimension { Columns = totalColumns, Rows = totalRows };
 
             for (int row = 0; row < totalRows; row++)
             {
@@ -67,11 +65,6 @@ namespace Assets.Modules.Graph
         public override float[,] GetData()
         {
             return _values;
-        }
-
-        public override Dimension GetDataDimensions()
-        {
-            return _dimensions;
         }
     }
 }
