@@ -8,19 +8,24 @@ namespace Assets.Modules.Graph
         public int Columns = 10;
         public int Rows = 10;
 
+        private float[,] _data;
+
         public override float[,] GetData()
         {
-            var data = new float[Rows, Columns];
-
-            for (int x = 0; x < data.GetLength(0); x++)
+            if (_data == null)
             {
-                for (int y = 0; y < data.GetLength(1); y++)
+                _data = new float[Rows, Columns];
+
+                for (int x = 0; x < _data.GetLength(0); x++)
                 {
-                    data[x, y] = UnityEngine.Random.Range(0f, 5f);
+                    for (int y = 0; y < _data.GetLength(1); y++)
+                    {
+                        _data[x, y] = UnityEngine.Random.Range(0f, 1f);
+                    }
                 }
             }
 
-            return data;
+            return _data;
         }
     }
 }
