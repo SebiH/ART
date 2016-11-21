@@ -22,12 +22,12 @@ Shader "Custom/Heatmap" {
 		sampler2D _MainTex;
 
 	struct Input {
-		float3 localPos;
+		float3 pos;
 	};
 
 	void vert(inout appdata_full v, out Input o) {
 		UNITY_INITIALIZE_OUTPUT(Input, o);
-		o.localPos = v.vertex;
+		o.pos = mul(unity_ObjectToWorld, v.vertex);
 	}
 
 	half _Alpha;
@@ -45,7 +45,7 @@ Shader "Custom/Heatmap" {
 	}
 
 	void surf(Input IN, inout SurfaceOutputStandard o) {
-		float height = 1 - (IN.localPos.y - _StartHeight) / (_EndHeight - _StartHeight);
+		float height = 1 - (IN.pos.y - _StartHeight) / (_EndHeight - _StartHeight);
 		float hueRange = _StartHue - _EndHue;
 
 		o.Albedo = hue2rgb(height * hueRange);
