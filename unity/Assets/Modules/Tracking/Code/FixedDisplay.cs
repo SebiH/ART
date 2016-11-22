@@ -35,7 +35,7 @@ namespace Assets.Modules.Tracking
                 // invert rotation on diagonal so that forward == 0,0,1
                 diagonal = Quaternion.Inverse(Rotation) * diagonal;
 
-                var scale = new Vector3(Mathf.Abs(diagonal.x), 0.05f, Mathf.Abs(diagonal.z));
+                var scale = new Vector3(Mathf.Abs(diagonal.x), 1f, Mathf.Abs(diagonal.z));
                 return scale;
             }
         }

@@ -39,7 +39,7 @@ namespace Assets.Modules.InteractiveSurface
                 var z = -DisplayUtility.PixelToUnityCoord(payload.posY) * payload.zoom;
 
                 transform.position = display.GetCornerPosition(Corner.TopLeft) + display.Rotation * new Vector3(-x, 0, -z);
-                transform.localScale = new Vector3(payload.zoom, 1, payload.zoom);
+                transform.localScale = new Vector3(Mathf.Max(payload.zoom, 0.01f), 0.5f, Mathf.Max(payload.zoom, 0.01f));
                 transform.rotation = display.Rotation;
             }
         }
