@@ -98,6 +98,7 @@
     <ClCompile Include="src\api\pipeline.cpp" />
     <ClCompile Include="src\api\processor_factory.cpp" />
     <ClCompile Include="src\api\tools.cpp" />
+    <ClCompile Include="src\aruco_calibration\aruco_calibration.cpp" />
     <ClCompile Include="src\cameras\ActiveCamera.cpp" />
     <ClCompile Include="src\cameras\DummyCameraSource.cpp" />
     <ClCompile Include="src\cameras\EmptyCameraSource.cpp" />
@@ -121,6 +122,7 @@
     <ClCompile Include="src\utils\Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\aruco_calibration\aruco_calibration_board_a4.h" />
     <ClInclude Include="src\cameras\ActiveCamera.h" />
     <ClInclude Include="src\cameras\DummyCameraSource.h" />
     <ClInclude Include="src\cameras\EmptyCameraSource.h" />
