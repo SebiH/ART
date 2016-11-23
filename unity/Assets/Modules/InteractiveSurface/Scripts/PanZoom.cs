@@ -39,8 +39,8 @@ namespace Assets.Modules.InteractiveSurface
                 var x = DisplayUtility.PixelToUnityCoord(payload.posX) * payload.zoom;
                 var z = -DisplayUtility.PixelToUnityCoord(payload.posY) * payload.zoom;
 
-                transform.localScale = new Vector3(Mathf.Max(payload.zoom, 0.01f), 0.5f, Mathf.Max(payload.zoom, 0.01f));
                 transform.position = display.GetCornerPosition(Corner.TopLeft) + display.Rotation * new Vector3(-x, HeightOffset, -z);
+                transform.localScale = new Vector3(Mathf.Max(payload.zoom, 0.01f), 0.4f + payload.zoom / 4f, Mathf.Max(payload.zoom, 0.01f));
                 transform.rotation = display.Rotation;
             }
         }
