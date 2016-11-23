@@ -8,6 +8,8 @@ namespace Assets.Modules.Tracking
         public bool ApplyYOffset = false;
         public bool Invert = false;
 
+        public Transform relativeTo;
+
         void OnEnable()
         {
             ArucoListener.Instance.NewPoseDetected += OnNewPose;
@@ -33,8 +35,8 @@ namespace Assets.Modules.Tracking
                 {
                     //transform.localPosition = pose.Position;
                     //transform.localRotation = pose.Rotation;
-                    var camPos = SceneCameraTracker.Instance.transform.position;
-                    var camRot = SceneCameraTracker.Instance.transform.rotation;
+                    var camPos = (relativeTo == null) ? SceneCameraTracker.Instance.transform.position : relativeTo.position;
+                    var camRot = (relativeTo == null) ? SceneCameraTracker.Instance.transform.rotation : relativeTo.rotation;
                     
                     if (ApplyYOffset)
                         transform.position = camPos + camRot * pose.Position + camRot * new Vector3(0, transform.localScale.y, 0) / 2f;
