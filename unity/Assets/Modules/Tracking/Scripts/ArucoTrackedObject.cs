@@ -39,7 +39,7 @@ namespace Assets.Modules.Tracking
                     var camRot = (relativeTo == null) ? SceneCameraTracker.Instance.transform.rotation : relativeTo.rotation;
                     
                     if (ApplyYOffset)
-                        transform.position = camPos + camRot * pose.Position + camRot * new Vector3(0, transform.localScale.y, 0) / 2f;
+                        transform.position = camPos + camRot * pose.Position + new Vector3(0, transform.localScale.y, 0) / 2f;
                     else
                         transform.position = camPos + camRot * pose.Position;
 
