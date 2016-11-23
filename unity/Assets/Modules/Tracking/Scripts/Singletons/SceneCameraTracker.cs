@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Modules.Tracking.Scripts
+namespace Assets.Modules.Tracking
 {
     public class SceneCameraTracker : MonoBehaviour
     {
