@@ -19,6 +19,12 @@ import { routing } from './routes';
     Components.MapOverlayComponent
   ],
   bootstrap:    [ Components.AppComponent ],
-  providers:    [ Services.SocketIO, Services.MarkerProvider, Services.MapProvider ]
+  providers:    [
+    Services.SocketIO,
+    Services.MarkerProvider,
+    Services.MapProvider,
+    Services.Logger,
+    Services.InteractionManager
+  ]
 })
 export class AppModule { }
