@@ -20,7 +20,7 @@ export class PanZoomComponent implements OnInit, OnDestroy {
     private position: Point = new Point(0, 0);
     private zoom: number = 1;
 
-    private intertiaVelocity: Point = new Point(0, 0);
+    private inertiaVelocity: Point = new Point(0, 0);
 
     private panzoomStartListener: InteractionListener;
     private panzoomUpdateListener: InteractionListener;
@@ -64,7 +64,7 @@ export class PanZoomComponent implements OnInit, OnDestroy {
 
 
     private onPanZoomStart(ev: InteractionEvent): boolean {
-        this.intertiaVelocity = new Point(0, 0);
+        this.inertiaVelocity = new Point(0, 0);
         return false;
     }
 
@@ -75,7 +75,8 @@ export class PanZoomComponent implements OnInit, OnDestroy {
             this.handleZoom(ev);
         }
 
-        this.intertiaVelocity = ev.delta;
+        this.inertiaVelocity = ev.delta;
+        this.sync();
 
         return false;
     }
@@ -116,16 +117,26 @@ export class PanZoomComponent implements OnInit, OnDestroy {
 
 
     private applyInertia(): void {
-        this.intertiaVelocity = this.intertiaVelocity.multiplyNum(INERTIA_RATE);
+        this.inertiaVelocity = this.inertiaVelocity.multiplyNum(INERTIA_RATE);
 
-        this.position.x += this.intertiaVelocity.x;
-        this.position.y += this.intertiaVelocity.y;
+        this.position.x += this.inertiaVelocity.x;
+        this.position.y += this.inertiaVelocity.y;
 
-        if (Math.abs(this.intertiaVelocity.x) > 0.001 || Math.abs(this.intertiaVelocity.y) > 0.001) {
+        this.sync();
+
+        if (Math.abs(this.inertiaVelocity.x) > 0.001 || Math.abs(this.inertiaVelocity.y) > 0.001) {
            setTimeout(() => { this.applyInertia(); }, 10);
         }
     }
 
+
+    private sync(): void {
+        this.socketio.sendMessage('panzoom', {
+            posX: this.position.x,
+            posY: this.position.y,
+            zoom: this.zoom
+        });
+    }
 
 
     private viewStyle = {
