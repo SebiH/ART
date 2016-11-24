@@ -37,8 +37,6 @@ ArucoProcessor::~ArucoProcessor()
 
 std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<const FrameData>& frame)
 {
-	static int frame_counter = 0;
-
 	if (initialized_size_ != frame->size)
 	{
 		Init(frame->size, ActiveCamera::Instance()->GetSource()->GetFocalLength());
@@ -53,21 +51,15 @@ std::shared_ptr<const FrameData> ArucoProcessor::Process(const std::shared_ptr<c
 
 	std::vector<aruco::Marker> detected_markers;
 
-	if (frame_counter == 0)
+	if (use_tracker_)
 	{
-		if (use_tracker_)
-		{
-			detected_markers = detector_.detect(img_gray);
-		}
-		else
-		{
-			// TODO: crashes with release version of aruco, works in debug?
-			detector_.detect(img_gray, detected_markers, camera_params_.CameraMatrix, cv::Mat(), marker_size_m_, true);
-		}
+		detected_markers = detector_.detect(img_gray);
 	}
-
-	// skip every x frames
-	frame_counter = (frame_counter + 1) % 3;
+	else
+	{
+		// TODO: crashes with release version of aruco, works in debug?
+		detector_.detect(img_gray, detected_markers, camera_params_.CameraMatrix, cv::Mat(), marker_size_m_, true);
+	}
 
 	json processed_markers{
 		{ "markers_left", json::array() },
