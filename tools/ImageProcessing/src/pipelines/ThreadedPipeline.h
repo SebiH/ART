@@ -5,6 +5,8 @@
 #include <thread>
 #include <vector>
 
+#include <Windows.h> // slim read/write lock
+
 #include "frames/FrameData.h"
 #include "frames/FrameSize.h"
 #include "outputs/Output.h"
@@ -18,7 +20,7 @@ namespace ImageProcessing
 	{
 	private:
 		const UID id_;
-		std::mutex list_mutex_;
+		PSRWLOCK list_lock_;
 		std::vector<std::shared_ptr<Processor>> processors_;
 		std::vector<std::shared_ptr<Output>> outputs_;
 

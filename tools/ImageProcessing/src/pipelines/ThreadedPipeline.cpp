@@ -15,6 +15,9 @@ ThreadedPipeline::ThreadedPipeline()
 	ActiveCamera::Instance()->on_framesize_changed += framesize_changed_handler_;
 
 	ResizeBuffers(ActiveCamera::Instance()->GetFrameSize());
+
+	list_lock_ = new SRWLOCK();
+	InitializeSRWLock(list_lock_);
 }
 
 
@@ -22,6 +25,7 @@ ThreadedPipeline::~ThreadedPipeline()
 {
 	ActiveCamera::Instance()->on_framesize_changed -= framesize_changed_handler_;
 	Stop();
+	delete list_lock_;
 }
 
 
@@ -124,7 +128,8 @@ void ThreadedPipeline::Run()
 		}
 
 		{
-			std::lock_guard<std::mutex> lock(list_mutex_);
+			// TODO: put into try/catch, or write class similar to std::lock_guard??
+			AcquireSRWLockShared(list_lock_);
 			// pass frame into all processing modules
 			for (auto processor : processors_)
 			{
@@ -136,6 +141,8 @@ void ThreadedPipeline::Run()
 			{
 				output->RegisterResult(frame);
 			}
+
+			ReleaseSRWLockShared(list_lock_);
 		}
 
 		SwitchBuffers();
@@ -149,32 +156,36 @@ void ThreadedPipeline::Run()
 
 void ThreadedPipeline::AddProcessor(std::shared_ptr<Processor> &processor)
 {
-	std::lock_guard<std::mutex> lock(list_mutex_);
+	AcquireSRWLockExclusive(list_lock_);
 	processors_.push_back(processor);
+	ReleaseSRWLockExclusive(list_lock_);
 }
 
 
 std::shared_ptr<Processor> ThreadedPipeline::GetProcessor(UID processor_id)
 {
-	std::lock_guard<std::mutex> lock(list_mutex_);
-	for (auto processor : processors_)
+	AcquireSRWLockShared(list_lock_);
+	for (const auto &processor : processors_)
 	{
 		if (processor->Id() == processor_id)
 		{
+			ReleaseSRWLockShared(list_lock_);
 			return processor;
 		}
 	}
 
+	ReleaseSRWLockShared(list_lock_);
 	throw std::exception("Unknown processor id");
 }
 
 
 void ThreadedPipeline::RemoveProcessor(UID processor_id)
 {
-	std::lock_guard<std::mutex> lock(list_mutex_);
+	AcquireSRWLockExclusive(list_lock_);
 	processors_.erase(std::remove_if(processors_.begin(), processors_.end(), [processor_id](const std::shared_ptr<Processor> &processor) {
 		return processor->Id() == processor_id;
 	}), processors_.end());
+	ReleaseSRWLockExclusive(list_lock_);
 }
 
 
@@ -182,40 +193,45 @@ void ThreadedPipeline::RemoveProcessor(UID processor_id)
 
 void ThreadedPipeline::AddOutput(std::shared_ptr<Output> &output)
 {
-	std::lock_guard<std::mutex> lock(list_mutex_);
+	AcquireSRWLockExclusive(list_lock_);
 	outputs_.push_back(output);
+	ReleaseSRWLockExclusive(list_lock_);
 }
 
 
 std::shared_ptr<Output> ThreadedPipeline::GetOutput(UID output_id)
 {
-	std::lock_guard<std::mutex> lock(list_mutex_);
 	for (auto output : outputs_)
+	AcquireSRWLockShared(list_lock_);
 	{
 		if (output->Id() == output_id)
 		{
+			ReleaseSRWLockShared(list_lock_);
 			return output;
 		}
 	}
 
+	ReleaseSRWLockShared(list_lock_);
 	throw std::exception("Unknown output id");
 }
 
 
 void ThreadedPipeline::RemoveOutput(UID output_id)
 {
-	std::lock_guard<std::mutex> lock(list_mutex_);
+	AcquireSRWLockExclusive(list_lock_);
 	outputs_.erase(std::remove_if(outputs_.begin(), outputs_.end(), [output_id](const std::shared_ptr<Output> &output) {
 		return output->Id() == output_id;
 	}), outputs_.end());
+	ReleaseSRWLockExclusive(list_lock_);
 }
 
 
 void ThreadedPipeline::FlushOutputs()
 {
-	std::lock_guard<std::mutex> lock(list_mutex_);
 	for (auto output : outputs_)
+	AcquireSRWLockShared(list_lock_);
 	{
 		output->WriteResult();
 	}
+	ReleaseSRWLockShared(list_lock_);
 }
