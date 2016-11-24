@@ -50,7 +50,7 @@ namespace ImageProcessing
 		std::shared_ptr<Processor> GetProcessor(UID processor_id);
 		void RemoveProcessor(UID processor_id);
 
-		void AddOutput(std::shared_ptr<Output> &output);
+		void AddOutput(const std::shared_ptr<Output> &output);
 		std::shared_ptr<Output> GetOutput(UID output_id);
 		void RemoveOutput(UID output_id);
 
