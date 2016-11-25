@@ -7,6 +7,9 @@ namespace Assets.Modules.Graph
     {
         public HeatmapModelDynamic Heatmap;
 
+        // radius around which points are (un)loaded
+        public int LoadRegionRadius = 1;
+
         private GameObject[,] _generatedObjects;
 
         void OnEnable()
@@ -51,8 +54,6 @@ namespace Assets.Modules.Graph
             }
         }
 
-        // radius around which points are (un)loaded
-        const int LOAD_REGION_RADIUS = 1;
 
         private void LoadRegionAround(DataPoint p)
         {
@@ -61,11 +62,11 @@ namespace Assets.Modules.Graph
             var maxRows = _generatedObjects.GetLength(0) - 1;
             var maxCols = _generatedObjects.GetLength(1) - 1;
 
-            var startRow = Mathf.Max(p.RowIndex - LOAD_REGION_RADIUS, 0);
-            var endRow = Mathf.Min(p.RowIndex + LOAD_REGION_RADIUS, maxRows);
+            var startRow = Mathf.Max(p.RowIndex - LoadRegionRadius, 0);
+            var endRow = Mathf.Min(p.RowIndex + LoadRegionRadius, maxRows);
 
-            var startCol = Mathf.Max(p.ColumnIndex - LOAD_REGION_RADIUS, 0);
-            var endCol = Mathf.Min(p.ColumnIndex + LOAD_REGION_RADIUS, maxCols);
+            var startCol = Mathf.Max(p.ColumnIndex - LoadRegionRadius, 0);
+            var endCol = Mathf.Min(p.ColumnIndex + LoadRegionRadius, maxCols);
 
             for (int row = startRow; row <= endRow; row++)
             {
@@ -96,11 +97,11 @@ namespace Assets.Modules.Graph
             // Note: the surrounding datapoints should always be active, so that panning
             // always loads data if user pans model completely outside
             // -> max(1, ...); min(max - 1, ...) instead of 0
-            var startRow = Mathf.Max(p.RowIndex - LOAD_REGION_RADIUS, 1);
-            var endRow = Mathf.Min(p.RowIndex + LOAD_REGION_RADIUS, maxRows - 1);
+            var startRow = Mathf.Max(p.RowIndex - LoadRegionRadius, 1);
+            var endRow = Mathf.Min(p.RowIndex + LoadRegionRadius, maxRows - 1);
 
-            var startCol = Mathf.Max(p.ColumnIndex - LOAD_REGION_RADIUS, 1);
-            var endCol = Mathf.Min(p.ColumnIndex + LOAD_REGION_RADIUS, maxCols - 1);
+            var startCol = Mathf.Max(p.ColumnIndex - LoadRegionRadius, 1);
+            var endCol = Mathf.Min(p.ColumnIndex + LoadRegionRadius, maxCols - 1);
 
             for (int row = startRow; row <= endRow; row++)
             {
