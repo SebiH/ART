@@ -460,6 +460,38 @@ namespace Assets.Modules.Calibration
                 Gizmos.DrawLine(bottomleft, bottomright);
                 Gizmos.DrawLine(bottomright, topright);
                 Gizmos.DrawLine(topright, topleft);
+
+                bool isValidMarker = ArucoListener.Instance.DetectedPoses.ContainsKey(marker.id) && Time.unscaledTime - ArucoListener.Instance.DetectedPoses[marker.id].DetectionTime < ArCutoffTime;
+
+                if (isValidMarker)
+                {
+                    var arMarker = ArucoListener.Instance.DetectedPoses[marker.id];
+
+                    var markerMatrix = Matrix4x4.TRS(arMarker.Position, arMarker.Rotation, Vector3.one);
+                    var cameraMatrix = markerMatrix.inverse;
+
+                    var localPos = cameraMatrix.GetPosition();
+                    var worldPos = markerPos + display.Rotation * localPos;
+
+                    Gizmos.DrawWireSphere(worldPos, 0.01f);
+                    Gizmos.DrawLine(worldPos, worldPos + Quaternion.Inverse(_optitrackPose.Rotation) * (worldPos - _optitrackPose.Position));
+
+                    var localRot = cameraMatrix.GetRotation();
+                    var localForward = localRot * Vector3.forward;
+                    var localUp = localRot * Vector3.up;
+
+                    var worldForward = display.Rotation * localForward;
+                    var worldUp = display.Rotation * localUp;
+                    var worldRight = display.Rotation * (localRot * Vector3.right);
+                    var worldRot = Quaternion.LookRotation(worldForward, worldUp);
+
+                    Gizmos.color = Color.blue;
+                    Gizmos.DrawLine(worldPos, worldPos + worldForward * 0.1f);
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawLine(worldPos, worldPos + worldUp * 0.01f);
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(worldPos, worldPos + worldRight * 0.01f);
+                }
             }
         }
 
