@@ -101,6 +101,11 @@ namespace Assets.Modules.Tracking
                 _camOffset = Vector3.Lerp(_startCamOffset, _targetCamOffset, deltaTime);
                 _rotationOffset = Quaternion.Lerp(_startRotationOffset, _targetRotationOffset, deltaTime);
             }
+            else
+            {
+                _camOffset = _targetCamOffset;
+                _rotationOffset = _targetRotationOffset;
+            }
         }
 
 
