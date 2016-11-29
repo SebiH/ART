@@ -6,7 +6,7 @@ import { Point } from '../../models/index';
 
 const INERTIA_RATE = 0.95;
 
-const MIN_ZOOM = 0.1;
+const MIN_ZOOM = 0.05;
 const MAX_ZOOM = 5;
 
 

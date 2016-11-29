@@ -15,6 +15,9 @@ namespace Assets.Modules.InteractiveSurface
             public float zoom;
         }
 
+        public bool TranslateX = true;
+        public bool TranslateZ = true;
+        public bool Zoom = true;
         public string DisplayName = "Surface";
         public float HeightOffset = -0.05f;
 
@@ -36,11 +39,12 @@ namespace Assets.Modules.InteractiveSurface
                 var display = FixedDisplays.Get(DisplayName);
 
                 var payload = JsonUtility.FromJson<MessagePayload>(msg.payload);
-                var x = DisplayUtility.PixelToUnityCoord(payload.posX) * payload.zoom;
-                var z = -DisplayUtility.PixelToUnityCoord(payload.posY) * payload.zoom;
+                var x = TranslateX ? DisplayUtility.PixelToUnityCoord(payload.posX) * payload.zoom : 0;
+                var z = TranslateZ ? -DisplayUtility.PixelToUnityCoord(payload.posY) * payload.zoom : 0;
 
                 transform.position = display.GetCornerPosition(Corner.TopLeft) + display.Rotation * new Vector3(-x, HeightOffset, -z);
-                transform.localScale = new Vector3(Mathf.Max(payload.zoom, 0.01f), 0.4f + payload.zoom / 4f, Mathf.Max(payload.zoom, 0.01f));
+                if (Zoom)
+                    transform.localScale = new Vector3(Mathf.Max(payload.zoom, 0.002f), 0.4f + payload.zoom / 4f, Mathf.Max(payload.zoom, 0.002f));
                 transform.rotation = display.Rotation;
             }
         }

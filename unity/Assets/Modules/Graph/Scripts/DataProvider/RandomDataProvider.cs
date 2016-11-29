@@ -21,6 +21,12 @@ namespace Assets.Modules.Graph
                     for (int y = 0; y < _data.GetLength(1); y++)
                     {
                         _data[x, y] = UnityEngine.Random.Range(0f, 1f);
+
+                        // make peaks more rare
+                        if (UnityEngine.Random.Range(0f, 1f) > 0.8)
+                        {
+                            _data[x, y] += UnityEngine.Random.Range(0f, 1f);
+                        }
                     }
                 }
             }

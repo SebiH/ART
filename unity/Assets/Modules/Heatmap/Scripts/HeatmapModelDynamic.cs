@@ -36,6 +36,8 @@ namespace Assets.Modules.Heatmap
             instance.transform.localScale = Vector3.one;
             instance.transform.localRotation = Quaternion.identity;
 
+            instance.hideFlags = HideFlags.HideAndDontSave;
+
             return instance;
         }
     }
