@@ -4,7 +4,8 @@ import {
     MenuComponent,
     DemoComponent,
     MeasurementComponent,
-    PanZoomComponent
+    PanZoomComponent,
+    ScrollerComponent
 } from './components/index';
 
 const routes: Routes = [
@@ -23,6 +24,10 @@ const routes: Routes = [
     {
         path: 'panzoom',
         component: PanZoomComponent
+    },
+    {
+        path: 'scroll',
+        component: ScrollerComponent
     },
     {
         path: '',

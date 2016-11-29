@@ -16,7 +16,8 @@ import { routing } from './routes';
     Components.MarkerOverlayComponent,
     Components.MeasurementComponent,
     Components.PanZoomComponent,
-    Components.MapOverlayComponent
+    Components.MapOverlayComponent,
+    Components.ScrollerComponent
   ],
   bootstrap:    [ Components.AppComponent ],
   providers:    [

@@ -5,3 +5,4 @@ export * from './marker-overlay/marker-overlay';
 export * from './map-overlay/map-overlay';
 export * from './measurement/measurement';
 export * from './panzoom/panzoom';
+export * from './scroller/scroller';
