@@ -29,25 +29,12 @@ export class MarkerProvider {
         let markerSize = 500;
         let borderSize = 30;
         let currentId = 0;
-        let markerCountHor = 7;
-        let markerCountVer = 5;
+        let markerCountHor = 5;
+        let markerCountVer = 2;
 
         let width = window.innerWidth - borderSize * 2;
         let height = window.innerHeight - borderSize * 2;
 
-        // for (let i = 0; i < markerCountHor; i++) {
-        //     for (let j = 0; j < markerCountVer; j++) {
-        //         for (let k = 0; k < 4; k++) {
-        //             let marker = new Marker();
-        //             marker.id = currentId++;
-        //             marker.posX = Math.max(i / (markerCountHor - 1) * width - markerSize/2, 0) + (k % 2) * (markerSize/4 + borderSize/2) + borderSize / 4 ;
-        //             marker.posY = Math.max(j / (markerCountVer - 1) * height - markerSize/2, 0) + Math.floor(k / 2) * (markerSize/4 + borderSize/2) + borderSize/4;
-        //             marker.size = markerSize / 4 - borderSize;
-        //             marker.onPropertyChanged((marker) => this.syncMarker(marker));
-        //             this.markers.push(marker);
-        //         }
-        //     }
-        // }
         for (let i = 0; i < markerCountHor; i++) {
             for (let j = 0; j < markerCountVer; j++) {
                 let marker = new Marker();
