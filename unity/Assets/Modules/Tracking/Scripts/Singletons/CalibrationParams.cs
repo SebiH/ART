@@ -95,17 +95,9 @@ namespace Assets.Modules.Tracking
             }
 #endif
 
-            if ((_targetCamOffset - _camOffset).sqrMagnitude > 0.0001f)
-            {
-                var deltaTime = (Time.unscaledTime - LastCalibrationTime) * (1 / Smoothing);
-                _camOffset = Vector3.Lerp(_startCamOffset, _targetCamOffset, deltaTime);
-                _rotationOffset = Quaternion.Lerp(_startRotationOffset, _targetRotationOffset, deltaTime);
-            }
-            else
-            {
-                _camOffset = _targetCamOffset;
-                _rotationOffset = _targetRotationOffset;
-            }
+            var deltaTime = (Time.unscaledTime - LastCalibrationTime) * (1 / Smoothing);
+            _camOffset = Vector3.Lerp(_startCamOffset, _targetCamOffset, deltaTime);
+            _rotationOffset = Quaternion.Lerp(_startRotationOffset, _targetRotationOffset, deltaTime);
         }
 
 
