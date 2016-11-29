@@ -20,6 +20,8 @@ namespace Assets.Modules.InteractiveSurface
         public bool Zoom = true;
         public string DisplayName = "Surface";
         public float HeightOffset = -0.05f;
+        public Vector3 PositionOffset = Vector3.zero;
+        public Vector3 RotationOffset = Vector3.zero;
 
         void OnEnable()
         {
@@ -42,10 +44,10 @@ namespace Assets.Modules.InteractiveSurface
                 var x = TranslateX ? DisplayUtility.PixelToUnityCoord(payload.posX) * payload.zoom : 0;
                 var z = TranslateZ ? -DisplayUtility.PixelToUnityCoord(payload.posY) * payload.zoom : 0;
 
-                transform.position = display.GetCornerPosition(Corner.TopLeft) + display.Rotation * new Vector3(-x, HeightOffset, -z);
+                transform.position = display.GetCornerPosition(Corner.TopLeft) + display.Rotation * new Vector3(-x, HeightOffset, -z) + PositionOffset;
                 if (Zoom)
                     transform.localScale = new Vector3(Mathf.Max(payload.zoom, 0.002f), 0.4f + payload.zoom / 4f, Mathf.Max(payload.zoom, 0.002f));
-                transform.rotation = display.Rotation;
+                transform.rotation = Quaternion.Euler(display.Rotation.eulerAngles + RotationOffset);
             }
         }
     }
