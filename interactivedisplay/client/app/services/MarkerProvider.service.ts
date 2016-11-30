@@ -29,8 +29,8 @@ export class MarkerProvider {
         let markerSize = 500;
         let borderSize = 30;
         let currentId = 0;
-        let markerCountHor = 5;
-        let markerCountVer = 2;
+        let markerCountHor = 7;
+        let markerCountVer = 5;
 
         let width = window.innerWidth - borderSize * 2;
         let height = window.innerHeight - borderSize * 2;
