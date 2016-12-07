@@ -128,11 +128,11 @@ namespace Assets.Modules.Calibration
                     if (Input.GetKeyDown(KeyCode.Space))
                     {
                         Debug.Log("Calibrating...");
-                        CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (_optitrackCameraPose.Position - worldPos);
+                        CalibrationParams.PositionOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (_optitrackCameraPose.Position - worldPos);
                         // c = b * inv(a)
                         // => b = c * a?
                         // from ovrRot to worldRot
-                        CalibrationParams.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
+                        CalibrationParams.RotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
                     }
                 }
             }
@@ -373,8 +373,8 @@ namespace Assets.Modules.Calibration
             var totalAvgPosOffset = Vector3.zero;
             foreach (var offset in _avgCalibrationPosOffsets) { totalAvgPosOffset += offset; }
 
-            CalibrationParams.OptitrackToCameraOffset = totalAvgPosOffset / _avgCalibrationPosOffsets.Count;
-            CalibrationParams.OpenVrRotationOffset = MathUtility.Average(_avgCalibrationRotOffsets);
+            CalibrationParams.PositionOffset = totalAvgPosOffset / _avgCalibrationPosOffsets.Count;
+            CalibrationParams.RotationOffset = MathUtility.Average(_avgCalibrationRotOffsets);
 
             IsCalibrating = false;
         }

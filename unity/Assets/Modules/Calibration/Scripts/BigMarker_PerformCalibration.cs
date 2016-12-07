@@ -127,11 +127,11 @@ namespace Assets.Modules.Calibration
                     positions.Add(worldPos);
                 }
 
-                CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (MathUtility.Average(positions) - _optitrackCameraPose.Position);
+                CalibrationParams.PositionOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (MathUtility.Average(positions) - _optitrackCameraPose.Position);
                 // c = b * inv(a)
                 // => b = c * a?
                 // from ovrRot to worldRot
-                CalibrationParams.OpenVrRotationOffset = MathUtility.Average(rotations) * Quaternion.Inverse(_ovrRot);
+                CalibrationParams.RotationOffset = MathUtility.Average(rotations) * Quaternion.Inverse(_ovrRot);
             }
         }
 
@@ -235,11 +235,11 @@ namespace Assets.Modules.Calibration
             var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
             Debug.Log("Calibrating...");
-            CalibrationParams.OptitrackToCameraOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
+            CalibrationParams.PositionOffset = Quaternion.Inverse(_optitrackCameraPose.Rotation) * (worldPos - _optitrackCameraPose.Position);
             // c = b * inv(a)
             // => b = c * a?
             // from ovrRot to worldRot
-            CalibrationParams.OpenVrRotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
+            CalibrationParams.RotationOffset = worldRot * Quaternion.Inverse(_ovrRot);
         }
 
         private Vector3 GetMarkerWorldPosition(int markerIndex, Quaternion tableRotation)

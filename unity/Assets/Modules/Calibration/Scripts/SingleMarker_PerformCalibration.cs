@@ -234,7 +234,7 @@ namespace Assets.Modules.Calibration
             var artkCameraPosInRoom = _arucoPos + markerPosInRoom; // TODO: could be '-' instead of '+' ?
 #endif
 
-            CalibrationParams.OptitrackToCameraOffset = (artkCameraPosInRoom - _optitrackCameraPose.Position);
+            CalibrationParams.PositionOffset = (artkCameraPosInRoom - _optitrackCameraPose.Position);
 
 
             /*
@@ -256,7 +256,7 @@ namespace Assets.Modules.Calibration
 
             // this should be the direction in which the OpenVR headset *should*
             // be looking - anything else we'll save as offset
-            CalibrationParams.OpenVrRotationOffset  = _ovrRot * Quaternion.Inverse(cameraRotationInRoom);
+            CalibrationParams.RotationOffset  = _ovrRot * Quaternion.Inverse(cameraRotationInRoom);
         }
     }
 }

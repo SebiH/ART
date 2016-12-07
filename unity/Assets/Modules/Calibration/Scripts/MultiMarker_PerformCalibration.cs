@@ -269,8 +269,8 @@ namespace Assets.Modules.Calibration
             var avgRotation = MathUtility.Average(arucoRotations);
             var avgRotOffset = avgRotation * Quaternion.Inverse(_ovrRot);
 
-            CalibrationParams.OptitrackToCameraOffset = avgPosOffset;
-            CalibrationParams.OpenVrRotationOffset = avgRotOffset;
+            CalibrationParams.PositionOffset = avgPosOffset;
+            CalibrationParams.RotationOffset = avgRotOffset;
 
             IsCalibrating = false;
             CalibrationProgress = 0;

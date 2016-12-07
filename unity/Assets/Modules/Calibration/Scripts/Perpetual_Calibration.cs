@@ -177,11 +177,11 @@ namespace Assets.Modules.Calibration
 
                 if (_perMarkerPosCalib.Count > 5 && _perMarkerPosCalib.Count < 50)
                 {
-                    CalibrationParams.OptitrackToCameraOffset = MathUtility.Average(_perMarkerPosCalib);
+                    CalibrationParams.PositionOffset = MathUtility.Average(_perMarkerPosCalib);
                     // c = b * inv(a)
                     // => b = c * a?
                     // from ovrRot to worldRot
-                    CalibrationParams.OpenVrRotationOffset = MathUtility.Average(_perMarkerRotCalib);
+                    CalibrationParams.RotationOffset = MathUtility.Average(_perMarkerRotCalib);
                 }
             }
         }
@@ -266,11 +266,11 @@ namespace Assets.Modules.Calibration
 
             if (nearestMarkers.Count > 0)
             {
-                CalibrationParams.OptitrackToCameraOffset = MathUtility.Average(pOffsets);
+                CalibrationParams.PositionOffset = MathUtility.Average(pOffsets);
                 // c = b * inv(a)
                 // => b = c * a?
                 // from ovrRot to worldRot
-                CalibrationParams.OpenVrRotationOffset = MathUtility.Average(rOffsets);
+                CalibrationParams.RotationOffset = MathUtility.Average(rOffsets);
             }
         }
 
