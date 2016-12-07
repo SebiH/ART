@@ -1,136 +1,113 @@
-using Assets.Modules.Core;
-using System;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
-    public class CalibrationParams : MonoBehaviour
+    public static class CalibrationParams
     {
-        private static CalibrationParams Instance;
-        public static float LastCalibrationTime { get; private set; }
+        private static readonly int STABLE_SAMPLE_COUNT = 10;
+        private static readonly float AVG_WEIGHT = 0.7f;
 
-        private static bool _isFirstRotation = true;
+        public static void Reset()
+        {
+            ResetRotationOffset();
+            ResetPositionOffset();
+        }
+
+        #region Rotation
+
         private static Quaternion _rotationOffset = Quaternion.identity;
-        private static Quaternion _targetRotationOffset = Quaternion.identity;
-        private static Quaternion _startRotationOffset = Quaternion.identity;
-        public static Quaternion OpenVrRotationOffset
+        public static Quaternion RotationOffset
         {
             get { return _rotationOffset; }
-            set
-            {
-                if (_isFirstRotation)
-                {
-                    _isFirstRotation = false;
-                    _rotationOffset = value;
-                }
-                else
-                {
-                    _startRotationOffset = _rotationOffset;
-                    _targetRotationOffset = value;
-                }
-
-                UpdateCalibration();
-            }
+            set { CalculateOffset(value); }
         }
 
-        private static bool _isFirstPosition = true;
-        private static Vector3 _camOffset = Vector3.zero;
-        private static Vector3 _targetCamOffset = Vector3.zero;
-        private static Vector3 _startCamOffset = Vector3.zero;
-        public static Vector3 OptitrackToCameraOffset
+        public static bool HasStableRotation
         {
-            get { return _camOffset; }
-            set
-            {
-                if (_isFirstPosition)
-                {
-                    _isFirstPosition = false;
-                    _camOffset = value;
-                }
-                else
-                {
-                    _startCamOffset = _camOffset;
-                    _targetCamOffset = value;
-                    UpdateCalibration();
-                }
-            }
+            get { return _avgRotSamples >= STABLE_SAMPLE_COUNT; }
         }
 
-        private static void UpdateCalibration()
+        public static void ResetRotationOffset()
         {
-            LastCalibrationTime = Time.unscaledTime;
+            _avgRotSamples = 0;
+            _rotationOffset = Quaternion.identity;
         }
 
-
-        public string StartupFile = "";
-        [Range(0.1f, 10f)]
-        public float Smoothing = 5f;
-        public bool OverrideCalibration = false;
-
-        public Vector3 OverrideRotation;
-        public Vector3 OverridePosition;
-
-        void OnEnable()
+        private static int _avgRotSamples = 0;
+        private static void CalculateOffset(Quaternion currentValue)
         {
-            Instance = this;
-
-            if (StartupFile.Length > 0)
+            if (_avgRotSamples < STABLE_SAMPLE_COUNT)
             {
-                LoadFromFile(StartupFile);
-            }
-        }
+                // use normal moving average until we have enough samples
+                float x = (_avgRotSamples * _rotationOffset.x + currentValue.x) / (_avgRotSamples + 1);
+                float y = (_avgRotSamples * _rotationOffset.y + currentValue.y) / (_avgRotSamples + 1);
+                float z = (_avgRotSamples * _rotationOffset.z + currentValue.z) / (_avgRotSamples + 1);
+                float w = (_avgRotSamples * _rotationOffset.w + currentValue.w) / (_avgRotSamples + 1);
 
-        void Update()
-        {
-#if UNITY_EDITOR
-            if (OverrideCalibration)
-            {
-                OptitrackToCameraOffset = OverridePosition;
-                OpenVrRotationOffset = Quaternion.Euler(OverrideRotation);
+                _rotationOffset = new Quaternion(x, y, z, w);
+                _avgRotSamples++;
             }
             else
             {
-                OverridePosition = OptitrackToCameraOffset;
-                OverrideRotation = OpenVrRotationOffset.eulerAngles;
+                // use decaying moving average to discard old values over time
+                float x = (AVG_WEIGHT * _rotationOffset.x + (1 - AVG_WEIGHT) * currentValue.x);
+                float y = (AVG_WEIGHT * _rotationOffset.y + (1 - AVG_WEIGHT) * currentValue.y);
+                float z = (AVG_WEIGHT * _rotationOffset.z + (1 - AVG_WEIGHT) * currentValue.z);
+                float w = (AVG_WEIGHT * _rotationOffset.w + (1 - AVG_WEIGHT) * currentValue.w);
+
+                _rotationOffset = new Quaternion(x, y, z, w);
             }
-#endif
-
-            var deltaTime = (Time.unscaledTime - LastCalibrationTime) * (1 / Smoothing);
-            _camOffset = Vector3.Lerp(_startCamOffset, _targetCamOffset, deltaTime);
-            _rotationOffset = Quaternion.Lerp(_startRotationOffset, _targetRotationOffset, deltaTime);
-        }
-
-
-        #region Serializing
-
-        [Serializable]
-        private class Offsets
-        {
-            public Quaternion Rotation;
-            public Vector3 Position;
-        }
-
-        public void SaveToFile(string filename)
-        {
-            var offsets = new Offsets
-            {
-                Rotation = OpenVrRotationOffset,
-                Position = OptitrackToCameraOffset
-            };
-
-            FileUtility.SaveToFile(filename, JsonUtility.ToJson(offsets));
-        }
-
-        public void LoadFromFile(string filename)
-        {
-            var contents = FileUtility.LoadFromFile(filename);
-            var offsets = JsonUtility.FromJson<Offsets>(contents);
-
-            OpenVrRotationOffset = offsets.Rotation;
-            OptitrackToCameraOffset = offsets.Position;
-            Debug.Log(String.Format("Loaded CalibrationOffsets: Rotation: {0}   Position: {1}", offsets.Rotation.ToString(), offsets.Position.ToString()));
         }
 
         #endregion
+
+
+        #region Position
+
+        private static Vector3 _positionOffset = Vector3.zero;
+        public static Vector3 PositionOffset
+        {
+            get { return _positionOffset; }
+            set { CalculateOffset(_positionOffset); }
+        }
+
+        public static bool HasStablePosition
+        {
+            get { return _avgPosSamples >= STABLE_SAMPLE_COUNT; }
+        }
+
+        public static void ResetPositionOffset()
+        {
+            _avgPosSamples = 0;
+            _positionOffset = Vector3.zero;
+        }
+
+
+        private static int _avgPosSamples = 0;
+        private static void CalculateOffset(Vector3 currentValue)
+        {
+            if (_avgPosSamples < STABLE_SAMPLE_COUNT)
+            {
+                // use normal moving average until we have enough samples
+                float x = (_avgPosSamples * _positionOffset.x + currentValue.x) / (_avgPosSamples + 1);
+                float y = (_avgPosSamples * _positionOffset.y + currentValue.y) / (_avgPosSamples + 1);
+                float z = (_avgPosSamples * _positionOffset.z + currentValue.z) / (_avgPosSamples + 1);
+
+                _positionOffset = new Vector3(x, y, z);
+                _avgPosSamples++;
+            }
+            else
+            {
+                // use decaying moving average to discard old values over time
+                float x = (AVG_WEIGHT * _positionOffset.x + (1 - AVG_WEIGHT) * currentValue.x);
+                float y = (AVG_WEIGHT * _positionOffset.y + (1 - AVG_WEIGHT) * currentValue.y);
+                float z = (AVG_WEIGHT * _positionOffset.z + (1 - AVG_WEIGHT) * currentValue.z);
+
+                _positionOffset = new Vector3(x, y, z);
+            }
+        }
+
+        #endregion
+
     }
 }
