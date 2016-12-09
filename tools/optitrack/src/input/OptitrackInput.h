@@ -9,14 +9,22 @@
 
 namespace Optitrack
 {
-	class OptitrackInput : Input
+	class OptitrackInput : public Input
 	{
 	public:
 		OptitrackInput() {}
 		virtual ~OptitrackInput();
 
+		// see static functions below
+		static OptitrackInput * Instance()
+		{
+			static OptitrackInput *instance = new OptitrackInput();
+			return instance;
+		}
+
 		void Start();
 		void Stop();
+		bool IsRunning() const { return is_running_; }
 
 		std::string OptitrackIp;
 		std::string LocalIp;
@@ -40,11 +48,6 @@ namespace Optitrack
 
 		// need to have static functions (and therefore instance)
 		// due to optitrack client only accepting function pointers
-		static OptitrackInput * Instance()
-		{
-			static OptitrackInput *instance = new OptitrackInput();
-			return instance;
-		}
 
 		static void DataHandler(sFrameOfMocapData *motionData, void *userData);
 		static void ErrorHandler(int msgType, char *msg);
