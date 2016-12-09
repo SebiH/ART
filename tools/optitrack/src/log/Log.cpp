@@ -4,10 +4,11 @@
 
 using namespace Optitrack;
 
-void Log::Init(int log_level)
+void Log::Init(int log_level, LoggerCallback callback)
 {
 	Instance()->log_level_ = log_level;
 	Instance()->logger_ = std::make_unique<Logger>();
+	Instance()->logger_->SetExternalLoggerCallback(callback);
 }
 
 

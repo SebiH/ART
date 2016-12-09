@@ -6,12 +6,9 @@
 
 using namespace Optitrack;
 
-typedef void(__stdcall * OutputCallback) (const char *str);
-static OutputCallback ExternalCallback;
-
-DLL_EXPORT void SetLogger(int log_level, OutputCallback callback)
+DLL_EXPORT void SetLogger(int log_level, LoggerCallback callback)
 {
-
+	Log::Init(log_level, callback);
 }
 
 DLL_EXPORT void StartOptitrackServer(const char *optitrack_ip, int data_port, int command_port, const char *local_ip)

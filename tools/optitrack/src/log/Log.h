@@ -14,7 +14,7 @@ namespace Optitrack
 		static void Warning(const std::string &fmt_str, ...);
 		static void Error(const std::string &fmt_str, ...);
 
-		static void Init(int log_level);
+		static void Init(int log_level, LoggerCallback callback);
 
 	private:
 		static Log * Instance()
