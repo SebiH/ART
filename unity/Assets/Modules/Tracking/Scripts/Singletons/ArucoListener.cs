@@ -2,6 +2,7 @@ using Assets.Modules.Vision;
 using Assets.Modules.Vision.Outputs;
 using Assets.Modules.Vision.Processors;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -79,11 +80,13 @@ namespace Assets.Modules.Tracking
         private ArucoProcessor _arProcessor;
         private JsonOutput _arOutput;
 
-        private Queue<ArucoOutput> _currentOutput = new Queue<ArucoOutput>();
+        private Queue _currentOutput;
 
         void OnEnable()
         {
             Instance = this;
+
+            _currentOutput = Queue.Synchronized(new Queue());
 
             _arProcessor = new ArucoProcessor(MarkerSizeInMeter)
             {
@@ -116,7 +119,7 @@ namespace Assets.Modules.Tracking
         {
             while (_currentOutput.Count > 0)
             {
-                var output = _currentOutput.Dequeue();
+                var output = (ArucoOutput)_currentOutput.Dequeue();
 
                 // TODO: processor only processes markers on left image at the moment!
                 foreach (var marker in output.markers_left)

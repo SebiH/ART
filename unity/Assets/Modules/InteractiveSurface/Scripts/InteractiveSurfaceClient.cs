@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
@@ -16,7 +17,7 @@ namespace Assets.Modules.InteractiveSurface
         public delegate void MessageHandler(IncomingCommand cmd);
         public event MessageHandler OnMessageReceived;
 
-        public Queue<IncomingCommand> _queuedCommands = new Queue<IncomingCommand>();
+        public Queue _queuedCommands;
 
         // see: https://forum.unity3d.com/threads/c-tcp-ip-socket-how-to-receive-from-server.227259/
         private Socket _socket;
@@ -26,6 +27,7 @@ namespace Assets.Modules.InteractiveSurface
         {
             Instance = this;
 
+            _queuedCommands = Queue.Synchronized(new Queue());
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             try
@@ -57,7 +59,7 @@ namespace Assets.Modules.InteractiveSurface
             {
                 while (_queuedCommands.Count > 0)
                 {
-                    OnMessageReceived(_queuedCommands.Dequeue());
+                    OnMessageReceived((IncomingCommand)_queuedCommands.Dequeue());
                 }
             }
         }
