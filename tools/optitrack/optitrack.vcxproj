@@ -190,9 +190,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\api.cpp" />
-    <ClCompile Include="OptitrackBridge.cpp" />
+    <ClCompile Include="src\input\Input.cpp" />
     <ClCompile Include="src\input\OptitrackInput.cpp" />
+    <ClCompile Include="src\log\Log.cpp" />
+    <ClCompile Include="src\log\Logger.cpp" />
     <ClCompile Include="src\message\JsonOptitrackMessage.cpp" />
+    <ClCompile Include="src\output\Output.cpp" />
     <ClCompile Include="src\output\UnityServerOutput.cpp" />
     <ClCompile Include="src\UnityServer.cpp" />
   </ItemGroup>
@@ -200,6 +203,8 @@
     <ClInclude Include="src\input\FileInput.h" />
     <ClInclude Include="src\input\Input.h" />
     <ClInclude Include="src\input\OptitrackInput.h" />
+    <ClInclude Include="src\log\Log.h" />
+    <ClInclude Include="src\log\Logger.h" />
     <ClInclude Include="src\message\JsonOptitrackMessage.h" />
     <ClInclude Include="src\message\OptitrackMessage.h" />
     <ClInclude Include="src\output\Output.h" />

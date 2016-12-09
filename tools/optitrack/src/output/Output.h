@@ -7,8 +7,11 @@ namespace Optitrack
 	class Output
 	{
 	public:
-		Output() {}
+		Output();
 		virtual ~Output() {}
-		virtual void Broadcast(const char *msg) = 0;
+
+		int Id;
+
+		virtual void Broadcast(const std::string &msg) = 0;
 	};
 }

@@ -13,7 +13,10 @@ UnityServerOutput::~UnityServerOutput()
 
 }
 
-void UnityServerOutput::Broadcast(const char *msg)
+void UnityServerOutput::Broadcast(const std::string &msg)
 {
-
+	if (server_->IsRunning())
+	{
+		server_->Send((unsigned char *)msg.c_str(), msg.length());
+	}
 }

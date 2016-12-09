@@ -1,24 +1,52 @@
 #pragma once
 
+#include <map>
+#include <memory>
+#include <string>
+#include <NatNet/NatNetClient.h>
+#include <NatNet/NatNetTypes.h>
 #include "input/Input.h"
-#include "output/Output.h"
 
 namespace Optitrack
 {
-	template <class O>
 	class OptitrackInput : Input
 	{
-	static_assert(std::is_base_of<Output, O>::value, "O must derive from Output");
-
 	public:
-		OptitrackInput(const O &output);
+		OptitrackInput() {}
 		virtual ~OptitrackInput();
 
 		void Start();
 		void Stop();
 
+		std::string OptitrackIp;
+		std::string LocalIp;
+
+		int DataPort = 3130;
+		int CommandPort = 3131;
+
+		// ConnectionType_Multicast || ConnectionType_Unicast
+		int ConnectionType = ConnectionType_Multicast;
+
 	private:
-		O output_;
 		bool is_running_;
+		std::unique_ptr<NatNetClient> client_;
+		// workarounds because natnetclient needs c strings for ips + memory?
+		std::unique_ptr<char[]> local_ip_, optitrack_ip_;
+		// track rigid body names
+		std::map<int, std::string> bone_names_;
+
+		void CreateClient();
+		void InitClient();
+
+		// need to have static functions (and therefore instance)
+		// due to optitrack client only accepting function pointers
+		static OptitrackInput * Instance()
+		{
+			static OptitrackInput *instance = new OptitrackInput();
+			return instance;
+		}
+
+		static void DataHandler(sFrameOfMocapData *motionData, void *userData);
+		static void ErrorHandler(int msgType, char *msg);
 	};
 }

@@ -73,7 +73,7 @@ namespace GUI.Optitrack
         private void LoadFile_Click(object sender, RoutedEventArgs e)
         {
             var file = LoadFileBox.Text;
-            var loglevel = Int32.Parse(LogLevelBox.Text);
+            var loglevel = 1;
 
             Task.Run(() =>
             {
@@ -84,8 +84,8 @@ namespace GUI.Optitrack
                     sb.Append(msg);
 
                     // reduce amount of calls to current dispatcher
-                    if ((DateTime.Now - lastUpdate).TotalMilliseconds > 100)
-                    {
+                    //if ((DateTime.Now - lastUpdate).TotalMilliseconds > 100)
+                    //{
                         var output = sb.ToString();
                         lastUpdate = DateTime.Now;
                         _currentDispatcher.InvokeAsync(() =>
@@ -93,7 +93,7 @@ namespace GUI.Optitrack
                             _logWindow.Log = output;
                             _logWindow.LogScroller.ScrollToBottom();
                         });
-                    }
+                    //}
                 };
 
 

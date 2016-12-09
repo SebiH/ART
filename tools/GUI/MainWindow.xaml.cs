@@ -112,13 +112,13 @@ namespace GUI
 
         private void PopulateArucoDictionaries()
         {
-            ImageProcessing.GetArucoDictionaries(ToolCallback);
-            dynamic output = JArray.Parse(_currentToolOutput);
+            //ImageProcessing.GetArucoDictionaries(ToolCallback);
+            //dynamic output = JArray.Parse(_currentToolOutput);
 
-            foreach (var entry in output)
-            {
-                ArucoDictionaries.Items.Add(((JToken)entry).ToString());
-            }
+            //foreach (var entry in output)
+            //{
+            //    ArucoDictionaries.Items.Add(((JToken)entry).ToString());
+            //}
         }
 
         private void Optitrack_Click(object sender, RoutedEventArgs e)

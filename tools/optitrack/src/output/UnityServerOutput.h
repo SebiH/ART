@@ -11,7 +11,7 @@ namespace Optitrack
 	public:
 		UnityServerOutput(const std::shared_ptr<UnityServer> &server);
 		~UnityServerOutput();
-		void Broadcast(const char *msg);
+		void Broadcast(const std::string &msg);
 
 	private:
 		std::shared_ptr<UnityServer> server_;

@@ -12,6 +12,10 @@ namespace Optitrack
 		float X;
 		float Y;
 		float Z;
+
+		Vector3() {}
+		Vector3(float x, float y, float z)
+			: X(x), Y(y), Z(z) {}
 	};
 
 	struct Quaternion
@@ -20,6 +24,10 @@ namespace Optitrack
 		float Y;
 		float Z;
 		float W;
+
+		Quaternion() {}
+		Quaternion(float x, float y, float z, float w)
+			: X(x), Y(y), Z(z), W(w) {}
 	};
 
 	struct Marker
