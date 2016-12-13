@@ -22,7 +22,7 @@ namespace Optitrack
 			return instance;
 		}
 
-		void Start();
+		bool Start();
 		void Stop();
 		bool IsRunning() const { return is_running_; }
 
@@ -36,7 +36,7 @@ namespace Optitrack
 		int ConnectionType = ConnectionType_Multicast;
 
 	private:
-		bool is_running_;
+		bool is_running_ = false;
 		std::unique_ptr<NatNetClient> client_;
 		// workarounds because natnetclient needs c strings for ips + memory?
 		std::unique_ptr<char[]> local_ip_, optitrack_ip_;

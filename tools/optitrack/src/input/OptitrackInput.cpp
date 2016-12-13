@@ -10,24 +10,27 @@ OptitrackInput::~OptitrackInput()
 	Stop();
 }
 
-void OptitrackInput::Start()
+bool OptitrackInput::Start()
 {
 	if (is_running_)
 	{
 		Log::Warning("Optitrack Listener already running!");
-		return;
+		return false;
 	}
 
 	try
 	{
+		is_running_ = true;
 		Log::Info("Starting Optitrack Listener listening on %s for multicast from %s", LocalIp, OptitrackIp);
 		CreateClient();
 		InitClient();
-		is_running_ = true;
+		return true;
 	}
 	catch (const std::exception &e)
 	{
 		Log::Error(e.what());
+		Stop();
+		return false;
 	}
 
 }
@@ -56,7 +59,7 @@ void OptitrackInput::CreateClient()
 	Log::Info("NatNet Sample Client (NatNet ver. %d.%d.%d.%d)", ver[0], ver[1], ver[2], ver[3]);
 
 	client_->SetMessageCallback(OptitrackInput::ErrorHandler);
-	client_->SetVerbosityLevel(Verbosity_Debug);
+	client_->SetVerbosityLevel(Verbosity_Error);
 	client_->SetDataCallback(OptitrackInput::DataHandler, client_.get());
 
 	local_ip_ = std::unique_ptr<char[]>(new char[LocalIp.length() + 1]);

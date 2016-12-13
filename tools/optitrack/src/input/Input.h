@@ -15,7 +15,7 @@ namespace Optitrack
 
 		int Id;
 
-		virtual void Start() = 0;
+		virtual bool Start() = 0;
 		virtual void Stop() = 0;
 
 		void AddOutput(const std::shared_ptr<Output> &out);

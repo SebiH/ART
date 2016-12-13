@@ -112,5 +112,6 @@ void Log::Error(const std::string &fmt_str, ...)
 
 	Instance()->logger_->Write("[ERROR] ");
 	Instance()->logger_->Write(formatted.get());
+	Instance()->logger_->Write("\n");
 }
 

@@ -10,6 +10,7 @@ namespace GUI.Optitrack
     {
         private OptitrackLogWindow _logWindow;
         private Dispatcher _currentDispatcher;
+        private OptitrackServer.LoggerCallback _callback;
 
         public OptitrackWindow()
         {
@@ -17,8 +18,25 @@ namespace GUI.Optitrack
             _logWindow = new OptitrackLogWindow();
             _logWindow.Show();
             _currentDispatcher = Dispatcher.CurrentDispatcher;
-        }
 
+            var sb = new StringBuilder();
+            OptitrackServer.LoggerCallback _callback = (msg) =>
+            {
+                sb.Append(msg);
+
+                var log = sb.ToString();
+                if (log.Contains(Environment.NewLine))
+                {
+                    log = log.Replace(Environment.NewLine, "");
+                    _currentDispatcher.InvokeAsync(() =>
+                    {
+                        _logWindow.Log.Add(log);
+                        _logWindow.LogScroller.ScrollToBottom();
+                    });
+                }
+
+            };
+        }
 
         private void StartServer_Click(object sender, RoutedEventArgs e)
         {
@@ -28,37 +46,15 @@ namespace GUI.Optitrack
             var saveFile = SaveFileBox.Text;
             var loglevel = Int32.Parse(LogLevelBox.Text);
 
+            var dataPort = 3130;
+            var commandPort = 3131;
+            var unityPort = 16000;
+
+            //OptitrackServer.SetLogger(loglevel, _callback);
             Task.Run(() =>
             {
-                var sb = new StringBuilder();
-                DateTime lastUpdate = DateTime.Now;
-                DateTime lastClear = DateTime.Now;
-                OptitrackServer.OutputCallback callback = (msg) =>
-                {
-                    sb.Append(msg);
-
-                    // periodically remove complete log
-                    if ((DateTime.Now - lastClear).TotalMilliseconds > 2000)
-                    {
-                        sb = new StringBuilder();
-                        lastClear = DateTime.Now;
-                    }
-
-                    // reduce amount of calls to current dispatcher
-                    if ((DateTime.Now - lastUpdate).TotalMilliseconds > 100)
-                    {
-                        var output = sb.ToString();
-                        lastUpdate = DateTime.Now;
-                        _currentDispatcher.InvokeAsync(() =>
-                        {
-                            _logWindow.Log = output;
-                            _logWindow.LogScroller.ScrollToBottom();
-                        });
-                    }
-                };
-
-                OptitrackServer.RegisterCallback(callback);
-                OptitrackServer.StartServer(optitrackIp, localIp, unityIp, saveFile, loglevel);
+                bool success = OptitrackServer.StartOptitrackServer(optitrackIp, dataPort, commandPort, localIp);
+                if (success) { OptitrackServer.AttachUnityOutput(unityIp, unityPort); }
             });
         }
 
@@ -66,40 +62,15 @@ namespace GUI.Optitrack
         {
             Task.Run(() =>
             {
-                OptitrackServer.StopServer();
+                OptitrackServer.StopOptitrackServer();
             });
         }
 
         private void LoadFile_Click(object sender, RoutedEventArgs e)
         {
-            var file = LoadFileBox.Text;
-            var loglevel = 1;
-
-            Task.Run(() =>
-            {
-                var sb = new StringBuilder();
-                DateTime lastUpdate = DateTime.Now;
-                OptitrackServer.OutputCallback callback = (msg) =>
-                {
-                    sb.Append(msg);
-
-                    // reduce amount of calls to current dispatcher
-                    //if ((DateTime.Now - lastUpdate).TotalMilliseconds > 100)
-                    //{
-                        var output = sb.ToString();
-                        lastUpdate = DateTime.Now;
-                        _currentDispatcher.InvokeAsync(() =>
-                        {
-                            _logWindow.Log = output;
-                            _logWindow.LogScroller.ScrollToBottom();
-                        });
-                    //}
-                };
-
-
-                OptitrackServer.RegisterCallback(callback);
-                OptitrackServer.ReplayFromData(file, loglevel);
-            });
+            //var file = LoadFileBox.Text;
+            //var loglevel = 1;
+            MessageBox.Show("NYI");
         }
     }
 }

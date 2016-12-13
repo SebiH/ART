@@ -14,6 +14,7 @@ namespace Optitrack
 		void SetExternalLoggerCallback(LoggerCallback &callback);
 
 	private:
-		LoggerCallback callback_;
+		LoggerCallback callback_ = nullptr;
+		bool has_callback_ = false;
 	};
 }

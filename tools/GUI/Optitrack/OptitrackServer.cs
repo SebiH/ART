@@ -1,26 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GUI
 {
     public static class OptitrackServer
     {
-        public delegate void OutputCallback(string message);
+        public delegate void LoggerCallback(string message);
 
         [DllImport("optitrack")]
-        public static extern void RegisterCallback(OutputCallback callback);
+        public static extern void SetLogger(int LogLevel, LoggerCallback callback);
 
         [DllImport("optitrack")]
-        public static extern void ReplayFromData(string filename, int loglevel);
+        public static extern bool StartOptitrackServer(string OptitrackIp, int DataPort, int CommandPort, string ListenIp);
 
         [DllImport("optitrack")]
-        public static extern void StartServer(string OptitrackIp, string ListenIp, string UnityIp, string SaveFile, int LogLevel);
+        public static extern void StopOptitrackServer();
 
         [DllImport("optitrack")]
-        public static extern void StopServer();
+        public static extern void AttachUnityOutput(string UnityIp, int port);
     }
 }

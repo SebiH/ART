@@ -11,7 +11,7 @@ DLL_EXPORT void SetLogger(int log_level, LoggerCallback callback)
 	Log::Init(log_level, callback);
 }
 
-DLL_EXPORT void StartOptitrackServer(const char *optitrack_ip, int data_port, int command_port, const char *local_ip)
+DLL_EXPORT bool StartOptitrackServer(const char *optitrack_ip, int data_port, int command_port, const char *local_ip)
 {
 	auto server = OptitrackInput::Instance();
 
@@ -22,11 +22,12 @@ DLL_EXPORT void StartOptitrackServer(const char *optitrack_ip, int data_port, in
 		server->OptitrackIp = std::string(optitrack_ip);
 		server->LocalIp = std::string(local_ip);
 		
-		server->Start();
+		return server->Start();
 	}
 	else
 	{
 		Log::Error("Server is already running");
+		return false;
 	}
 }
 
