@@ -13,7 +13,6 @@ export class MarkerProvider {
 
     constructor(private socketio: SocketIO) {
         this.socketio.on('get-marker', () => {
-            console.log('get-marker');
             for (var marker of this.markers) {
                 this.syncMarker(marker);
             }

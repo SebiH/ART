@@ -5,7 +5,8 @@ import {
     DemoComponent,
     MeasurementComponent,
     PanZoomComponent,
-    ScrollerComponent
+    ScrollerComponent,
+    GraphContainerComponent
 } from './components/index';
 
 const routes: Routes = [
@@ -28,6 +29,10 @@ const routes: Routes = [
     {
         path: 'scroll',
         component: ScrollerComponent
+    },
+    {
+        path: 'graph',
+        component: GraphContainerComponent
     },
     {
         path: '',

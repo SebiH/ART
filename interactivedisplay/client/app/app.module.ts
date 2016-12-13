@@ -17,7 +17,9 @@ import { routing } from './routes';
     Components.MeasurementComponent,
     Components.PanZoomComponent,
     Components.MapOverlayComponent,
-    Components.ScrollerComponent
+    Components.ScrollerComponent,
+    Components.GraphContainerComponent,
+    Components.GraphSectionComponent
   ],
   bootstrap:    [ Components.AppComponent ],
   providers:    [
@@ -25,7 +27,8 @@ import { routing } from './routes';
     Services.MarkerProvider,
     Services.MapProvider,
     Services.Logger,
-    Services.InteractionManager
+    Services.InteractionManager,
+    Services.GraphProvider
   ]
 })
 export class AppModule { }
