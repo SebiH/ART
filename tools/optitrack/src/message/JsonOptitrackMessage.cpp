@@ -6,6 +6,8 @@ using namespace Optitrack;
 JsonOptitrackMessage::JsonOptitrackMessage()
 	: is_sealed_(false)
 {
+	writer_.StartObject();
+	writer_.String("Rigidbodies");
 	writer_.StartArray();
 }
 
@@ -75,6 +77,7 @@ const char* JsonOptitrackMessage::Print()
 	if (!is_sealed_)
 	{
 		writer_.EndArray();
+		writer_.EndObject();
 		is_sealed_ = true;
 	}
 
