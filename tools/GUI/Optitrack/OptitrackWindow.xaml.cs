@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -8,34 +9,14 @@ namespace GUI.Optitrack
 {
     public partial class OptitrackWindow : Window
     {
-        private OptitrackLogWindow _logWindow;
         private Dispatcher _currentDispatcher;
-        private OptitrackServer.LoggerCallback _callback;
+        private bool _isRunning;
 
         public OptitrackWindow()
         {
             InitializeComponent();
-            _logWindow = new OptitrackLogWindow();
-            _logWindow.Show();
             _currentDispatcher = Dispatcher.CurrentDispatcher;
 
-            var sb = new StringBuilder();
-            OptitrackServer.LoggerCallback _callback = (msg) =>
-            {
-                sb.Append(msg);
-
-                var log = sb.ToString();
-                if (log.Contains(Environment.NewLine))
-                {
-                    log = log.Replace(Environment.NewLine, "");
-                    _currentDispatcher.InvokeAsync(() =>
-                    {
-                        _logWindow.Log.Add(log);
-                        _logWindow.LogScroller.ScrollToBottom();
-                    });
-                }
-
-            };
         }
 
         private void StartServer_Click(object sender, RoutedEventArgs e)
@@ -50,11 +31,47 @@ namespace GUI.Optitrack
             var commandPort = 3131;
             var unityPort = 16000;
 
-            //OptitrackServer.SetLogger(loglevel, _callback);
             Task.Run(() =>
             {
+                var sb = new StringBuilder();
+                OptitrackServer.LoggerCallback callback = (msg) =>
+                {
+                    sb.Append(msg);
+
+                    var log = sb.ToString();
+                    if (log.Contains("\n"))
+                    {
+                        log = log.Replace("\n", "");
+                        _currentDispatcher.InvokeAsync(() =>
+                        {
+                            OptitrackLog.Log.Add(log);
+                        });
+
+                        sb.Clear();
+                    }
+
+                };
+
+                OptitrackServer.SetLogger(loglevel, callback);
+
+
                 bool success = OptitrackServer.StartOptitrackServer(optitrackIp, dataPort, commandPort, localIp);
-                if (success) { OptitrackServer.AttachUnityOutput(unityIp, unityPort); }
+                if (success)
+                {
+                    OptitrackServer.AttachUnityOutput(unityIp, unityPort);
+
+                    // TODO: remove terrible keep-memory-alive hacks
+                    _isRunning = true;
+                    while (_isRunning)
+                    {
+                        Thread.Sleep(200); // .. keep memory for log lambda alive
+                    }
+                }
+                else
+                {
+                    // keep memory alive a bit longer
+                    Thread.Sleep(500);
+                }
             });
         }
 
@@ -63,6 +80,7 @@ namespace GUI.Optitrack
             Task.Run(() =>
             {
                 OptitrackServer.StopOptitrackServer();
+                _isRunning = false;
             });
         }
 

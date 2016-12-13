@@ -8,6 +8,9 @@ namespace Optitrack
 	class Logger
 	{
 	public:
+		Logger() {};
+		~Logger() {};
+
 		void Write(const char *msg);
 		void WriteLine(const char *msg);
 
@@ -15,6 +18,5 @@ namespace Optitrack
 
 	private:
 		LoggerCallback callback_ = nullptr;
-		bool has_callback_ = false;
 	};
 }

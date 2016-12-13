@@ -21,7 +21,7 @@ bool OptitrackInput::Start()
 	try
 	{
 		is_running_ = true;
-		Log::Info("Starting Optitrack Listener listening on %s for multicast from %s", LocalIp, OptitrackIp);
+		Log::Info("Starting Optitrack Listener listening on %s for multicast from %s", LocalIp.c_str(), OptitrackIp.c_str());
 		CreateClient();
 		InitClient();
 		return true;
@@ -89,8 +89,8 @@ void OptitrackInput::CreateClient()
 		srv_description.HostAppVersion[1], srv_description.HostAppVersion[2], srv_description.HostAppVersion[3]);
 	Log::Info("NatNet Version: %d.%d.%d.%d", srv_description.NatNetVersion[0], srv_description.NatNetVersion[1],
 		srv_description.NatNetVersion[2], srv_description.NatNetVersion[3]);
-	Log::Info("Local IP:%s", LocalIp);
-	Log::Info("Optitrack IP:%s", OptitrackIp);
+	Log::Info("Local IP:%s", LocalIp.c_str());
+	Log::Info("Optitrack IP:%s", OptitrackIp.c_str());
 	Log::Info("Server Name:%s", srv_description.szHostComputerName);
 	Log::Info(""); // empty line
 }

@@ -87,7 +87,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Optitrack\OptitrackLogWindow.xaml">
+    <Page Include="Optitrack\OptitrackLogControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -100,8 +100,8 @@
     <Compile Include="MarkerMapGenerator.xaml.cs">
       <DependentUpon>MarkerMapGenerator.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Optitrack\OptitrackLogWindow.xaml.cs">
-      <DependentUpon>OptitrackLogWindow.xaml</DependentUpon>
+    <Compile Include="Optitrack\OptitrackLogControl.xaml.cs">
+      <DependentUpon>OptitrackLogControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Optitrack\OptitrackServer.cs" />
     <Compile Include="Optitrack\OptitrackWindow.xaml.cs">

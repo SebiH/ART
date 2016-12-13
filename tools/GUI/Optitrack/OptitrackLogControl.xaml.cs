@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace GUI.Optitrack
 {
-    public partial class OptitrackLogWindow : Window
+    public partial class OptitrackLogControl : UserControl
     {
         public ObservableCollection<string> Log
         {
@@ -11,10 +12,10 @@ namespace GUI.Optitrack
             set { SetValue(LogProperty, value); }
         }
 
-        public static readonly DependencyProperty LogProperty = DependencyProperty.Register("Log", typeof(ObservableCollection<string>), typeof(OptitrackLogWindow));
+        public static readonly DependencyProperty LogProperty = DependencyProperty.Register("Log", typeof(ObservableCollection<string>), typeof(OptitrackLogControl));
 
 
-        public OptitrackLogWindow()
+        public OptitrackLogControl()
         {
             Log = new ObservableCollection<string>();
             InitializeComponent();

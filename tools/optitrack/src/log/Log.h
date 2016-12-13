@@ -23,6 +23,9 @@ namespace Optitrack
 			return instance;
 		}
 
+		Log() : logger_(std::make_unique<Logger>()), log_level_(0) {}
+		~Log() {};
+
 		std::unique_ptr<Logger> logger_;
 		int log_level_;
 	};
