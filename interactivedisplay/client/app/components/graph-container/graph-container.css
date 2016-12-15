@@ -14,7 +14,7 @@
 
     position: absolute;
     top: 0;
-    transition: left 0.3s ease-in-out;
+    transition: left 0.3s ease-out;
 
     box-shadow: 0px 0px 8px grey;
     background: white;
