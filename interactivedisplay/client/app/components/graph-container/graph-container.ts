@@ -28,8 +28,9 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     getStyle(graph: Graph): any {
       let index = this.graphs.indexOf(graph);
+      let offset = 600; // offset for the graph creation card
       return {
-        "left": ((index + 1) * 500) + "px"
+        "left": offset + (index * 500) + "px"
       };
     }
 }

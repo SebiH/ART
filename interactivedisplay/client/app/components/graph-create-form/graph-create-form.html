@@ -1,3 +1,35 @@
-<div style="height: 100%;">
-    Graph create form. WIP.
+<div class="container">
+    <div class="row">
+        <div class="six columns title">
+            <h1> X </h1>
+        </div>
+        <div class="six columns title">
+            <h1> Y </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="six columns">
+            <div class="toggle-button" *ngFor="let dim of dimensions">
+                <button [ngClass]="{ 'button-primary': selectedDimX === dim }"
+                        (click)="toggleButtonX(dim)">
+                    {{dim}}
+                </button>
+            </div>
+        </div>
+        <div class="six columns">
+            <div class="toggle-button" *ngFor="let dim of dimensions">
+                <button [ngClass]="{ 'button-primary': selectedDimY === dim }"
+                        (click)="toggleButtonY(dim)">
+                    {{dim}}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="twelve columns">
+            <button class="button-primary button-submit"> Create graph </button>
+        </div>
+    </div>
 </div>
