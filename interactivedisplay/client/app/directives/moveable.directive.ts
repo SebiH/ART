@@ -68,7 +68,7 @@ export class MoveableDirective implements OnInit, OnDestroy {
     private handleTouchMove(ev: InteractionEvent) {
         this.moveUpdate.emit({
             deltaX: ev.delta.x,
-            deltaY: ev.delta.y
+            deltaY: ev.delta.y,
         });
     }
 

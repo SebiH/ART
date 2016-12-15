@@ -2,13 +2,13 @@
     <div class="graph-card" style="left: 0;">
         <graph-create-form></graph-create-form>
     </div>
-    <div *ngFor="let graph of graphs" class="graph-card" [ngStyle]="getStyle(graph)">
+    <div *ngFor="let graph of graphs" class="graph-card" [ngStyle]="getStyle(graph)" [ngClass]="{'selected': draggedGraphId === graph.id }">
         <div class="card-root">
             <graph-section [graph]="graph"></graph-section>
             <div class="mover" moveable
-                (moveStart)="handleMoveStart()"
-                (moveUpdate)="handleMoveUpdate()"
-                (moveEnd)="handleMoveEnd()">
+                (moveStart)="handleMoveStart(graph)"
+                (moveUpdate)="handleMoveUpdate(graph, $event)"
+                (moveEnd)="handleMoveEnd(graph)">
                     M
             </div>
         </div>

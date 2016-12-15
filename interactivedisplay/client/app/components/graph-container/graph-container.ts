@@ -11,6 +11,9 @@ import { MoveableDirective } from '../../directives/index';
 export class GraphContainerComponent implements OnInit, OnDestroy {
     private graphs: Graph[];
 
+    private draggedGraphId: number = -1;
+    private totalMoveDelta: number = 0;
+
     constructor (private graphProvider: GraphProvider) {}
 
     ngOnInit() {
@@ -30,20 +33,26 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     private getStyle(graph: Graph): any {
       let index = this.graphs.indexOf(graph);
       let offset = 600; // offset for the graph creation card
+
+      if (this.draggedGraphId == graph.id) {
+        offset -= this.totalMoveDelta;
+      }
+
       return {
         "left": offset + (index * 500) + "px"
       };
     }
 
-    private handleMoveStart() {
-      console.log('movestart');
+    private handleMoveStart(graph: Graph) {
+      this.draggedGraphId = graph.id;
     }
 
-    private handleMoveUpdate(ev) {
-      console.log('moveupdate');
+    private handleMoveUpdate(graph: Graph, ev: any) {
+      this.totalMoveDelta += ev.deltaX;
     }
 
     private handleMoveEnd() {
-      console.log('moveend');
+      this.draggedGraphId = -1;
+      this.totalMoveDelta = 0;
     }
 }
