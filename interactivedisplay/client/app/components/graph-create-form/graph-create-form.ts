@@ -11,8 +11,8 @@ export class GraphCreateFormComponent implements OnInit, OnDestroy {
 
     private dimensions: string[] = [ "Dummy_Calories", "Dummy_Vitamin_C", "Dummy_Happiness", "Dummy_Vitamin_D" ];
 
-    private selectedDimX: string;
-    private selectedDimY: string;
+    private selectedDimX: string = "";
+    private selectedDimY: string = "";
 
     constructor (private graphProvider: GraphProvider) {}
 
@@ -22,11 +22,18 @@ export class GraphCreateFormComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
 
-    toggleButtonX(dim: string) {
+    private toggleButtonX(dim: string) {
         this.selectedDimX = dim;
     }
 
-    toggleButtonY(dim: string) {
+    private toggleButtonY(dim: string) {
         this.selectedDimY = dim;
+    }
+
+    private createGraph(): void {
+        if (this.selectedDimX.length > 0 && this.selectedDimY.length > 0)
+        this.graphProvider.addGraph(this.selectedDimX, this.selectedDimY);
+        this.selectedDimX = "";
+        this.selectedDimY = "";
     }
 }

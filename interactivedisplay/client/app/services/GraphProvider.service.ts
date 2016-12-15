@@ -17,7 +17,7 @@ export class GraphProvider {
         graph.dimX = dimX;
         graph.dimY = dimY;
 
-        this.graphs.push(graph);
+        this.graphs.unshift(graph);
     }
 
     public getGraphs(): Graph[] {
