@@ -17,9 +17,19 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         this.graphProvider.addGraph("todo1", "todo2");
         this.graphProvider.addGraph("todo1", "todo3");
         this.graphProvider.addGraph("todo2", "todo3");
+        this.graphProvider.addGraph("todo4", "todo3");
+        this.graphProvider.addGraph("todo5", "todo3");
+        this.graphProvider.addGraph("todo6", "todo3");
     }
 
     ngOnDestroy() {
 
+    }
+
+    getStyle(graph: Graph): any {
+      let index = this.graphs.indexOf(graph);
+      return {
+        "left": ((index + 1) * 500) + "px"
+      };
     }
 }

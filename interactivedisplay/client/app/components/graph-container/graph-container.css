@@ -1,19 +1,18 @@
-.gc-root {
+.graph-container-root {
     overflow-x: visible;
     white-space: nowrap;
-}
-
-.gc-root .vertical-slice {
+    position: relative;
     height: 100%;
-    display: inline-block;
-    border-right: solid 1px black;
-    height: calc(100% - 10px);
+    width: 100%;
 }
 
-.gc-root .vertical-slice:last-child {
-    border-right: none;
-}
+.graph-card {
+    height: calc(100% - 50px); /* - 2*margin */
+    margin: 25px;
 
-.vertical-slice > * {
-    display: inline-block;
+    position: absolute;
+    top: 0;
+    transition: left 0.3s ease-in-out;
+
+    box-shadow: 0px 0px 8px grey;
 }

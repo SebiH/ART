@@ -1,8 +1,8 @@
-<div class="">
-    <div class="vertical-slice">
+<div class="graph-container-root">
+    <div class="graph-card" style="left: 0;">
         <graph-create-form></graph-create-form>
     </div>
-    <div *ngFor="let graph of graphs" class="vertical-slice">
+    <div *ngFor="let graph of graphs" class="graph-card" [ngStyle]="getStyle(graph)">
         <graph-section [graph]="graph"></graph-section>
     </div>
 </div>
