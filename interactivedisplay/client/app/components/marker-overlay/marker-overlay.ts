@@ -20,15 +20,4 @@ export class MarkerOverlayComponent implements OnInit  {
     ngOnInit() {
         this.markers = this.markerProvider.getMarkers();
     }
-
-    getMarkerImageSource(marker: Marker): string {
-        return '/markers/artoolkitplusbch_' + this.padLeft('' + marker.id, 5)  + '.png';
-    }
-
-    private padLeft(str: string, size: number) {
-        while (str.length < size) {
-            str = '0' + str;
-        }
-        return str;
-    }
 }

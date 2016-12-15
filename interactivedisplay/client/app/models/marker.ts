@@ -1,3 +1,4 @@
+import { Utils } from '../Utils';
 import * as _ from 'lodash';
 
 export class Marker {
@@ -35,6 +36,10 @@ export class Marker {
     public set size(size: number) {
         this._size = size;
         this.delayedRaisePropertyChangedEvent();
+    }
+
+    public get src(): string {
+        return './markers/artoolkitplusbch_' + Utils.padLeft('' + this.id, 5) + '.png';
     }
 
     public constructor() {
