@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef } from '@angular/core';
-import { Graph } from '../../models/index';
+import { Marker, Graph } from '../../models/index';
+import { MarkerProvider } from '../../services/index';
 
 @Component({
   selector: 'graph-section',
@@ -8,15 +9,16 @@ import { Graph } from '../../models/index';
 })
 export class GraphSectionComponent implements OnInit, OnDestroy {
 
-    @Input()
-    private graph: Graph;
+    @Input() private graph: Graph;
+    private marker: Marker;
 
-    constructor () {}
+    constructor (private markerProvider: MarkerProvider) {}
 
     ngOnInit() {
+      this.marker = this.markerProvider.createMarker();
     }
 
     ngOnDestroy() {
-
+      this.markerProvider.destroyMarker(this.marker);
     }
 }

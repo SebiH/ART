@@ -2,6 +2,8 @@ import { Injectable, HostListener } from '@angular/core';
 import { SocketIO } from './SocketIO.service';
 import { Marker } from '../models/index';
 
+import * as _ from 'lodash';
+
 /**
  *    TODO: 
  *        - Get marker arrangement from unity (low priority)
@@ -62,8 +64,14 @@ export class MarkerProvider {
         let marker: Marker = new Marker();
         marker.id = this.idCounter++;
         marker.onPropertyChanged((marker) => this.syncMarker(marker));
+        // TODO: register marker in unity?
 
         return marker;
+    }
+
+    public destroyMarker(marker: Marker) {
+        _.pull(this.markers, marker);
+        // TODO: remove marker in unity!
     }
 }
 
