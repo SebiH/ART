@@ -3,6 +3,8 @@ import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
 import { MoveableDirective } from '../../directives/index';
 
+const CARD_WIDTH = 500;
+
 @Component({
   selector: 'graph-container',
   templateUrl: './app/components/graph-container/graph-container.html',
@@ -39,7 +41,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
       }
 
       return {
-        "left": offset + (index * 500) + "px"
+        "left": offset + (index * CARD_WIDTH) + "px"
       };
     }
 
@@ -49,6 +51,22 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     private handleMoveUpdate(graph: Graph, ev: any) {
       this.totalMoveDelta += ev.deltaX;
+
+      if (Math.abs(this.totalMoveDelta) > CARD_WIDTH) {
+        let moveIndexBy = Math.floor(Math.abs(this.totalMoveDelta / CARD_WIDTH));
+
+        if (this.totalMoveDelta < 0) {
+          for (let i = 0; i < moveIndexBy; i++) {
+            this.graphProvider.moveRight(graph);
+          }
+        } else {
+          for (let i = 0; i < moveIndexBy; i++) {
+            this.graphProvider.moveLeft(graph);
+          }
+        }
+
+        this.totalMoveDelta = this.totalMoveDelta % CARD_WIDTH;
+      }
     }
 
     private handleMoveEnd() {
