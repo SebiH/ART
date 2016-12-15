@@ -1,1 +1,8 @@
-<div> Work in progress </div>
+<div class="">
+    <div class="vertical-slice">
+        <graph-create-form></graph-create-form>
+    </div>
+    <div *ngFor="let graph of graphs" class="vertical-slice">
+        <graph-section [graph]="graph"></graph-section>
+    </div>
+</div>

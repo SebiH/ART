@@ -19,7 +19,8 @@ import { routing } from './routes';
     Components.MapOverlayComponent,
     Components.ScrollerComponent,
     Components.GraphContainerComponent,
-    Components.GraphSectionComponent
+    Components.GraphSectionComponent,
+    Components.GraphCreateFormComponent
   ],
   bootstrap:    [ Components.AppComponent ],
   providers:    [

@@ -10,8 +10,11 @@ import { Marker } from '../models/index';
 @Injectable()
 export class MarkerProvider {
     private markers: Marker[] = [];
+    private idCounter: number = 0;
 
     constructor(private socketio: SocketIO) {
+
+        // respond to unity requests
         this.socketio.on('get-marker', () => {
             for (var marker of this.markers) {
                 this.syncMarker(marker);
@@ -20,31 +23,31 @@ export class MarkerProvider {
     }
 
     public initMarkers() {
-        while (this.markers.length > 0) {
-            let marker = this.markers.pop();
-            marker.offPropertyChanged((marker) => this.syncMarker(marker));
-        }
+        // while (this.markers.length > 0) {
+        //     let marker = this.markers.pop();
+        //     marker.offPropertyChanged((marker) => this.syncMarker(marker));
+        // }
 
-        let markerSize = 500;
-        let borderSize = 30;
-        let currentId = 0;
-        let markerCountHor = 7;
-        let markerCountVer = 5;
+        // let markerSize = 500;
+        // let borderSize = 30;
+        // let currentId = 0;
+        // let markerCountHor = 7;
+        // let markerCountVer = 5;
 
-        let width = window.innerWidth - borderSize * 2;
-        let height = window.innerHeight - borderSize * 2;
+        // let width = window.innerWidth - borderSize * 2;
+        // let height = window.innerHeight - borderSize * 2;
 
-        for (let i = 0; i < markerCountHor; i++) {
-            for (let j = 0; j < markerCountVer; j++) {
-                let marker = new Marker();
-                marker.id = currentId++;
-                marker.posX = Math.max(i / (markerCountHor - 1) * width - markerSize / 2, 0) + borderSize / 2 ;
-                marker.posY = Math.max(j / (markerCountVer - 1) * height - markerSize / 2, 0) + borderSize / 2;
-                marker.size = markerSize / 2 - borderSize;
-                marker.onPropertyChanged((marker) => this.syncMarker(marker));
-                this.markers.push(marker);
-            }
-        }
+        // for (let i = 0; i < markerCountHor; i++) {
+        //     for (let j = 0; j < markerCountVer; j++) {
+        //         let marker = new Marker();
+        //         marker.id = currentId++;
+        //         marker.posX = Math.max(i / (markerCountHor - 1) * width - markerSize / 2, 0) + borderSize / 2 ;
+        //         marker.posY = Math.max(j / (markerCountVer - 1) * height - markerSize / 2, 0) + borderSize / 2;
+        //         marker.size = markerSize / 2 - borderSize;
+        //         marker.onPropertyChanged((marker) => this.syncMarker(marker));
+        //         this.markers.push(marker);
+        //     }
+        // }
     }
 
     private syncMarker(marker: Marker) {
@@ -53,6 +56,14 @@ export class MarkerProvider {
 
     public getMarkers(): Marker[] {
         return this.markers;
+    }
+
+    public createMarker(): Marker {
+        let marker: Marker = new Marker();
+        marker.id = this.idCounter++;
+        marker.onPropertyChanged((marker) => this.syncMarker(marker));
+
+        return marker;
     }
 }
 

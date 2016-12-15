@@ -1,0 +1,19 @@
+.gc-root {
+    overflow-x: visible;
+    white-space: nowrap;
+}
+
+.gc-root .vertical-slice {
+    height: 100%;
+    display: inline-block;
+    border-right: solid 1px black;
+    height: calc(100% - 10px);
+}
+
+.gc-root .vertical-slice:last-child {
+    border-right: none;
+}
+
+.vertical-slice > * {
+    display: inline-block;
+}
