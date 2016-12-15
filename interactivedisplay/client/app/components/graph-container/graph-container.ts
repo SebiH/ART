@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
+import { MoveableDirective } from '../../directives/index';
 
 @Component({
   selector: 'graph-container',
   templateUrl: './app/components/graph-container/graph-container.html',
-  styleUrls: ['./app/components/graph-container/graph-container.css'],
+  styleUrls: ['./app/components/graph-container/graph-container.css']
 })
 export class GraphContainerComponent implements OnInit, OnDestroy {
     private graphs: Graph[];
@@ -26,11 +27,23 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     }
 
-    getStyle(graph: Graph): any {
+    private getStyle(graph: Graph): any {
       let index = this.graphs.indexOf(graph);
       let offset = 600; // offset for the graph creation card
       return {
         "left": offset + (index * 500) + "px"
       };
+    }
+
+    private handleMoveStart() {
+      console.log('movestart');
+    }
+
+    private handleMoveUpdate(ev) {
+      console.log('moveupdate');
+    }
+
+    private handleMoveEnd() {
+      console.log('moveend');
     }
 }

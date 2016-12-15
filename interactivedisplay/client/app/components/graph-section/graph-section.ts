@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { Graph } from '../../models/index';
-import { InteractionListener, InteractionEventType, InteractionManager, InteractionEvent } from '../../services/index';
 
 @Component({
   selector: 'graph-section',

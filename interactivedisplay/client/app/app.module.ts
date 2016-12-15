@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule } from '@angular/http';
 
 import * as Components from './components/index';
+import * as Directives from './directives/index';
 import * as Services from './services/index';
 
 import { routing } from './routes';
@@ -20,7 +21,8 @@ import { routing } from './routes';
     Components.ScrollerComponent,
     Components.GraphContainerComponent,
     Components.GraphSectionComponent,
-    Components.GraphCreateFormComponent
+    Components.GraphCreateFormComponent,
+    Directives.MoveableDirective
   ],
   bootstrap:    [ Components.AppComponent ],
   providers:    [
