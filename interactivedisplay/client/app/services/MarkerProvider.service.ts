@@ -1,59 +1,31 @@
-import { Injectable, HostListener } from '@angular/core';
+import { Injectable, HostListener, OnInit } from '@angular/core';
 import { SocketIO } from './SocketIO.service';
 import { Marker } from '../models/index';
 
 import * as _ from 'lodash';
 
-/**
- *    TODO: 
- *        - Get marker arrangement from unity (low priority)
- */
-
 @Injectable()
-export class MarkerProvider {
+export class MarkerProvider implements OnInit {
     private markers: Marker[] = [];
     private idCounter: number = 0;
 
-    constructor(private socketio: SocketIO) {
+    constructor(private socketio: SocketIO) { }
 
+    ngOnInit() {
         // respond to unity requests
         this.socketio.on('get-marker', () => {
             for (var marker of this.markers) {
-                this.syncMarker(marker);
+                this.addMarkerUnity(marker);
             }
         });
     }
 
-    public initMarkers() {
-        // while (this.markers.length > 0) {
-        //     let marker = this.markers.pop();
-        //     marker.offPropertyChanged((marker) => this.syncMarker(marker));
-        // }
-
-        // let markerSize = 500;
-        // let borderSize = 30;
-        // let currentId = 0;
-        // let markerCountHor = 7;
-        // let markerCountVer = 5;
-
-        // let width = window.innerWidth - borderSize * 2;
-        // let height = window.innerHeight - borderSize * 2;
-
-        // for (let i = 0; i < markerCountHor; i++) {
-        //     for (let j = 0; j < markerCountVer; j++) {
-        //         let marker = new Marker();
-        //         marker.id = currentId++;
-        //         marker.posX = Math.max(i / (markerCountHor - 1) * width - markerSize / 2, 0) + borderSize / 2 ;
-        //         marker.posY = Math.max(j / (markerCountVer - 1) * height - markerSize / 2, 0) + borderSize / 2;
-        //         marker.size = markerSize / 2 - borderSize;
-        //         marker.onPropertyChanged((marker) => this.syncMarker(marker));
-        //         this.markers.push(marker);
-        //     }
-        // }
+    private addMarkerUnity(marker: Marker) {
+        this.socketio.sendMessage('add-marker', marker.id);
     }
 
-    private syncMarker(marker: Marker) {
-        this.socketio.sendMessage('marker', marker.toJson());
+    private removeMarkerUnity(marker: Marker) {
+        this.socketio.sendMessage('remove-marker', marker.id);
     }
 
     public getMarkers(): Marker[] {
@@ -61,17 +33,14 @@ export class MarkerProvider {
     }
 
     public createMarker(): Marker {
-        let marker: Marker = new Marker();
-        marker.id = this.idCounter++;
-        marker.onPropertyChanged((marker) => this.syncMarker(marker));
-        // TODO: register marker in unity?
-
+        let marker: Marker = new Marker(this.idCounter++);
+        this.addMarkerUnity(marker);
         return marker;
     }
 
     public destroyMarker(marker: Marker) {
         _.pull(this.markers, marker);
-        // TODO: remove marker in unity!
+        this.removeMarkerUnity(marker);
     }
 }
 

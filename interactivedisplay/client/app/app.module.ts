@@ -14,6 +14,7 @@ import { routing } from './routes';
     Components.AppComponent,
     Components.MenuComponent,
     Components.DemoComponent,
+    Components.MarkerComponent,
     Components.MarkerOverlayComponent,
     Components.MeasurementComponent,
     Components.PanZoomComponent,
