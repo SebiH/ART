@@ -30,8 +30,6 @@ export class AppComponent implements OnInit
     private sendWindowSize() {
         if (this.useMaps)
             this.mapProvider.initMaps(); // TODO: not here.
-        else
-            this.markerProvider.initMarkers(); // TODO: not here.
         
         this.socketio.sendMessage('window-size', {
             width: window.innerWidth,
