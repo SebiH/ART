@@ -12,12 +12,6 @@ export class MarkerProvider implements OnInit {
     constructor(private socketio: SocketIO) { }
 
     ngOnInit() {
-        // respond to unity requests
-        this.socketio.on('get-marker', () => {
-            for (var marker of this.markers) {
-                this.addMarkerUnity(marker);
-            }
-        });
     }
 
     private addMarkerUnity(marker: Marker) {

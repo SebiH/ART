@@ -380,7 +380,7 @@ namespace Assets.Modules.Calibration
                 //ArucoMapListener.Instance.MarkerSizeInMeter = unitySize;
             }
 
-            if (cmd.command == "marker")
+            if (cmd.command == "marker-data")
             {
                 var payload = JsonUtility.FromJson<DisplayMarker>(cmd.payload);
                 var existingMarker = _markers.FirstOrDefault((m) => m.id == payload.id);
@@ -399,6 +399,12 @@ namespace Assets.Modules.Calibration
                 var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
 
                 ArucoListener.Instance.MarkerSizeInMeter = unitySize;
+            }
+
+            if (cmd.command == "remove-marker")
+            {
+                var payload = int.Parse(cmd.payload);
+                _markers.RemoveAll((m) => m.id == payload);
             }
         }
 
@@ -420,7 +426,10 @@ namespace Assets.Modules.Calibration
                 return;
 
             if (!FixedDisplays.Has(DisplayName))
+            {
+                Debug.Log("No display");
                 return;
+            }
 
             var display = FixedDisplays.Get(DisplayName);
             var displayRotation = display.Rotation;

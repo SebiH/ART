@@ -15,18 +15,23 @@ export class MarkerComponent implements OnInit, OnDestroy
     @Input() private marker: Marker;
     private markerSize = MARKER_SIZE_PX;
 
+    private socketioListener;
     private timerSubscription: Subscription;
     private prevMarkerPos: Point;
 
     constructor(private socketio: SocketIO, private elementRef: ElementRef) { }
 
     ngOnInit() {
-        let timer = Observable.timer(0, 200);
+        this.socketioListener = () => { this.sendMarkerPosition(this.getMarkerPosition()); };
+        this.socketio.on('get-marker', this.socketioListener);
+
+        let timer = Observable.timer(0, 100);
         this.timerSubscription = timer.subscribe(this.checkForChanges.bind(this));
     }
 
     ngOnDestroy() {
         this.timerSubscription.unsubscribe();
+        this.socketio.off('get-marker', this.socketioListener);
     }
 
     private checkForChanges() {
