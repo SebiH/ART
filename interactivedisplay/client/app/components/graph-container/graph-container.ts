@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
 import { MoveableDirective } from '../../directives/index';
@@ -10,7 +10,7 @@ const CARD_WIDTH = 500;
   templateUrl: './app/components/graph-container/graph-container.html',
   styleUrls: ['./app/components/graph-container/graph-container.css']
 })
-export class GraphContainerComponent implements OnInit, OnDestroy {
+export class GraphContainerComponent implements OnInit {
     private graphs: Graph[];
 
     private draggedGraphId: number = -1;
@@ -26,10 +26,6 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         this.graphProvider.addGraph("todo4", "todo3");
         this.graphProvider.addGraph("todo5", "todo3");
         this.graphProvider.addGraph("todo6", "todo3");
-    }
-
-    ngOnDestroy() {
-
     }
 
     private getStyle(graph: Graph): any {
@@ -72,5 +68,9 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     private handleMoveEnd() {
       this.draggedGraphId = -1;
       this.totalMoveDelta = 0;
+    }
+
+    private removeGraph(graph: Graph) {
+      this.graphProvider.removeGraph(graph);
     }
 }

@@ -12,17 +12,22 @@ export class GraphProvider {
 
     }
 
-    public addGraph(dimX: string, dimY: string) {
+    public addGraph(dimX: string, dimY: string): Graph {
         let graph = new Graph();
         graph.id = this.idCounter++;
         graph.dimX = dimX;
         graph.dimY = dimY;
 
         this.graphs.unshift(graph);
+        return graph;
     }
 
     public getGraphs(): Graph[] {
         return this.graphs;
+    }
+
+    public removeGraph(graph: Graph): void {
+        _.pull(this.graphs, graph);
     }
 
     public moveLeft(graph: Graph) {

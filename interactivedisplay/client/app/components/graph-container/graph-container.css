@@ -38,7 +38,19 @@
     position: absolute;
     width: 50px;
     height: 50px;
-    background: yellow;
+    background: #FFC107;
+    bottom: 0;
+    left: 0;
+}
+
+.delete-button {
+    position: absolute;
+    width: 50px;
+    height: 50px;
     bottom: 0;
     right: 0;
+}
+
+.delete-button > button {
+    background: #F44336;
 }
