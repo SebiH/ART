@@ -126,7 +126,7 @@ namespace Leap.Unity.PinchUtility.Examples {
       mesh.RecalculateNormals();
       mesh.RecalculateBounds();
 
-      mesh.Optimize();
+      ;
       mesh.UploadMeshData(true);
 
       return mesh;

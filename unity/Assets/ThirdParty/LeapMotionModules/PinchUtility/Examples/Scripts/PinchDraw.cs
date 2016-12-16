@@ -149,7 +149,7 @@ namespace Leap.Unity.PinchUtility.Examples {
       }
 
       public void FinishLine() {
-        _mesh.Optimize();
+        ;
         _mesh.UploadMeshData(true);
       }
 
