@@ -86,4 +86,8 @@ export class Point {
     public distanceTo(p2: Point): number {
         return Point.distanceBetween(this, p2);
     }
+
+    public equalTo(p2: Point): boolean {
+        return this.x == p2.x && this.y == p2.y;
+    }
 }
