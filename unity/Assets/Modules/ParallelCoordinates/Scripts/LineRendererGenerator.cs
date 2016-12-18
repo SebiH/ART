@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    public class LineGenerator : MonoBehaviour
+    public class LineRendererGenerator : LineGenerator
     {
         // must have LineRenderer
         public GameObject LineTemplate;
@@ -16,7 +16,7 @@ namespace Assets.Modules.ParallelCoordinates
             ClearLines();
         }
 
-        public void GenerateLines(Vector2[] startData, Vector2[] endData)
+        public override void GenerateLines(Vector2[] startData, Vector2[] endData)
         {
             ClearLines();
 
@@ -28,7 +28,7 @@ namespace Assets.Modules.ParallelCoordinates
 
                 var lr = go.GetComponent<LineRenderer>();
                 lr.useWorldSpace = false;
-                lr.SetVertexCount(2);
+                lr.numPositions = 2;
                 lr.SetPosition(0, transform.TransformPoint(startData[i].x, startData[i].y, 0));
                 lr.SetPosition(1, transform.TransformPoint(endData[i].x, endData[i].y, 1));
             }
