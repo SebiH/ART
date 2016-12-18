@@ -9,20 +9,20 @@ namespace Assets.Modules.ParallelCoordinates
         public GameObject PlaneTemplate;
         public DataProvider Provider;
 
-        public List<GameObject> Planes
+        public List<Plane> Planes
         {
             get; private set;
         }
 
         void OnEnable()
         {
-            Planes = new List<GameObject>();
+            Planes = new List<Plane>();
 
 #if UNITY_EDITOR
             // spawn a few planes for debugging
             for (int i = 0; i < 3; i++)
             {
-                SpawnPlane("DUMMY_X", "DUMMY_Y");
+                CreatePlane(-1, "DUMMY_X", "DUMMY_Y");
             }
 #endif
         }
@@ -30,17 +30,16 @@ namespace Assets.Modules.ParallelCoordinates
 
         void OnDisable()
         {
-            foreach (var plane in Planes)
+            while (Planes.Count > 0)
             {
-                Destroy(plane);
+                RemovePlane(Planes[0].Id);
+                Planes.RemoveAt(0);
             }
-
-            Planes.Clear();
         }
 
         private int counter = 0;
 
-        public void SpawnPlane(string dimX, string dimY)
+        public void CreatePlane(int id, string dimX, string dimY)
         {
             var planeGameObj = Instantiate(PlaneTemplate);
             planeGameObj.transform.parent = transform;
@@ -48,16 +47,28 @@ namespace Assets.Modules.ParallelCoordinates
             planeGameObj.transform.localPosition = new Vector3(0, 0, -counter);
             planeGameObj.transform.localRotation = Quaternion.identity;
             counter++;
-            Planes.Insert(0, planeGameObj);
 
             var plane = planeGameObj.GetComponent<Plane>();
+            plane.Id = id;
             plane.Provider = Provider;
             plane.SetDimensions(dimX, dimY);
+
+            Planes.Insert(0, plane);
 
             if (Planes.Count > 1)
             {
                 plane.ConnectTo(Planes[1].GetComponent<Plane>());
             }
+        }
+
+        public void RemovePlane(int id)
+        {
+            // TODO.
+        }
+
+        public void SetPlaneOrder(int[] ids)
+        {
+            // TODO.
         }
     }
 }

@@ -4,4 +4,12 @@ export class Graph {
 
     public dimY: string = "";
     public dimX: string = "";
+
+    public toJson(): any {
+        return {
+            id: this.id,
+            dimX: this.dimX,
+            dimY: this.dimY
+        };
+    }
 }

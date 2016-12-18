@@ -72,7 +72,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private void ClearLines()
+        public void ClearLines()
         {
             if (_lineSegments != null)
             {

@@ -8,6 +8,7 @@ namespace Assets.Modules.ParallelCoordinates
         public LineGenerator Generator;
 
         // set by manager
+        public int Id { get; set; }
         public DataProvider Provider { get; set; }
         public string DimensionX { get; private set; }
         public string DimensionY { get; private set; }
@@ -20,17 +21,31 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void ConnectTo(Plane next)
         {
-            _nextPlane = next;
-
-            if (_hasGeneratedLines)
+            if (next == _nextPlane)
             {
-                // TODO: get data from Provider once properly implemented?
-                Generator.SetEnd(_nextPlane._data);
+                return;
+            }
+
+            if (next == null)
+            {
+                Generator.ClearLines();
+                _hasGeneratedLines = false;
+                _nextPlane = null;
             }
             else
             {
-                Generator.GenerateLines(_data, _nextPlane._data);
-                _hasGeneratedLines = true;
+                _nextPlane = next;
+
+                if (_hasGeneratedLines)
+                {
+                    // TODO: get data from Provider once properly implemented?
+                    Generator.SetEnd(_nextPlane._data);
+                }
+                else
+                {
+                    Generator.GenerateLines(_data, _nextPlane._data);
+                    _hasGeneratedLines = true;
+                }
             }
         }
 
