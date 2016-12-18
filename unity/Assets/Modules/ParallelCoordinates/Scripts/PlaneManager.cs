@@ -40,12 +40,13 @@ namespace Assets.Modules.ParallelCoordinates
 
         private int counter = 0;
 
-        void SpawnPlane(string dimX, string dimY)
+        public void SpawnPlane(string dimX, string dimY)
         {
             var planeGameObj = Instantiate(PlaneTemplate);
             planeGameObj.transform.parent = transform;
             // TODO: proper position
             planeGameObj.transform.localPosition = new Vector3(0, 0, -counter);
+            planeGameObj.transform.localRotation = Quaternion.identity;
             counter++;
             Planes.Insert(0, planeGameObj);
 
