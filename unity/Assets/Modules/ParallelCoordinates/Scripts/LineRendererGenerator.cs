@@ -1,4 +1,4 @@
-using System;
+using Assets.Modules.Core;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -7,6 +7,8 @@ namespace Assets.Modules.ParallelCoordinates
     {
         // must have LineRenderer
         public GameObject LineTemplate;
+
+        private LineRenderer[] _lineRenderers;
 
         void OnEnable()
         {
@@ -28,6 +30,7 @@ namespace Assets.Modules.ParallelCoordinates
                 go.hideFlags = HideFlags.HideAndDontSave;
 
                 var lr = go.GetComponent<LineRenderer>();
+                lr.material.color = Theme.GetColor(i);
                 lr.useWorldSpace = false;
                 lr.numPositions = 2;
                 lr.SetPosition(0, transform.TransformPoint(startData[i].x, startData[i].y, 0));
@@ -37,12 +40,34 @@ namespace Assets.Modules.ParallelCoordinates
 
         public override void SetStart(Vector2[] startData)
         {
-            Debug.LogWarning("NYI");
+            if (startData.Length != _lineRenderers.Length)
+            {
+                // TODO: handle edge case? shouldn't happen with given data
+                Debug.LogWarning("Size doesn't match!");
+                return;
+            }
+
+            // TODO: animate
+            for (int i = 0; i < startData.Length; i++)
+            {
+                _lineRenderers[i].SetPosition(0, transform.TransformPoint(startData[i].x, startData[i].y, 0));
+            }
         }
 
         public override void SetEnd(Vector2[] endData)
         {
-            Debug.LogWarning("NYI");
+            if (endData.Length != _lineRenderers.Length)
+            {
+                // TODO: handle edge case? shouldn't happen with given data
+                Debug.LogWarning("Size doesn't match!");
+                return;
+            }
+
+            // TODO: animate
+            for (int i = 0; i < endData.Length; i++)
+            {
+                _lineRenderers[i].SetPosition(1, transform.TransformPoint(endData[i].x, endData[i].y, 1));
+            }
         }
 
         private void ClearLines()
@@ -52,6 +77,8 @@ namespace Assets.Modules.ParallelCoordinates
                 var child = transform.GetChild(i - 1);
                 Destroy(child.gameObject);
             }
+
+            _lineRenderers = null;
         }
     }
 }
