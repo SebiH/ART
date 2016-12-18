@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -32,6 +33,16 @@ namespace Assets.Modules.ParallelCoordinates
                 lr.SetPosition(0, transform.TransformPoint(startData[i].x, startData[i].y, 0));
                 lr.SetPosition(1, transform.TransformPoint(endData[i].x, endData[i].y, 1));
             }
+        }
+
+        public override void SetStart(Vector2[] startData)
+        {
+            Debug.LogWarning("NYI");
+        }
+
+        public override void SetEnd(Vector2[] endData)
+        {
+            Debug.LogWarning("NYI");
         }
 
         private void ClearLines()
