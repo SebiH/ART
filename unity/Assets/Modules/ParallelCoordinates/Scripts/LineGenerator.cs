@@ -1,14 +1,13 @@
-using Assets.Modules.Core;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
     public class LineGenerator : MonoBehaviour
     {
-        // must have LineRenderer
+        // must have LineSegment
         public GameObject LineTemplate;
 
-        private LineRenderer[] _lineRenderers;
+        private LineSegment[] _lineSegments;
 
         void OnEnable()
         {
@@ -21,64 +20,71 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void GenerateLines(Vector2[] startData, Vector2[] endData)
         {
+            Debug.Assert(startData.Length == endData.Length);
+
             ClearLines();
+            _lineSegments = new LineSegment[startData.Length];
 
             for (int i = 0; i < startData.Length; i++)
             {
                 var go = Instantiate(LineTemplate);
                 go.transform.parent = transform;
+                // reduce editor load (?)
                 go.hideFlags = HideFlags.HideAndDontSave;
 
-                var lr = go.GetComponent<LineRenderer>();
-                lr.material.color = Theme.GetColor(i);
-                lr.useWorldSpace = false;
-                lr.numPositions = 2;
-                lr.SetPosition(0, transform.TransformPoint(startData[i].x, startData[i].y, 0));
-                lr.SetPosition(1, transform.TransformPoint(endData[i].x, endData[i].y, 1));
+                var segment = go.GetComponent<LineSegment>();
+                segment.SetPositions(transform.TransformPoint(startData[i].x, startData[i].y, 0), transform.TransformPoint(endData[i].x, endData[i].y, 1));
+
+                ContinualLines.Get(i).AddSegment(segment);
+                _lineSegments[i] = segment;
             }
         }
 
         public void SetStart(Vector2[] startData)
         {
-            if (startData.Length != _lineRenderers.Length)
+            if (startData.Length != _lineSegments.Length)
             {
                 // TODO: handle edge case? shouldn't happen with given data
-                Debug.LogWarning("Size doesn't match!");
+                Debug.LogWarning("LineGenerator segment size doesn't match!");
                 return;
             }
 
             // TODO: animate
             for (int i = 0; i < startData.Length; i++)
             {
-                _lineRenderers[i].SetPosition(0, transform.TransformPoint(startData[i].x, startData[i].y, 0));
+                _lineSegments[i].SetStartAnimated(transform.TransformPoint(startData[i].x, startData[i].y, 0));
             }
         }
 
         public void SetEnd(Vector2[] endData)
         {
-            if (endData.Length != _lineRenderers.Length)
+            if (endData.Length != _lineSegments.Length)
             {
                 // TODO: handle edge case? shouldn't happen with given data
-                Debug.LogWarning("Size doesn't match!");
+                Debug.LogWarning("LineGenerator segment size doesn't match!");
                 return;
             }
 
             // TODO: animate
             for (int i = 0; i < endData.Length; i++)
             {
-                _lineRenderers[i].SetPosition(1, transform.TransformPoint(endData[i].x, endData[i].y, 1));
+                _lineSegments[i].SetEndAnimated(transform.TransformPoint(endData[i].x, endData[i].y, 1));
             }
         }
 
         private void ClearLines()
         {
-            for (int i = transform.childCount; i > 0; i--)
+            if (_lineSegments != null)
             {
-                var child = transform.GetChild(i - 1);
-                Destroy(child.gameObject);
-            }
+                for (int i = 0; i < _lineSegments.Length; i++)
+                {
+                    ContinualLines.Get(i).RemoveSegment(_lineSegments[i]);
+                    var go = _lineSegments[i].gameObject;
+                    Destroy(go);
+                }
 
-            _lineRenderers = null;
+                _lineSegments = null;
+            }
         }
     }
 }
