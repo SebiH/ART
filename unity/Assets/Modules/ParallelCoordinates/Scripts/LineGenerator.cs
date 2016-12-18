@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    public class LineRendererGenerator : LineGenerator
+    public class LineGenerator : MonoBehaviour
     {
         // must have LineRenderer
         public GameObject LineTemplate;
@@ -19,7 +19,7 @@ namespace Assets.Modules.ParallelCoordinates
             ClearLines();
         }
 
-        public override void GenerateLines(Vector2[] startData, Vector2[] endData)
+        public void GenerateLines(Vector2[] startData, Vector2[] endData)
         {
             ClearLines();
 
@@ -38,7 +38,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        public override void SetStart(Vector2[] startData)
+        public void SetStart(Vector2[] startData)
         {
             if (startData.Length != _lineRenderers.Length)
             {
@@ -54,7 +54,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        public override void SetEnd(Vector2[] endData)
+        public void SetEnd(Vector2[] endData)
         {
             if (endData.Length != _lineRenderers.Length)
             {
