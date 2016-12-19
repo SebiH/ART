@@ -9,7 +9,7 @@ namespace Assets.Modules.Graph
         // TODO: make abstract & proper implementations
         public Vector2[] GetDimData(string dimX, string dimY)
         {
-            var randomData = new Vector2[100];
+            var randomData = new Vector2[10];
             for (int i = 0; i < randomData.Length; i++)
             {
                 randomData[i] = Random.insideUnitCircle / 2f;

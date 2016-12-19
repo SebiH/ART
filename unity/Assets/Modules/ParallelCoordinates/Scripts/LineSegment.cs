@@ -23,13 +23,13 @@ namespace Assets.Modules.ParallelCoordinates
         public void SetStartAnimated(Vector3 start)
         {
             // TODO: animate
-            _lineRenderer.SetPosition(0, transform.TransformPoint(start.x, start.y, 0));
+            _lineRenderer.SetPosition(0, start);
         }
 
-        public void SetEndAnimated(Vector2 end)
+        public void SetEndAnimated(Vector3 end)
         {
             // TODO: animate
-            _lineRenderer.SetPosition(1, transform.TransformPoint(end.x, end.y, 1));
+            _lineRenderer.SetPosition(1, end);
         }
 
 

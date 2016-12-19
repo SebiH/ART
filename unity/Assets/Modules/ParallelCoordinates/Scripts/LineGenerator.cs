@@ -33,7 +33,9 @@ namespace Assets.Modules.ParallelCoordinates
                 go.hideFlags = HideFlags.HideAndDontSave;
 
                 var segment = go.GetComponent<LineSegment>();
-                segment.SetPositions(transform.TransformPoint(startData[i].x, startData[i].y, 0), transform.TransformPoint(endData[i].x, endData[i].y, 1));
+                var startPoint = transform.TransformPoint(startData[i].x, startData[i].y, 0);
+                var endPoint = transform.TransformPoint(endData[i].x, endData[i].y, -1);
+                segment.SetPositions(startPoint, endPoint);
 
                 ContinualLines.Get(i).AddSegment(segment);
                 _lineSegments[i] = segment;
@@ -42,6 +44,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void SetStart(Vector2[] startData)
         {
+            if (_lineSegments == null)
+            {
+                return;
+            }
+
             if (startData.Length != _lineSegments.Length)
             {
                 // TODO: handle edge case? shouldn't happen with given data
@@ -52,12 +59,18 @@ namespace Assets.Modules.ParallelCoordinates
             // TODO: animate
             for (int i = 0; i < startData.Length; i++)
             {
-                _lineSegments[i].SetStartAnimated(transform.TransformPoint(startData[i].x, startData[i].y, 0));
+                var startPoint = transform.TransformPoint(startData[i].x, startData[i].y, 0);
+                _lineSegments[i].SetStartAnimated(startPoint);
             }
         }
 
         public void SetEnd(Vector2[] endData)
         {
+            if (_lineSegments == null)
+            {
+                return;
+            }
+
             if (endData.Length != _lineSegments.Length)
             {
                 // TODO: handle edge case? shouldn't happen with given data
@@ -68,7 +81,8 @@ namespace Assets.Modules.ParallelCoordinates
             // TODO: animate
             for (int i = 0; i < endData.Length; i++)
             {
-                _lineSegments[i].SetEndAnimated(transform.TransformPoint(endData[i].x, endData[i].y, 1));
+                var endPoint = transform.TransformPoint(endData[i].x, endData[i].y, -1);
+                _lineSegments[i].SetEndAnimated(endPoint);
             }
         }
 

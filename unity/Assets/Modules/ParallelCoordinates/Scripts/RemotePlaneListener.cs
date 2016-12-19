@@ -1,5 +1,4 @@
 using Assets.Modules.InteractiveSurface;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -34,6 +33,8 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _planeManager = GetComponent<PlaneManager>();
             InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
+            InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-planes" });
+            InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-plane" });
         }
 
         void OnDisable()
@@ -76,7 +77,7 @@ namespace Assets.Modules.ParallelCoordinates
         private void RepositionPlane(string jsonPayload)
         {
             var payload = JsonUtility.FromJson<RemotePlaneMover>(jsonPayload);
-            var plane = _planeManager.Planes.FirstOrDefault(p => p.Id == payload.id);
+            var plane = _planeManager.GetPlane(payload.id);
 
             if (plane != null)
             {

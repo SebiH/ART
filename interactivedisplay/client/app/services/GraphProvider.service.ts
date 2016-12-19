@@ -9,7 +9,14 @@ export class GraphProvider {
     private idCounter: number = 0;
 
     constructor(private socketio: SocketIO) {
+        this.socketio.on('get-planes', (ev) => {
+            for (let graph of this.graphs) {
+                this.socketio.sendMessage('plane-add', graph.toJson());
+            }
 
+            let ids = _.map(this.graphs, 'id');
+            this.socketio.sendMessage('plane-order', { ids: ids });
+        });
     }
 
     public addGraph(dimX: string, dimY: string): Graph {

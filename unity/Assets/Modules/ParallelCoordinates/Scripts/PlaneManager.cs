@@ -1,5 +1,6 @@
 using Assets.Modules.Graph;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -37,38 +38,55 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private int counter = 0;
-
         public void CreatePlane(int id, string dimX, string dimY)
         {
             var planeGameObj = Instantiate(PlaneTemplate);
             planeGameObj.transform.parent = transform;
-            // TODO: proper position
             planeGameObj.transform.localPosition = Vector3.zero;
             planeGameObj.transform.localRotation = Quaternion.identity;
-            counter++;
 
             var plane = planeGameObj.GetComponent<Plane>();
             plane.Id = id;
             plane.Provider = Provider;
             plane.SetDimensions(dimX, dimY);
 
-            Planes.Insert(0, plane);
+            Planes.Add(plane);
+        }
 
-            if (Planes.Count > 1)
-            {
-                plane.ConnectTo(Planes[1].GetComponent<Plane>());
-            }
+        public Plane GetPlane(int id)
+        {
+            return Planes.FirstOrDefault(p => p.Id == id);
         }
 
         public void RemovePlane(int id)
         {
-            // TODO.
+            var plane = GetPlane(id);
+            Planes.Remove(plane);
+            Destroy(plane.gameObject);
         }
 
         public void SetPlaneOrder(int[] ids)
         {
-            // TODO.
+            if (ids.Length == 0)
+                return;
+
+            var firstPlane = GetPlane(ids[0]);
+            if (firstPlane != null)
+            {
+                firstPlane.SetPrevPlane(null);
+            }
+
+            // -1 because last plane is not connected to anything
+            for (int i = 0; i < ids.Length - 1; i++)
+            {
+                var plane = GetPlane(ids[i]);
+                var nextPlane = GetPlane(ids[i + 1]);
+
+                if (plane != null && nextPlane != null)
+                {
+                    plane.ConnectTo(nextPlane);
+                }
+            }
         }
     }
 }

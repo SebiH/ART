@@ -69,9 +69,23 @@ namespace Assets.Modules.ParallelCoordinates
         public void SetPosition(float posX)
         {
             transform.localPosition = new Vector3(0, 0, -posX);
+            UpdateScale();
+            if (_prevPlane != null)
+            {
+                _prevPlane.UpdateScale();
+            }
         }
 
-        private void SetPrevPlane(Plane prev)
+        private void UpdateScale()
+        {
+            if (_nextPlane != null)
+            {
+                var scale = Mathf.Abs(_nextPlane.transform.localPosition.z - transform.localPosition.z);
+                Generator.transform.localScale = new Vector3(1, 1, scale);
+            }
+        }
+
+        public void SetPrevPlane(Plane prev)
         {
             _prevPlane = prev;
         }
