@@ -64,8 +64,12 @@ export class UnityServer {
 
     private handleSocketData(socket: net.Socket, data: Buffer): void {
         console.log(LOG_PREFIX + "" + data);
-        let msg = <UnityMessage>JSON.parse(data + '');
-        this.raiseMessageReceivedEvent(msg)
+        let msgs = this.splitJson(data + '');
+
+        for (let msgText of msgs) {
+            let msg = <UnityMessage>JSON.parse(msgText);
+            this.raiseMessageReceivedEvent(msg)
+        }
     }
 
     private handleSocketError(socket: net.Socket, error: Error): void {
@@ -77,5 +81,42 @@ export class UnityServer {
     private handleSocketDisconnect(socket: net.Socket): void {
         console.log(LOG_PREFIX + "Client " + socket.address().address +  " disconnect");
         _.pull(this.clients, socket);
+    }
+
+
+    // TODO: breaks easily, but sufficient for current purpose
+    // TODO: see equivalent implementation in unity listener InteractiveSurfaceClient.cs
+    private splitJson(text: string): string[] {
+        let jsonPackets = [];
+
+        let leftBracketIndex = -1;
+        let rightBracketIndex = -1;
+
+        let bracketCounter = 0;
+
+        for (let i = 0; i < text.length; i++) {
+            let ch = text.charAt(i);
+
+            if (ch === '{') {
+                if (bracketCounter == 0) {
+                    leftBracketIndex = i;
+                }
+
+                bracketCounter++;
+            } else if (ch === '}') {
+                bracketCounter--;
+
+                if (bracketCounter <= 0) {
+                    rightBracketIndex = i;
+                    bracketCounter = 0;
+
+                    jsonPackets.push(text.substring(leftBracketIndex, rightBracketIndex + 1));
+                }
+            }
+        }
+
+        console.log('Split text into ' + jsonPackets.length + ' packets');
+
+        return jsonPackets;
     }
 }
