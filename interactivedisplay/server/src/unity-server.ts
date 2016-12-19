@@ -42,6 +42,9 @@ export class UnityServer {
 
 
     private handleConnection(socket: net.Socket): void {
+        let address = socket.address().address;
+        console.log(LOG_PREFIX + "New unity client connected from " + address);
+
         this.handleNewConnection(socket);
 
         socket.on('data', (data) => {
@@ -53,12 +56,12 @@ export class UnityServer {
         });
 
         socket.on('end', () => {
+            console.log(LOG_PREFIX + "Client " + address +  " disconnect");
             this.handleSocketDisconnect(socket);
         });
     }
 
     private handleNewConnection(socket: net.Socket): void {
-        console.log(LOG_PREFIX + "New unity client connected from " + socket.address().address);
         this.clients.push(socket);
     }
 
@@ -79,7 +82,6 @@ export class UnityServer {
     }
 
     private handleSocketDisconnect(socket: net.Socket): void {
-        console.log(LOG_PREFIX + "Client " + socket.address().address +  " disconnect");
         _.pull(this.clients, socket);
     }
 
@@ -114,8 +116,6 @@ export class UnityServer {
                 }
             }
         }
-
-        console.log('Split text into ' + jsonPackets.length + ' packets');
 
         return jsonPackets;
     }
