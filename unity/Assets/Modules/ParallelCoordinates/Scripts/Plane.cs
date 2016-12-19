@@ -63,6 +63,8 @@ namespace Assets.Modules.ParallelCoordinates
                     Generator.GenerateLines(_data, _nextPlane._data);
                     _hasGeneratedLines = true;
                 }
+
+                UpdateScale();
             }
         }
 

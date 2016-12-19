@@ -92,7 +92,8 @@ namespace Assets.Modules.ParallelCoordinates
         private void AddPlane(string jsonPayload)
         {
             var payload = JsonUtility.FromJson<RemotePlaneCreator>(jsonPayload);
-            _planeManager.CreatePlane(payload.id, payload.dimX, payload.dimY);
+            var plane = _planeManager.GetPlane(payload.id);
+            plane.SetDimensions(payload.dimX, payload.dimY);
         }
 
         private void RemovePlane(int id)

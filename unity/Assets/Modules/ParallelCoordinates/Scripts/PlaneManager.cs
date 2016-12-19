@@ -38,7 +38,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        public void CreatePlane(int id, string dimX, string dimY)
+        private Plane CreatePlane(int id)
         {
             var planeGameObj = Instantiate(PlaneTemplate);
             planeGameObj.transform.parent = transform;
@@ -48,14 +48,19 @@ namespace Assets.Modules.ParallelCoordinates
             var plane = planeGameObj.GetComponent<Plane>();
             plane.Id = id;
             plane.Provider = Provider;
-            plane.SetDimensions(dimX, dimY);
 
             Planes.Add(plane);
+            return plane;
         }
 
         public Plane GetPlane(int id)
         {
-            return Planes.FirstOrDefault(p => p.Id == id);
+            var plane = Planes.FirstOrDefault(p => p.Id == id) ?? CreatePlane(id);
+            if (plane == null)
+            {
+                plane = CreatePlane(id);
+            }
+            return plane;
         }
 
         public void RemovePlane(int id)
