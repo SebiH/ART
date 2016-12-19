@@ -1,4 +1,5 @@
 using Assets.Modules.InteractiveSurface;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -75,7 +76,16 @@ namespace Assets.Modules.ParallelCoordinates
         private void RepositionPlane(string jsonPayload)
         {
             var payload = JsonUtility.FromJson<RemotePlaneMover>(jsonPayload);
-            // TODO
+            var plane = _planeManager.Planes.FirstOrDefault(p => p.Id == payload.id);
+
+            if (plane != null)
+            {
+                plane.SetPosition(DisplayUtility.PixelToUnityCoord(payload.pos));
+            }
+            else
+            {
+                Debug.LogWarning("Tried to move nonexistent plane " + payload.id);
+            }
         }
 
         private void AddPlane(string jsonPayload)

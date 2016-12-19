@@ -13,11 +13,27 @@ namespace Assets.Modules.ParallelCoordinates
         public string DimensionX { get; private set; }
         public string DimensionY { get; private set; }
 
-        //private Plane _prevPlane;
+        // basically emulating a double linked list
+        private Plane _prevPlane;
         private Plane _nextPlane;
 
         private bool _hasGeneratedLines = false;
         private Vector2[] _data;
+
+        void OnEnable()
+        {
+
+        }
+
+        void OnDisable()
+        {
+            if (_prevPlane != null)
+            {
+                // TODO: smooth out lines if plane disappears?
+                _prevPlane.ConnectTo(_nextPlane);
+            }
+        }
+
 
         public void ConnectTo(Plane next)
         {
@@ -35,6 +51,7 @@ namespace Assets.Modules.ParallelCoordinates
             else
             {
                 _nextPlane = next;
+                _nextPlane.SetPrevPlane(this);
 
                 if (_hasGeneratedLines)
                 {
@@ -47,6 +64,16 @@ namespace Assets.Modules.ParallelCoordinates
                     _hasGeneratedLines = true;
                 }
             }
+        }
+
+        public void SetPosition(float posX)
+        {
+            transform.localPosition = new Vector3(0, 0, -posX);
+        }
+
+        private void SetPrevPlane(Plane prev)
+        {
+            _prevPlane = prev;
         }
 
 

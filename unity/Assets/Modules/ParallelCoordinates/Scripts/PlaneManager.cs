@@ -19,11 +19,11 @@ namespace Assets.Modules.ParallelCoordinates
             Planes = new List<Plane>();
 
 #if UNITY_EDITOR
-            // spawn a few planes for debugging
-            for (int i = 0; i < 3; i++)
-            {
-                CreatePlane(-1, "DUMMY_X", "DUMMY_Y");
-            }
+            //// spawn a few planes for debugging
+            //for (int i = 0; i < 3; i++)
+            //{
+            //    CreatePlane(-1, "DUMMY_X", "DUMMY_Y");
+            //}
 #endif
         }
 
@@ -44,7 +44,7 @@ namespace Assets.Modules.ParallelCoordinates
             var planeGameObj = Instantiate(PlaneTemplate);
             planeGameObj.transform.parent = transform;
             // TODO: proper position
-            planeGameObj.transform.localPosition = new Vector3(0, 0, -counter);
+            planeGameObj.transform.localPosition = Vector3.zero;
             planeGameObj.transform.localRotation = Quaternion.identity;
             counter++;
 
