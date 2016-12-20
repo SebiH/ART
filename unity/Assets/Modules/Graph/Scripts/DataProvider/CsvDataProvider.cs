@@ -66,5 +66,11 @@ namespace Assets.Modules.Graph
         {
             return _values;
         }
+
+        public override Vector2[] GetDimData(string dimX, string dimY)
+        {
+            // TODO: wait for actual data format
+            return new []{ Vector2.zero };
+        }
     }
 }

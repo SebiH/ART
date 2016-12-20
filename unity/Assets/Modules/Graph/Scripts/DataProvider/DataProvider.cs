@@ -6,16 +6,6 @@ namespace Assets.Modules.Graph
     {
         public abstract float[,] GetData();
 
-        // TODO: make abstract & proper implementations
-        public Vector2[] GetDimData(string dimX, string dimY)
-        {
-            var randomData = new Vector2[10];
-            for (int i = 0; i < randomData.Length; i++)
-            {
-                randomData[i] = Random.insideUnitCircle / 2f;
-            }
-
-            return randomData;
-        }
+        public abstract Vector2[] GetDimData(string dimX, string dimY);
     }
 }

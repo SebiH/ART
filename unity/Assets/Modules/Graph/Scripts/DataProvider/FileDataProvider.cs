@@ -56,5 +56,10 @@ namespace Assets.Modules.Graph
         {
             return data;
         }
+
+        public override Vector2[] GetDimData(string dimX, string dimY)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
