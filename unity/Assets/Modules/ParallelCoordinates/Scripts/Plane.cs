@@ -104,5 +104,22 @@ namespace Assets.Modules.ParallelCoordinates
                 Generator.SetStart(_data);
             }
         }
+
+
+
+        void OnDrawGizmosSelected()
+        {
+            if (_nextPlane != null)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawLine(transform.position, _nextPlane.transform.position);
+            }
+
+            if (_prevPlane != null)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(transform.position, _prevPlane.transform.position);
+            }
+        }
     }
 }
