@@ -25,7 +25,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.marker = this.markerProvider.createMarker();
 
-    let timer = Observable.timer(0, 100);
+    let timer = Observable.timer(0, 50);
     this.timerSubscription = timer.subscribe(this.checkForChanges.bind(this));
 
     this.socketioListener =  () => { this.sendPosition(this.getSectionPosition()); };

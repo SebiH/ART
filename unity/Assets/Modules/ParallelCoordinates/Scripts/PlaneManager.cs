@@ -34,7 +34,6 @@ namespace Assets.Modules.ParallelCoordinates
             while (Planes.Count > 0)
             {
                 RemovePlane(Planes[0].Id);
-                Planes.RemoveAt(0);
             }
         }
 

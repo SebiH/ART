@@ -29,12 +29,15 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 var go = Instantiate(LineTemplate);
                 go.transform.parent = transform;
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localRotation = Quaternion.identity;
+                go.transform.localScale = Vector3.one;
                 // reduce editor load (?)
                 go.hideFlags = HideFlags.HideAndDontSave;
 
                 var segment = go.GetComponent<LineSegment>();
-                var startPoint = transform.TransformPoint(startData[i].x, startData[i].y, 0);
-                var endPoint = transform.TransformPoint(endData[i].x, endData[i].y, -1);
+                var startPoint = new Vector3(startData[i].x, startData[i].y, 0);
+                var endPoint = new Vector3(endData[i].x, endData[i].y, -1);
                 segment.SetPositions(startPoint, endPoint);
 
                 ContinualLines.Get(i).AddSegment(segment);
@@ -59,7 +62,7 @@ namespace Assets.Modules.ParallelCoordinates
             // TODO: animate
             for (int i = 0; i < startData.Length; i++)
             {
-                var startPoint = transform.TransformPoint(startData[i].x, startData[i].y, 0);
+                var startPoint = new Vector3(startData[i].x, startData[i].y, 0);
                 _lineSegments[i].SetStartAnimated(startPoint);
             }
         }
@@ -81,7 +84,7 @@ namespace Assets.Modules.ParallelCoordinates
             // TODO: animate
             for (int i = 0; i < endData.Length; i++)
             {
-                var endPoint = transform.TransformPoint(endData[i].x, endData[i].y, -1);
+                var endPoint = new Vector3(endData[i].x, endData[i].y, -1);
                 _lineSegments[i].SetEndAnimated(endPoint);
             }
         }

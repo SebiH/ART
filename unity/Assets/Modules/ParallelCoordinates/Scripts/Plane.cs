@@ -47,11 +47,13 @@ namespace Assets.Modules.ParallelCoordinates
                 Generator.ClearLines();
                 _hasGeneratedLines = false;
                 _nextPlane = null;
+                UpdateScale();
             }
             else
             {
                 _nextPlane = next;
                 _nextPlane.SetPrevPlane(this);
+                UpdateScale();
 
                 if (_hasGeneratedLines)
                 {
@@ -63,8 +65,6 @@ namespace Assets.Modules.ParallelCoordinates
                     Generator.GenerateLines(_data, _nextPlane._data);
                     _hasGeneratedLines = true;
                 }
-
-                UpdateScale();
             }
         }
 
@@ -84,6 +84,10 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 var scale = Mathf.Abs(_nextPlane.transform.localPosition.z - transform.localPosition.z);
                 Generator.transform.localScale = new Vector3(1, 1, scale);
+            }
+            else
+            {
+                Generator.transform.localScale = Vector3.one;
             }
         }
 
