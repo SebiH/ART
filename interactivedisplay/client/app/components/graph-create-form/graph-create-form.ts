@@ -17,7 +17,7 @@ export class GraphCreateFormComponent implements OnInit, OnDestroy {
     constructor (private graphProvider: GraphProvider, private graphDataProvider: GraphDataProvider) {}
 
     ngOnInit() {
-        this.graphDataProvider.dimensions.subscribe(dim => this.dimensions = dim);
+        this.graphDataProvider.getDimensions().subscribe(dim => this.dimensions = dim);
     }
 
     ngOnDestroy() {

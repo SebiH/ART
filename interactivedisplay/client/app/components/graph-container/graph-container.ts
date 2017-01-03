@@ -20,12 +20,6 @@ export class GraphContainerComponent implements OnInit {
 
     ngOnInit() {
         this.graphs = this.graphProvider.getGraphs();
-        this.graphProvider.addGraph("todo1", "todo2");
-        this.graphProvider.addGraph("todo1", "todo3");
-        this.graphProvider.addGraph("todo2", "todo3");
-        this.graphProvider.addGraph("todo4", "todo3");
-        this.graphProvider.addGraph("todo5", "todo3");
-        this.graphProvider.addGraph("todo6", "todo3");
     }
 
     private getStyle(graph: Graph): any {

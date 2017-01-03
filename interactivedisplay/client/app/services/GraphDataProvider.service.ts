@@ -8,12 +8,16 @@ import * as _ from 'lodash';
 @Injectable()
 export class GraphDataProvider {
 
-    public dimensions: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
+    private dimensions: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
     private data: { [id: string]: ReplaySubject<number[]> } = {}
 
     constructor(private http: Http) {
         this.http.get('/api/graph/dimensions')
             .subscribe(res => this.dimensions.next(<string[]>res.json().dimensions));
+    }
+
+    public getDimensions(): ReplaySubject<string[]> {
+        return this.dimensions;
     }
 
     public getData(dim: string): ReplaySubject<number[]> {

@@ -5,6 +5,9 @@ export class Graph {
     public dimY: string = "";
     public dimX: string = "";
 
+    public selectedDataIndices: number[] = [];
+    public isSelected: boolean = false;
+
     public toJson(): any {
         return {
             id: this.id,
