@@ -1,24 +1,28 @@
 import * as http from 'http';
 import * as path from 'path';
 import * as express from 'express';
+import * as bodyparser from 'body-parser';
 
 import { Util } from './util';
 
 export class WebServer {
 
+    private app: express.Application;
     private server: http.Server;
 
     public start(port: number): void {
-        let app = express();
-        app.set('port', port);
-        app.use(express.static(path.join(__dirname, '../../client/')));
+        this.app = express();
+        this.app.set('port', port);
 
-        // send clients to index page on 404
-        app.use((req, res, next) => {
-            res.sendFile(path.join(__dirname, '../../client/index.html'));
-        })
+        // handle POST data
+        this.app.use(bodyparser.urlencoded({ extended: false }));
+        this.app.use(bodyparser.json());
 
-        this.server = http.createServer(app);
+        // set up default routes
+        this.app.use(express.static(path.join(__dirname, '../../client/')));
+
+        // start server
+        this.server = http.createServer(this.app);
         this.server.listen(port, () => {
             console.log('Web server listening on ' + Util.getIp() + ':' + port);
         });
@@ -30,6 +34,10 @@ export class WebServer {
 
     public stop(): void {
         this.server.close();
+    }
+
+    public addPath(path: string, requestHandler: express.RequestHandler) {
+        this.app.use(path, requestHandler);
     }
 }
 
