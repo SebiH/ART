@@ -4,7 +4,7 @@ export class GraphDataProvider {
 
     public constructor(filename: string) {
         // TODO: read csv or something
-        for (let dimension of this.getDimensions()) {
+        for (let dimension of this.getDimensions().dimensions) {
             let dummyData: number[] = [];
             for (let i = 0; i < 100; i++) {
                 dummyData[i] = Math.random() - 0.5;
@@ -13,11 +13,12 @@ export class GraphDataProvider {
         }
     }
 
-    public getDimensions(): string[] {
-        return [ "DUMMY_Calories", "DUMMY_Vitamin_C", "DUMMY_Vitamin_D", "DUMMY_Happiness", "DUMMY_Gewicht" ];
+    public getDimensions(): any {
+        // workaround since Unity needs an object type for JSON conversion
+        return { dimensions:  [ "DUMMY_Calories", "DUMMY_Vitamin_C", "DUMMY_Vitamin_D", "DUMMY_Happiness", "DUMMY_Gewicht" ] };
     }
 
-    public getData(dimension: string): number[] {
-        return this.dummyData[dimension];
+    public getData(dimension: string): any {
+        return { data: this.dummyData[dimension] };
     }
 }

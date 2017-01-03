@@ -1,4 +1,6 @@
+using Assets.Modules.Graph;
 using Assets.Modules.InteractiveSurface;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -32,6 +34,28 @@ namespace Assets.Modules.ParallelCoordinates
         void OnEnable()
         {
             _planeManager = GetComponent<PlaneManager>();
+
+            if (_planeManager.Provider is RemoteDataProvider)
+            {
+                StartCoroutine(DelayedInitialisation());
+            }
+            else
+            {
+                InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
+                InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-planes" });
+                InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-plane" });
+            }
+        }
+
+        private IEnumerator DelayedInitialisation()
+        {
+            var provider = _planeManager.Provider as RemoteDataProvider;
+
+            while (!provider.IsReady)
+            {
+                yield return new WaitForSeconds(0.5f);
+            }
+
             InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
             InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-planes" });
             InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-plane" });

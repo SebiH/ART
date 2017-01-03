@@ -13,7 +13,7 @@ export class GraphDataProvider {
 
     constructor(private http: Http) {
         this.http.get('/api/graph/dimensions')
-            .subscribe(res => this.dimensions.next(<string[]>res.json()));
+            .subscribe(res => this.dimensions.next(<string[]>res.json().dimensions));
     }
 
     public getData(dim: string): ReplaySubject<number[]> {
@@ -21,7 +21,7 @@ export class GraphDataProvider {
             let rs = new ReplaySubject<number[]>(1);
             this.data[dim] = rs;
             this.http.post('/api/graph/data', { dimension: dim })
-                .subscribe(res => rs.next(res.json()));
+                .subscribe(res => rs.next(<number[]>res.json().data));
         }
 
         return this.data[dim];
