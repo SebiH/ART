@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { GraphProvider } from '../../services/index';
+import { GraphProvider, GraphDataProvider } from '../../services/index';
 import { Graph } from '../../models/index';
 
 @Component({
@@ -9,14 +9,15 @@ import { Graph } from '../../models/index';
 })
 export class GraphCreateFormComponent implements OnInit, OnDestroy {
 
-    private dimensions: string[] = [ "Dummy_Calories", "Dummy_Vitamin_C", "Dummy_Happiness", "Dummy_Vitamin_D" ];
+    private dimensions: string[];
 
     private selectedDimX: string = "";
     private selectedDimY: string = "";
 
-    constructor (private graphProvider: GraphProvider) {}
+    constructor (private graphProvider: GraphProvider, private graphDataProvider: GraphDataProvider) {}
 
     ngOnInit() {
+        this.dimensions = this.graphDataProvider.getDimensions();
     }
 
     ngOnDestroy() {
