@@ -10,3 +10,4 @@ export * from './graph-section/graph-section';
 export * from './graph-create-form/graph-create-form';
 export * from './graph-container/graph-container';
 export * from './scroller/scroller';
+export * from './graph-data-selection/graph-data-selection';

@@ -23,6 +23,7 @@ import { routing } from './routes';
     Components.GraphContainerComponent,
     Components.GraphSectionComponent,
     Components.GraphCreateFormComponent,
+    Components.GraphDataSelectionComponent,
     Directives.MoveableDirective
   ],
   bootstrap:    [ Components.AppComponent ],
