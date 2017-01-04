@@ -4,7 +4,7 @@
     </div>
     <div *ngFor="let graph of graphs; trackBy:graph?.id"
         class="graph-card"
-        [ngStyle]="getStyle(graph)"
+        [ngStyle]="getOffsetStyle(graph)"
         [ngClass]="{'selected': draggedGraphId === graph.id }">
         <div class="card-root">
             <graph-section [graph]="graph"></graph-section>

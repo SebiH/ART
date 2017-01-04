@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { GraphProvider, GraphDataProvider } from '../../services/index';
 import { Graph } from '../../models/index';
 
@@ -14,13 +15,19 @@ export class GraphCreateFormComponent implements OnInit, OnDestroy {
     private selectedDimX: string = "";
     private selectedDimY: string = "";
 
-    constructor (private graphProvider: GraphProvider, private graphDataProvider: GraphDataProvider) {}
+    private dimSubscription: Subscription;
+
+    constructor (
+        private graphProvider: GraphProvider, 
+        private graphDataProvider: GraphDataProvider) {}
 
     ngOnInit() {
-        this.graphDataProvider.getDimensions().subscribe(dim => this.dimensions = dim);
+        this.dimSubscription = this.graphDataProvider.getDimensions()
+            .subscribe(dim => this.dimensions = dim);
     }
 
     ngOnDestroy() {
+        this.dimSubscription.unsubscribe();
     }
 
     private toggleButtonX(dim: string) {
@@ -32,8 +39,12 @@ export class GraphCreateFormComponent implements OnInit, OnDestroy {
     }
 
     private createGraph(): void {
-        if (this.selectedDimX.length > 0 && this.selectedDimY.length > 0)
-        this.graphProvider.addGraph(this.selectedDimX, this.selectedDimY);
+        if (this.selectedDimX.length > 0 && this.selectedDimY.length > 0) {
+            let newGraph = this.graphProvider.addGraph();
+            newGraph.dimX = this.selectedDimX;
+            newGraph.dimY = this.selectedDimY;
+            newGraph.updateData();
+        }
         this.selectedDimX = "";
         this.selectedDimY = "";
     }

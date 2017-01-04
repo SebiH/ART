@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
 import { MoveableDirective } from '../../directives/index';
@@ -6,65 +7,40 @@ import { MoveableDirective } from '../../directives/index';
 const CARD_WIDTH = 500;
 
 @Component({
-  selector: 'graph-container',
-  templateUrl: './app/components/graph-container/graph-container.html',
-  styleUrls: ['./app/components/graph-container/graph-container.css']
+    selector: 'graph-container',
+    templateUrl: './app/components/graph-container/graph-container.html',
+    styleUrls: ['./app/components/graph-container/graph-container.css']
 })
-export class GraphContainerComponent implements OnInit {
-    private graphs: Graph[];
+export class GraphContainerComponent implements OnInit, OnDestroy {
 
-    private draggedGraphId: number = -1;
-    private totalMoveDelta: number = 0;
+    private graphs: Graph[] = [];
+    private graphSubscription: Subscription;
 
-    constructor (private graphProvider: GraphProvider) {}
+    constructor(private graphProvider: GraphProvider) {}
 
     ngOnInit() {
-        this.graphs = this.graphProvider.getGraphs();
+        this.graphSubscription = this.graphProvider.getGraphs()
+            .subscribe(graphs => this.graphs = graphs);
     }
 
-    private getStyle(graph: Graph): any {
-      let index = this.graphs.indexOf(graph);
-      let offset = 600; // offset for the graph creation card
-
-      if (this.draggedGraphId == graph.id) {
-        offset -= this.totalMoveDelta;
-      }
-
-      return {
-        "left": offset + (index * CARD_WIDTH) + "px"
-      };
+    ngOnDestroy() {
+        this.graphSubscription.unsubscribe();
     }
 
-    private handleMoveStart(graph: Graph) {
-      this.draggedGraphId = graph.id;
-    }
-
-    private handleMoveUpdate(graph: Graph, ev: any) {
-      this.totalMoveDelta += ev.deltaX;
-
-      if (Math.abs(this.totalMoveDelta) > CARD_WIDTH) {
-        let moveIndexBy = Math.floor(Math.abs(this.totalMoveDelta / CARD_WIDTH));
-
-        if (this.totalMoveDelta < 0) {
-          for (let i = 0; i < moveIndexBy; i++) {
-            this.graphProvider.moveRight(graph);
-          }
-        } else {
-          for (let i = 0; i < moveIndexBy; i++) {
-            this.graphProvider.moveLeft(graph);
-          }
+    private getOffset(graph: Graph) {
+        let offset = 0;
+        for (let g of this.graphs) {
+            if (g.listIndex < graph.listIndex) {
+                offset += g.width;
+            }
         }
 
-        this.totalMoveDelta = this.totalMoveDelta % CARD_WIDTH;
-      }
+        return offset;
     }
 
-    private handleMoveEnd() {
-      this.draggedGraphId = -1;
-      this.totalMoveDelta = 0;
-    }
-
-    private removeGraph(graph: Graph) {
-      this.graphProvider.removeGraph(graph);
+    private getOffsetStyle(graph: Graph) {
+        return {
+            left: (600 + this.getOffset(graph)) + 'px'
+        };
     }
 }
