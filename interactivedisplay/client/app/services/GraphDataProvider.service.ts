@@ -21,7 +21,7 @@ export class GraphDataProvider {
     }
 
     public getData(dim: string): ReplaySubject<number[]> {
-        if (this.data[dim] !== undefined) {
+        if (this.data[dim] === undefined) {
             let rs = new ReplaySubject<number[]>(1);
             this.data[dim] = rs;
             this.http.post('/api/graph/data', { dimension: dim })
