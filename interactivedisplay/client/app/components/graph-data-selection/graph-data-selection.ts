@@ -23,6 +23,10 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     @ViewChild('graphContainer') private graphContainer: ElementRef;
     private dataSubscription: Subscription;
 
+    private data: Point[];
+    private scaleX: d3.ScaleLinear<number, number>;
+    private scaleY: d3.ScaleLinear<number, number>;
+
     private polygonPath;
     private selectionPolygon: Point[] = [];
 
@@ -79,6 +83,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     private handleTouchUp(ev: InteractionEvent): void {
         this.hasTouchDown = false;
+        this.highlightData();
     }
 
     private handleTouchMove(ev: InteractionEvent): void {
@@ -89,6 +94,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             }
             this.selectionPolygon.splice(this.selectionPolygon.length - 2, 0, ev.position);
             this.renderSelectionPolygon();
+            this.highlightData();
         }
     }
 
@@ -98,6 +104,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             this.selectionPolygon.pop();
         }
         this.renderSelectionPolygon();
+        this.highlightData();
     }
 
     private renderSelectionPolygon(): void {
@@ -109,27 +116,68 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         }
     }
 
+    private highlightData(): void {
+        if (this.data) {
+            while (this.graph.selectedDataIndices.length > 0) {
+                this.graph.selectedDataIndices.pop();
+            }
+
+            if (this.selectionPolygon.length > 0) {
+                let topLeft = new Point(this.selectionPolygon[0].x, this.selectionPolygon[0].y);
+                let bottomRight = new Point(this.selectionPolygon[0].x, this.selectionPolygon[0].y);
+
+                for (let p of this.selectionPolygon) {
+                    topLeft.x = Math.min(topLeft.x, p.x);
+                    topLeft.y = Math.min(topLeft.y, p.y);
+                    bottomRight.x = Math.max(bottomRight.x, p.x);
+                    bottomRight.y = Math.max(bottomRight.y, p.y);
+                }
+
+                for (let index = 0; index < this.data.length; index++) {
+                    let datum = new Point(this.scaleX(this.data[index].x), this.scaleY(this.data[index].y));
+                    if (datum.isInPolygon(this.selectionPolygon, [topLeft, bottomRight])) {
+                        this.graph.selectedDataIndices.push(index);
+                    }
+                }
+
+                this.graph.updateData();
+            }
+
+            // highlight data
+            d3.select(this.graphContainer.nativeElement)
+                .selectAll('circle')
+                .filter((d, i) => this.graph.selectedDataIndices.indexOf(i) > -1)
+                .style('fill', 'red');
+
+            // remove highlight from other data
+            d3.select(this.graphContainer.nativeElement)
+                .selectAll('circle')
+                .filter((d, i) => this.graph.selectedDataIndices.indexOf(i) == -1)
+                .style('fill', 'black');
+        }
+    }
+
     private displayData(dataX: number[], dataY: number[]) {
-        let data = [];
+        this.data = [];
         // assume dataX.length === dataY.length
         for (let i = 0; i < dataX.length; i++) {
-            data.push([dataX[i], dataY[i]]);
+            this.data.push(new Point(dataX[i], dataY[i]));
         }
 
         let margin = {top: 20, right: 20, bottom: 30, left: 40};
         let width = 960 - margin.left - margin.right;
         let height = 500 - margin.top - margin.bottom;
 
-        let x = d3.scaleLinear()
+        this.scaleX = d3.scaleLinear()
             .range([0, width])
-            .domain([d3.min(data, d => d[0]), d3.max(data, d => d[0])]);
-        let y = d3.scaleLinear()
+            .domain([d3.min(this.data, d => d.x), d3.max(this.data, d => d.x)]);
+        this.scaleY = d3.scaleLinear()
             .range([0, height])
-            .domain([d3.min(data, d => d[1]), d3.max(data, d => d[1])]);
+            .domain([d3.min(this.data, d => d.y), d3.max(this.data, d => d.y)]);
 
         let valueLine = d3.line()
-            .x(d => x(d[0]))
-            .y(d => y(d[1]));
+            .x(d => this.scaleX(d.x))
+            .y(d => this.scaleY(d.y));
 
         let svg = d3.select(this.graphContainer.nativeElement).append('svg')
             .attr('width', width + margin.left + margin.right)
@@ -150,17 +198,17 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
 
         svg.selectAll('dot')
-            .data(data)
+            .data(this.data)
             .enter().append('circle')
                 .attr('r', 5)
-                .attr('cx', d => x(d[0]))
-                .attr('cy', d => y(d[1]));
+                .attr('cx', d => this.scaleX(d.x))
+                .attr('cy', d => this.scaleY(d.y));
 
         svg.append('g')
             .attr('transform', 'translate(0,' + height + ')')
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(this.scaleX));
 
         svg.append('g')
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(this.scaleY));
     }
 }
