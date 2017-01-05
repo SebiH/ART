@@ -1,14 +1,9 @@
 <div>
-    <div #graphContainer></div>
+    <div #graphContainer>
+        <!-- Graph will be generated here -->
+    </div>
+
     <div class="buttons">
-        <button [ngClass]="{ 'button-primary': isSelecting}"
-                (click)="startSelect()">
-            Select
-        </button>
-        <button [ngClass]="{ 'button-primary': isDeselecting }"
-                (click)="startDeselect()">
-            Deselect
-        </button>
         <button (click)="clearSelection()">
             Clear Selection
         </button>

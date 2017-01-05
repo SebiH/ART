@@ -1,8 +1,14 @@
 import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { GraphDataProvider } from '../../services/index';
 import { Graph, Point } from '../../models/index';
+import {
+    GraphDataProvider,
+    InteractionManager,
+    InteractionEvent,
+    InteractionListener,
+    InteractionEventType
+} from '../../services/index';
 
 import * as d3 from 'd3';
 
@@ -17,10 +23,17 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     @ViewChild('graphContainer') private graphContainer: ElementRef;
     private dataSubscription: Subscription;
 
-    private isSelecting: boolean = true;
-    private isDeselecting: boolean = false;
+    private polygonPath;
+    private selectionPolygon: Point[] = [];
 
-    constructor(private graphDataProvider: GraphDataProvider) {}
+    private hasTouchDown: boolean = false;
+    private touchDownListener: InteractionListener;
+    private touchMoveListener: InteractionListener;
+    private touchUpListener: InteractionListener;
+
+    constructor(
+        private graphDataProvider: GraphDataProvider,
+        private interactionManager: InteractionManager) {}
 
     ngOnInit() {
         this.dataSubscription = Observable
@@ -30,20 +43,70 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             .subscribe(([dataX, dataY]) => {
                 this.displayData(dataX, dataY);
             });
+
+        this.touchDownListener = {
+            type: InteractionEventType.TouchDown,
+            element: this.graphContainer.nativeElement,
+            handler: (ev) => { this.handleTouchDown(ev); }
+        };
+        this.touchMoveListener = {
+            type: InteractionEventType.TouchMove,
+            element: this.graphContainer.nativeElement,
+            handler: (ev) => { this.handleTouchMove(ev); }
+        };
+        this.touchUpListener = {
+            type: InteractionEventType.TouchUp,
+            element: this.graphContainer.nativeElement,
+            handler: (ev) => { this.handleTouchUp(ev); }
+        };
+        this.interactionManager.on(this.touchDownListener);
+        this.interactionManager.on(this.touchMoveListener);
+        this.interactionManager.on(this.touchUpListener);
     }
 
     ngOnDestroy() {
         this.dataSubscription.unsubscribe();
+        this.interactionManager.off(this.touchDownListener);
+        this.interactionManager.off(this.touchMoveListener);
+        this.interactionManager.off(this.touchUpListener);
     }
 
-    private startSelect(): void {
-        this.isSelecting = true;
-        this.isDeselecting = false;
+
+    private handleTouchDown(ev: InteractionEvent): void {
+        this.hasTouchDown = true;
+        this.clearSelection();
     }
 
-    private startDeselect(): void {
-        this.isDeselecting = true;
-        this.isSelecting = false;
+    private handleTouchUp(ev: InteractionEvent): void {
+        this.hasTouchDown = false;
+    }
+
+    private handleTouchMove(ev: InteractionEvent): void {
+        if (this.hasTouchDown) {
+            if (this.selectionPolygon.length === 0) {
+                this.selectionPolygon.push(ev.position);
+                this.selectionPolygon.push(ev.position);
+            }
+            this.selectionPolygon.splice(this.selectionPolygon.length - 2, 0, ev.position);
+            this.renderSelectionPolygon();
+        }
+    }
+
+    private clearSelection(): void {
+        // retain object reference for d3
+        while (this.selectionPolygon.length > 0) {
+            this.selectionPolygon.pop();
+        }
+        this.renderSelectionPolygon();
+    }
+
+    private renderSelectionPolygon(): void {
+        if (this.polygonPath) {
+            let polygonLine = d3.line()
+                .x(d => d.x)
+                .y(d => d.y);
+            this.polygonPath.attr('d', polygonLine(this.selectionPolygon));
+        }
     }
 
     private displayData(dataX: number[], dataY: number[]) {
@@ -73,6 +136,18 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             .attr('height', height + margin.top + margin.bottom)
             .append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+        let polygonLine = d3.line()
+            .x(d => d.x)
+            .y(d => d.y);
+
+        this.polygonPath = svg.append('path')
+            .attr('d', polygonLine(this.selectionPolygon))
+            .attr('stroke', 'blue')
+            .attr('stroke-width', 2)
+            .attr('fill', '#00FF00')
+            .attr('fill-opacity', '0.4');
+
 
         svg.selectAll('dot')
             .data(data)
