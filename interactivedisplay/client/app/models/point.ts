@@ -104,9 +104,8 @@ export class Point {
 
         let intersections = 0;
         let startPoint = new Point(boundingRect[0].x - Number.EPSILON, this.y);
-        // assuming polygon[0] == polygon[end]
-        for (let index = 0; index < polygon.length - 1; index++) {
-            if (Point.areIntersecting(polygon[index], polygon[index + 1], startPoint, this)) {
+        for (let index = 0; index < polygon.length; index++) {
+            if (Point.areIntersecting(polygon[index], polygon[(index + 1) % polygon.length], startPoint, this)) {
                 intersections++;
             }
         }

@@ -88,11 +88,12 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     private handleTouchMove(ev: InteractionEvent): void {
         if (this.hasTouchDown) {
-            if (this.selectionPolygon.length === 0) {
-                this.selectionPolygon.push(ev.position);
-                this.selectionPolygon.push(ev.position);
-            }
-            this.selectionPolygon.splice(this.selectionPolygon.length - 2, 0, ev.position);
+            // if (this.selectionPolygon.length === 0) {
+            //     this.selectionPolygon.push(ev.position);
+            //     this.selectionPolygon.push(ev.position);
+            // }
+            // this.selectionPolygon.splice(this.selectionPolygon.length - 2, 0, ev.position);
+            this.selectionPolygon.push(ev.position);
             this.renderSelectionPolygon();
             this.highlightData();
         }
@@ -109,7 +110,8 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     private renderSelectionPolygon(): void {
         if (this.polygonPath) {
-            let polygonLine = d3.line()
+            let polygonLine = d3.line<Point>()
+                .curve(d3.curveBasisClosed)
                 .x(d => d.x)
                 .y(d => d.y);
             this.polygonPath.attr('d', polygonLine(this.selectionPolygon));
@@ -140,8 +142,9 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
                     }
                 }
 
-                this.graph.updateData();
             }
+
+            this.graph.updateData();
 
             // highlight data
             d3.select(this.graphContainer.nativeElement)
@@ -175,7 +178,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             .range([0, height])
             .domain([d3.min(this.data, d => d.y), d3.max(this.data, d => d.y)]);
 
-        let valueLine = d3.line()
+        let valueLine = d3.line<Point>()
             .x(d => this.scaleX(d.x))
             .y(d => this.scaleY(d.y));
 
@@ -185,12 +188,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             .append('g')
             .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-        let polygonLine = d3.line()
-            .x(d => d.x)
-            .y(d => d.y);
-
         this.polygonPath = svg.append('path')
-            .attr('d', polygonLine(this.selectionPolygon))
             .attr('stroke', 'blue')
             .attr('stroke-width', 2)
             .attr('fill', '#00FF00')
