@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { GraphDataProvider } from '../../services/index';
@@ -14,9 +14,13 @@ import * as d3 from 'd3';
 export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     @Input() private graph: Graph;
+    @ViewChild('graphContainer') private graphContainer: ElementRef;
     private dataSubscription: Subscription;
 
-    constructor(private graphDataProvider: GraphDataProvider, private elementRef: ElementRef) {}
+    private isSelecting: boolean = true;
+    private isDeselecting: boolean = false;
+
+    constructor(private graphDataProvider: GraphDataProvider) {}
 
     ngOnInit() {
         this.dataSubscription = Observable
@@ -32,6 +36,15 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         this.dataSubscription.unsubscribe();
     }
 
+    private startSelect(): void {
+        this.isSelecting = true;
+        this.isDeselecting = false;
+    }
+
+    private startDeselect(): void {
+        this.isDeselecting = true;
+        this.isSelecting = false;
+    }
 
     private displayData(dataX: number[], dataY: number[]) {
         let data = [];
@@ -55,7 +68,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             .x(d => x(d[0]))
             .y(d => y(d[1]));
 
-        let svg = d3.select(this.elementRef.nativeElement).append('svg')
+        let svg = d3.select(this.graphContainer.nativeElement).append('svg')
             .attr('width', width + margin.left + margin.right)
             .attr('height', height + margin.top + margin.bottom)
             .append('g')
