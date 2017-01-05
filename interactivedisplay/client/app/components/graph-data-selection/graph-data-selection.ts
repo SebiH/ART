@@ -1,4 +1,6 @@
 import { Component, OnInit, OnDestroy, Input, ElementRef } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
 import { GraphDataProvider } from '../../services/index';
 import { Graph, Point } from '../../models/index';
 
@@ -12,32 +14,30 @@ import * as d3 from 'd3';
 export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     @Input() private graph: Graph;
-    private dataX: number[] = null;
-    private dataY: number[] = null;
+    private dataSubscription: Subscription;
 
     constructor(private graphDataProvider: GraphDataProvider, private elementRef: ElementRef) {}
 
     ngOnInit() {
-        this.graphDataProvider.getData(this.graph.dimX)
-            .subscribe(r => { this.dataX = r; this.displayData(); })
-        this.graphDataProvider.getData(this.graph.dimY)
-            .subscribe(r => { this.dataY = r; this.displayData(); })
+        this.dataSubscription = Observable
+            .zip(
+                this.graphDataProvider.getData(this.graph.dimX),
+                this.graphDataProvider.getData(this.graph.dimY))
+            .subscribe(([dataX, dataY]) => {
+                this.displayData(dataX, dataY);
+            });
     }
 
     ngOnDestroy() {
-
+        this.dataSubscription.unsubscribe();
     }
 
 
-    private displayData() {
-        if (this.dataX == null || this.dataY == null) {
-            return;
-        }
-
+    private displayData(dataX: number[], dataY: number[]) {
         let data = [];
         // assume dataX.length === dataY.length
-        for (let i = 0; i < this.dataX.length; i++) {
-            data.push([this.dataX[i], this.dataY[i]]);
+        for (let i = 0; i < dataX.length; i++) {
+            data.push([dataX[i], dataY[i]]);
         }
 
         let margin = {top: 20, right: 20, bottom: 30, left: 40};
