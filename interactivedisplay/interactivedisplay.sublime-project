@@ -1,0 +1,26 @@
+{
+	"folders":
+	[
+		{
+			"file_exclude_patterns":
+			[
+				"app/*.js",
+				"**/*.map"
+			],
+			"folder_exclude_patterns":
+			[
+				"node_modules"
+			],
+			"path": "client"
+		},
+		{
+			"path": "server",
+			"folder_exclude_patterns": [
+				"node_modules",
+				"bin"
+			],
+			"file_exclude_patterns": [
+			]
+		}
+	]
+}
