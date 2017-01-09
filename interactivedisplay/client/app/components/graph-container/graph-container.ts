@@ -1,15 +1,18 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
 import { MoveableDirective } from '../../directives/index';
+import { GraphSectionComponent } from '../graph-section/graph-section';
+
+import * as _ from 'lodash';
 
 const CARD_WIDTH = 500;
 
 @Component({
     selector: 'graph-container',
     templateUrl: './app/components/graph-container/graph-container.html',
-    styleUrls: ['./app/components/graph-container/graph-container.css']
+    styleUrls: ['./app/components/graph-container/graph-container.css'],
 })
 export class GraphContainerComponent implements OnInit, OnDestroy {
 
@@ -20,7 +23,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.graphSubscription = this.graphProvider.getGraphs()
-            .subscribe(graphs => this.graphs = graphs);
+            .subscribe(graphs => this.graphs = _.sortBy(graphs, 'listIndex'));
     }
 
     ngOnDestroy() {
@@ -40,7 +43,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     private getOffsetStyle(graph: Graph) {
         return {
-            left: (600 + this.getOffset(graph)) + 'px'
+            left: this.getOffset(graph) + 'px'
         };
     }
 }

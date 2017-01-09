@@ -1,57 +1,19 @@
-.graph-container-root {
+.list-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
     overflow-x: visible;
     overflow-y: hidden;
-    white-space: nowrap;
-    position: relative;
+}
+
+.list-item {
+    flex-shrink: 0;
     height: 100%;
-    width: 100%;
-    background: #EEEEEE;
-}
-
-.graph-card {
-    height: calc(100% - 50px - 50px); /* - 2*margin - 2*padding */
-    margin: 25px;
-    padding: 25px;
-
-    position: absolute;
-    top: 0;
-    transition: left 0.3s ease-out, background 0.1s linear;
-
-    box-shadow: 0px 0px 8px grey;
-    border-radius: 2px;
-    background: white;
-}
-
-.graph-card.selected {
-    z-index: 999;
-    top: -10;
-    background: #FFC107;
-    transition: background 0.1s linear;
-}
-
-.card-root {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
-
-.mover {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    background: #FFC107;
-    bottom: 0;
-    left: 0;
-}
-
-.delete-button {
-    position: absolute;
-    width: 50px;
-    height: 50px;
-    bottom: 0;
-    right: 0;
-}
-
-.delete-button > button {
-    background: #F44336;
+    display: inline-block;
+    box-shadow: -6px 0px 28px 0px black;
 }

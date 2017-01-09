@@ -1,27 +1,44 @@
 .section-root {
-    position: relative;
-    height: 100%;
-}
-
-.centered {
     width: 100%;
     height: 100%;
+
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column-reverse;
 }
 
-.container.bottom {
+.dimensions {
+    font-size: 5em;
+    font-family: "geosanslightregular";
+    position: relative;
+}
+
+.dimensions > .x {
     position: absolute;
-    bottom: 0;
-    left: 0;
+    top: 70%;
+    left: 50%;
+}
 
-    margin: -25px;
-    padding: 25px;
-    width: calc(100% + 50px); /* + 2*(-margin) */
+.dimensions > .y {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: rotate(90deg);
+}
 
-    /* TODO: remove hardcoded dependency on card as parent */
-    /* Remove card padding */
-    background: #CCC;
-    text-align: center;
+.buttons {
+}
+
+.buttons .row {
+    height: 70px;
+}
+
+.buttons button {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0;
+    border-color: transparent;
+    font-size: 2em;
+    font-family: "geosanslightregular";
+    color: white;
 }

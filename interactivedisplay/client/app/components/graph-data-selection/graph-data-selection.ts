@@ -88,11 +88,6 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     private handleTouchMove(ev: InteractionEvent): void {
         if (this.hasTouchDown) {
-            // if (this.selectionPolygon.length === 0) {
-            //     this.selectionPolygon.push(ev.position);
-            //     this.selectionPolygon.push(ev.position);
-            // }
-            // this.selectionPolygon.splice(this.selectionPolygon.length - 2, 0, ev.position);
             this.selectionPolygon.push(ev.position);
             this.renderSelectionPolygon();
             this.highlightData();
@@ -100,7 +95,6 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     }
 
     private clearSelection(): void {
-        // retain object reference for d3
         while (this.selectionPolygon.length > 0) {
             this.selectionPolygon.pop();
         }

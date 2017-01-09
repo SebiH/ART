@@ -1,22 +1,20 @@
-<div class="graph-container-root">
-    <div class="graph-card" style="left: 0;">
-        <graph-create-form></graph-create-form>
-    </div>
+<div class="list-container">
     <div *ngFor="let graph of graphs; trackBy:graph?.id"
-        class="graph-card"
-        [ngStyle]="getOffsetStyle(graph)"
-        [ngClass]="{'selected': draggedGraphId === graph.id }">
-        <div class="card-root">
-            <graph-section [graph]="graph"></graph-section>
-            <div class="mover" moveable
-                (moveStart)="handleMoveStart(graph)"
-                (moveUpdate)="handleMoveUpdate(graph, $event)"
-                (moveEnd)="handleMoveEnd(graph)">
-                    M
-            </div>
-            <div class="delete-button">
-                <button (click)="removeGraph(graph)">X</button>
-            </div>
-        </div>
+         class="list-item"
+         [style.width.px]="graph.width"
+         [style.order]="graph.listIndex">
+
+        <graph-section
+            [graph]="graph"
+            (onDelete)="deleteGraph(graph, $event)"
+            (onSelect)="selectGraph(graph, $event)"
+            (onMove)="moveGraph(graph, $event)">
+
+<!--             moveable
+            (moveStart)="handleMoveStart(graph, $event)"
+            (moveUpdate)="handleMoveUpdate(graph, $event)"
+            (moveEnd)="handleMoveEnd(graph, $event)">
+ -->        </graph-section>
+
     </div>
 </div>

@@ -16,6 +16,7 @@ export class GraphProvider {
             .subscribe(response => {
                 // previously created graphs will be ignored
                 this.graphs = <Graph[]>response.json().graphs;
+                this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
                 this.graphObserver.next(this.graphs);
             });
     }
@@ -31,6 +32,7 @@ export class GraphProvider {
 
         this.socketio.sendMessage('+graph', graph.toJson());
         this.graphs.push(graph);
+        this.graphObserver.next(this.graphs);
 
         graph.onDataUpdate.subscribe(g => this.socketio.sendMessage('graph-data', g));
         graph.onPositionUpdate.subscribe(g => this.socketio.sendMessage('graph-position', g));

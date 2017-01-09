@@ -1,20 +1,38 @@
-<div class="section-root" [style.width.px]="graph.width">
+<div class="section-root" [style.background]="backgroundColor">
 
-    <div class="centered">
-        <ar-marker [marker]="marker"></ar-marker>
+    <div class="dimensions">
+        <div class="y">{{ graph.dimY }}</div>
+        <div class="x">{{ graph.dimX }}</div>
     </div>
 
-
-    <div class="container bottom">
+    <div class="buttons container">
         <div class="row">
             <div class="twelve columns">
-                <h4>X: {{ graph.dimX }}</h4>
+                <button> Select </button>
             </div>
         </div>
         <div class="row">
             <div class="twelve columns">
-                <h4>Y: {{ graph.dimY }}</h4>
+                <button> Remove </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="columns"
+                [ngClass]="{ four: graph.width < 400, two: graph.width >= 400 }">
+                <button> &lt; </button>
+            </div>
+
+            <div class="columns"
+                [ngClass]="{ four: graph.width < 400, eight: graph.width >= 400 }"
+                #moveElement>
+                <button> ↔ </button>
+            </div>
+
+            <div class="columns"
+                [ngClass]="{ four: graph.width < 400, two: graph.width >= 400 }">
+                <button> &gt; </button>
             </div>
         </div>
     </div>
+
 </div>
