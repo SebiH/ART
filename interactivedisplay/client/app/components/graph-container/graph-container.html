@@ -1,15 +1,22 @@
-<div class="list-container">
-    <div *ngFor="let graph of graphs; trackBy:graph?.id"
-         class="list-item"
-         [ngClass]="{moving: graph.isPickedUp, static: !graph.isPickedUp }"
-         [ngStyle]="getStyle(graph)">
+<div class="list-root"
+     moveable
+     (moveStart)="handleMoveStart($event)"
+     (moveUpdate)="handleMoveUpdate($event)"
+     (moveEnd)="handleMoveEnd($event)">
+     
+    <div class="list-container" [ngStyle]="getContainerStyle()">
+        <div *ngFor="let graph of graphs; trackBy:graph?.id"
+             class="list-item"
+             [ngClass]="{moving: graph.isPickedUp, static: !graph.isPickedUp }"
+             [ngStyle]="getStyle(graph)">
 
-        <graph-section
-            [graph]="graph"
-            (onDelete)="deleteGraph(graph, $event)"
-            (onSelect)="selectGraph(graph, $event)"
-            (onMove)="moveGraph(graph, $event)">
-        </graph-section>
+            <graph-section
+                [graph]="graph"
+                (onDelete)="deleteGraph(graph, $event)"
+                (onSelect)="selectGraph(graph, $event)"
+                (onMove)="moveGraph(graph, $event)">
+            </graph-section>
 
+        </div>
     </div>
 </div>

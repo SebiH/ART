@@ -47,5 +47,6 @@ export class GraphProvider {
     public removeGraph(graph: Graph): void {
         this.socketio.sendMessage('-graph', graph.id);
         _.pull(this.graphs, graph);
+        this.graphObserver.next(this.graphs);
     }
 }

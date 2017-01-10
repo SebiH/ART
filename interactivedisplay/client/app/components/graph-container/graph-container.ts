@@ -18,6 +18,8 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     private graphs: Graph[] = [];
     private graphSubscription: Subscription;
 
+    private scrollOffset: number = 0;
+
     constructor(private graphProvider: GraphProvider) {}
 
     ngOnInit() {
@@ -38,6 +40,12 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         }
         
         return offset;
+    }
+
+    private getContainerStyle(): any {
+        return {
+            transform: 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)'
+        };
     }
 
     private getStyle(graph: Graph): any {
@@ -96,5 +104,30 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
             }
         }
 
+    }
+
+
+    private handleMoveStart(event: any): void {
+    }
+
+    private handleMoveUpdate(event: any): void {
+        this.scrollOffset += event.deltaX;
+
+        let maxWidth = 0;
+
+        for (let graph of this.graphs) {
+            if (graph.isPickedUp) {
+                graph.posOffset -= event.deltaX;
+            }
+
+            maxWidth += graph.width;
+        }
+
+        maxWidth -= window.innerWidth;
+
+        this.scrollOffset = Math.min(Math.max(0, this.scrollOffset), maxWidth);
+    }
+
+    private handleMoveEnd(event: any): void {
     }
 }
