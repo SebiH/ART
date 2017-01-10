@@ -1,9 +1,8 @@
 <div class="list-container">
     <div *ngFor="let graph of graphs; trackBy:graph?.id"
          class="list-item"
-         [style.width.px]="graph.width"
-         [style.order]="graph.listIndex"
-         [style.z-index]="graph.listIndex">
+         [ngClass]="{moving: graph.isPickedUp, static: !graph.isPickedUp }"
+         [ngStyle]="getStyle(graph)">
 
         <graph-section
             [graph]="graph"

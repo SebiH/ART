@@ -1,4 +1,6 @@
 .list-container {
+    position: relative;
+
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -7,13 +9,27 @@
     height: 100%;
     width: 100%;
     box-sizing: border-box;
-    overflow-x: visible;
+    overflow-x: hidden;
     overflow-y: hidden;
 }
 
 .list-item {
+    position: absolute;
+    left: 0;
+    top: 0;
+
     flex-shrink: 0;
     height: 100%;
     display: inline-block;
     box-shadow: -6px 0px 28px 0px black;
+
+    transition: top 0.05s linear;
+}
+
+.list-item.moving {
+    top: -25px;
+}
+
+.list-item.static {
+    transition: top 0.05s linear, transform 0.2s ease-in-out;
 }

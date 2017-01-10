@@ -1,7 +1,7 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef, Output, EventEmitter } from '@angular/core';
 import { Observable, Subscription } from 'rxjs/Rx';
 import { Marker, Graph, Point } from '../../models/index';
-import { MarkerProvider, SocketIO } from '../../services/index';
+import { MarkerProvider } from '../../services/index';
 
 const COLOURS = [
     // material colour palette, see https://material.io/guidelines/style/color.html
@@ -23,18 +23,18 @@ const COLOURS = [
 export class GraphSectionComponent implements OnInit, OnDestroy {
 
     @Input() private graph: Graph;
-    private marker: Marker;
-    private prevPosition: Point;
-    private timerSubscription: Subscription;
-    private socketioListener;
 
-    @ViewChild('moveElement') private moveElement: ElementRef;
+    @Output() onDelete = new EventEmitter(); 
+    @Output() onSelect = new EventEmitter(); 
+    @Output() onMove = new EventEmitter(); 
+
+    private marker: Marker;
+    private timerSubscription: Subscription;
 
     private backgroundColor: string = "white";
 
     constructor (
         private markerProvider: MarkerProvider,
-        private socketio: SocketIO,
         private elementRef: ElementRef
         ) {}
 
@@ -44,23 +44,19 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
 
         let timer = Observable.timer(0, 50);
         this.timerSubscription = timer.subscribe(this.checkForChanges.bind(this));
-
-        // this.socketioListener = () => { this.sendPosition(this.getSectionPosition()); };
-        // this.socketio.on('get-plane', this.socketioListener);
     }
 
     ngOnDestroy() {
         this.markerProvider.destroyMarker(this.marker);
         this.timerSubscription.unsubscribe();
-        // this.socketio.off('get-plane', this.socketioListener);
     }
 
-    private checkForChanges() {
-        let currentPosition = this.getSectionPosition();
+    private checkForChanges(): void {
+        let currentPosition = this.getSectionPosition().x;
 
-        if (this.prevPosition == undefined || !this.prevPosition.equalTo(currentPosition)) {
-            this.sendPosition(currentPosition);
-            this.prevPosition = currentPosition;
+        if (this.graph.absolutePos == undefined || this.graph.absolutePos !== currentPosition) {
+            this.graph.absolutePos = currentPosition;
+            this.graph.updatePosition();
         }
     }
 
@@ -71,10 +67,31 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         return new Point(pos.left, pos.top);
     }
 
-    private sendPosition(pos: Point) {
-        // this.socketio.sendMessage('plane-position', {
-            //   id: this.graph.id,
-            //   pos: pos.x
-            // });
-        }
+
+    private handleDelete(): void {
+        this.onDelete.emit();
     }
+
+
+    private handleSelect(): void {
+        this.onSelect.emit();
+    }
+
+    private handleMoveStart(graph: Graph, event: any) {
+        this.onMove.emit({
+            start: true,
+        });
+    }
+
+    private handleMoveUpdate(graph: Graph, event: any) {
+        this.onMove.emit({
+            delta: event.deltaX
+        });
+    }
+
+    private handleMoveEnd(graph: Graph, event: any) {
+        this.onMove.emit({
+            end: true,
+        });
+    }
+}

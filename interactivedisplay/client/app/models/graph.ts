@@ -14,6 +14,8 @@ export class Graph {
     public listIndex: number = 0;
     public width: number = 100;
 
+    public posOffset: number = 0;
+    public isPickedUp: boolean = false;
 
     private dataSubscription: Subject<any> = new Subject<any>();
     public get onDataUpdate() : Observable<any> {

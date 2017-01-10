@@ -8,12 +8,12 @@
     <div class="buttons container">
         <div class="row">
             <div class="twelve columns">
-                <button> Select </button>
+                <button (click)="handleSelect()"> Select </button>
             </div>
         </div>
         <div class="row">
             <div class="twelve columns">
-                <button> Remove </button>
+                <button (click)="handleDelete()"> Remove {{graph.listIndex}} </button>
             </div>
         </div>
         <div class="row">
