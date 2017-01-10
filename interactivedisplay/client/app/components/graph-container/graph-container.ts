@@ -70,8 +70,9 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         this.graphProvider.removeGraph(graph);
     }
 
+    private selectedGraph: Graph;
     private selectGraph(graph: Graph, event: any): void {
-        // TODO.
+        this.selectedGraph = graph;
     }
 
     private moveGraph(graph: Graph, event: any): void {
@@ -133,5 +134,31 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     }
 
     private handleMoveEnd(event: any): void {
+    }
+
+    private handleMoveDown(graph: Graph): void {
+        let sortedGraphs = _.sortBy(this.graphs, 'listIndex');
+        let graphIndex = sortedGraphs.indexOf(graph);
+
+        if (graphIndex > 0) {
+            let prevGraph = sortedGraphs[graphIndex - 1];
+            prevGraph.listIndex++;
+            prevGraph.updateData();
+            graph.listIndex--;
+            graph.updateData();
+        }
+    }
+
+    private handleMoveUp(graph: Graph): void {
+        let sortedGraphs = _.sortBy(this.graphs, 'listIndex');
+        let graphIndex = sortedGraphs.indexOf(graph);
+
+        if (graphIndex < sortedGraphs.length - 1) {
+            let nextGraph = sortedGraphs[graphIndex + 1];
+            nextGraph.listIndex--;
+            nextGraph.updateData();
+            graph.listIndex++;
+            graph.updateData();
+        }
     }
 }

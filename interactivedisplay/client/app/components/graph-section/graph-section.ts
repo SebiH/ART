@@ -28,6 +28,9 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     @Output() onSelect = new EventEmitter(); 
     @Output() onMove = new EventEmitter(); 
 
+    @Output() onMoveDown = new EventEmitter(); 
+    @Output() onMoveUp = new EventEmitter(); 
+
     private marker: Marker;
     private timerSubscription: Subscription;
 
@@ -93,5 +96,13 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         this.onMove.emit({
             end: true,
         });
+    }
+
+    private moveDown(): void {
+        this.onMoveDown.emit();
+    }
+
+    private moveUp(): void {
+        this.onMoveUp.emit();
     }
 }

@@ -18,7 +18,8 @@
         </div>
         <div class="row">
             <div class="columns"
-                [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }">
+                [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }"
+                (click)="moveDown()">
                 <button> &lt; </button>
             </div>
 
@@ -33,7 +34,8 @@
             </div>
 
             <div class="columns"
-                [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }">
+                [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }"
+                (click)="moveUp()">
                 <button> &gt; </button>
             </div>
         </div>
