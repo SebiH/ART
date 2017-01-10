@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy, ViewChildren } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
-import { MoveableDirective } from '../../directives/index';
 import { GraphSectionComponent } from '../graph-section/graph-section';
 
 import * as _ from 'lodash';

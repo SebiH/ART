@@ -2,19 +2,15 @@
     <div *ngFor="let graph of graphs; trackBy:graph?.id"
          class="list-item"
          [style.width.px]="graph.width"
-         [style.order]="graph.listIndex">
+         [style.order]="graph.listIndex"
+         [style.z-index]="graph.listIndex">
 
         <graph-section
             [graph]="graph"
             (onDelete)="deleteGraph(graph, $event)"
             (onSelect)="selectGraph(graph, $event)"
             (onMove)="moveGraph(graph, $event)">
-
-<!--             moveable
-            (moveStart)="handleMoveStart(graph, $event)"
-            (moveUpdate)="handleMoveUpdate(graph, $event)"
-            (moveEnd)="handleMoveEnd(graph, $event)">
- -->        </graph-section>
+        </graph-section>
 
     </div>
 </div>

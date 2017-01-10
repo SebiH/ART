@@ -18,18 +18,22 @@
         </div>
         <div class="row">
             <div class="columns"
-                [ngClass]="{ four: graph.width < 400, two: graph.width >= 400 }">
+                [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }">
                 <button> &lt; </button>
             </div>
 
             <div class="columns"
-                [ngClass]="{ four: graph.width < 400, eight: graph.width >= 400 }"
-                #moveElement>
+                [ngClass]="{ four: graph.width < 400, eight: 400 < graph.width }"
+
+                moveable
+                (moveStart)="handleMoveStart(graph, $event)"
+                (moveUpdate)="handleMoveUpdate(graph, $event)"
+                (moveEnd)="handleMoveEnd(graph, $event)">
                 <button> ↔ </button>
             </div>
 
             <div class="columns"
-                [ngClass]="{ four: graph.width < 400, two: graph.width >= 400 }">
+                [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }">
                 <button> &gt; </button>
             </div>
         </div>
