@@ -25,6 +25,8 @@
     display: inline-block;
     box-shadow: -6px 0px 28px 0px black;
 
+    -webkit-transition: top 0.05s linear;
+    -ms-transition: top 0.05s linear;
     transition: top 0.05s linear;
 }
 
@@ -33,5 +35,7 @@
 }
 
 .list-item.static {
+    -webkit-transition: top 0.05s linear, -webkit-transform 0.2s ease-in-out;
+    -ms-transition: top 0.05s linear, -ms-transform 0.2s ease-in-out;
     transition: top 0.05s linear, transform 0.2s ease-in-out;
 }

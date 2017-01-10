@@ -44,6 +44,8 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     private getContainerStyle(): any {
         return {
+            '-webkit-transform': 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)',
+            '-ms-transform': 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)',
             transform: 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)'
         };
     }
@@ -52,6 +54,8 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         let style = {
             width: graph.width + 'px',
             'z-index': graph.listIndex,
+            '-webkit-transform': 'translate3d(' + (this.getOffset(graph) + graph.posOffset) +'px, 0, 0)',
+            '-ms-transform': 'translate3d(' + (this.getOffset(graph) + graph.posOffset) +'px, 0, 0)',
             transform: 'translate3d(' + (this.getOffset(graph) + graph.posOffset) +'px, 0, 0)'
         };
 
@@ -117,7 +121,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
         for (let graph of this.graphs) {
             if (graph.isPickedUp) {
-                graph.posOffset -= event.deltaX;
+                graph.posOffset += event.deltaX;
             }
 
             maxWidth += graph.width;

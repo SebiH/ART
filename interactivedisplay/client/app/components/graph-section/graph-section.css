@@ -31,7 +31,7 @@
     height: 70px;
 }
 
-.buttons button {
+.buttons button, .buttons .button-imitation {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.3);

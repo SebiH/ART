@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {Point} from '../../models/index';
 
 import {Logger} from '../logger.service';
@@ -22,7 +22,7 @@ export class InteractionManager {
 
     // constructor(private logger: Logger) {
     private logger: Logger = new Logger(); // TODO: inject?
-    constructor() {
+    constructor(private ngZone: NgZone) {
 
         // in case 'touchup/move' etc ends up on unregistered elements
         this.subscribeElementListeners(document.body);
@@ -277,21 +277,29 @@ export class InteractionManager {
 
     private addTouchInteraction(el: HTMLElement): void {
         el.ontouchstart = (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            this.onTouchStart(el, ev);
+            if (ev.srcElement.tagName.toLowerCase() !== 'button') {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.onTouchStart(el, ev);
+            }
+
+            this.ngZone.run(() => {});
         };
 
         el.ontouchmove = (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
             this.onTouchMove(ev);
+            this.ngZone.run(() => {});
         }
 
         el.ontouchend = (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            this.onTouchEnd(ev);
+            if (ev.srcElement.tagName.toLowerCase() !== 'button') {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.onTouchEnd(ev);
+            }
+            this.ngZone.run(() => {});
         }
 
         el.ontouchcancel = (ev) => {
@@ -334,7 +342,9 @@ export class InteractionManager {
             if (!interaction) {
                 this.logger.error('No matching touch identifier found, didn\'t receive onTouchStart??');
             } else {
+                let prevPos = interaction.currPos;
                 interaction.currPos = touchPos;
+                let delta = Point.sub(prevPos, touchPos);
 
                 // check if movement threshold was broken if touch was waiting for press
                 if (interaction.type === InteractionType.Undecided && !interaction.isEligibleForPress(MAX_PRESS_DISTANCE)) {
@@ -345,8 +355,9 @@ export class InteractionManager {
                 if (interaction.type !== InteractionType.PanZoom && interaction.type !== InteractionType.Undecided) {
                     this.raiseEvent(interaction, {
                         type: InteractionEventType.TouchMove,
-                        position: touchPos
-                    })
+                        position: touchPos,
+                        delta: delta
+                    });
                 }
             }
         }
