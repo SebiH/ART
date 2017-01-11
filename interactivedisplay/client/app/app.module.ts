@@ -22,7 +22,6 @@ import { routing } from './routes';
     Components.ScrollerComponent,
     Components.GraphContainerComponent,
     Components.GraphSectionComponent,
-    Components.GraphCreateFormComponent,
     Components.GraphDataSelectionComponent,
     Components.GraphDetailComponent,
     Directives.MoveableDirective
