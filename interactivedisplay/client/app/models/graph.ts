@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { Point } from './point';
 
 export class Graph {
     public id: number = -1;
@@ -7,6 +8,9 @@ export class Graph {
     public dimY: string = "";
     public dimX: string = "";
 
+    public color: string = "#FFFFFF";
+
+    public selectionPolygon: Point[] = [];
     public selectedDataIndices: number[] = [];
     public isSelected: boolean = false;
 
@@ -25,6 +29,7 @@ export class Graph {
     public updateData() {
         this.dataSubscription.next({
             id: this.id,
+            color: this.color,
             dimX: this.dimX,
             dimY: this.dimY,
             selectedData: this.selectedDataIndices,
@@ -53,6 +58,7 @@ export class Graph {
             
             dimX: this.dimX,
             dimY: this.dimY,
+            color: this.color,
             selectedData: this.selectedDataIndices,
             isSelected: this.isSelected,
 

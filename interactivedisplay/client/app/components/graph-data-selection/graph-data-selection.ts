@@ -26,9 +26,9 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     private data: Point[];
     private scaleX: d3.ScaleLinear<number, number>;
     private scaleY: d3.ScaleLinear<number, number>;
+    private margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
     private polygonPath;
-    private selectionPolygon: Point[] = [];
 
     private hasTouchDown: boolean = false;
     private touchDownListener: InteractionListener;
@@ -46,6 +46,8 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
                 this.graphDataProvider.getData(this.graph.dimY))
             .subscribe(([dataX, dataY]) => {
                 this.displayData(dataX, dataY);
+                this.renderSelectionPolygon();
+                this.highlightData();
             });
 
         this.touchDownListener = {
@@ -88,15 +90,19 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     private handleTouchMove(ev: InteractionEvent): void {
         if (this.hasTouchDown) {
-            this.selectionPolygon.push(ev.position);
+            let globalPosition = this.graphContainer.nativeElement.getBoundingClientRect();
+            let posOffset = new Point(globalPosition.left + this.margin.left,
+                globalPosition.top + this.margin.top);
+
+            this.graph.selectionPolygon.push(Point.sub(ev.position, posOffset));
             this.renderSelectionPolygon();
             this.highlightData();
         }
     }
 
     private clearSelection(): void {
-        while (this.selectionPolygon.length > 0) {
-            this.selectionPolygon.pop();
+        while (this.graph.selectionPolygon.length > 0) {
+            this.graph.selectionPolygon.pop();
         }
         this.renderSelectionPolygon();
         this.highlightData();
@@ -108,7 +114,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
                 .curve(d3.curveBasisClosed)
                 .x(d => d.x)
                 .y(d => d.y);
-            this.polygonPath.attr('d', polygonLine(this.selectionPolygon));
+            this.polygonPath.attr('d', polygonLine(this.graph.selectionPolygon));
         }
     }
 
@@ -118,11 +124,11 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
                 this.graph.selectedDataIndices.pop();
             }
 
-            if (this.selectionPolygon.length > 0) {
-                let topLeft = new Point(this.selectionPolygon[0].x, this.selectionPolygon[0].y);
-                let bottomRight = new Point(this.selectionPolygon[0].x, this.selectionPolygon[0].y);
+            if (this.graph.selectionPolygon.length > 0) {
+                let topLeft = new Point(this.graph.selectionPolygon[0].x, this.graph.selectionPolygon[0].y);
+                let bottomRight = new Point(this.graph.selectionPolygon[0].x, this.graph.selectionPolygon[0].y);
 
-                for (let p of this.selectionPolygon) {
+                for (let p of this.graph.selectionPolygon) {
                     topLeft.x = Math.min(topLeft.x, p.x);
                     topLeft.y = Math.min(topLeft.y, p.y);
                     bottomRight.x = Math.max(bottomRight.x, p.x);
@@ -131,7 +137,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
                 for (let index = 0; index < this.data.length; index++) {
                     let datum = new Point(this.scaleX(this.data[index].x), this.scaleY(this.data[index].y));
-                    if (datum.isInPolygon(this.selectionPolygon, [topLeft, bottomRight])) {
+                    if (datum.isInPolygon(this.graph.selectionPolygon, [topLeft, bottomRight])) {
                         this.graph.selectedDataIndices.push(index);
                     }
                 }
@@ -161,9 +167,8 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             this.data.push(new Point(dataX[i], dataY[i]));
         }
 
-        let margin = {top: 20, right: 20, bottom: 30, left: 40};
-        let width = 960 - margin.left - margin.right;
-        let height = 500 - margin.top - margin.bottom;
+        let width = 960 - this.margin.left - this.margin.right;
+        let height = 500 - this.margin.top - this.margin.bottom;
 
         this.scaleX = d3.scaleLinear()
             .range([0, width])
@@ -177,10 +182,10 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             .y(d => this.scaleY(d.y));
 
         let svg = d3.select(this.graphContainer.nativeElement).append('svg')
-            .attr('width', width + margin.left + margin.right)
-            .attr('height', height + margin.top + margin.bottom)
+            .attr('width', width + this.margin.left + this.margin.right)
+            .attr('height', height + this.margin.top + this.margin.bottom)
             .append('g')
-            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+            .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
 
         this.polygonPath = svg.append('path')
             .attr('stroke', 'blue')

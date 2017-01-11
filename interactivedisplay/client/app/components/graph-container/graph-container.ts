@@ -25,7 +25,17 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.graphSubscription = this.graphProvider.getGraphs()
-            .subscribe(graphs => this.graphs = _.sortBy(graphs, 'listIndex'));
+            .subscribe(graphs => {
+                this.graphs = _.sortBy(graphs, 'listIndex');
+                let selectedGraphs = _.filter(graphs, 'isSelected');
+
+                // assuming at most one graph is selected
+                if (selectedGraphs.length > 0) {
+                    this.selectGraph(selectedGraphs[0]);
+                } else {
+                    this.deselectGraph();
+                }
+            });
     }
 
     ngOnDestroy() {
@@ -71,7 +81,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         this.graphProvider.removeGraph(graph);
     }
 
-    private selectGraph(graph: Graph, event: any): void {
+    private selectGraph(graph: Graph): void {
         if (!this.selectedGraph) {
             this.selectedGraph = graph;
             this.selectedGraph.isSelected = true;
@@ -84,8 +94,6 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
             this.selectedGraph.isSelected = false;
             this.selectedGraph.updateData();
             this.selectedGraph = null;
-        } else {
-            console.error('Tried to deselect graph when no graph was selected!');
         }
     }
 

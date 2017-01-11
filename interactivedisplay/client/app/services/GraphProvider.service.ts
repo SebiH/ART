@@ -5,6 +5,18 @@ import { SocketIO } from './SocketIO.service';
 import { Graph } from '../models/index';
 import * as _ from 'lodash';
 
+const COLOURS = [
+    // material colour palette, see https://material.io/guidelines/style/color.html
+    "#F44336", // red
+    "#9C27B0", // purple
+    "#3F51B5", // indigo
+    "#2196F3", // blue
+    "#4CAF50", // green
+    "#FFEB3B", // yellow
+    "#FF9800", // orange
+    "#9E9E9E", // grey
+];
+
 @Injectable()
 export class GraphProvider {
     private graphs: Graph[] = [];
@@ -18,12 +30,18 @@ export class GraphProvider {
                 this.graphs = <Graph[]>response.json().graphs;
                 this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
                 this.graphObserver.next(this.graphs);
+
+                // for live editing via console
+                window['graphs'] = this.graphs;
             });
+
     }
 
     public addGraph(): Graph {
         let graph = new Graph();
         graph.id = this.idCounter++;
+
+        graph.color = COLOURS[graph.id % COLOURS.length];
 
         graph.listIndex = 0;
         for (let g of this.graphs) {
