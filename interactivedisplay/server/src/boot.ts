@@ -4,7 +4,7 @@ import { WebServer } from "./web-server";
 import { SocketIOServer } from "./socketio-server";
 import { SocketIOMessageListener } from './socketio-message-listener';
 import { GraphDataProvider } from './graph-data-provider';
-import { GraphStorage } from './graph-storage';
+import { ObjectStorage } from './object-storage';
 
 const UNITY_PORT = 8835;
 const WEB_PORT = 81; // 80 might already be in use, thanks skype!
@@ -43,10 +43,10 @@ unityServer.onMessageReceived({
 
 
 
-let graphStorage = new GraphStorage();
+let graphStorage = new ObjectStorage();
 
 webServer.addPath('/api/graph/list', (req, res, next) => {
-    res.json(graphStorage.getGraphs());
+    res.json({ graphs: graphStorage.getAll() });
 });
 
 sioServer.onMessageReceived({
@@ -55,10 +55,10 @@ sioServer.onMessageReceived({
             case '+graph':
             case 'graph-data':
             case 'graph-position':
-                graphStorage.setGraph(JSON.parse(msg.payload));
+                graphStorage.set(JSON.parse(msg.payload));
                 break;
             case '-graph':
-                graphStorage.removeGraph(<number>msg.payload);
+                graphStorage.remove(<number>msg.payload);
         }
     }
 })
