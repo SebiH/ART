@@ -16,7 +16,7 @@ export class Graph {
 
     public absolutePos: number = 0;
     public listIndex: number = 0;
-    public width: number = 100;
+    public width: number = 700;
 
     public posOffset: number = 0;
     public isPickedUp: boolean = false;

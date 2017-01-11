@@ -152,7 +152,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
         maxWidth -= window.innerWidth;
 
-        this.scrollOffset = Math.min(Math.max(0, this.scrollOffset), maxWidth);
+        this.scrollOffset = Math.max(0, Math.min(this.scrollOffset, maxWidth));
     }
 
     private handleMoveEnd(event: any): void {
@@ -182,5 +182,11 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
             graph.listIndex++;
             graph.updateData();
         }
+    }
+
+
+    private addGraph(listIndex: number) {
+        let graph = this.graphProvider.addGraph(listIndex);
+        this.selectGraph(graph);
     }
 }

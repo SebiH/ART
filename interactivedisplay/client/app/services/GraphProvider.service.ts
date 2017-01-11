@@ -37,15 +37,17 @@ export class GraphProvider {
 
     }
 
-    public addGraph(): Graph {
+    public addGraph(listIndex: number = 0): Graph {
         let graph = new Graph();
         graph.id = this.idCounter++;
 
         graph.color = COLOURS[graph.id % COLOURS.length];
 
-        graph.listIndex = 0;
+        graph.listIndex = listIndex;
         for (let g of this.graphs) {
-            g.listIndex++;
+            if (g.listIndex >= listIndex) {
+                g.listIndex++;
+            }
         }
 
         this.socketio.sendMessage('+graph', graph.toJson());

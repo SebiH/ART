@@ -21,6 +21,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     @Input() private graph: Graph;
     @ViewChild('graphContainer') private graphContainer: ElementRef;
+    private graphSubscription: Subscription;
     private dataSubscription: Subscription;
 
     private data: Point[];
@@ -40,14 +41,24 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         private interactionManager: InteractionManager) {}
 
     ngOnInit() {
-        this.dataSubscription = Observable
-            .zip(
-                this.graphDataProvider.getData(this.graph.dimX),
-                this.graphDataProvider.getData(this.graph.dimY))
-            .subscribe(([dataX, dataY]) => {
-                this.displayData(dataX, dataY);
-                this.renderSelectionPolygon();
-                this.highlightData();
+        this.graphSubscription = this.graph.onDataUpdate
+            .subscribe(() => {
+                if (this.dataSubscription) {
+                    this.dataSubscription.unsubscribe();
+                    this.dataSubscription = null;
+                }
+
+                if (this.graph.dimX.length > 0 && this.graph.dimY.length > 0) {
+                    this.dataSubscription = Observable
+                        .zip(
+                            this.graphDataProvider.getData(this.graph.dimX),
+                            this.graphDataProvider.getData(this.graph.dimY))
+                        .subscribe(([dataX, dataY]) => {
+                            this.displayData(dataX, dataY);
+                            this.renderSelectionPolygon();
+                            this.highlightData();
+                        });
+                }
             });
 
         this.touchDownListener = {
@@ -71,7 +82,11 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.dataSubscription.unsubscribe();
+        this.graphSubscription.unsubscribe();
+        if (this.dataSubscription) {
+            this.dataSubscription.unsubscribe();
+        }
+
         this.interactionManager.off(this.touchDownListener);
         this.interactionManager.off(this.touchMoveListener);
         this.interactionManager.off(this.touchUpListener);

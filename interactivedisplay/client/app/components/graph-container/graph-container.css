@@ -39,3 +39,23 @@
     -ms-transition: top 0.05s linear, -ms-transform 0.2s ease-in-out;
     transition: top 0.05s linear, transform 0.2s ease-in-out;
 }
+
+.graph-creation-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+
+    border-color: #4CAF50;
+    background: #4CAF50;
+    color: white;
+
+    font-size: 5em;
+    padding: 50px;
+    height: 200px;
+    vertical-align: middle;
+    z-index: 999
+}
+
+.graph-creation-button.first {
+    left: 0;
+}
