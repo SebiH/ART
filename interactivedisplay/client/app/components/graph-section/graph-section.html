@@ -1,8 +1,17 @@
 <div class="section-root">
 
+    <div class="marker top">
+        <ar-marker [marker]="markerTop"></ar-marker>
+    </div>
+
+
     <div class="dimensions">
         <div class="y">{{ graph.dimY }}</div>
         <div class="x">{{ graph.dimX }}</div>
+    </div>
+
+    <div class="marker bottom">
+        <ar-marker [marker]="markerBottom"></ar-marker>
     </div>
 
     <div class="buttons container">

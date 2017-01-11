@@ -8,8 +8,7 @@
         <div *ngFor="let graph of graphs; trackBy:graph?.id; let isFirst = first"
              class="list-item"
              [ngClass]="{ moving: graph.isPickedUp, static: !graph.isPickedUp }"
-             [ngStyle]="getStyle(graph)"
-             [style.background]="graph.color">
+             [ngStyle]="getStyle(graph)">
 
             <graph-section
                 [graph]="graph"

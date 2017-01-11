@@ -44,29 +44,10 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         private interactionManager: InteractionManager) {}
 
     ngOnInit() {
+        this.initiate();
         this.graphSubscription = this.graph.onDataUpdate
             .subscribe(() => {
-                if (this.dataSubscription) {
-                    this.dataSubscription.unsubscribe();
-                    this.dataSubscription = null;
-                }
-
-                if (this.graph.dimX.length > 0 && this.graph.dimY.length > 0) {
-
-                    if (this.prevDimX !== this.graph.dimX || this.prevDimY !== this.graph.dimY) {
-                        this.prevDimX = this.graph.dimX;
-                        this.prevDimY = this.graph.dimY;
-                        this.dataSubscription = Observable
-                            .zip(
-                                this.graphDataProvider.getData(this.graph.dimX),
-                                this.graphDataProvider.getData(this.graph.dimY))
-                            .subscribe(([dataX, dataY]) => {
-                                this.displayData(dataX, dataY);
-                                this.renderSelectionPolygon();
-                                this.highlightData();
-                            });
-                    }
-                }
+                this.initiate();
             });
 
         this.touchDownListener = {
@@ -100,6 +81,29 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         this.interactionManager.off(this.touchUpListener);
     }
 
+    private initiate() {
+        if (this.dataSubscription) {
+            this.dataSubscription.unsubscribe();
+            this.dataSubscription = null;
+        }
+
+        if (this.graph.dimX.length > 0 && this.graph.dimY.length > 0) {
+
+            if (this.prevDimX !== this.graph.dimX || this.prevDimY !== this.graph.dimY) {
+                this.prevDimX = this.graph.dimX;
+                this.prevDimY = this.graph.dimY;
+                this.dataSubscription = Observable
+                    .zip(
+                        this.graphDataProvider.getData(this.graph.dimX),
+                        this.graphDataProvider.getData(this.graph.dimY))
+                    .subscribe(([dataX, dataY]) => {
+                        this.displayData(dataX, dataY);
+                        this.renderSelectionPolygon();
+                        this.highlightData();
+                    });
+            }
+        }
+    }
 
     private handleTouchDown(ev: InteractionEvent): void {
         this.hasTouchDown = true;

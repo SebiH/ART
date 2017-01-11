@@ -26,9 +26,11 @@ export class GraphProvider {
     constructor(private socketio: SocketIO, private http: Http) {
         this.http.get('/api/graph/list')
             .subscribe(response => {
-                // previously created graphs will be ignored
-                this.graphs = <Graph[]>response.json().graphs;
-                this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
+                // response gives graphs as interface, *not* as class
+                this.graphs = _.map(<any[]>response.json().graphs, (g) => Graph.fromJson(g));
+                if (this.graphs.length > 0) {
+                    this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
+                }
                 this.graphObserver.next(this.graphs);
 
                 // for live editing via console

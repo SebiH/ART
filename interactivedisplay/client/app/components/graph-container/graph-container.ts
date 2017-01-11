@@ -64,6 +64,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     private getStyle(graph: Graph): any {
         let style = {
             width: graph.width + 'px',
+            background: graph.color,
             'z-index': graph.listIndex,
             '-webkit-transform': 'translate3d(' + (this.getOffset(graph) + graph.posOffset) +'px, 0, 0)',
             '-ms-transform': 'translate3d(' + (this.getOffset(graph) + graph.posOffset) +'px, 0, 0)',

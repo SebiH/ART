@@ -19,7 +19,8 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     @Output() onMoveDown = new EventEmitter(); 
     @Output() onMoveUp = new EventEmitter(); 
 
-    private marker: Marker;
+    private markerTop: Marker;
+    private markerBottom: Marker;
     private timerSubscription: Subscription;
 
     private backgroundColor: string = "white";
@@ -30,14 +31,16 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         ) {}
 
     ngOnInit() {
-        this.marker = this.markerProvider.createMarker();
+        this.markerTop = this.markerProvider.createMarker();
+        this.markerBottom = this.markerProvider.createMarker();
 
         let timer = Observable.timer(0, 50);
         this.timerSubscription = timer.subscribe(this.checkForChanges.bind(this));
     }
 
     ngOnDestroy() {
-        this.markerProvider.destroyMarker(this.marker);
+        this.markerProvider.destroyMarker(this.markerTop);
+        this.markerProvider.destroyMarker(this.markerBottom);
         this.timerSubscription.unsubscribe();
     }
 

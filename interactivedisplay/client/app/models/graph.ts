@@ -66,4 +66,22 @@ export class Graph {
             index: this.listIndex
         }
     }
+
+
+    // inverse of .toJson()
+    public static fromJson(jGraph: any): Graph {
+        let graph = new Graph();
+        graph.id = jGraph.id;
+
+        graph.dimX = jGraph.dimX;
+        graph.dimY = jGraph.dimY;
+        graph.color = jGraph.color;
+        graph.selectedDataIndices = jGraph.selectedData;
+        graph.isSelected = jGraph.isSelected;
+
+        graph.absolutePos = jGraph.pos;
+        graph.listIndex = jGraph.index;
+
+        return graph;
+    }
 }
