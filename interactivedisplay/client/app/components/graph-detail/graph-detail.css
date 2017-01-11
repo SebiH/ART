@@ -22,3 +22,8 @@
     background: #8BC34A;
     border-color: #8BC34A;
 }
+
+.button-selected {
+    background: #FFC107;
+    border-color: #FFC107;
+}

@@ -1,3 +1,23 @@
 <h1> Graph Detail </h1>
 <button (click)="close()"> Close </button>
 <graph-data-selection [graph]="graph"></graph-data-selection>
+
+<div class="buttons">
+    <h2> X </h2>
+    <button *ngFor="let dim of this.dimensions"
+            class="button-primary"
+            [ngClass]="{ 'button-selected': graph.dimX === dim }"
+            (click)="assignDimX(dim)">
+        {{dim}}
+    </button>
+</div>
+
+<div class="buttons">
+    <h2> Y </h2>
+    <button *ngFor="let dim of this.dimensions"
+            class="button-primary"
+            [ngClass]="{ 'button-selected': graph.dimY === dim }"
+            (click)="assignDimY(dim)">
+        {{dim}}
+    </button>
+</div>

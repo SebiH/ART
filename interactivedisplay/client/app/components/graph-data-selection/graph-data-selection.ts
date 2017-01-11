@@ -29,6 +29,9 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     private scaleY: d3.ScaleLinear<number, number>;
     private margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
+    private prevDimX: string;
+    private prevDimY: string;
+
     private polygonPath;
 
     private hasTouchDown: boolean = false;
@@ -49,15 +52,20 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
                 }
 
                 if (this.graph.dimX.length > 0 && this.graph.dimY.length > 0) {
-                    this.dataSubscription = Observable
-                        .zip(
-                            this.graphDataProvider.getData(this.graph.dimX),
-                            this.graphDataProvider.getData(this.graph.dimY))
-                        .subscribe(([dataX, dataY]) => {
-                            this.displayData(dataX, dataY);
-                            this.renderSelectionPolygon();
-                            this.highlightData();
-                        });
+
+                    if (this.prevDimX !== this.graph.dimX || this.prevDimY !== this.graph.dimY) {
+                        this.prevDimX = this.graph.dimX;
+                        this.prevDimY = this.graph.dimY;
+                        this.dataSubscription = Observable
+                            .zip(
+                                this.graphDataProvider.getData(this.graph.dimX),
+                                this.graphDataProvider.getData(this.graph.dimY))
+                            .subscribe(([dataX, dataY]) => {
+                                this.displayData(dataX, dataY);
+                                this.renderSelectionPolygon();
+                                this.highlightData();
+                            });
+                    }
                 }
             });
 
@@ -184,6 +192,8 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
         let width = 960 - this.margin.left - this.margin.right;
         let height = 500 - this.margin.top - this.margin.bottom;
+
+        d3.select(this.graphContainer.nativeElement).html('');
 
         this.scaleX = d3.scaleLinear()
             .range([0, width])
