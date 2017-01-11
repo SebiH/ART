@@ -19,6 +19,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     private graphSubscription: Subscription;
 
     private scrollOffset: number = 0;
+    private selectedGraph: Graph;
 
     constructor(private graphProvider: GraphProvider) {}
 
@@ -70,9 +71,22 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         this.graphProvider.removeGraph(graph);
     }
 
-    private selectedGraph: Graph;
     private selectGraph(graph: Graph, event: any): void {
-        this.selectedGraph = graph;
+        if (!this.selectedGraph) {
+            this.selectedGraph = graph;
+            this.selectedGraph.isSelected = true;
+            this.selectedGraph.updateData();
+        }
+    }
+
+    private deselectGraph(): void {
+        if (this.selectedGraph) {
+            this.selectedGraph.isSelected = false;
+            this.selectedGraph.updateData();
+            this.selectedGraph = null;
+        } else {
+            console.error('Tried to deselect graph when no graph was selected!');
+        }
     }
 
     private moveGraph(graph: Graph, event: any): void {

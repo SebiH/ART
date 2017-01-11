@@ -23,5 +23,9 @@
     </div>
 </div>
 
-<div *ngIf="selectedGraph" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; background: black;">
+<div *ngIf="selectedGraph" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; background: white;">
+    <graph-detail
+        [graph]="selectedGraph"
+        (onClose)="deselectGraph()">
+    </graph-detail>
 </div>
