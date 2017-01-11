@@ -15,11 +15,11 @@ export class MarkerProvider implements OnInit {
     }
 
     private addMarkerUnity(marker: Marker) {
-        this.socketio.sendMessage('add-marker', marker.id);
+        this.socketio.sendMessage('+marker', marker.id);
     }
 
     private removeMarkerUnity(marker: Marker) {
-        this.socketio.sendMessage('remove-marker', marker.id);
+        this.socketio.sendMessage('-marker', marker.id);
     }
 
     public getMarkers(): Marker[] {

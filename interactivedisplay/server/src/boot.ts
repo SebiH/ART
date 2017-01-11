@@ -59,10 +59,30 @@ sioServer.onMessageReceived({
                 break;
             case '-graph':
                 graphStorage.remove(<number>msg.payload);
+                break;
         }
     }
 })
 
+let markerStorage = new ObjectStorage();
+
+webServer.addPath('/api/marker/list', (req, res, next) => {
+    res.json({ markers: markerStorage.getAll() });
+});
+
+sioServer.onMessageReceived({
+    handler: (msg) => {
+        switch (msg.command) {
+            case '+marker':
+            case 'marker':
+                markerStorage.set(JSON.parse(msg.payload));
+                break;
+            case '-marker':
+                markerStorage.remove(<number>msg.payload);
+                break;
+        }
+    }
+})
 
 webServer.start();
 sioServer.start(webServer);

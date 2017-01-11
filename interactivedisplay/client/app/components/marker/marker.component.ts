@@ -3,7 +3,7 @@ import { Observable, Subscription } from 'rxjs/Rx';
 import { Marker, Point } from '../../models/index';
 import { SocketIO } from '../../services/index';
 
-const MARKER_SIZE_PX = 300;
+const MARKER_SIZE_PX = 250;
 
 @Component({
     selector: 'ar-marker',
@@ -22,16 +22,12 @@ export class MarkerComponent implements OnInit, OnDestroy
     constructor(private socketio: SocketIO, private elementRef: ElementRef) { }
 
     ngOnInit() {
-        this.socketioListener = () => { this.sendMarkerPosition(this.getMarkerPosition()); };
-        this.socketio.on('get-marker', this.socketioListener);
-
         let timer = Observable.timer(0, 100);
         this.timerSubscription = timer.subscribe(this.checkForChanges.bind(this));
     }
 
     ngOnDestroy() {
         this.timerSubscription.unsubscribe();
-        this.socketio.off('get-marker', this.socketioListener);
     }
 
     private checkForChanges() {
@@ -51,7 +47,7 @@ export class MarkerComponent implements OnInit, OnDestroy
     }
 
     private sendMarkerPosition(pos: Point) {
-        this.socketio.sendMessage('marker-data', {
+        this.socketio.sendMessage('marker', {
             id: this.marker.id,
             posX: pos.x,
             posY: pos.y,
