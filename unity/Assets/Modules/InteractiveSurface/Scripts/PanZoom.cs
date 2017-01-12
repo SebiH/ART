@@ -1,6 +1,6 @@
 using UnityEngine;
 using System;
-using Assets.Modules.Tracking;
+using Assets.Modules.Surfaces;
 
 namespace Assets.Modules.InteractiveSurface
 {
@@ -37,9 +37,9 @@ namespace Assets.Modules.InteractiveSurface
 
         private void OnMessage(IncomingCommand msg)
         {
-            if (msg.command == "panzoom" && FixedDisplays.Has(DisplayName))
+            if (msg.command == "panzoom" && SurfaceManager.Has(DisplayName))
             {
-                var display = FixedDisplays.Get(DisplayName);
+                var display = SurfaceManager.Get(DisplayName);
 
                 var payload = JsonUtility.FromJson<MessagePayload>(msg.payload);
                 var x = TranslateX ? DisplayUtility.PixelToUnityCoord(payload.posX) * payload.zoom : 0;

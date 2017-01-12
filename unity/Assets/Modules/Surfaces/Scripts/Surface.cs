@@ -1,9 +1,9 @@
 using Assets.Modules.Core;
 using UnityEngine;
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Surfaces
 {
-    public class FixedDisplay
+    public class Surface : MonoBehaviour
     {
         private Vector3[] _calibratedCorners = new Vector3[4];
 
@@ -51,7 +51,7 @@ namespace Assets.Modules.Tracking
             }
         }
 
-        public FixedDisplay(Vector3 topleft, Vector3 bottomleft, Vector3 bottomright, Vector3 topright)
+        public Surface(Vector3 topleft, Vector3 bottomleft, Vector3 bottomright, Vector3 topright)
         {
             _calibratedCorners[(int)Corner.TopLeft] = topleft;
             _calibratedCorners[(int)Corner.BottomLeft] = bottomleft;

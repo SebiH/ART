@@ -1,4 +1,5 @@
 using Assets.Modules.InteractiveSurface;
+using Assets.Modules.Surfaces;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
@@ -9,9 +10,9 @@ namespace Assets.Modules.Tracking
 
         void OnDrawGizmos()
         {
-            if (FixedDisplays.Has(DisplayName))
+            if (SurfaceManager.Has(DisplayName))
             {
-                var display = FixedDisplays.Get(DisplayName);
+                var display = SurfaceManager.Get(DisplayName);
 
                 // draw coordinates as given via calibration
                 Gizmos.color = Color.white;

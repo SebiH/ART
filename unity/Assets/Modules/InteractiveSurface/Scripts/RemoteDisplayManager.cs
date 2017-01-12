@@ -1,4 +1,4 @@
-using Assets.Modules.Tracking;
+using Assets.Modules.Surfaces;
 using System;
 using UnityEngine;
 
@@ -29,9 +29,9 @@ namespace Assets.Modules.InteractiveSurface
 
                 case "window-size":
                     // TODO: use cmd.origin
-                    if (FixedDisplays.Has(DisplayName))
+                    if (SurfaceManager.Has(DisplayName))
                     {
-                        var display = FixedDisplays.Get(DisplayName);
+                        var display = SurfaceManager.Get(DisplayName);
                         var windowSize = JsonUtility.FromJson<WindowSize>(cmd.payload);
                         display.DisplayResolution = new Resolution
                         {

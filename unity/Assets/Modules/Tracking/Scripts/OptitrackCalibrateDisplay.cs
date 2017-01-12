@@ -1,3 +1,4 @@
+using Assets.Modules.Surfaces;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -114,7 +115,7 @@ namespace Assets.Modules.Tracking
                 return;
             }
 
-            FixedDisplays.Set(DisplayName,
+            SurfaceManager.Set(DisplayName,
                 _calibratedCorners[(int)Corner.TopLeft] + new Vector3(BorderLeft, HeightOffset, -BorderTop),
                 _calibratedCorners[(int)Corner.BottomLeft] + new Vector3(BorderLeft, HeightOffset, BorderBottom),
                 _calibratedCorners[(int)Corner.BottomRight] + new Vector3(-BorderRight, HeightOffset, BorderBottom),

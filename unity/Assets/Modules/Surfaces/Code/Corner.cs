@@ -1,4 +1,4 @@
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Surfaces
 {
     // Matching int values are ordered so that iterating through them will paint a rectangle
     public enum Corner

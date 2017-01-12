@@ -1,6 +1,6 @@
 using Assets.Modules.Core;
+using Assets.Modules.Surfaces;
 using Assets.Modules.Tracking;
-using Assets.Modules.Tracking.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,9 +79,9 @@ namespace Assets.Modules.Calibration
 
         void Update()
         {
-            if (FixedDisplays.Has(DisplayName) && (Time.unscaledTime - _optitrackCameraDetectionTime) < OptitrackCutoffTime)
+            if (SurfaceManager.Has(DisplayName) && (Time.unscaledTime - _optitrackCameraDetectionTime) < OptitrackCutoffTime)
             {
-                var display = FixedDisplays.Get(DisplayName);
+                var display = SurfaceManager.Get(DisplayName);
                 var tableRotation = display.Rotation;
 
                 var lineRenderer = GetComponent<LineRenderer>();
@@ -210,7 +210,7 @@ namespace Assets.Modules.Calibration
         public void StartCalibration()
         {
             var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime);
-            var display = FixedDisplays.Get(DisplayName);
+            var display = SurfaceManager.Get(DisplayName);
             var tableRotation = display.Rotation;
 
             if (markers == null || markers.Count() != 1) return;
@@ -244,7 +244,7 @@ namespace Assets.Modules.Calibration
 
         private Vector3 GetMarkerWorldPosition(int markerIndex, Quaternion tableRotation)
         {
-            var display = FixedDisplays.Get(DisplayName);
+            var display = SurfaceManager.Get(DisplayName);
 
             int row = markerIndex / MarkersPerRow;
             int column = markerIndex % MarkersPerRow;
@@ -277,9 +277,9 @@ namespace Assets.Modules.Calibration
             }
 
             // this only works if we have optitrack coordinates for all markers
-            if (FixedDisplays.Has(DisplayName))
+            if (SurfaceManager.Has(DisplayName))
             {
-                var display = FixedDisplays.Get(DisplayName);
+                var display = SurfaceManager.Get(DisplayName);
                 var tableRotation = display.Rotation;
 
                 // draw table's orientation in center of table

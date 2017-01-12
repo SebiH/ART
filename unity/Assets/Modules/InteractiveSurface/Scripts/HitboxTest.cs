@@ -1,5 +1,5 @@
 using UnityEngine;
-using Assets.Modules.Tracking;
+using Assets.Modules.Surfaces;
 
 public class HitboxTest : MonoBehaviour
 {
@@ -9,9 +9,9 @@ public class HitboxTest : MonoBehaviour
 
 	void Update ()
     {
-        if (FixedDisplays.Has(DisplayName))
+        if (SurfaceManager.Has(DisplayName))
         {
-            var display = FixedDisplays.Get(DisplayName);
+            var display = SurfaceManager.Get(DisplayName);
             transform.localScale = display.Scale;
             // TODO: preserve relative scale of moveable object?
             if (MoveableObject != null)

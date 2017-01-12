@@ -1,5 +1,6 @@
 using Assets.Modules.Core;
 using Assets.Modules.InteractiveSurface;
+using Assets.Modules.Surfaces;
 using Assets.Modules.Tracking;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Assets.Modules.Calibration
         public float MinMarkerAngle = 35f;
         public float MaxMarkerCameraDistance = 0.6f;
 
-        public string DisplayName = "Surface";
+        public string SurfaceName = "Surface";
 
         public bool UseMaps = false;
         public bool UseMultiMarker = false;
@@ -57,7 +58,7 @@ namespace Assets.Modules.Calibration
         {
             if (!_isInitialised)
             {
-                if (FixedDisplays.Has(DisplayName))
+                if (SurfaceManager.Has(SurfaceName))
                 {
                     _isInitialised = true;
                     var command = UseMaps ? "get-maps" : "get-marker";
@@ -66,30 +67,30 @@ namespace Assets.Modules.Calibration
                     {
                         command = command,
                         payload = null,
-                        target = DisplayName
+                        target = SurfaceName
                     });
                 }
             }
 
-            if (FixedDisplays.Has(DisplayName) && Time.unscaledTime - _optitrackPoseTime < OptitrackCutoffTime)
+            if (SurfaceManager.Has(SurfaceName) && Time.unscaledTime - _optitrackPoseTime < OptitrackCutoffTime)
             {
-                var display = FixedDisplays.Get(DisplayName);
+                var surface = SurfaceManager.Get(SurfaceName);
 
                 if (UseMaps)
                 {
-                    DoMapCalibration(display);
+                    DoMapCalibration(surface);
                 }
                 else
                 {
                     if (UseMultiMarker)
-                        DoMultiMarkerCalibration(display);
+                        DoMultiMarkerCalibration(surface);
                     else
-                        DoSingleMarkerCalibration(display);
+                        DoSingleMarkerCalibration(surface);
                 }
             }
         }
 
-        private void DoSingleMarkerCalibration(FixedDisplay display)
+        private void DoSingleMarkerCalibration(Surface surface)
         {
             // get nearest marker (from center) with up-to-date ar marker pose
             MarkerPose nearestMarker = null;
@@ -97,9 +98,9 @@ namespace Assets.Modules.Calibration
 
             // get intersection between camera ray and display plane
             Vector3 intersection = new Vector3();
-            var hasIntersection = MathUtility.LinePlaneIntersection(out intersection, TrackedCamera.position, TrackedCamera.forward, display.Normal, display.GetCornerPosition(Corner.TopLeft));
+            var hasIntersection = MathUtility.LinePlaneIntersection(out intersection, TrackedCamera.position, TrackedCamera.forward, surface.Normal, surface.GetCornerPosition(Corner.TopLeft));
 
-            var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, display.Normal);
+            var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, surface.Normal);
 
             // use <, as we want the camera to be perpendicular to the table ( | camera, _ table)
             __camTableAngle = Mathf.Abs(angle);
@@ -162,14 +163,14 @@ namespace Assets.Modules.Calibration
                 var cameraMatrix = markerMatrix.inverse;
 
                 var localPos = cameraMatrix.GetPosition();
-                var worldPos = markerWorldPos + display.Rotation * localPos;
+                var worldPos = markerWorldPos + surface.Rotation * localPos;
 
                 var localRot = cameraMatrix.GetRotation();
                 var localForward = localRot * Vector3.forward;
                 var localUp = localRot * Vector3.up;
 
-                var worldForward = display.Rotation * localForward;
-                var worldUp = display.Rotation * localUp;
+                var worldForward = surface.Rotation * localForward;
+                var worldUp = surface.Rotation * localUp;
                 var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
                 _perMarkerPosCalib.Add(Quaternion.Inverse(_optitrackPose.Rotation) * (worldPos - _optitrackPose.Position));
@@ -186,16 +187,16 @@ namespace Assets.Modules.Calibration
             }
         }
 
-        private void DoMultiMarkerCalibration(FixedDisplay display)
+        private void DoMultiMarkerCalibration(Surface surface)
         {
             // get nearest marker (from center) with up-to-date ar marker pose
             var nearestMarkers = new List<MarkerPose>();
 
             // get intersection between camera ray and display plane
             Vector3 intersection = new Vector3();
-            var hasIntersection = MathUtility.LinePlaneIntersection(out intersection, TrackedCamera.position, TrackedCamera.forward, display.Normal, display.GetCornerPosition(Corner.TopLeft));
+            var hasIntersection = MathUtility.LinePlaneIntersection(out intersection, TrackedCamera.position, TrackedCamera.forward, surface.Normal, surface.GetCornerPosition(Corner.TopLeft));
 
-            var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, display.Normal);
+            var angle = MathUtility.AngleVectorPlane(TrackedCamera.forward, surface.Normal);
 
             // use <, as we want the camera to be perpendicular to the table ( | camera, _ table)
             __camTableAngle = Mathf.Abs(angle);
@@ -250,14 +251,14 @@ namespace Assets.Modules.Calibration
                 var cameraMatrix = markerMatrix.inverse;
 
                 var localPos = cameraMatrix.GetPosition();
-                var worldPos = markerWorldPos + display.Rotation * localPos;
+                var worldPos = markerWorldPos + surface.Rotation * localPos;
 
                 var localRot = cameraMatrix.GetRotation();
                 var localForward = localRot * Vector3.forward;
                 var localUp = localRot * Vector3.up;
 
-                var worldForward = display.Rotation * localForward;
-                var worldUp = display.Rotation * localUp;
+                var worldForward = surface.Rotation * localForward;
+                var worldUp = surface.Rotation * localUp;
                 var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
                 pOffsets.Add(Quaternion.Inverse(_optitrackPose.Rotation) * (worldPos - _optitrackPose.Position));
@@ -274,7 +275,7 @@ namespace Assets.Modules.Calibration
             }
         }
 
-        private void DoMapCalibration(FixedDisplay display)
+        private void DoMapCalibration(Surface surface)
         {
             // TODO.
         }
@@ -282,7 +283,7 @@ namespace Assets.Modules.Calibration
         private Vector3 GetMapWorldPosition(int id)
         {
             var map = _maps.FirstOrDefault((m) => m.id == id);
-            var display = FixedDisplays.Get(DisplayName);
+            var display = SurfaceManager.Get(SurfaceName);
 
             if (map == null)
             {
@@ -300,7 +301,7 @@ namespace Assets.Modules.Calibration
         private Vector3 GetMarkerWorldPosition(int id)
         {
             var marker = _markers.FirstOrDefault((m) => m.id == id);
-            var display = FixedDisplays.Get(DisplayName);
+            var display = SurfaceManager.Get(SurfaceName);
 
             if (marker == null)
             {
@@ -425,13 +426,13 @@ namespace Assets.Modules.Calibration
             if (!Application.isPlaying)
                 return;
 
-            if (!FixedDisplays.Has(DisplayName))
+            if (!SurfaceManager.Has(SurfaceName))
             {
                 Debug.Log("No display");
                 return;
             }
 
-            var display = FixedDisplays.Get(DisplayName);
+            var display = SurfaceManager.Get(SurfaceName);
             var displayRotation = display.Rotation;
 
             Gizmos.DrawWireCube(__intersection, Vector3.one * 0.01f);
