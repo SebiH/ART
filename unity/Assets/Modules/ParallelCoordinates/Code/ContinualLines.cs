@@ -20,7 +20,6 @@ namespace Assets.Modules.ParallelCoordinates
             // should not happen
             if (index >= _lines.Length)
             {
-                var oldLines = _lines;
                 _lines = new ContinualLine[index + 1];
             }
 

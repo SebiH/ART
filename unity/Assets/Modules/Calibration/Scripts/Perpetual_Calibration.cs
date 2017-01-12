@@ -492,7 +492,6 @@ namespace Assets.Modules.Calibration
                     var worldForward = surface.Rotation * localForward;
                     var worldUp = surface.Rotation * localUp;
                     var worldRight = surface.Rotation * (localRot * Vector3.right);
-                    var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
                     Gizmos.color = Color.blue;
                     Gizmos.DrawLine(worldPos, worldPos + worldForward * 0.1f);

@@ -10,7 +10,7 @@ namespace Assets.Deprecated.Graph
         public string Filename;
 
         private string[] _columnNames;
-        private string[] _rowNames;
+        //private string[] _rowNames;
         private float[,] _values;
 
         void OnEnable()
@@ -51,7 +51,7 @@ namespace Assets.Deprecated.Graph
             var totalColumns = _columnNames.Length - 1; // first column is used for row ID
             var totalRows = values.Count / totalColumns;
             _values = new float[totalRows, totalColumns];
-            _rowNames = rowNames.ToArray();
+            //_rowNames = rowNames.ToArray();
 
             for (int row = 0; row < totalRows; row++)
             {

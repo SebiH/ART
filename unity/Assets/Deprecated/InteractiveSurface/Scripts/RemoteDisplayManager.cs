@@ -56,8 +56,8 @@ namespace Assets.Modules.InteractiveSurface
         [Serializable]
         private class WindowSize
         {
-            public int width;
-            public int height;
+            public int width = 0;
+            public int height = 0;
         }
 
         #endregion

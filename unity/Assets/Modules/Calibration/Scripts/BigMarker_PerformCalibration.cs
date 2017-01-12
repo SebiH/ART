@@ -88,7 +88,7 @@ namespace Assets.Modules.Calibration
 
                 if (lineRenderer != null)
                 {
-                    lineRenderer.SetVertexCount(5);
+                    lineRenderer.numPositions = 5;
                     lineRenderer.SetPosition(0, display.GetCornerPosition(Corner.TopLeft));
                     lineRenderer.SetPosition(1, display.GetCornerPosition(Corner.BottomLeft));
                     lineRenderer.SetPosition(2, display.GetCornerPosition(Corner.BottomRight));
@@ -115,11 +115,9 @@ namespace Assets.Modules.Calibration
 
                     var localRot = marker.ArCameraRotation;
                     var localForward = localRot * Vector3.forward;
-                    var localRight = localRot * Vector3.right;
                     var localUp = localRot * Vector3.up;
 
                     var worldForward = tableRotation * localForward;
-                    var worldRight = tableRotation * localRight;
                     var worldUp = tableRotation * localUp;
                     var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 

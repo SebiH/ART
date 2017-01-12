@@ -91,7 +91,7 @@ namespace Assets.Modules.Calibration
 
                 if (lineRenderer != null)
                 {
-                    lineRenderer.SetVertexCount(5);
+                    lineRenderer.numPositions = 5;
                     lineRenderer.SetPosition(0, display.GetCornerPosition(Corner.TopLeft));
                     lineRenderer.SetPosition(1, display.GetCornerPosition(Corner.BottomLeft));
                     lineRenderer.SetPosition(2, display.GetCornerPosition(Corner.BottomRight));

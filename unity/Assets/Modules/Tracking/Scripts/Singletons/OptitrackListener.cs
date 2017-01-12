@@ -13,33 +13,33 @@ namespace Assets.Modules.Tracking
     {
         private class OptitrackPacket
         {
-            public OT_Rigidbody[] Rigidbodies;
+            public OT_Rigidbody[] Rigidbodies = new OT_Rigidbody[] { };
         }
 
         private class OT_Rigidbody
         {
-            public int Id;
-            public string Name;
+            public int Id = -1; 
+            public string Name = "";
 
-            public float X;
-            public float Y;
-            public float Z;
+            public float X = 0;
+            public float Y = 0;
+            public float Z = 0;
 
-            public float QX;
-            public float QY;
-            public float QZ;
-            public float QW;
+            public float QX = 0;
+            public float QY = 0;
+            public float QZ = 0;
+            public float QW = 0;
 
-            public OT_Marker[] Markers;
+            public OT_Marker[] Markers = new OT_Marker[] { };
         }
 
         private class OT_Marker
         {
-            public int Id;
+            public int Id = -1;
 
-            public float X;
-            public float Y;
-            public float Z;
+            public float X = 0;
+            public float Y = 0;
+            public float Z = 0;
         }
 
 
