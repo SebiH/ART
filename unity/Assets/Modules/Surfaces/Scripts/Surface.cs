@@ -5,11 +5,15 @@ namespace Assets.Modules.Surfaces
 {
     public class Surface : MonoBehaviour
     {
-        private Vector3[] _calibratedCorners = new Vector3[4];
-
         public float PixelToCmRatio = 0.0485f; // measured 2016-11-15 on Microsoft Surface
         public Resolution DisplayResolution { get; set; }
 
+        public delegate void SurfaceActionHandler(string cmd, string payload);
+        public event SurfaceActionHandler OnAction;
+
+        private Vector3[] _calibratedCorners = new Vector3[4] { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero };
+
+        #region Calculated Properties
         // Returns position of center to match Unity
         public Vector3 Position
         {
@@ -52,14 +56,11 @@ namespace Assets.Modules.Surfaces
             }
         }
 
+        #endregion
+
         public Surface()
         {
-            _calibratedCorners[(int)Corner.TopLeft] = Vector3.zero;
-            _calibratedCorners[(int)Corner.BottomLeft] = Vector3.zero;
-            _calibratedCorners[(int)Corner.BottomRight] = Vector3.zero;
-            _calibratedCorners[(int)Corner.TopRight] = Vector3.zero;
         }
-
 
         public void SetCornerPosition(Corner c, Vector3 pos)
         {
@@ -87,7 +88,10 @@ namespace Assets.Modules.Surfaces
 
         public void TriggerAction(string cmd, string payload)
         {
-
+            if (OnAction != null)
+            {
+                OnAction(cmd, payload);
+            }
         }
 
         void OnDrawGizmos()
