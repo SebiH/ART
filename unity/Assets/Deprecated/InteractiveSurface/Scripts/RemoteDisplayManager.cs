@@ -20,7 +20,6 @@ namespace Assets.Modules.InteractiveSurface
 
         private void HandleCommand(IncomingCommand cmd)
         {
-            // TODO1
             switch (cmd.command)
             {
                 case "pixelCmRatio":
