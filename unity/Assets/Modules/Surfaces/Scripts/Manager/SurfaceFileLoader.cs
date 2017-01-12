@@ -32,7 +32,7 @@ namespace Assets.Modules.Surfaces
         public static void SaveToFile(string filename)
         {
             var displays = new SavedSurfaces();
-            var calibratedSurfaces = SurfaceManager.GetAll();
+            var calibratedSurfaces = SurfaceManager.Instance.GetAll();
 
             displays.Surfaces = new SavedSurface[calibratedSurfaces.Count];
             int counter = 0;
@@ -63,7 +63,7 @@ namespace Assets.Modules.Surfaces
 
             foreach (var display in displays.Surfaces)
             {
-                SurfaceManager.Set(display.Name, display.SurfaceCorners[0], display.SurfaceCorners[1], display.SurfaceCorners[2], display.SurfaceCorners[3]);
+                SurfaceManager.Instance.Set(display.Name, display.SurfaceCorners[0], display.SurfaceCorners[1], display.SurfaceCorners[2], display.SurfaceCorners[3]);
             }
         }
 

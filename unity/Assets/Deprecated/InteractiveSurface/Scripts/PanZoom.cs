@@ -37,9 +37,9 @@ namespace Assets.Modules.InteractiveSurface
 
         private void OnMessage(IncomingCommand msg)
         {
-            if (msg.command == "panzoom" && SurfaceManager.Has(DisplayName))
+            if (msg.command == "panzoom" && SurfaceManager.Instance.Has(DisplayName))
             {
-                var surface = SurfaceManager.Get(DisplayName);
+                var surface = SurfaceManager.Instance.Get(DisplayName);
 
                 var payload = JsonUtility.FromJson<MessagePayload>(msg.payload);
                 var x = TranslateX ? surface.PixelToUnityCoord(payload.posX) * payload.zoom : 0;

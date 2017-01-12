@@ -52,12 +52,12 @@ namespace Assets.Modules.Surfaces
             }
         }
 
-        public Surface(Vector3 topleft, Vector3 bottomleft, Vector3 bottomright, Vector3 topright)
+        public Surface()
         {
-            _calibratedCorners[(int)Corner.TopLeft] = topleft;
-            _calibratedCorners[(int)Corner.BottomLeft] = bottomleft;
-            _calibratedCorners[(int)Corner.BottomRight] = bottomright;
-            _calibratedCorners[(int)Corner.TopRight] = topright;
+            _calibratedCorners[(int)Corner.TopLeft] = Vector3.zero;
+            _calibratedCorners[(int)Corner.BottomLeft] = Vector3.zero;
+            _calibratedCorners[(int)Corner.BottomRight] = Vector3.zero;
+            _calibratedCorners[(int)Corner.TopRight] = Vector3.zero;
         }
 
 
@@ -84,6 +84,11 @@ namespace Assets.Modules.Surfaces
             return (1 / PixelToCmRatio) * unityCoord * 100f;
         }
 
+
+        public void TriggerAction(string cmd, string payload)
+        {
+
+        }
 
         void OnDrawGizmos()
         {

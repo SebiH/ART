@@ -9,9 +9,9 @@ public class HitboxTest : MonoBehaviour
 
 	void Update ()
     {
-        if (SurfaceManager.Has(DisplayName))
+        if (SurfaceManager.Instance.Has(DisplayName))
         {
-            var display = SurfaceManager.Get(DisplayName);
+            var display = SurfaceManager.Instance.Get(DisplayName);
             transform.localScale = display.Scale;
             // TODO: preserve relative scale of moveable object?
             if (MoveableObject != null)

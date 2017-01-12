@@ -79,9 +79,9 @@ namespace Assets.Modules.Calibration
 
         void Update()
         {
-            if (SurfaceManager.Has(DisplayName) && (Time.unscaledTime - _optitrackCameraDetectionTime) < OptitrackCutoffTime)
+            if (SurfaceManager.Instance.Has(DisplayName) && (Time.unscaledTime - _optitrackCameraDetectionTime) < OptitrackCutoffTime)
             {
-                var display = SurfaceManager.Get(DisplayName);
+                var display = SurfaceManager.Instance.Get(DisplayName);
                 var tableRotation = display.Rotation;
 
                 var lineRenderer = GetComponent<LineRenderer>();
@@ -210,7 +210,7 @@ namespace Assets.Modules.Calibration
         public void StartCalibration()
         {
             var markers = CalibrationOffsets.Where((m) => m.HasArPose && (Time.unscaledTime - m.ArPoseDetectionTime) < ArCutoffTime);
-            var display = SurfaceManager.Get(DisplayName);
+            var display = SurfaceManager.Instance.Get(DisplayName);
             var tableRotation = display.Rotation;
 
             if (markers == null || markers.Count() != 1) return;
@@ -244,7 +244,7 @@ namespace Assets.Modules.Calibration
 
         private Vector3 GetMarkerWorldPosition(int markerIndex, Quaternion tableRotation)
         {
-            var display = SurfaceManager.Get(DisplayName);
+            var display = SurfaceManager.Instance.Get(DisplayName);
 
             int row = markerIndex / MarkersPerRow;
             int column = markerIndex % MarkersPerRow;
@@ -277,9 +277,9 @@ namespace Assets.Modules.Calibration
             }
 
             // this only works if we have optitrack coordinates for all markers
-            if (SurfaceManager.Has(DisplayName))
+            if (SurfaceManager.Instance.Has(DisplayName))
             {
-                var display = SurfaceManager.Get(DisplayName);
+                var display = SurfaceManager.Instance.Get(DisplayName);
                 var tableRotation = display.Rotation;
 
                 // draw table's orientation in center of table

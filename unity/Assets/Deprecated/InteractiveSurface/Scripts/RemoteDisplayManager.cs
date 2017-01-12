@@ -24,9 +24,9 @@ namespace Assets.Modules.InteractiveSurface
             switch (cmd.command)
             {
                 case "pixelCmRatio":
-                    if (SurfaceManager.Has(DisplayName))
+                    if (SurfaceManager.Instance.Has(DisplayName))
                     {
-                        var display = SurfaceManager.Get(DisplayName);
+                        var display = SurfaceManager.Instance.Get(DisplayName);
                         display.PixelToCmRatio = float.Parse(cmd.payload.Trim('"'));
                         Debug.Log("Setting PixelCmRatio to " + display.PixelToCmRatio);
                     }
@@ -34,9 +34,9 @@ namespace Assets.Modules.InteractiveSurface
 
                 case "window-size":
                     // TODO: use cmd.origin
-                    if (SurfaceManager.Has(DisplayName))
+                    if (SurfaceManager.Instance.Has(DisplayName))
                     {
-                        var display = SurfaceManager.Get(DisplayName);
+                        var display = SurfaceManager.Instance.Get(DisplayName);
                         var windowSize = JsonUtility.FromJson<WindowSize>(cmd.payload);
                         display.DisplayResolution = new Resolution
                         {

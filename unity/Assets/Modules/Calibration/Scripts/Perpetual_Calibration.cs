@@ -58,7 +58,7 @@ namespace Assets.Modules.Calibration
         {
             if (!_isInitialised)
             {
-                if (SurfaceManager.Has(SurfaceName))
+                if (SurfaceManager.Instance.Has(SurfaceName))
                 {
                     _isInitialised = true;
                     var command = UseMaps ? "get-maps" : "get-marker";
@@ -72,9 +72,9 @@ namespace Assets.Modules.Calibration
                 }
             }
 
-            if (SurfaceManager.Has(SurfaceName) && Time.unscaledTime - _optitrackPoseTime < OptitrackCutoffTime)
+            if (SurfaceManager.Instance.Has(SurfaceName) && Time.unscaledTime - _optitrackPoseTime < OptitrackCutoffTime)
             {
-                var surface = SurfaceManager.Get(SurfaceName);
+                var surface = SurfaceManager.Instance.Get(SurfaceName);
 
                 if (UseMaps)
                 {
@@ -283,7 +283,7 @@ namespace Assets.Modules.Calibration
         private Vector3 GetMapWorldPosition(int id)
         {
             var map = _maps.FirstOrDefault((m) => m.id == id);
-            var surface = SurfaceManager.Get(SurfaceName);
+            var surface = SurfaceManager.Instance.Get(SurfaceName);
 
             if (map == null)
             {
@@ -301,7 +301,7 @@ namespace Assets.Modules.Calibration
         private Vector3 GetMarkerWorldPosition(int id)
         {
             var marker = _markers.FirstOrDefault((m) => m.id == id);
-            var surface = SurfaceManager.Get(SurfaceName);
+            var surface = SurfaceManager.Instance.Get(SurfaceName);
 
             if (marker == null)
             {
@@ -426,13 +426,13 @@ namespace Assets.Modules.Calibration
             if (!Application.isPlaying)
                 return;
 
-            if (!SurfaceManager.Has(SurfaceName))
+            if (!SurfaceManager.Instance.Has(SurfaceName))
             {
                 Debug.Log("No display");
                 return;
             }
 
-            var surface = SurfaceManager.Get(SurfaceName);
+            var surface = SurfaceManager.Instance.Get(SurfaceName);
             var displayRotation = surface.Rotation;
 
             Gizmos.DrawWireCube(__intersection, Vector3.one * 0.01f);
