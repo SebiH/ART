@@ -7,6 +7,7 @@ namespace Assets.Modules.Surfaces
     {
         private Vector3[] _calibratedCorners = new Vector3[4];
 
+        public float PixelToCmRatio = 0.0485f; // measured 2016-11-15 on Microsoft Surface
         public Resolution DisplayResolution { get; set; }
 
         // Returns position of center to match Unity
@@ -68,6 +69,49 @@ namespace Assets.Modules.Surfaces
         public Vector3 GetCornerPosition(Corner c)
         {
             return _calibratedCorners[(int)c];
+        }
+
+
+        public float PixelToUnityCoord(float pixelLocation)
+        {
+            // pixel coords uses cm, unity uses m
+            return PixelToCmRatio * pixelLocation / 100f;           
+        }
+
+        public float UnityToPixelLocation(float unityCoord)
+        {
+            // pixel coords uses cm, unity uses m
+            return (1 / PixelToCmRatio) * unityCoord * 100f;
+        }
+
+
+        void OnDrawGizmos()
+        {
+            // draw coordinates as given via calibration
+            Gizmos.color = Color.white;
+
+            var tl = GetCornerPosition(Corner.TopLeft);
+            var tr = GetCornerPosition(Corner.TopRight);
+            var bl = GetCornerPosition(Corner.BottomLeft);
+            var br = GetCornerPosition(Corner.BottomRight);
+
+            Gizmos.DrawLine(tl, bl);
+            Gizmos.DrawLine(bl, br);
+            Gizmos.DrawLine(br, tr);
+            Gizmos.DrawLine(tr, tl);
+
+            // draw coordinates as calculated via pixelToCm Ratio and displaySize
+            Gizmos.color = Color.red;
+            var uh = PixelToUnityCoord(DisplayResolution.height);
+            var uw = PixelToUnityCoord(DisplayResolution.width);
+
+            var downV = (bl - tl).normalized;
+            var rightV = (tr - tl).normalized;
+
+            Gizmos.DrawLine(tl, tl + downV * uh);
+            Gizmos.DrawLine(tl + downV * uh, tl + downV * uh + rightV * uw);
+            Gizmos.DrawLine(tl + downV * uh + rightV * uw, tl + rightV * uw);
+            Gizmos.DrawLine(tl, tl + rightV * uw);
         }
     }
 }

@@ -39,16 +39,18 @@ namespace Assets.Modules.InteractiveSurface
         {
             if (msg.command == "panzoom" && SurfaceManager.Has(DisplayName))
             {
-                var display = SurfaceManager.Get(DisplayName);
+                var surface = SurfaceManager.Get(DisplayName);
 
                 var payload = JsonUtility.FromJson<MessagePayload>(msg.payload);
-                var x = TranslateX ? DisplayUtility.PixelToUnityCoord(payload.posX) * payload.zoom : 0;
-                var z = TranslateZ ? -DisplayUtility.PixelToUnityCoord(payload.posY) * payload.zoom : 0;
+                var x = TranslateX ? surface.PixelToUnityCoord(payload.posX) * payload.zoom : 0;
+                var z = TranslateZ ? -surface.PixelToUnityCoord(payload.posY) * payload.zoom : 0;
 
-                transform.position = display.GetCornerPosition(Corner.TopLeft) + display.Rotation * new Vector3(-x, HeightOffset, -z) + PositionOffset;
+                transform.position = surface.GetCornerPosition(Corner.TopLeft) + surface.Rotation * new Vector3(-x, HeightOffset, -z) + PositionOffset;
                 if (Zoom)
+                {
                     transform.localScale = new Vector3(ZoomX ? Mathf.Max(payload.zoom, 0.002f) : 1f, 0.4f + payload.zoom / 4f, Mathf.Max(payload.zoom, 0.002f));
-                transform.rotation = Quaternion.Euler(display.Rotation.eulerAngles + RotationOffset);
+                }
+                transform.rotation = Quaternion.Euler(surface.Rotation.eulerAngles + RotationOffset);
             }
         }
     }

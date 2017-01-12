@@ -105,7 +105,8 @@ namespace Assets.Modules.ParallelCoordinates
 
             if (plane != null)
             {
-                plane.SetPosition(DisplayUtility.PixelToUnityCoord(payload.pos));
+                // TODO1
+                //plane.SetPosition(DisplayUtility.PixelToUnityCoord(payload.pos));
             }
             else
             {

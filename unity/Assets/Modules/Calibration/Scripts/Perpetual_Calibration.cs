@@ -283,7 +283,7 @@ namespace Assets.Modules.Calibration
         private Vector3 GetMapWorldPosition(int id)
         {
             var map = _maps.FirstOrDefault((m) => m.id == id);
-            var display = SurfaceManager.Get(SurfaceName);
+            var surface = SurfaceManager.Get(SurfaceName);
 
             if (map == null)
             {
@@ -292,16 +292,16 @@ namespace Assets.Modules.Calibration
                 return Vector3.zero;
             }
 
-            var worldOffsetFromTopLeft = map.GetUnityPosition();
-            var localOffsetFromTopLeft = display.Rotation * worldOffsetFromTopLeft;
+            var worldOffsetFromTopLeft = map.GetUnityPosition(surface);
+            var localOffsetFromTopLeft = surface.Rotation * worldOffsetFromTopLeft;
 
-            return display.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
+            return surface.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
         }
 
         private Vector3 GetMarkerWorldPosition(int id)
         {
             var marker = _markers.FirstOrDefault((m) => m.id == id);
-            var display = SurfaceManager.Get(SurfaceName);
+            var surface = SurfaceManager.Get(SurfaceName);
 
             if (marker == null)
             {
@@ -310,10 +310,10 @@ namespace Assets.Modules.Calibration
                 return Vector3.zero;
             }
 
-            var worldOffsetFromTopLeft = marker.GetUnityPosition();
-            var localOffsetFromTopLeft = display.Rotation * worldOffsetFromTopLeft;
+            var worldOffsetFromTopLeft = marker.GetUnityPosition(surface);
+            var localOffsetFromTopLeft = surface.Rotation * worldOffsetFromTopLeft;
 
-            return display.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
+            return surface.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
         }
 
         private void OnOptitrackPose(List<OptitrackPose> poses)
@@ -397,9 +397,9 @@ namespace Assets.Modules.Calibration
                     existingMarker.size = payload.size;
                 }
 
-                var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
-
-                ArucoListener.Instance.MarkerSizeInMeter = unitySize;
+                // TODO1
+                //var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
+                //ArucoListener.Instance.MarkerSizeInMeter = unitySize;
             }
 
             if (cmd.command == "remove-marker")
@@ -432,8 +432,8 @@ namespace Assets.Modules.Calibration
                 return;
             }
 
-            var display = SurfaceManager.Get(SurfaceName);
-            var displayRotation = display.Rotation;
+            var surface = SurfaceManager.Get(SurfaceName);
+            var displayRotation = surface.Rotation;
 
             Gizmos.DrawWireCube(__intersection, Vector3.one * 0.01f);
 
@@ -460,7 +460,7 @@ namespace Assets.Modules.Calibration
 
                 Gizmos.DrawWireSphere(markerPos, 0.01f);
 
-                var offset = DisplayUtility.PixelToUnityCoord(marker.size) / 2;
+                var offset = surface.PixelToUnityCoord(marker.size) / 2;
                 var topleft = markerPos - displayRotation * new Vector3(-offset, 0, offset);
                 var bottomleft = markerPos - displayRotation * new Vector3(-offset, 0, -offset);
                 var bottomright = markerPos - displayRotation * new Vector3(offset, 0, -offset);
@@ -481,7 +481,7 @@ namespace Assets.Modules.Calibration
                     var cameraMatrix = markerMatrix.inverse;
 
                     var localPos = cameraMatrix.GetPosition();
-                    var worldPos = markerPos + display.Rotation * localPos;
+                    var worldPos = markerPos + surface.Rotation * localPos;
 
                     Gizmos.DrawWireSphere(worldPos, 0.01f);
                     Gizmos.DrawLine(worldPos, worldPos + Quaternion.Inverse(_optitrackPose.Rotation) * (worldPos - _optitrackPose.Position));
@@ -490,9 +490,9 @@ namespace Assets.Modules.Calibration
                     var localForward = localRot * Vector3.forward;
                     var localUp = localRot * Vector3.up;
 
-                    var worldForward = display.Rotation * localForward;
-                    var worldUp = display.Rotation * localUp;
-                    var worldRight = display.Rotation * (localRot * Vector3.right);
+                    var worldForward = surface.Rotation * localForward;
+                    var worldUp = surface.Rotation * localUp;
+                    var worldRight = surface.Rotation * (localRot * Vector3.right);
                     var worldRot = Quaternion.LookRotation(worldForward, worldUp);
 
                     Gizmos.color = Color.blue;

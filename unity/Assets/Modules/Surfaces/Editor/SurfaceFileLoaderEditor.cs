@@ -6,7 +6,6 @@ namespace Assets.Modules.Surfaces
     [CustomEditor(typeof(SurfaceFileLoader))]
     public class SurfaceFileLoaderEditor : Editor
     {
-        private static string _calibrateMarkerId = "";
         private static string _filename = "";
 
         public override void OnInspectorGUI()

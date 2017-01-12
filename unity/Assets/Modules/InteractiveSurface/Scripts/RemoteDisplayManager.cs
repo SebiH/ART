@@ -20,11 +20,16 @@ namespace Assets.Modules.InteractiveSurface
 
         private void HandleCommand(IncomingCommand cmd)
         {
+            // TODO1
             switch (cmd.command)
             {
                 case "pixelCmRatio":
-                    DisplayUtility.PixelToCmRatio = float.Parse(cmd.payload.Trim('"'));
-                    Debug.Log("Setting PixelCmRatio to " + DisplayUtility.PixelToCmRatio);
+                    if (SurfaceManager.Has(DisplayName))
+                    {
+                        var display = SurfaceManager.Get(DisplayName);
+                        display.PixelToCmRatio = float.Parse(cmd.payload.Trim('"'));
+                        Debug.Log("Setting PixelCmRatio to " + display.PixelToCmRatio);
+                    }
                     break;
 
                 case "window-size":
