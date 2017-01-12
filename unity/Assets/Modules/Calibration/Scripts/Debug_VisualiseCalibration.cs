@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Valve.VR;
 
 namespace Assets.Modules.Calibration
@@ -9,19 +9,18 @@ namespace Assets.Modules.Calibration
 
         void OnEnable()
         {
-            SteamVR_Utils.Event.Listen("new_poses", OnSteamVrPose);
+            SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
         }
 
         void OnDisable()
         {
-            SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
+            SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
         }
 
-        private void OnSteamVrPose(params object[] args)
+        private void OnSteamVrPose(TrackedDevicePose_t[] poses)
         {
             var i = (int)OpenVR.k_unTrackedDeviceIndex_Hmd;
 
-            var poses = (TrackedDevicePose_t[])args[0];
             if (poses.Length <= i)
                 return;
 

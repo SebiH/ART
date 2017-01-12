@@ -63,7 +63,7 @@ namespace Assets.Modules.Calibration
             ArucoListener.Instance.NewPoseDetected += OnArucoPose;
 #endif
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
-            SteamVR_Utils.Event.Listen("new_poses", OnSteamVrPose);
+            SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
         }
 
         void OnDisable()
@@ -74,7 +74,7 @@ namespace Assets.Modules.Calibration
             ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
 #endif
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
-            SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
+            SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
         }
 
         void Update()
@@ -176,11 +176,10 @@ namespace Assets.Modules.Calibration
             memberPose = newPose;
         }
 
-        private void OnSteamVrPose(params object[] args)
+        private void OnSteamVrPose(TrackedDevicePose_t[] poses)
         {
             var i = (int)OpenVR.k_unTrackedDeviceIndex_Hmd;
 
-            var poses = (TrackedDevicePose_t[])args[0];
             if (poses.Length <= i)
                 return;
 

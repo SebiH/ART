@@ -46,7 +46,7 @@ namespace Assets.Scripts
         public Transform origin; // if not set, relative to parent
         public bool isValid = false;
 
-        private void OnNewPoses(params object[] args)
+        private void OnNewPoses(TrackedDevicePose_t[] poses)
         {
             if (index == EIndex.None || relativeToIndex == EIndex.None)
                 return;
@@ -55,7 +55,6 @@ namespace Assets.Scripts
             var relIndex = (int)relativeToIndex;
 
             isValid = false;
-            var poses = (Valve.VR.TrackedDevicePose_t[])args[0];
             if (poses.Length <= Math.Max(i, relIndex))
                 return;
 
@@ -104,12 +103,12 @@ namespace Assets.Scripts
                 return;
             }
 
-            SteamVR_Utils.Event.Listen("new_poses", OnNewPoses);
+            SteamVR_Events.NewPoses.Listen(OnNewPoses);
         }
 
         void OnDisable()
         {
-            SteamVR_Utils.Event.Remove("new_poses", OnNewPoses);
+            SteamVR_Events.NewPoses.Remove(OnNewPoses);
             isValid = false;
         }
 

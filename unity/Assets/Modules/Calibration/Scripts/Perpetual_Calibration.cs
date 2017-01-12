@@ -38,14 +38,14 @@ namespace Assets.Modules.Calibration
         void OnEnable()
         {
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
-            SteamVR_Utils.Event.Listen("new_poses", OnSteamVrPose);
+            SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
             InteractiveSurfaceClient.Instance.OnMessageReceived += HandleMarkerMessage;
         }
 
         void OnDisable()
         {
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
-            SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
+            SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
             InteractiveSurfaceClient.Instance.OnMessageReceived -= HandleMarkerMessage;
         }
 
@@ -328,11 +328,10 @@ namespace Assets.Modules.Calibration
             }
         }
 
-        private void OnSteamVrPose(params object[] args)
+        private void OnSteamVrPose(TrackedDevicePose_t[] poses)
         {
             var i = (int)OpenVR.k_unTrackedDeviceIndex_Hmd;
 
-            var poses = (TrackedDevicePose_t[])args[0];
             if (poses.Length <= i)
                 return;
 

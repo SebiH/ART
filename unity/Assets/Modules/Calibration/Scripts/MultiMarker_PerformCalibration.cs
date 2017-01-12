@@ -65,7 +65,7 @@ namespace Assets.Modules.Calibration
 
             ArucoListener.Instance.NewPoseDetected += OnArucoPose;
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
-            SteamVR_Utils.Event.Listen("new_poses", OnSteamVrPose);
+            SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
 
             _markerSetupScript = GetComponent<MultiMarker_MarkerSetup>();
         }
@@ -74,7 +74,7 @@ namespace Assets.Modules.Calibration
         {
             ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
-            SteamVR_Utils.Event.Remove("new_poses", OnSteamVrPose);
+            SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
         }
 
 
@@ -158,11 +158,10 @@ namespace Assets.Modules.Calibration
         }
 
 
-        private void OnSteamVrPose(params object[] args)
+        private void OnSteamVrPose(TrackedDevicePose_t[] poses)
         {
             var i = (int)OpenVR.k_unTrackedDeviceIndex_Hmd;
 
-            var poses = (TrackedDevicePose_t[])args[0];
             if (poses.Length <= i)
                 return;
 
