@@ -63,7 +63,7 @@ namespace Assets.Modules.Calibration
                     _isInitialised = true;
                     var command = UseMaps ? "get-maps" : "get-marker";
                     // fetch markers once display is initialised
-                    InteractiveSurfaceClient.Instance.SendCommand(new WebCommand
+                    InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand
                     {
                         command = command,
                         payload = null,

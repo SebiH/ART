@@ -26,7 +26,7 @@ namespace Assets.Modules.InteractiveSurface
 
             if (GUILayout.Button("Send") && Application.isPlaying)
             {
-                script.SendCommand(new WebCommand
+                script.SendCommand(new OutgoingCommand
                 {
                     command = _cmdName,
                     target = _cmdTarget,

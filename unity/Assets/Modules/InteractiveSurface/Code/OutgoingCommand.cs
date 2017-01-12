@@ -3,7 +3,7 @@ using System;
 namespace Assets.Modules.InteractiveSurface
 {
     [Serializable]
-    public class WebCommand
+    public class OutgoingCommand
     {
         public string command = "";
         public string target = "";

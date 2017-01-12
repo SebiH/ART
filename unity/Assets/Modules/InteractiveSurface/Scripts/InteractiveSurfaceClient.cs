@@ -102,7 +102,7 @@ namespace Assets.Modules.InteractiveSurface
             _socket.SendAsync(socketAsyncData);
         }
 
-        public void SendCommand(WebCommand cmd)
+        public void SendCommand(OutgoingCommand cmd)
         {
             UTF8Encoding encoding = new UTF8Encoding();
             var rawData = encoding.GetBytes(JsonUtility.ToJson(cmd));

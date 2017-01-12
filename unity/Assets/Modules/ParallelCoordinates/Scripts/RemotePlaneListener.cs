@@ -42,8 +42,8 @@ namespace Assets.Modules.ParallelCoordinates
             else
             {
                 InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
-                InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-planes" });
-                InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-plane" });
+                InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-planes" });
+                InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-plane" });
             }
         }
 
@@ -57,8 +57,8 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
-            InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-planes" });
-            InteractiveSurfaceClient.Instance.SendCommand(new WebCommand { command = "get-plane" });
+            InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-planes" });
+            InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-plane" });
         }
 
         void OnDisable()
