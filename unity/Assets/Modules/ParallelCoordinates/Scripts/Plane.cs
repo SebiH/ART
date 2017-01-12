@@ -1,4 +1,4 @@
-using Assets.Modules.Graph;
+using Assets.Deprecated.Graph;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates

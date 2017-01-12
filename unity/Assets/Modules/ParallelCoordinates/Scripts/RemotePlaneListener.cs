@@ -1,4 +1,4 @@
-using Assets.Modules.Graph;
+using Assets.Deprecated.Graph;
 using Assets.Modules.InteractiveSurface;
 using System.Collections;
 using UnityEngine;

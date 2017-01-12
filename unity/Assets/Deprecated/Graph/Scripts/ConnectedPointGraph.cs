@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Assets.Modules.Graph
+namespace Assets.Deprecated.Graph
 {
     public class ConnectedPointGraph : MonoBehaviour
     {

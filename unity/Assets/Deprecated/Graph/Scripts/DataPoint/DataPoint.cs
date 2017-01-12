@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace Assets.Modules.Graph
+namespace Assets.Deprecated.Graph
 {
     public abstract class DataPoint : MonoBehaviour
     {

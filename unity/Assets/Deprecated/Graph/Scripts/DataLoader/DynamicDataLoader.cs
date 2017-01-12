@@ -1,7 +1,7 @@
 using Assets.Modules.Heatmap;
 using UnityEngine;
 
-namespace Assets.Modules.Graph
+namespace Assets.Deprecated.Graph
 {
     public class DynamicDataLoader : DataLoader
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Modules.Graph
+namespace Assets.Deprecated.Graph
 {
     class RandomDataProvider : DataProvider
     {

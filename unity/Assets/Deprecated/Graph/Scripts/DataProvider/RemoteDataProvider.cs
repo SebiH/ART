@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace Assets.Modules.Graph
+namespace Assets.Deprecated.Graph
 {
     public class RemoteDataProvider : DataProvider
     {

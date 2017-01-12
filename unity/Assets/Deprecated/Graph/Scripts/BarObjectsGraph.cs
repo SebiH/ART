@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Modules.Graph
+namespace Assets.Deprecated.Graph
 {
     public class BarObjectsGraph : MonoBehaviour
     {
