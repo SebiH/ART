@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Surfaces
 {
-    public class RemoteSurfaceListener : MonoBehaviour
+    public class RemoteSurfaceConnection : MonoBehaviour
     {
         #region Serializing
 
