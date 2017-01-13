@@ -4,6 +4,7 @@ using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using Assets.Modules.Core;
 
 namespace Assets.Modules.Tracking
 {
@@ -46,10 +47,6 @@ namespace Assets.Modules.Tracking
 
         public static OptitrackListener Instance;
 
-        public string IP = "127.0.0.1";
-        public int Port = 16000;
-        public float Scaling = 0.8f;
-
         public event OptitrackPosesReceived PosesReceived;
 
         private IPEndPoint mRemoteIpEndPoint;
@@ -66,7 +63,7 @@ namespace Assets.Modules.Tracking
             mReceiveBuffer = new byte[kMaxSubPacketSize];
             mPacket = string.Empty;
 
-            mRemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Port);
+            mRemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Globals.OptitrackServerPort);
             mListener = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             mListener.Bind(mRemoteIpEndPoint);
 

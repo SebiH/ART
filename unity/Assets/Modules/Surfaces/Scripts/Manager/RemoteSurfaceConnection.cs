@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,9 +30,6 @@ namespace Assets.Modules.Surfaces
 
         #endregion
 
-        public string ServerIp = "127.0.0.1";
-        public int ServerPort = 8835;
-
         // see: https://forum.unity3d.com/threads/c-tcp-ip-socket-how-to-receive-from-server.227259/
         private Socket _socket;
         private byte[] _receiveBuffer = new byte[256 * 256];
@@ -44,7 +42,7 @@ namespace Assets.Modules.Surfaces
 
             try
             {
-                _socket.Connect(ServerIp, ServerPort);
+                _socket.Connect(Globals.OptitrackServerIp, Globals.OptitrackServerPort);
                 _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
             }
             catch (SocketException ex)

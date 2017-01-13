@@ -8,7 +8,7 @@ namespace Assets.Modules.Core
     {
         public static string GetPath(string relativePath)
         {
-            return Path.Combine(Application.dataPath, Path.Combine("../data/", relativePath));
+            return Path.Combine(Globals.CustomDataPath, relativePath);
         }
 
         public static void SaveToFile(string filename, string text)
