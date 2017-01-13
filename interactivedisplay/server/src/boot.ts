@@ -82,7 +82,27 @@ sioServer.onMessageReceived({
                 break;
         }
     }
-})
+});
+
+
+let surfaceStorage: { [name: string]: any } = {};
+
+webServer.addPath('/api/surface', (req, res, next) => {
+    let params = req.body;
+    res.json(surfaceStorage[params.name]);
+});
+
+sioServer.onMessageReceived({
+    handler: (msg) => {
+        switch (msg.command) {
+            case 'surface':
+                let payload = JSON.parse(msg.payload);
+                surfaceStorage[payload.name] = payload;
+                break;
+        }
+    }
+});
+
 
 webServer.start();
 sioServer.start(webServer);

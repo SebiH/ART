@@ -20,6 +20,7 @@ export class SocketIO {
 
     public sendMessage(command: string, data: any): void {
         this.socket.emit('command', {
+            origin: 'Surface',
             command: command,
             payload: data
         });

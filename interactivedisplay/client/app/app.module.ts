@@ -34,7 +34,8 @@ import { routing } from './routes';
     Services.Logger,
     Services.InteractionManager,
     Services.GraphProvider,
-    Services.GraphDataProvider
+    Services.GraphDataProvider,
+    Services.SurfaceProvider
   ]
 })
 export class AppModule { }

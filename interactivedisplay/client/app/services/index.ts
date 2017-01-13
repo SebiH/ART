@@ -5,3 +5,4 @@ export * from './Logger.service';
 export * from './GraphProvider.service';
 export * from './GraphDataProvider.service';
 export * from './interaction/index';
+export * from './SurfaceProvider.service';

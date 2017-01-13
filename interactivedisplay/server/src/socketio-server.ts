@@ -66,7 +66,7 @@ export class SocketIOServer {
         console.log(data);
         this.raiseMessageReceivedEvent({
             command: data.command,
-            origin: 'TODO', // TODO
+            origin: data.origin,
             payload: JSON.stringify(data.payload)
         });
     }

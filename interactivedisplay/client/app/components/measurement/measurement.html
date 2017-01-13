@@ -2,9 +2,11 @@
     <div>
         <div class="measure-bar"></div><br/>
 
-        <span>100px = {{ 100 * pixelCmRatio }} cm</span><br/>
-        <input type="number" [value]="pixelCmRatio" (input)="pixelCmRatio = $event.target.value">
+        <span>100px = {{ 100 * surface.pixelToCmRatio }} cm</span><br/>
+        <input type="number"
+               [value]="surface.pixelToCmRatio"
+               (input)="updateMeasurement($event.target.value)">
         <br/>
-        <button (click)="sendMeasurement()">Confirm</button>
+        <button (click)="navigateBack()">Back</button>
     </div>
 </div>

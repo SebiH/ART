@@ -1,4 +1,6 @@
+using Assets.Modules.Core;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.Surfaces
@@ -12,6 +14,8 @@ namespace Assets.Modules.Surfaces
         {
             _surface = GetComponent<Surface>();
             _surface.OnAction += OnSurfaceAction;
+
+            StartCoroutine(LoadInitialData());
         }
 
         void OnDisable()
@@ -23,21 +27,40 @@ namespace Assets.Modules.Surfaces
         {
             if (cmd == "surface")
             {
-                var properties = JsonUtility.FromJson<SurfaceActionPayload>(payload);
-
-                var resolution = new Resolution
-                {
-                    width = properties.width,
-                    height = properties.height
-                };
-                _surface.DisplayResolution = resolution;
-                _surface.PixelToCmRatio = properties.pixelToCmRatio;
+                var properties = JsonUtility.FromJson<SurfaceDataPayload>(payload);
+                ApplyProperties(properties);
             }
         }
 
-        [Serializable]
-        private class SurfaceActionPayload
+        private IEnumerator LoadInitialData()
         {
+            var form = new WWWForm();
+            form.AddField("name", _surface.name);
+            var request = new WWW(String.Format("{0}:{1}/api/surface", Globals.SurfaceServerIp, Globals.SurfaceWebPort), form);
+            yield return request;
+
+            if (request.text != null && request.text.Length > 0)
+            {
+                var surfaceData = JsonUtility.FromJson<SurfaceDataPayload>(request.text);
+                ApplyProperties(surfaceData);
+            }
+        }
+
+        private void ApplyProperties(SurfaceDataPayload properties)
+        {
+            var resolution = new Resolution
+            {
+                width = properties.width,
+                height = properties.height
+            };
+            _surface.DisplayResolution = resolution;
+            _surface.PixelToCmRatio = properties.pixelToCmRatio;
+        }
+
+        [Serializable]
+        private class SurfaceDataPayload
+        {
+            public string name;
             public float pixelToCmRatio = 1;
             public int width = 0;
             public int height = 0;
