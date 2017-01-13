@@ -20,9 +20,9 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-        public void SetConnection(int startId, int endId)
+        public GraphConnection SetConnection(Graph start, Graph end)
         {
-
+            return null;
         }
 
         public void RemoveConnection(int graphId)

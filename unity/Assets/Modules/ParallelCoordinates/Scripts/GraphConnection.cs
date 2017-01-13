@@ -21,6 +21,15 @@ namespace Assets.Modules.ParallelCoordinates
             SetEndGraph(null);
         }
 
+        void Update()
+        {
+            if (_startGraph && _endGraph)
+            {
+                var scale = Mathf.Abs(_endGraph.transform.localPosition.z - _startGraph.transform.localPosition.z);
+                transform.localScale = new Vector3(1, 1, scale);
+            }
+        }
+
 
         public void SetStartGraph(Graph graph)
         {

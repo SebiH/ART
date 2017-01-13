@@ -7,6 +7,9 @@ namespace Assets.Modules.Graphs
         public int Id;
         public RemoteDataProvider DataProvider { get; set; }
 
+        public delegate void DataChangeHandler();
+        public event DataChangeHandler OnDataChange;
+
         private DataPoint2D[] _data = null;
         private string _currentDimX = null;
         private string _currentDimY = null;

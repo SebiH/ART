@@ -106,7 +106,8 @@ namespace Assets.Modules.SurfaceGraph
 
             if (nextGraphInfo != null)
             {
-                _connectionManager.SetConnection(graphInfo.id, nextGraphInfo.id);
+                var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
+                var connection = _connectionManager.SetConnection(graph, nextGraph);
             }
         }
 
