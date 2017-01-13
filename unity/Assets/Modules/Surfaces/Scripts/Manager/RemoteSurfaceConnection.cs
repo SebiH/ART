@@ -42,7 +42,7 @@ namespace Assets.Modules.Surfaces
 
             try
             {
-                _socket.Connect(Globals.OptitrackServerIp, Globals.OptitrackServerPort);
+                _socket.Connect(Globals.SurfaceServerIp, Globals.SurfaceServerPort);
                 _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
             }
             catch (SocketException ex)

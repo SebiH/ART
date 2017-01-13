@@ -35,7 +35,7 @@ namespace Assets.Modules.Surfaces
         private IEnumerator LoadInitialData()
         {
             var form = new WWWForm();
-            form.AddField("name", _surface.name);
+            form.AddField("name", _surface.ClientName);
             var request = new WWW(String.Format("{0}:{1}/api/surface", Globals.SurfaceServerIp, Globals.SurfaceWebPort), form);
             yield return request;
 
@@ -48,13 +48,14 @@ namespace Assets.Modules.Surfaces
 
         private void ApplyProperties(SurfaceDataPayload properties)
         {
+            _surface = GetComponent<Surface>();
             var resolution = new Resolution
             {
                 width = properties.width,
                 height = properties.height
             };
             _surface.DisplayResolution = resolution;
-            _surface.PixelToCmRatio = properties.pixelToCmRatio;
+            _surface.PixelToCmRatio = Math.Max(properties.pixelToCmRatio, float.Epsilon);
         }
 
         [Serializable]

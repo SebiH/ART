@@ -7,6 +7,7 @@ namespace Assets.Modules.Surfaces
     {
         public float PixelToCmRatio = 0.0485f; // measured 2016-11-15 on Microsoft Surface
         public Resolution DisplayResolution { get; set; }
+        public string ClientName = "";
 
         public delegate void SurfaceActionHandler(string cmd, string payload);
         public event SurfaceActionHandler OnAction;
