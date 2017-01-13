@@ -10,6 +10,8 @@ namespace Assets.Modules.ParallelCoordinates
     public class ContinualLine
     {
         private int _dataIndex = -1;
+        public int DataIndex { get { return _dataIndex; } }
+
         private List<LineSegment> _lineSegments = new List<LineSegment>();
 
         private Color _color;

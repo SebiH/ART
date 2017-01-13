@@ -61,7 +61,7 @@ namespace Assets.Modules.Surfaces
         [Serializable]
         private class SurfaceDataPayload
         {
-            public string name;
+            public string name = "";
             public float pixelToCmRatio = 1;
             public int width = 0;
             public int height = 0;
