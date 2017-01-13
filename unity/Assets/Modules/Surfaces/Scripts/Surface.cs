@@ -1,4 +1,5 @@
 using Assets.Modules.Core;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.Surfaces
@@ -58,10 +59,6 @@ namespace Assets.Modules.Surfaces
         }
 
         #endregion
-
-        public Surface()
-        {
-        }
 
         public void SetCornerPosition(Corner c, Vector3 pos)
         {

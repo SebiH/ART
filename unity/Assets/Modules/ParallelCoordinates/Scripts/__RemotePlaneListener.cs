@@ -35,35 +35,40 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _planeManager = GetComponent<PlaneManager>();
 
-            if (_planeManager.Provider is RemoteDataProvider)
-            {
-                StartCoroutine(DelayedInitialisation());
-            }
-            else
-            {
-                InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
-                InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-planes" });
-                InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-plane" });
-            }
+            var plane = _planeManager.GetPlane(0);
+            plane = _planeManager.GetPlane(1);
+            plane = _planeManager.GetPlane(2);
+            plane = _planeManager.GetPlane(3);
+
+            //if (_planeManager.Provider is RemoteDataProvider)
+            //{
+            //    StartCoroutine(DelayedInitialisation());
+            //}
+            //else
+            //{
+            //    InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
+            //    InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-planes" });
+            //    InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-plane" });
+            //}
         }
 
-        private IEnumerator DelayedInitialisation()
-        {
-            var provider = _planeManager.Provider as RemoteDataProvider;
+        //private IEnumerator DelayedInitialisation()
+        //{
+            //var provider = _planeManager.Provider as RemoteDataProvider;
 
-            while (!provider.IsReady)
-            {
-                yield return new WaitForSeconds(0.5f);
-            }
+            //while (!provider.IsReady)
+            //{
+            //    yield return new WaitForSeconds(0.5f);
+            //}
 
-            InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
-            InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-planes" });
-            InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-plane" });
-        }
+            //InteractiveSurfaceClient.Instance.OnMessageReceived += OnMessageReceived;
+            //InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-planes" });
+            //InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand { command = "get-plane" });
+        //}
 
         void OnDisable()
         {
-            InteractiveSurfaceClient.Instance.OnMessageReceived -= OnMessageReceived;
+            //InteractiveSurfaceClient.Instance.OnMessageReceived -= OnMessageReceived;
         }
 
         private void OnMessageReceived(IncomingCommand cmd)

@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
+    [RequireComponent(typeof(LineRenderer))]
     public class LineSegment : MonoBehaviour
     {
-        // for faster access
         private LineRenderer _lineRenderer;
 
         void OnEnable()

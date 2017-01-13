@@ -40,7 +40,7 @@ namespace Assets.Modules.ParallelCoordinates
                 var endPoint = new Vector3(endData[i].x, endData[i].y, -1);
                 segment.SetPositions(startPoint, endPoint);
 
-                ContinualLines.Get(i).AddSegment(segment);
+                DataLineManager.GetLine(i).AddSegment(segment);
                 _lineSegments[i] = segment;
             }
         }
@@ -95,7 +95,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 for (int i = 0; i < _lineSegments.Length; i++)
                 {
-                    ContinualLines.Get(i).RemoveSegment(_lineSegments[i]);
+                    DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
                     var go = _lineSegments[i].gameObject;
                     Destroy(go);
                 }

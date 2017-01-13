@@ -1,31 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Assets.Modules.ParallelCoordinates
 {
-    public static class ContinualLines
+    public static class DataLineManager
     {
-        private static ContinualLine[] _lines = new ContinualLine[100];
+        private static DataLine[] _lines = new DataLine[100];
 
         // minor optimisation to avoid extending the array
         public static void SetMaxDataIndex(int max)
         {
-            _lines = new ContinualLine[max + 1];
+            _lines = new DataLine[max + 1];
         }
 
-        public static ContinualLine Get(int index)
+        public static DataLine GetLine(int index)
         {
             // should not happen
             if (index >= _lines.Length)
             {
-                _lines = new ContinualLine[index + 1];
+                _lines = new DataLine[index + 1];
             }
 
             if (_lines[index] == null)
             {
-                _lines[index] = new ContinualLine(index);
+                _lines[index] = new DataLine(index);
             }
 
             return _lines[index];

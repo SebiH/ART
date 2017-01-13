@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Assets.Modules.Core.Scripts
+namespace Assets.Modules.Core
 {
     /**
      *  Manages persistent instances of singleton scripts, so that they're not 
