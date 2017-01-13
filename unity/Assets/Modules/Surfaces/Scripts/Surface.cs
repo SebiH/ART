@@ -66,6 +66,7 @@ namespace Assets.Modules.Surfaces
         public void SetCornerPosition(Corner c, Vector3 pos)
         {
             _calibratedCorners[(int)c] = pos;
+            UpdateTransform();
         }
 
         public Vector3 GetCornerPosition(Corner c)
@@ -93,6 +94,13 @@ namespace Assets.Modules.Surfaces
             {
                 OnAction(cmd, payload);
             }
+        }
+
+        public void UpdateTransform()
+        {
+            transform.position = GetCornerPosition(Corner.BottomLeft);
+            transform.rotation = Rotation;
+            transform.localScale = Vector3.one;
         }
 
         void OnDrawGizmos()
