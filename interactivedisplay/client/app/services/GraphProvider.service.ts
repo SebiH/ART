@@ -23,6 +23,9 @@ export class GraphProvider {
     private graphObserver: ReplaySubject<Graph[]> = new ReplaySubject<Graph[]>(1);
     private idCounter: number = 0;
 
+    private delayedGraphDataUpdate: Function;
+    private delayedGraphPositionUpdate: Function;
+
     constructor(private socketio: SocketIO, private http: Http) {
         this.http.get('/api/graph/list')
             .subscribe(response => {
@@ -31,12 +34,19 @@ export class GraphProvider {
                 if (this.graphs.length > 0) {
                     this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
                 }
+
+                for (let graph of this.graphs) {
+                    this.attachListeners(graph);
+                }
+
                 this.graphObserver.next(this.graphs);
 
                 // for live editing via console
                 window['graphs'] = this.graphs;
             });
 
+        this.delayedGraphDataUpdate = _.debounce(this.updateGraphData, 0);
+        this.delayedGraphPositionUpdate = _.debounce(this.updateGraphPosition, 0);
     }
 
     public addGraph(listIndex: number = 0): Graph {
@@ -56,10 +66,18 @@ export class GraphProvider {
         this.graphs.push(graph);
         this.graphObserver.next(this.graphs);
 
-        graph.onDataUpdate.subscribe(g => this.socketio.sendMessage('graph-data', g));
-        graph.onPositionUpdate.subscribe(g => this.socketio.sendMessage('graph-position', g));
-
         return graph;
+    }
+
+    private attachListeners(graph: Graph): void {
+        graph.onDataUpdate.subscribe(g => {
+            this.graphDataUpdateQueue[g.id] = g;
+            this.delayedGraphDataUpdate();
+        });
+        graph.onPositionUpdate.subscribe(g => {
+            this.graphPositionUpdateQueue[g.id] = g;
+            this.delayedGraphPositionUpdate();
+        });
     }
 
     public getGraphs(): ReplaySubject<Graph[]> {
@@ -71,4 +89,33 @@ export class GraphProvider {
         _.pull(this.graphs, graph);
         this.graphObserver.next(this.graphs);
     }
+
+
+
+    private graphDataUpdateQueue: { [id: number]: any } = {};
+    private graphPositionUpdateQueue: { [id: number]: any } = {};
+
+    private updateGraphData(): void {
+        let graphs = _.values(this.graphDataUpdateQueue);
+
+        if (graphs.length > 0) {
+            this.socketio.sendMessage('graph-data', {
+                graphs: graphs
+            });
+            this.graphDataUpdateQueue = {};
+        }
+    }
+
+    private updateGraphPosition(): void {
+        let graphs = _.values(this.graphPositionUpdateQueue);
+
+        if (graphs.length > 0) {
+            this.socketio.sendMessage('graph-position', {
+                graphs: graphs
+            });
+            this.graphPositionUpdateQueue = {};
+        }
+    }
+
+
 }

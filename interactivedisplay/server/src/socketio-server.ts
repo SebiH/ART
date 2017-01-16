@@ -63,7 +63,6 @@ export class SocketIOServer {
     }
 
     private handleCommand(socket: SocketIO.Socket, data: any): void {
-        console.log(data);
         this.raiseMessageReceivedEvent({
             command: data.command,
             origin: data.origin,

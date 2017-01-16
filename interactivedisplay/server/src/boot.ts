@@ -53,9 +53,15 @@ sioServer.onMessageReceived({
     handler: (msg) => {
         switch (msg.command) {
             case '+graph':
+                graphStorage.set(JSON.parse(msg.payload));
+                break;
+
             case 'graph-data':
             case 'graph-position':
-                graphStorage.set(JSON.parse(msg.payload));
+                let graphs = JSON.parse(msg.payload).graphs;
+                for (let graph of graphs) {
+                    graphStorage.set(graph);
+                }
                 break;
             case '-graph':
                 graphStorage.remove(<number>msg.payload);

@@ -2,6 +2,7 @@ using Assets.Modules.Core;
 using Assets.Modules.Graphs;
 using Assets.Modules.ParallelCoordinates;
 using Assets.Modules.Surfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -37,6 +38,7 @@ namespace Assets.Modules.SurfaceGraph
         private void HandleSurfaceAction(string command, string payload)
         {
             GraphInfo info;
+            GraphInfoWrapper wrapper;
 
             switch (command)
             {
@@ -46,13 +48,19 @@ namespace Assets.Modules.SurfaceGraph
                     break;
 
                 case "graph-data":
-                    info = JsonUtility.FromJson<GraphInfo>(payload);
-                    UpdateGraphData(info);
+                    wrapper = JsonUtility.FromJson<GraphInfoWrapper>(payload);
+                    foreach (var i in wrapper.graphs)
+                    {
+                        UpdateGraphData(i);
+                    }
                     break;
 
                 case "graph-position":
-                    info = JsonUtility.FromJson<GraphInfo>(payload);
-                    UpdateGraphPosition(info);
+                    wrapper = JsonUtility.FromJson<GraphInfoWrapper>(payload);
+                    foreach (var i in wrapper.graphs)
+                    {
+                        UpdateGraphPosition(i);
+                    }
                     break;
 
                 case "-graph":
@@ -122,6 +130,13 @@ namespace Assets.Modules.SurfaceGraph
 
             _connectionManager.RemoveConnection(graphId);
             _graphManager.RemoveGraph(graphId);
+        }
+
+
+        [Serializable]
+        private class GraphInfoWrapper
+        {
+            public GraphInfo[] graphs = new GraphInfo[0];
         }
     }
 }
