@@ -3,11 +3,21 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    // TODO1 replace linegenerator?
     public class GraphConnection : MonoBehaviour
     {
-        private Graph _startGraph;
-        private Graph _endGraph;
+        private Graph _startGraph = null;
+        public Graph StartGraph
+        {
+            get { return _startGraph; } 
+            set { if (value != _startGraph) { SetStartGraph(value); } }
+        }
+
+        private Graph _endGraph = null;
+        public Graph EndGraph
+        {
+            get { return _endGraph; } 
+            set { if (value != _endGraph) { SetEndGraph(value); } }
+        }
 
         void OnEnable()
         {
@@ -31,7 +41,7 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-        public void SetStartGraph(Graph graph)
+        private void SetStartGraph(Graph graph)
         {
             if (graph == _startGraph)
             {
@@ -44,7 +54,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        public void SetEndGraph(Graph graph)
+        private void SetEndGraph(Graph graph)
         {
             if (_endGraph == graph)
             {

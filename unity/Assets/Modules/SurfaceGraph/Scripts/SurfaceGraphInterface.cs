@@ -3,20 +3,21 @@ using Assets.Modules.Graphs;
 using Assets.Modules.ParallelCoordinates;
 using Assets.Modules.Surfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.SurfaceGraph
 {
-    [RequireComponent(typeof(GraphManager), typeof(GraphConnectionManager))]
+    [RequireComponent(typeof(GraphManager))]
     public class SurfaceGraphInterface : MonoBehaviour
     {
         private Surface _surface;
         private GraphManager _graphManager;
-        private GraphConnectionManager _connectionManager;
 
         private readonly List<GraphInfo> _currentGraphs = new List<GraphInfo>();
+        private readonly List<GraphConnection> _graphConnections = new List<GraphConnection>();
 
         void OnEnable()
         {
@@ -25,14 +26,34 @@ namespace Assets.Modules.SurfaceGraph
             _surface.OnAction += HandleSurfaceAction;
 
             _graphManager = GetComponent<GraphManager>();
-            _connectionManager = GetComponent<GraphConnectionManager>();
 
-            // TODO1 fetch initial graph data
+            StartCoroutine(InitWebData());
         }
 
         void OnDisable()
         {
             _surface.OnAction -= HandleSurfaceAction;
+        }
+
+        private IEnumerator InitWebData()
+        {
+            var request = new WWW(String.Format("{0}:{1}/api/graphs/list", Globals.SurfaceServerIp, Globals.SurfaceWebPort));
+            yield return request;
+
+            if (request.text != null && request.text.Length > 0)
+            {
+                var graphInfo = JsonUtility.FromJson<GraphInfoWrapper>(request.text);
+                foreach (var graph in graphInfo.graphs)
+                {
+                    AddGraph(graph);
+                }
+
+                foreach (var graph in graphInfo.graphs)
+                {
+                    UpdateGraphData(graph);
+                    UpdateGraphPosition(graph);
+                }
+            }
         }
 
         private void HandleSurfaceAction(string command, string payload)
@@ -45,22 +66,18 @@ namespace Assets.Modules.SurfaceGraph
                 case "+graph":
                     info = JsonUtility.FromJson<GraphInfo>(payload);
                     AddGraph(info);
+                    UpdateGraphData(info);
+                    UpdateGraphPosition(info);
                     break;
 
                 case "graph-data":
                     wrapper = JsonUtility.FromJson<GraphInfoWrapper>(payload);
-                    foreach (var i in wrapper.graphs)
-                    {
-                        UpdateGraphData(i);
-                    }
+                    UpdateGraphData(wrapper);
                     break;
 
                 case "graph-position":
                     wrapper = JsonUtility.FromJson<GraphInfoWrapper>(payload);
-                    foreach (var i in wrapper.graphs)
-                    {
-                        UpdateGraphPosition(i);
-                    }
+                    UpdateGraphPosition(wrapper);
                     break;
 
                 case "-graph":
@@ -77,10 +94,13 @@ namespace Assets.Modules.SurfaceGraph
 
         private void AddGraph(GraphInfo graphInfo)
         {
-            _graphManager.CreateGraph(graphInfo.id);
+            var graph = _graphManager.CreateGraph(graphInfo.id);
 
-            var existingGraph = GetExistingGraphInfo(graphInfo.id);
-            if (existingGraph == null)
+            Debug.Assert(graph.GetComponent<GraphConnection>() != null, "GraphTemplate used by GraphManager must have GraphConnection script attached");
+            _graphConnections.Add(graph.GetComponent<GraphConnection>());
+
+            var existingGraphInfo = GetExistingGraphInfo(graphInfo.id);
+            if (existingGraphInfo == null)
             {
                 _currentGraphs.Add(graphInfo);
             }
@@ -88,21 +108,64 @@ namespace Assets.Modules.SurfaceGraph
             {
                 Debug.LogWarning("Already have graphinfo for id " + graphInfo.id);
             }
+        }
 
-            UpdateGraphData(graphInfo);
-            UpdateGraphPosition(graphInfo);
+        private void UpdateGraphData(GraphInfoWrapper graphInfoWrapper)
+        {
+            // update existing graph info first, before applying changes to actual graphs
+            foreach (var updatedGraph in graphInfoWrapper.graphs)
+            {
+                var existingGraph = GetExistingGraphInfo(updatedGraph.id);
+                if (existingGraph == null)
+                {
+                    AddGraph(updatedGraph);
+                }
+                else
+                {
+                    existingGraph.color = updatedGraph.color;
+                    existingGraph.dimX = updatedGraph.dimX;
+                    existingGraph.dimY = updatedGraph.dimY;
+                    existingGraph.selectedData = updatedGraph.selectedData;
+                    existingGraph.isSelected = updatedGraph.isSelected;
+                }
+            }
+
+            foreach (var updatedGraph in graphInfoWrapper.graphs)
+            {
+                UpdateGraphData(updatedGraph);
+            }
         }
 
         private void UpdateGraphData(GraphInfo graphInfo)
         {
             var graph = _graphManager.GetGraph(graphInfo.id);
-
-            if (graphInfo.dimX != null && graphInfo.dimY != null)
-            {
-                graph.SetData(graphInfo.dimX, graphInfo.dimY);
-            }
+            graph.SetData(graphInfo.dimX, graphInfo.dimY);
 
             // TODO1 selectedData && isSelected
+        }
+
+        private void UpdateGraphPosition(GraphInfoWrapper graphInfoWrapper)
+        {
+            // update existing graph info first, before applying changes to actual graphs
+            foreach (var updatedGraph in graphInfoWrapper.graphs)
+            {
+                var existingGraph = GetExistingGraphInfo(updatedGraph.id);
+                if (existingGraph == null)
+                {
+                    AddGraph(updatedGraph);
+                }
+                else
+                {
+                    existingGraph.pos = updatedGraph.pos;
+                    existingGraph.index = updatedGraph.index;
+                }
+            }
+
+
+            foreach (var updatedGraph in graphInfoWrapper.graphs)
+            {
+                UpdateGraphPosition(updatedGraph);
+            }
         }
 
         private void UpdateGraphPosition(GraphInfo graphInfo)
@@ -115,7 +178,11 @@ namespace Assets.Modules.SurfaceGraph
             if (nextGraphInfo != null)
             {
                 var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
-                var connection = _connectionManager.SetConnection(graph, nextGraph);
+                var graphConnection = _graphConnections.FirstOrDefault(c => c.StartGraph != null && c.StartGraph.Id == graphInfo.id);
+                if (graphConnection)
+                {
+                    graphConnection.EndGraph = nextGraph;
+                }
             }
         }
 
@@ -126,9 +193,18 @@ namespace Assets.Modules.SurfaceGraph
             if (graphInfo != null)
             {
                 _currentGraphs.Remove(graphInfo);
+                var prevGraphConnection = _graphConnections.FirstOrDefault(c => c.EndGraph != null && c.EndGraph.Id == graphInfo.id);
+                var currGraphConnection = _graphConnections.FirstOrDefault(c => c.StartGraph != null && c.StartGraph.Id == graphInfo.id);
+                if (currGraphConnection && prevGraphConnection)
+                {
+                    prevGraphConnection.EndGraph = currGraphConnection.EndGraph;
+                }
+                else if (prevGraphConnection)
+                {
+                    prevGraphConnection.EndGraph = null;
+                }
             }
 
-            _connectionManager.RemoveConnection(graphId);
             _graphManager.RemoveGraph(graphId);
         }
 
