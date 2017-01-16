@@ -52,17 +52,20 @@ export class GraphProvider {
     public addGraph(listIndex: number = 0): Graph {
         let graph = new Graph();
         graph.id = this.idCounter++;
-
         graph.color = COLOURS[graph.id % COLOURS.length];
-
         graph.listIndex = listIndex;
+
+        this.attachListeners(graph);
+
+        this.socketio.sendMessage('+graph', graph.toJson());
+
         for (let g of this.graphs) {
             if (g.listIndex >= listIndex) {
                 g.listIndex++;
+                g.updatePosition();
             }
         }
 
-        this.socketio.sendMessage('+graph', graph.toJson());
         this.graphs.push(graph);
         this.graphObserver.next(this.graphs);
 

@@ -58,7 +58,7 @@ namespace Assets.Modules.Graphs
             if (graph)
             {
                 _graphs.Remove(graph);
-                Destroy(graph);
+                Destroy(graph.gameObject);
             }
         }
 

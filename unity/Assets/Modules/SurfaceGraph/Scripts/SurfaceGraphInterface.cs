@@ -33,11 +33,13 @@ namespace Assets.Modules.SurfaceGraph
         void OnDisable()
         {
             _surface.OnAction -= HandleSurfaceAction;
+            _currentGraphs.Clear();
+            _graphConnections.Clear();
         }
 
         private IEnumerator InitWebData()
         {
-            var request = new WWW(String.Format("{0}:{1}/api/graphs/list", Globals.SurfaceServerIp, Globals.SurfaceWebPort));
+            var request = new WWW(String.Format("{0}:{1}/api/graph/list", Globals.SurfaceServerIp, Globals.SurfaceWebPort));
             yield return request;
 
             if (request.text != null && request.text.Length > 0)

@@ -9,13 +9,13 @@ namespace Assets.Modules.Graphs
     public class RemoteDataProvider : MonoBehaviour
     {
         private Dictionary<string, DataPoint[]> _loadedData = new Dictionary<string, DataPoint[]>();
-        private Dictionary<string, List<Action<DataPoint[]>>> _loadOperations = new Dictionary<string, List<Action<DataPoint[]>>>();
+        private Dictionary<string, List<Action<string, DataPoint[]>>> _loadOperations = new Dictionary<string, List<Action<string, DataPoint[]>>>();
 
-        public void LoadDataAsync(string dimension, Action<DataPoint[]> onDataLoaded)
+        public void LoadDataAsync(string dimension, Action<string, DataPoint[]> onDataLoaded)
         {
             if (_loadedData.ContainsKey(dimension))
             {
-                onDataLoaded(_loadedData[dimension]);
+                onDataLoaded(dimension, _loadedData[dimension]);
             }
             else if (_loadOperations.ContainsKey(dimension))
             {
@@ -23,7 +23,7 @@ namespace Assets.Modules.Graphs
             }
             else
             {
-                _loadOperations.Add(dimension, new List<Action<DataPoint[]>>());
+                _loadOperations.Add(dimension, new List<Action<string, DataPoint[]>>());
                 _loadOperations[dimension].Add(onDataLoaded);
                 StartCoroutine(LoadData(dimension));
             }
@@ -35,7 +35,7 @@ namespace Assets.Modules.Graphs
             var dataRequestForm = new WWWForm();
             dataRequestForm.AddField("dimension", dimension);
 
-            var dataWebRequest = new WWW(String.Format("{0}:{1}/api/graph/data", Globals.SurfaceServerIp, Globals.SurfaceServerPort), dataRequestForm);
+            var dataWebRequest = new WWW(String.Format("{0}:{1}/api/graph/data", Globals.SurfaceServerIp, Globals.SurfaceWebPort), dataRequestForm);
             yield return dataWebRequest;
 
             var dimData = JsonUtility.FromJson<DataResponse>(dataWebRequest.text).data;
@@ -50,14 +50,15 @@ namespace Assets.Modules.Graphs
 
             foreach (var onDataLoaded in _loadOperations[dimension])
             {
-                onDataLoaded(dataPoints);
+                onDataLoaded(dimension, dataPoints);
             }
             _loadOperations.Remove(dimension);
         }
 
-        private struct DataResponse
+        [Serializable]
+        private class DataResponse
         {
-            public float[] data;
+            public float[] data = null;
         }
     }
 }

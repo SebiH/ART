@@ -12,7 +12,8 @@ namespace Assets.Modules.Core
             {
                 curr = curr.parent;
             }
-            return curr.GetComponent<T>();
+
+            return curr ? curr.GetComponent<T>() : null;
         }
 
     }
