@@ -136,14 +136,25 @@ namespace Assets.Modules.SurfaceGraph
             {
                 UpdateGraphData(updatedGraph);
             }
+
+            // TODO1 isSelected
+            DataLineManager.ClearFilter();
+
+            foreach (var gi in _currentGraphs)
+            {
+                if (gi.selectedData != null && gi.selectedData.Length > 0)
+                {
+                    DataLineManager.AddFilter(gi.selectedData);
+                }
+            }
+
+            DataLineManager.ApplyFilter();
         }
 
         private void UpdateGraphData(GraphInfo graphInfo)
         {
             var graph = _graphManager.GetGraph(graphInfo.id);
             graph.SetData(graphInfo.dimX, graphInfo.dimY);
-
-            // TODO1 selectedData && isSelected
         }
 
         private void UpdateGraphPosition(GraphInfoWrapper graphInfoWrapper)

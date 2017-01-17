@@ -32,5 +32,20 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _lineSegments.Remove(segment);
         }
+
+        public void SetHighlight(bool isHighlighted)
+        {
+            foreach (var segment in _lineSegments)
+            {
+                if (isHighlighted)
+                {
+                    segment.SetColor(_color);
+                }
+                else
+                {
+                    segment.SetColor(Color.gray);
+                }
+            }
+        }
     }
 }
