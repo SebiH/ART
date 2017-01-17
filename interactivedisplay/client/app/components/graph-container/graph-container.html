@@ -10,7 +10,8 @@
              [ngClass]="{ moving: graph.isPickedUp, static: !graph.isPickedUp }"
              [ngStyle]="getStyle(graph)">
 
-            <graph-section
+            <graph-section 
+                *ngIf="!graph.isSelected"
                 [graph]="graph"
                 (onDelete)="deleteGraph(graph, $event)"
                 (onSelect)="selectGraph(graph, $event)"
@@ -19,16 +20,11 @@
                 (onMoveUp)="handleMoveUp(graph)">
             </graph-section>
 
-            <button class="graph-creation-button first"
-                *ngIf="isFirst"
-                (click)="addGraph(graph.listIndex)">
-                +
-            </button>
-
-            <button class="graph-creation-button"
-                (click)="addGraph(graph.listIndex + 1)">
-                +
-            </button>
+            <graph-detail
+                *ngIf="graph.isSelected"
+                [graph]="graph"
+                (onClose)="deselectGraph(graph)">
+            </graph-detail>
 
         </div>
 
@@ -40,11 +36,4 @@
         </div>
 
     </div>
-</div>
-
-<div *ngIf="selectedGraph" style="width: 100%; height: 100%; position: absolute; left: 0; top: 0; background: white;">
-    <graph-detail
-        [graph]="selectedGraph"
-        (onClose)="deselectGraph()">
-    </graph-detail>
 </div>
