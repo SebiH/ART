@@ -59,3 +59,10 @@
     vertical-align: middle;
     z-index: 999
 }
+
+.accordion.open {
+    margin-left: 200px;
+    margin-right: 200px;
+    background: white;
+    height: 100%;
+}

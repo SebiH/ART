@@ -22,11 +22,13 @@
                     (onMoveUp)="handleMoveUp(graph)">
                 </graph-section>
 
-                <graph-detail
-                    *ngIf="graph.isSelected"
-                    [graph]="graph"
-                    (onClose)="deselectGraph(graph)">
-                </graph-detail>
+                <div class="accordion open"
+                    *ngIf="graph.isSelected">
+                    <graph-detail
+                        [graph]="graph"
+                        (onClose)="deselectGraph(graph)">
+                    </graph-detail>
+                </div>
 
             </div>
         </div>
