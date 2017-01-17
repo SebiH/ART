@@ -1,3 +1,7 @@
+.container-root {
+    position: relative;
+}
+
 .list-root {
     overflow: hidden;
     width: 100%;
@@ -42,20 +46,16 @@
 
 .graph-creation-button {
     position: absolute;
-    right: 0;
-    top: 50%;
+    left: 0;
+    top: calc(50% - 200px);
 
-    border-color: #4CAF50;
-    background: #4CAF50;
-    color: white;
+    background: white;
+    box-shadow: -6px 0px 28px 0px black;
+    color: #222;
 
     font-size: 5em;
     padding: 50px;
-    height: 200px;
+    height: 400px;
     vertical-align: middle;
     z-index: 999
-}
-
-.graph-creation-button.first {
-    left: 0;
 }

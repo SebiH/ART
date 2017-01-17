@@ -21,20 +21,14 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     private scrollOffset: number = 0;
     private selectedGraph: Graph;
 
+    private interactionCounter: number = 0;
+
     constructor(private graphProvider: GraphProvider) {}
 
     ngOnInit() {
         this.graphSubscription = this.graphProvider.getGraphs()
             .subscribe(graphs => {
                 this.graphs = graphs;
-                let selectedGraphs = _.filter(graphs, 'isSelected');
-
-                // assuming at most one graph is selected
-                if (selectedGraphs.length > 0) {
-                    this.selectGraph(selectedGraphs[0]);
-                } else {
-                    this.deselectGraph();
-                }
             });
     }
 
@@ -80,6 +74,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     private deleteGraph(graph: Graph, event: any): void {
         this.graphProvider.removeGraph(graph);
+        this.applyScrollOffsetLimits();
     }
 
     private selectGraph(graph: Graph): void {
@@ -97,9 +92,11 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     private moveGraph(graph: Graph, event: any): void {
         if (_.has(event, 'start') && event.start) {
             graph.isPickedUp = true;
+            this.interactionCounter++;
         } else if (_.has(event, 'end') && event.end) {
             graph.isPickedUp = false;
             graph.posOffset = 0;
+            this.interactionCounter--;
         } else {
 
             graph.posOffset -= event.delta;
@@ -129,20 +126,21 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     }
 
     private handleMoveUpdate(event: any): void {
+        let oldOffset = this.scrollOffset;
         this.scrollOffset += event.deltaX;
+        this.applyScrollOffsetLimits();
 
-        let maxWidth = 0;
+        let appliedDeltaX = this.scrollOffset - oldOffset;
 
         for (let graph of this.graphs) {
             if (graph.isPickedUp) {
-                graph.posOffset += event.deltaX;
+                graph.posOffset += appliedDeltaX;
             }
-
-            maxWidth += graph.width;
         }
+    }
 
-        maxWidth -= window.innerWidth;
-
+    private applyScrollOffsetLimits(): void {
+        let maxWidth = _.sumBy(this.graphs, 'width') - window.innerWidth;
         this.scrollOffset = Math.max(0, Math.min(this.scrollOffset, maxWidth));
     }
 
@@ -158,8 +156,28 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     }
 
 
-    private addGraph(listIndex: number) {
+    private createdGraph: Graph;
+
+    private handleCreateStart(event: any) {
         let graph = this.graphProvider.addGraph();
-        this.selectGraph(graph);
+        this.createdGraph = graph;
+        this.createdGraph.posOffset += this.scrollOffset;
+        this.moveGraph(this.createdGraph, {
+            start: true
+        });
+    }
+
+    private handleCreateUpdate(event: any) {
+        this.moveGraph(this.createdGraph, {
+            delta: event.deltaX
+        });
+    }
+
+    private handleCreateEnd(event: any) {
+        this.moveGraph(this.createdGraph, {
+            end: true
+        });
+        this.selectGraph(this.createdGraph);
+        this.createdGraph = null;
     }
 }

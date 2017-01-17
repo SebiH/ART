@@ -1,39 +1,42 @@
-<div class="list-root"
-     moveable
-     (moveStart)="handleMoveStart($event)"
-     (moveUpdate)="handleMoveUpdate($event)"
-     (moveEnd)="handleMoveEnd($event)">
+<div class="container-root">
 
-    <div class="list-container" [ngStyle]="getContainerStyle()">
-        <div *ngFor="let graph of graphs; trackBy:graph?.id; let isFirst = first"
-             class="list-item"
-             [ngClass]="{ moving: graph.isPickedUp, static: !graph.isPickedUp }"
-             [ngStyle]="getStyle(graph)">
+    <div class="list-root"
+         moveable
+         (moveStart)="handleMoveStart($event)"
+         (moveUpdate)="handleMoveUpdate($event)"
+         (moveEnd)="handleMoveEnd($event)">
 
-            <graph-section 
-                *ngIf="!graph.isSelected"
-                [graph]="graph"
-                (onDelete)="deleteGraph(graph, $event)"
-                (onSelect)="selectGraph(graph, $event)"
-                (onMove)="moveGraph(graph, $event)"
-                (onMoveDown)="handleMoveDown(graph)"
-                (onMoveUp)="handleMoveUp(graph)">
-            </graph-section>
+        <div class="list-container" [ngStyle]="getContainerStyle()">
+            <div *ngFor="let graph of graphs; trackBy:graph?.id; let isFirst = first"
+                 class="list-item"
+                 [ngClass]="{ moving: graph.isPickedUp, static: !graph.isPickedUp }"
+                 [ngStyle]="getStyle(graph)">
 
-            <graph-detail
-                *ngIf="graph.isSelected"
-                [graph]="graph"
-                (onClose)="deselectGraph(graph)">
-            </graph-detail>
+                <graph-section 
+                    *ngIf="!graph.isSelected"
+                    [graph]="graph"
+                    (onDelete)="deleteGraph(graph, $event)"
+                    (onSelect)="selectGraph(graph, $event)"
+                    (onMove)="moveGraph(graph, $event)"
+                    (onMoveDown)="handleMoveDown(graph)"
+                    (onMoveUp)="handleMoveUp(graph)">
+                </graph-section>
 
+                <graph-detail
+                    *ngIf="graph.isSelected"
+                    [graph]="graph"
+                    (onClose)="deselectGraph(graph)">
+                </graph-detail>
+
+            </div>
         </div>
+    </div>
 
-        <div *ngIf="graphs.length == 0"
-            class="list-item" style="positon: relative; height: 100%;">
-            <button (click)="addGraph(0)" style="position: absolute; bottom: 0; height: 500px; background: #4CAF50; border-color: #4CAF50; color: white;">
-                Add new graph
-            </button>
-        </div>
-
+    <div class="graph-creation-button"
+        moveable
+        (moveStart)="handleCreateStart($event)"
+        (moveUpdate)="handleCreateUpdate($event)"
+        (moveEnd)="handleCreateEnd($event)">
+        <span>+</span>
     </div>
 </div>
