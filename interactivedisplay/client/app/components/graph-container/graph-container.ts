@@ -164,6 +164,6 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     private addGraph(listIndex: number) {
         let graph = this.graphProvider.addGraph();
-        // this.selectGraph(graph);
+        this.selectGraph(graph);
     }
 }

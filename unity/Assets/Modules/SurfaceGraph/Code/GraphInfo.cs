@@ -15,6 +15,6 @@ namespace Assets.Modules.SurfaceGraph
         public bool isSelected = false;
 
         public float pos = 0;
-        public int index = 0;
+        public int nextId = 0;
     }
 }

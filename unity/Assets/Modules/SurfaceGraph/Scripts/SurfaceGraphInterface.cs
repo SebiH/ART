@@ -159,7 +159,7 @@ namespace Assets.Modules.SurfaceGraph
                 else
                 {
                     existingGraph.pos = updatedGraph.pos;
-                    existingGraph.index = updatedGraph.index;
+                    existingGraph.nextId = updatedGraph.nextId;
                 }
             }
 
@@ -175,7 +175,7 @@ namespace Assets.Modules.SurfaceGraph
             var graph = _graphManager.GetGraph(graphInfo.id);
             graph.transform.localPosition += new Vector3(0, 0, -graph.transform.localPosition.z + _surface.PixelToUnityCoord(graphInfo.pos));
 
-            var nextGraphInfo = _currentGraphs.Where((g) => g.index > graphInfo.index).OrderBy(g => g.index).FirstOrDefault();
+            var nextGraphInfo = _currentGraphs.FirstOrDefault(g => g.id == graphInfo.nextId);
 
             if (nextGraphInfo != null)
             {
