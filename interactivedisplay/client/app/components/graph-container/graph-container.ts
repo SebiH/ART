@@ -26,7 +26,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.graphSubscription = this.graphProvider.getGraphs()
             .subscribe(graphs => {
-                this.graphs = _.sortBy(graphs, 'listIndex');
+                this.graphs = graphs;
                 let selectedGraphs = _.filter(graphs, 'isSelected');
 
                 // assuming at most one graph is selected
@@ -114,20 +114,14 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
             if (graph.posOffset < 0 && graphIndex > 0) {
                 let prevGraph = sortedGraphs[graphIndex - 1];
                 if (-graph.posOffset > prevGraph.width / 2) {
-                    prevGraph.listIndex++;
-                    graph.listIndex--;
+                    this.graphProvider.moveLeft(graph);
                     graph.posOffset += prevGraph.width;
-                    graph.updateData();
-                    prevGraph.updateData();
                 }
             } else if (graph.posOffset > 0 && graphIndex < sortedGraphs.length - 1) {
                 let nextGraph = sortedGraphs[graphIndex + 1];
                 if (graph.posOffset > nextGraph.width / 2) {
-                    nextGraph.listIndex--;
-                    graph.listIndex++;
+                    this.graphProvider.moveRight(graph);
                     graph.posOffset -= nextGraph.width;
-                    graph.updateData();
-                    nextGraph.updateData();
                 }
             }
         }
@@ -160,34 +154,16 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     }
 
     private handleMoveDown(graph: Graph): void {
-        let sortedGraphs = _.sortBy(this.graphs, 'listIndex');
-        let graphIndex = sortedGraphs.indexOf(graph);
-
-        if (graphIndex > 0) {
-            let prevGraph = sortedGraphs[graphIndex - 1];
-            prevGraph.listIndex++;
-            prevGraph.updateData();
-            graph.listIndex--;
-            graph.updateData();
-        }
+        this.graphProvider.moveLeft(graph);
     }
 
     private handleMoveUp(graph: Graph): void {
-        let sortedGraphs = _.sortBy(this.graphs, 'listIndex');
-        let graphIndex = sortedGraphs.indexOf(graph);
-
-        if (graphIndex < sortedGraphs.length - 1) {
-            let nextGraph = sortedGraphs[graphIndex + 1];
-            nextGraph.listIndex--;
-            nextGraph.updateData();
-            graph.listIndex++;
-            graph.updateData();
-        }
+        this.graphProvider.moveRight(graph);
     }
 
 
     private addGraph(listIndex: number) {
-        let graph = this.graphProvider.addGraph(listIndex);
-        this.selectGraph(graph);
+        let graph = this.graphProvider.addGraph();
+        // this.selectGraph(graph);
     }
 }
