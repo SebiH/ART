@@ -113,3 +113,7 @@ sysinfo.txt
 
 # Sublime workspaces contain user data
 *.sublime-workspace
+
+# Configs may contain confidential/machine related data
+/interactivedisplay/**/*.conf.json
+
