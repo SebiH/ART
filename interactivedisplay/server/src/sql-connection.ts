@@ -74,7 +74,6 @@ export class SqlConnection {
                 console.error('Could not complete request for ' + dimension);
                 console.error(error);
             } else {
-                console.log(requestedData);
                 onSuccess(requestedData);
             }
         });

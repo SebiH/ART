@@ -15,10 +15,13 @@ unityServer.start(UNITY_PORT);
 
 let webServer = new WebServer(WEB_PORT);
 
-let graphDataProvider = new GraphDataProvider('');
+let graphDataProvider = new GraphDataProvider();
 webServer.addPath('/api/graph/data', (req, res, next) => {
     let params = req.body;
-    res.json(graphDataProvider.getData(params['dimension']));
+
+    graphDataProvider.getData(params['dimension'], (data) => {
+        res.json(data);
+    });
 });
 
 webServer.addPath('/api/graph/dimensions', (req, res, next) => {

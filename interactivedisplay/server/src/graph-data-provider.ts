@@ -1,24 +1,31 @@
+import { SqlConnection } from './sql-connection';
+import * as _ from 'lodash';
+
 export class GraphDataProvider {
 
-    private dummyData: { [id: string]: number[]; } = {};
+    private sqlConnection = new SqlConnection();
+    private dataCache: { [id: string]: any } = {};
 
-    public constructor(filename: string) {
-        // TODO: read csv or something
-        for (let dimension of this.getDimensions().dimensions) {
-            let dummyData: number[] = [];
-            for (let i = 0; i < 100; i++) {
-                dummyData[i] = Math.random() - 0.5;
-            }
-            this.dummyData[dimension] = dummyData;
-        }
+    public constructor() {
+        this.sqlConnection.connect();
     }
 
     public getDimensions(): any {
         // workaround since Unity needs an object type for JSON conversion
-        return { dimensions:  [ "DUMMY_Calories", "DUMMY_Vitamin_C", "DUMMY_Vitamin_D", "DUMMY_Happiness", "DUMMY_Gewicht" ] };
+        return { dimensions: this.sqlConnection.getDimensions() };
     }
 
-    public getData(dimension: string): any {
-        return { data: this.dummyData[dimension] };
+    public getData(dimension: string, onDataRetrieved: (data: any) => void): void {
+        if (this.dataCache[dimension] === undefined) {
+            console.log('Loading \'' + dimension + '\' from sql server');
+            this.sqlConnection.getData(dimension, (data) => {
+                let vals = { data: _.map(data, 'value') };
+                this.dataCache[dimension] = vals;
+                onDataRetrieved(vals);
+            });
+        } else {
+            console.log('Loading \'' + dimension + '\' from cache');
+            onDataRetrieved(this.dataCache[dimension]);
+        }
     }
 }
