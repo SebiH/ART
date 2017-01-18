@@ -17,10 +17,12 @@
     "@types/lodash": "^4.14.38",
     "@types/node": "^6.0.46",
     "@types/socket.io": "^1.4.27",
+    "@types/tedious": "^1.8.28",
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "lodash": "^4.16.6",
-    "socket.io": "^1.5.1"
+    "socket.io": "^1.5.1",
+    "tedious": "^1.14.0"
   },
   "devDependencies": {
     "@types/node": "^6.0.46",
