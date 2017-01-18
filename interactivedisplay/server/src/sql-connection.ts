@@ -1,3 +1,4 @@
+import { ReplaySubject } from 'rxjs';
 import { SqlColumnMapping, SmartactMapping } from './sql-mapping';
 
 import * as sql from 'tedious';
@@ -5,6 +6,7 @@ import * as _ from 'lodash';
 
 export class SqlConnection {
 
+    private connectionSubject = new ReplaySubject<boolean>();
     private sqlConnection: sql.Connection;
     private isConnected: boolean = false;
 
@@ -22,9 +24,12 @@ export class SqlConnection {
             if (error) {
                 console.error('Cannot connect to sql server: Connection terminated');
                 console.error(error);
+                this.isConnected = false;
+                this.connectionSubject.next(false);
             } else {
                 console.log('Established connection to SQL Server @ ' + config.server);
                 this.isConnected = true;
+                this.connectionSubject.next(true);
             }
         });
     }
@@ -33,6 +38,7 @@ export class SqlConnection {
         if (this.isConnected) {
             this.sqlConnection.close();
             this.isConnected = false;
+            this.connectionSubject.next(false);
         }
     }
 
@@ -42,6 +48,15 @@ export class SqlConnection {
     }
 
     public getData(dimension: string, onSuccess: (data: any[]) => void): void {
+        this.connectionSubject
+            .skipWhile(isConnected => !isConnected)
+            .first()
+            .subscribe(() => this.getDataConnectionEstablished(dimension, onSuccess));
+    }
+
+    // assumes connection is established
+    private getDataConnectionEstablished(dimension: string, onSuccess: (data: any[]) => void): void {
+
         let mapping = _.find(SmartactMapping, map => map.name === dimension);
 
         if (!mapping) {
@@ -51,7 +66,7 @@ export class SqlConnection {
 
         let requestedData = [];
         let requestSql = '\
-            SELECT TOP 100000 User_Id, ' + mapping.dbColumn + '\
+            SELECT TOP 10 User_Id, ' + mapping.dbColumn + '\
             FROM Flat_Dataset_1';
 
         let request = new sql.Request(requestSql, (error: Error, rowCount: number, rows: any[]) => {
