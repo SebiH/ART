@@ -4,15 +4,55 @@ import { SqlColumnMapping, SmartactMapping } from './sql-mapping';
 import * as sql from 'tedious';
 import * as _ from 'lodash';
 
+enum ConnectionState {
+    Offline, Connected, Busy
+};
+
+class Status {
+
+    public subscription = new ReplaySubject<ConnectionState>();
+
+    private connectionStatus = ConnectionState.Offline;
+
+    public isConnected(): boolean {
+        return this.connectionStatus === ConnectionState.Connected || 
+            this.connectionStatus === ConnectionState.Busy;
+    }
+
+    public set(state: ConnectionState): void {
+        this.connectionStatus = state;
+        this.subscription.next(state);
+    }
+
+    public get(): ConnectionState {
+        return this.connectionStatus;
+    }
+
+    public whenReady(fn: (state: ConnectionState) => void) {
+        return this.subscription
+            .skipWhile(status => {
+                // query member instead, in case it changes to busy
+                if (this.connectionStatus === ConnectionState.Connected) {
+                    // only allow *one* connection at a time
+                    this.connectionStatus = ConnectionState.Busy;
+                    return false;
+                }
+
+                return true; // skip
+            })
+            .first()
+            .subscribe(fn);
+    }
+}
+
 export class SqlConnection {
 
-    private connectionSubject = new ReplaySubject<boolean>();
     private sqlConnection: sql.Connection;
-    private isConnected: boolean = false;
+    private status: Status = new Status();
 
     public connect() {
 
-        if (this.isConnected) {
+        if (this.status.isConnected()) {
             console.error('Cannot connect to sql server: Already connected');
             return;
         }
@@ -24,21 +64,18 @@ export class SqlConnection {
             if (error) {
                 console.error('Cannot connect to sql server: Connection terminated');
                 console.error(error);
-                this.isConnected = false;
-                this.connectionSubject.next(false);
+                this.status.set(ConnectionState.Connected); 
             } else {
                 console.log('Established connection to SQL Server @ ' + config.server);
-                this.isConnected = true;
-                this.connectionSubject.next(true);
+                this.status.set(ConnectionState.Connected);
             }
         });
     }
 
     public disconnect(): void {
-        if (this.isConnected) {
+        if (this.status.isConnected()) {
             this.sqlConnection.close();
-            this.isConnected = false;
-            this.connectionSubject.next(false);
+            this.status.set(ConnectionState.Offline);
         }
     }
 
@@ -48,10 +85,11 @@ export class SqlConnection {
     }
 
     public getData(dimension: string, onSuccess: (data: any[]) => void): void {
-        this.connectionSubject
-            .skipWhile(isConnected => !isConnected)
-            .first()
-            .subscribe(() => this.getDataConnectionEstablished(dimension, onSuccess));
+        this.status.whenReady(() => this.getDataConnectionEstablished(dimension, (data) => {
+            onSuccess(data);
+            // unmark connection from being busy, so that next request can be started
+            this.status.set(ConnectionState.Connected);
+        }));
     }
 
     // assumes connection is established
@@ -66,7 +104,7 @@ export class SqlConnection {
 
         let requestedData = [];
         let requestSql = '\
-            SELECT TOP 10 User_Id, ' + mapping.dbColumn + '\
+            SELECT TOP 1000 User_Id, ' + mapping.dbColumn + '\
             FROM Flat_Dataset_1';
 
         let request = new sql.Request(requestSql, (error: Error, rowCount: number, rows: any[]) => {
