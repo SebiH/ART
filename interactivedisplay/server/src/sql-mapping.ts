@@ -53,7 +53,7 @@ export const SmartactMapping: SqlColumnMapping[] = [
             {
                 dbValue: "5",
                 name: "Baseline 3"
-            },
+            }
         ]
     },
     {
@@ -62,11 +62,11 @@ export const SmartactMapping: SqlColumnMapping[] = [
         type: DataRepresentation.Categorical,
         values: [
             {
-                value: "1",
+                dbValue: "1",
                 name: "Mit Happy Eater"
             },
             {
-                value: "2",
+                dbValue: "2",
                 name: "Ohne Happy Eater"
             }
         ]
@@ -77,29 +77,29 @@ export const SmartactMapping: SqlColumnMapping[] = [
         type: DataRepresentation.Categorical,
         values: [
             {
-                value: "1",
+                dbValue: "1",
                 name: "Frühstück"
             },
             {
-                value: "2",
+                dbValue: "2",
                 name: "Mittagessen"
             },
             {
-                value: "3",
+                dbValue: "3",
                 name: "Abendessen"
             },
             {
-                value: "4",
+                dbValue: "4",
                 name: "Kaffe & Kuchen"
             },
             {
-                value: "5",
+                dbValue: "5",
                 name: "Snacks"
             },
 
             // TODO: ?
             {
-                value: "6",
+                dbValue: "6",
                 name: "Unbekannt"
             }
         ]
@@ -320,6 +320,5 @@ export const SmartactMapping: SqlColumnMapping[] = [
         type: DataRepresentation.Metric,
         minValue: 0,
         maxValue: 100
-    },
-
+    }
 ];
