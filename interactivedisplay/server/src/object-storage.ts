@@ -1,5 +1,6 @@
 /**
  *    Semi-persistent storage for querying current graph/marker data
+ *    TODO: database backed?
  */
 
 import * as _ from 'lodash';
@@ -18,7 +19,6 @@ export class ObjectStorage {
     }
 
     public getAll(): any {
-        // workaround since unity needs an object
         return this.storage;
     }
 

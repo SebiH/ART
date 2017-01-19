@@ -6,8 +6,18 @@ export class GraphDataProvider {
     private sqlConnection = new SqlConnection();
     private dataCache: { [id: string]: any } = {};
 
-    public constructor() {
-        this.sqlConnection.connect();
+    public constructor(useRandom: boolean = false) {
+        if (useRandom) {
+            for (let dim of this.getDimensions().dimensions) {
+                let data = [];
+                for (let i = 0; i < 300; i++) {
+                    data.push(Math.random());
+                }
+                this.dataCache[dim] = { data: data };
+            }
+        } else {
+            this.sqlConnection.connect();
+        }
     }
 
     public getDimensions(): any {

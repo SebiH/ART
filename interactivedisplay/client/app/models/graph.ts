@@ -10,7 +10,7 @@ export class Graph {
 
     public color: string = "#FFFFFF";
 
-    public selectionPolygon: Point[] = [];
+    public selectionPolygon: Point[][] = [];
     public selectedDataIndices: number[] = [];
     public isSelected: boolean = false;
 

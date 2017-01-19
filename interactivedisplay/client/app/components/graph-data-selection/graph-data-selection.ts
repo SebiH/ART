@@ -2,15 +2,15 @@ import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@ang
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Graph, Point } from '../../models/index';
+import { ScatterPlotComponent, PlotSelection } from '../scatter-plot/scatter-plot';
 import {
+    GraphProvider,
     GraphDataProvider,
     InteractionManager,
     InteractionEvent,
     InteractionListener,
     InteractionEventType
 } from '../../services/index';
-
-import * as d3 from 'd3';
 
 @Component({
   selector: 'graph-data-selection',
@@ -19,27 +19,33 @@ import * as d3 from 'd3';
 })
 export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
-    @Input() private graph: Graph;
-    @ViewChild('graphContainer') private graphContainer: ElementRef;
+    @Input()
+    private graph: Graph;
+
+    @ViewChild('plot')
+    private scatterplot: ScatterPlotComponent;
+    @ViewChild('plotContainer')
+    private graphContainer: ElementRef;
+
     private graphSubscription: Subscription;
     private dataSubscription: Subscription;
 
     private data: Point[];
-    private scaleX: d3.ScaleLinear<number, number>;
-    private scaleY: d3.ScaleLinear<number, number>;
-    private margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
     private prevDimX: string;
     private prevDimY: string;
 
-    private polygonPath;
+    private currentSelection: Point[];
+    private currentPolygon: PlotSelection;
+    private selectionPolygons: PlotSelection[] = [];
 
-    private hasTouchDown: boolean = false;
+    private clickListener: InteractionListener;
     private touchDownListener: InteractionListener;
     private touchMoveListener: InteractionListener;
     private touchUpListener: InteractionListener;
 
     constructor(
+        private graphProvider: GraphProvider,
         private graphDataProvider: GraphDataProvider,
         private interactionManager: InteractionManager) {}
 
@@ -49,6 +55,28 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             .subscribe(() => {
                 this.initiate();
             });
+
+        this.registerInteractionListeners();
+    }
+
+    ngOnDestroy() {
+        this.graphSubscription.unsubscribe();
+        if (this.dataSubscription) {
+            this.dataSubscription.unsubscribe();
+        }
+
+        this.deregisterInteractionListeners();
+    }
+
+
+
+
+    private registerInteractionListeners(): void {
+        this.clickListener = {
+            type: InteractionEventType.Click,
+            element: this.graphContainer.nativeElement,
+            handler: (ev) => { this.handleClick(ev); }
+        };
 
         this.touchDownListener = {
             type: InteractionEventType.TouchDown,
@@ -65,21 +93,21 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
             element: this.graphContainer.nativeElement,
             handler: (ev) => { this.handleTouchUp(ev); }
         };
+        this.interactionManager.on(this.clickListener);
         this.interactionManager.on(this.touchDownListener);
         this.interactionManager.on(this.touchMoveListener);
         this.interactionManager.on(this.touchUpListener);
     }
 
-    ngOnDestroy() {
-        this.graphSubscription.unsubscribe();
-        if (this.dataSubscription) {
-            this.dataSubscription.unsubscribe();
-        }
 
+    private deregisterInteractionListeners(): void {
+        this.interactionManager.off(this.clickListener);
         this.interactionManager.off(this.touchDownListener);
         this.interactionManager.off(this.touchMoveListener);
         this.interactionManager.off(this.touchUpListener);
     }
+
+
 
     private initiate() {
         if (this.dataSubscription) {
@@ -97,144 +125,93 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
                         this.graphDataProvider.getData(this.graph.dimX),
                         this.graphDataProvider.getData(this.graph.dimY))
                     .subscribe(([dataX, dataY]) => {
-                        this.displayData(dataX, dataY);
-                        this.renderSelectionPolygon();
-                        this.highlightData();
+                        // TODO
+                        // this.displayData(dataX, dataY);
+                        // this.highlightData();
                     });
             }
         }
     }
 
     private handleTouchDown(ev: InteractionEvent): void {
-        this.hasTouchDown = true;
-        this.clearSelection();
+        this.currentSelection = [];
+        this.graph.selectionPolygon.push(this.currentSelection);
+
+        this.currentPolygon = this.scatterplot.createSelectionPolygon();
+        this.selectionPolygons.push(this.currentPolygon);
     }
 
     private handleTouchUp(ev: InteractionEvent): void {
-        this.hasTouchDown = false;
         this.highlightData();
     }
 
     private handleTouchMove(ev: InteractionEvent): void {
-        if (this.hasTouchDown) {
-            let globalPosition = this.graphContainer.nativeElement.getBoundingClientRect();
-            let posOffset = new Point(globalPosition.left + this.margin.left,
-                globalPosition.top + this.margin.top);
+        let globalPosition = this.graphContainer.nativeElement.getBoundingClientRect();
+        let posOffset = new Point(
+            globalPosition.left + this.scatterplot.margin.left,
+            globalPosition.top + this.scatterplot.margin.top); 
 
-            this.graph.selectionPolygon.push(Point.sub(ev.position, posOffset));
-            this.renderSelectionPolygon();
-            this.highlightData();
-        }
+        this.currentSelection.push(Point.sub(ev.position, posOffset));
+        this.currentPolygon.paint(this.currentSelection);
+        this.highlightData();
+    }
+
+    private handleClick(ev: InteractionEvent): void {
+        // TODO.
     }
 
     private clearSelection(): void {
         while (this.graph.selectionPolygon.length > 0) {
             this.graph.selectionPolygon.pop();
         }
-        this.renderSelectionPolygon();
+
+        for (let sel of this.selectionPolygons) {
+            sel.remove();
+        }
+        this.selectionPolygons = [];
+
         this.highlightData();
     }
 
-    private renderSelectionPolygon(): void {
-        if (this.polygonPath) {
-            let polygonLine = d3.line<Point>()
-                .curve(d3.curveBasisClosed)
-                .x(d => d.x)
-                .y(d => d.y);
-            this.polygonPath.attr('d', polygonLine(this.graph.selectionPolygon));
-        }
-    }
-
     private highlightData(): void {
-        if (this.data) {
-            while (this.graph.selectedDataIndices.length > 0) {
-                this.graph.selectedDataIndices.pop();
-            }
+    //     if (this.data) {
+    //         while (this.graph.selectedDataIndices.length > 0) {
+    //             this.graph.selectedDataIndices.pop();
+    //         }
 
-            if (this.graph.selectionPolygon.length > 0) {
-                let topLeft = new Point(this.graph.selectionPolygon[0].x, this.graph.selectionPolygon[0].y);
-                let bottomRight = new Point(this.graph.selectionPolygon[0].x, this.graph.selectionPolygon[0].y);
+    //         if (this.graph.selectionPolygon.length > 0) {
+    //             let topLeft = new Point(this.graph.selectionPolygon[0].x, this.graph.selectionPolygon[0].y);
+    //             let bottomRight = new Point(this.graph.selectionPolygon[0].x, this.graph.selectionPolygon[0].y);
 
-                for (let p of this.graph.selectionPolygon) {
-                    topLeft.x = Math.min(topLeft.x, p.x);
-                    topLeft.y = Math.min(topLeft.y, p.y);
-                    bottomRight.x = Math.max(bottomRight.x, p.x);
-                    bottomRight.y = Math.max(bottomRight.y, p.y);
-                }
+    //             for (let p of this.graph.selectionPolygon) {
+    //                 topLeft.x = Math.min(topLeft.x, p.x);
+    //                 topLeft.y = Math.min(topLeft.y, p.y);
+    //                 bottomRight.x = Math.max(bottomRight.x, p.x);
+    //                 bottomRight.y = Math.max(bottomRight.y, p.y);
+    //             }
 
-                for (let index = 0; index < this.data.length; index++) {
-                    let datum = new Point(this.scaleX(this.data[index].x), this.scaleY(this.data[index].y));
-                    if (datum.isInPolygon(this.graph.selectionPolygon, [topLeft, bottomRight])) {
-                        this.graph.selectedDataIndices.push(index);
-                    }
-                }
+    //             for (let index = 0; index < this.data.length; index++) {
+    //                 let datum = new Point(this.scaleX(this.data[index].x), this.scaleY(this.data[index].y));
+    //                 if (datum.isInPolygon(this.graph.selectionPolygon, [topLeft, bottomRight])) {
+    //                     this.graph.selectedDataIndices.push(index);
+    //                 }
+    //             }
 
-            }
+    //         }
 
-            this.graph.updateData();
+    //         this.graph.updateData();
 
-            // highlight data
-            d3.select(this.graphContainer.nativeElement)
-                .selectAll('circle')
-                .filter((d, i) => this.graph.selectedDataIndices.indexOf(i) > -1)
-                .style('fill', 'red');
+    //         // highlight data
+    //         d3.select(this.graphContainer.nativeElement)
+    //             .selectAll('circle')
+    //             .filter((d, i) => this.graph.selectedDataIndices.indexOf(i) > -1)
+    //             .style('fill', 'red');
 
-            // remove highlight from other data
-            d3.select(this.graphContainer.nativeElement)
-                .selectAll('circle')
-                .filter((d, i) => this.graph.selectedDataIndices.indexOf(i) == -1)
-                .style('fill', 'black');
-        }
-    }
-
-    private displayData(dataX: number[], dataY: number[]) {
-        this.data = [];
-        // assume dataX.length === dataY.length
-        for (let i = 0; i < dataX.length; i++) {
-            this.data.push(new Point(dataX[i], dataY[i]));
-        }
-
-        let width = 960 - this.margin.left - this.margin.right;
-        let height = 500 - this.margin.top - this.margin.bottom;
-
-        d3.select(this.graphContainer.nativeElement).html('');
-
-        this.scaleX = d3.scaleLinear()
-            .range([0, width])
-            .domain([d3.min(this.data, d => d.x), d3.max(this.data, d => d.x)]);
-        this.scaleY = d3.scaleLinear()
-            .range([0, height])
-            .domain([d3.min(this.data, d => d.y), d3.max(this.data, d => d.y)]);
-
-        let valueLine = d3.line<Point>()
-            .x(d => this.scaleX(d.x))
-            .y(d => this.scaleY(d.y));
-
-        let svg = d3.select(this.graphContainer.nativeElement).append('svg')
-            .attr('width', width + this.margin.left + this.margin.right)
-            .attr('height', height + this.margin.top + this.margin.bottom)
-            .append('g')
-            .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
-
-        this.polygonPath = svg.append('path')
-            .attr('stroke', 'blue')
-            .attr('stroke-width', 2)
-            .attr('fill', '#00FF00')
-            .attr('fill-opacity', '0.4');
-
-
-        svg.selectAll('dot')
-            .data(this.data)
-            .enter().append('circle')
-                .attr('r', 5)
-                .attr('cx', d => this.scaleX(d.x))
-                .attr('cy', d => this.scaleY(d.y));
-
-        svg.append('g')
-            .attr('transform', 'translate(0,' + height + ')')
-            .call(d3.axisBottom(this.scaleX));
-
-        svg.append('g')
-            .call(d3.axisLeft(this.scaleY));
+    //         // remove highlight from other data
+    //         d3.select(this.graphContainer.nativeElement)
+    //             .selectAll('circle')
+    //             .filter((d, i) => this.graph.selectedDataIndices.indexOf(i) == -1)
+    //             .style('fill', 'black');
+    //     }
     }
 }

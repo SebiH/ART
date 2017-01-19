@@ -238,7 +238,7 @@ export class InteractionManager {
                 if (Point.distanceBetween(new Point(0, 0), this.mouseData.totalDistance) < MAX_PRESS_DISTANCE) {
                     this.raiseEvent(this.mouseData, {
                         type: InteractionEventType.Click,
-                        position: this.mouseData.currPos;
+                        position: this.mouseData.currPos
                     })
                 }
 
