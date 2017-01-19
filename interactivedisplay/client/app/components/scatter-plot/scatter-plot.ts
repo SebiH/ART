@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { ChartDimension, Point } from '../../models/index';
 import * as d3 from 'd3';
 
+declare var textures: any;
+
 type PlotElement = d3.Selection<any, {}, null, undefined>;
 
 export class PlotSelection {
@@ -79,8 +81,12 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         let polyPath = this.plotRoot.append('path')
             .attr('stroke', 'blue')
             .attr('stroke-width', 2)
-            .attr('fill', '#00FF00')
             .attr('fill-opacity', '0.4');
+
+        // see: https://riccardoscalco.github.io/textures/
+        let texture = textures.lines().thicker();
+        this.plotRoot.call(texture);
+        polyPath.attr('fill', texture.url())
 
         return new PlotSelection(polyPath);
     }

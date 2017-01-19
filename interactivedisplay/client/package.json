@@ -31,6 +31,7 @@
     "skeleton-css": "^2.0.4",
     "socket.io-client": "^1.5.1",
     "systemjs": "0.19.39",
+    "textures": "^1.0.4",
     "zone.js": "^0.6.25"
   },
   "devDependencies": {
