@@ -29,6 +29,11 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         this.graphSubscription = this.graphProvider.getGraphs()
             .subscribe(graphs => {
                 this.graphs = graphs;
+                for (let graph of this.graphs) {
+                    if (graph.isSelected) {
+                        graph.width = 1500;
+                    }
+                }
             });
     }
 
