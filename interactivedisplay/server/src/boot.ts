@@ -15,7 +15,7 @@ unityServer.start(UNITY_PORT);
 
 let webServer = new WebServer(WEB_PORT);
 
-let graphDataProvider = new GraphDataProvider();
+let graphDataProvider = new GraphDataProvider(true);
 webServer.addPath('/api/graph/data', (req, res, next) => {
     let params = req.body;
 
