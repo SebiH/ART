@@ -164,6 +164,7 @@ export class InteractionManager {
             // TODO only update currentPosition, so that we can catch up with prevPosition later
             let oldPos = this.mouseData.currPos;
             this.mouseData.currPos = newPos;
+            this.mouseData.addTotalDistance(Point.sub(oldPos, newPos));
 
             if (this.mouseData.type === InteractionType.Undecided) {
                 if (this.isEligibleForPress(this.mouseData)) {
@@ -207,11 +208,14 @@ export class InteractionManager {
             let hasTimerStopped = this.stopPressTimer(this.mouseData);
             this.mouseData.isActive = false;
 
-            let evType: InteractionEventType;
 
             if (hasTimerStopped) {
-                evType = InteractionEventType.Click;
+                this.raiseEvent(this.mouseData, {
+                    type: InteractionEventType.Click,
+                    position: this.mouseData.currPos
+                });
             } else {
+                let evType: InteractionEventType;
                 switch (this.mouseData.type) {
                     case InteractionType.PanZoom:
                         evType = InteractionEventType.PanZoomEnd;
@@ -224,17 +228,23 @@ export class InteractionManager {
                     case InteractionType.Touch:
                         evType = InteractionEventType.TouchUp;
                         break;
-
-                    default:
-                        this.logger.error('Unknown mousedata type at mouseUp, ignoring event: ' + this.mouseData.type);
-                        return;
                 }
+
+                this.raiseEvent(this.mouseData, {
+                    type: evType,
+                    position: this.mouseData.currPos
+                });
+
+                if (Point.distanceBetween(new Point(0, 0), this.mouseData.totalDistance) < MAX_PRESS_DISTANCE) {
+                    this.raiseEvent(this.mouseData, {
+                        type: InteractionEventType.Click,
+                        position: this.mouseData.currPos;
+                    })
+                }
+
             }
 
-            this.raiseEvent(this.mouseData, {
-                type: evType,
-                position: this.mouseData.currPos
-            });
+
             this.mouseData.type = InteractionType.Undecided;
         }
     }
@@ -349,6 +359,7 @@ export class InteractionManager {
                 let prevPos = interaction.currPos;
                 interaction.currPos = touchPos;
                 let delta = Point.sub(prevPos, touchPos);
+                interaction.addTotalDistance(delta);
 
                 // check if movement threshold was broken if touch was waiting for press
                 if (interaction.type === InteractionType.Undecided && !this.isEligibleForPress(interaction)) {
@@ -440,13 +451,20 @@ export class InteractionManager {
                     this.triggerTouchDown(interaction);
                 }
 
-
                 if (interaction.type === InteractionType.Press || interaction.type === InteractionType.Touch) {
                     let eventType = (interaction.type === InteractionType.Press) ? InteractionEventType.PressUp : InteractionEventType.TouchUp;
                     this.raiseEvent(interaction, {
                         type: eventType,
                         position: touchPos
                     });
+
+                    // if event was press, but no listener was registered, fire a click event just in case
+                    if (Point.distanceBetween(new Point(0, 0), interaction.totalDistance) < MAX_PRESS_DISTANCE) {
+                        this.raiseEvent(interaction, {
+                            type: InteractionEventType.Click,
+                            position: touchPos
+                        })
+                    }
                 }
             }
 

@@ -7,6 +7,8 @@ export class InteractionData {
     public prevPos: Point;
     public currPos: Point;
 
+    public totalDistance: Point = new Point(0, 0);
+
     public element: HTMLElement;
 
     public timeoutId: number = -1;
@@ -20,5 +22,10 @@ export class InteractionData {
         this.prevPos = pos;
         this.currPos = pos;
         this.isActive = isActive;
+    }
+
+    public addTotalDistance(delta: Point): void {
+        this.totalDistance.x += Math.abs(delta.x);
+        this.totalDistance.y += Math.abs(delta.y);
     }
 }
