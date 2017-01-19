@@ -2,10 +2,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {
     AppComponent,
     MenuComponent,
-    DemoComponent,
     MeasurementComponent,
-    PanZoomComponent,
-    ScrollerComponent,
     GraphContainerComponent
 } from './components/index';
 
@@ -15,20 +12,8 @@ const routes: Routes = [
         component: MenuComponent
     },
     {
-        path: 'demo',
-        component: DemoComponent
-    },
-    {
         path: 'measurement',
         component: MeasurementComponent
-    },
-    {
-        path: 'panzoom',
-        component: PanZoomComponent
-    },
-    {
-        path: 'scroll',
-        component: ScrollerComponent
     },
     {
         path: 'graph',

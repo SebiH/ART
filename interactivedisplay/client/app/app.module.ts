@@ -13,13 +13,8 @@ import { routing } from './routes';
   declarations: [
     Components.AppComponent,
     Components.MenuComponent,
-    Components.DemoComponent,
     Components.MarkerComponent,
-    Components.MarkerOverlayComponent,
     Components.MeasurementComponent,
-    Components.PanZoomComponent,
-    Components.MapOverlayComponent,
-    Components.ScrollerComponent,
     Components.GraphContainerComponent,
     Components.GraphSectionComponent,
     Components.GraphDataSelectionComponent,
