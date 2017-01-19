@@ -21,8 +21,4 @@ export class InteractionData {
         this.currPos = pos;
         this.isActive = isActive;
     }
-
-    public isEligibleForPress(max_distance: number): boolean {
-        return this.currPos.distanceTo(this.startPos) < max_distance;
-    }
 }

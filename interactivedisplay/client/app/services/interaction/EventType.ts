@@ -8,6 +8,9 @@ export enum InteractionEventType {
     PressDown,
     PressUp,
 
+    // 1 finger, touchdown -> up without moving, but shorter than press
+    Click,
+
     // 1/2 Fingers - Sent after TouchMove, only if no TouchMove event
     // cancelled subsequent events via returning true
     PanZoomStart,
