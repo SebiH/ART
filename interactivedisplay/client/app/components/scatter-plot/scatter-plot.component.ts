@@ -20,6 +20,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
     private plotRoot: PlotElement;
     private xAxis: PlotElement;
     private yAxis: PlotElement;
+    private plotValues: PlotElement;
 
     constructor() { }
 
@@ -33,28 +34,45 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
 
     public loadData(dimX: ChartDimension, dimY: ChartDimension): void {
-        // let data: Point[] = [];
+        let data: number[][] = [];
 
-        // this.plotRoot.selectAll('dot')
-        //     .data(data)
-        //     .enter().append('circle')
-        //         .attr('r', 5)
-        //         .attr('cx', d => this.scaleX(d.x))
-        //         .attr('cy', d => this.scaleY(d.y));
+        // assuming dimX data length === dimY data length
+        for (let i = 0; i < dimX.data.length; i++) {
+            data.push([dimX.data[i], dimY.data[i]]);
+        }
 
-        // this.plotRoot.append('g')
-        //     .attr('transform', 'translate(0,' + height + ')')
-        //     .call(d3.axisBottom(this.scaleX));
+        // x axis
+        if (this.xAxis) {
+            this.xAxis.remove();
+        }
+        let scaleX = d3.scaleLinear()
+            .range([0, this.width])
+            .domain([dimX.domain.min, dimX.domain.max]);
+        this.xAxis = this.plotRoot.append('g')
+            .attr('transform', 'translate(0,' + this.height + ')')
+            .call(d3.axisBottom(scaleX));
 
-        // this.plotRoot.append('g')
-        //     .call(d3.axisLeft(this.scaleY));
+        // y axis
+        if (this.yAxis) {
+            this.yAxis.remove();
+        }
+        let scaleY = d3.scaleLinear()
+            .range([0, this.width])
+            .domain([dimY.domain.min, dimY.domain.max]);
+        this.yAxis = this.plotRoot.append('g')
+            .call(d3.axisLeft(scaleY));
 
-        // svg.selectAll('dot')
-        //     .data(this.data)
-        //     .enter().append('circle')
-        //         .attr('r', 5)
-        //         .attr('cx', d => this.scaleX(d.x))
-        //         .attr('cy', d => this.scaleY(d.y));
+        // values
+        if (this.plotValues) {
+            this.plotValues.remove();
+        }
+
+        this.plotValues = this.plotRoot.selectAll('dot')
+            .data(data)
+            .enter().append('circle')
+                .attr('r', 5)
+                .attr('cx', d => scaleX(d[0]))
+                .attr('cy', d => scaleY(d[1]));
     }
 
     public createSelectionPolygon(): PlotSelection {
@@ -62,6 +80,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         selection.init(this.plotRoot);
         return selection;
     }
+
 
     private initGraph(): void {
         let d3element = d3.select(this.graphElement.nativeElement);

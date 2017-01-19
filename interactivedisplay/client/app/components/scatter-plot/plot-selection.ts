@@ -7,6 +7,7 @@ declare var textures: any;
 
 export class PlotSelection {
     private pathElement: PlotElement;
+    private line: d3.Line<Point>;
 
     public init(svg: PlotElement) {
         let texture = textures.lines().thicker();
@@ -17,14 +18,15 @@ export class PlotSelection {
             .attr('stroke-width', 2)
             .attr('fill-opacity', '0.4')
             .attr('fill', texture.url());
-    }
 
-    public paint(path: Point[]) {
-        let polygonLine = d3.line<Point>()
+        this.line = d3.line<Point>()
             .curve(d3.curveBasisClosed)
             .x(d => d.x)
             .y(d => d.y);
-        this.pathElement.attr('d', polygonLine(path));
+    }
+
+    public paint(path: Point[]) {
+        this.pathElement.attr('d', this.line(path));
     }
 
     public remove() {

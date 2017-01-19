@@ -125,9 +125,8 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
                         this.graphDataProvider.getData(this.graph.dimX),
                         this.graphDataProvider.getData(this.graph.dimY))
                     .subscribe(([dataX, dataY]) => {
-                        // TODO
-                        // this.displayData(dataX, dataY);
-                        // this.highlightData();
+                        this.scatterplot.loadData(dataX, dataY);
+                        this.highlightData();
                     });
             }
         }

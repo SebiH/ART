@@ -4,7 +4,7 @@ export class ChartDimension {
 
     name: string;
 
-    isNumeric: boolean;
+    isMetric: boolean;
     // only if isNumeric is false
     mappings?: { value: number, name: string }[];
 }
