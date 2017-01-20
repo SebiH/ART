@@ -9,12 +9,24 @@ export class GraphDataProvider {
 
     public constructor(useRandom?: boolean) {
         if (useRandom) {
-            for (let dim of this.getDimensions().dimensions) {
+            for (let mapping of SmartactMapping) {
+                let dimension = mapping.name;
                 let data = [];
+                let minValue = (mapping.type === DataRepresentation.Categorical) ?
+                    +_.minBy(mapping.values, 'dbValue').dbValue :
+                    +mapping.minValue;
+                let maxValue = (mapping.type === DataRepresentation.Categorical) ?
+                    +_.maxBy(mapping.values, 'dbValue').dbValue :
+                    +mapping.maxValue;
+
                 for (let i = 0; i < 300; i++) {
-                    data.push({ value: Math.random() });
+                    let val = Math.random() * maxValue - minValue;
+                    if (mapping.type === DataRepresentation.Categorical) {
+                        val = Math.round(val);
+                    }
+                    data.push({ value: val });
                 }
-                this.dataCache[dim] = this.convertData(dim, data);
+                this.dataCache[dimension] = this.convertData(dimension, data);
             }
         } else {
             this.sqlConnection.connect();
