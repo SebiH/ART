@@ -3,6 +3,7 @@ import { ChartDimension } from '../../models/index';
 import { ChartElement } from './chart-element';
 import { ChartPolygon } from './chart-polygon';
 import { ChartAxis, AxisType } from './chart-axis';
+import { ChartData } from './chart-data';
 import * as d3 from 'd3';
 
 @Component({
@@ -21,7 +22,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
     private chartRoot: ChartElement;
     private xAxis: ChartAxis;
     private yAxis: ChartAxis;
-    private chartValues: ChartElement;
+    private chartValues: ChartData;
 
     constructor() { }
 
@@ -50,10 +51,6 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         }
 
         // values
-        if (this.chartValues) {
-            this.chartValues.remove();
-        }
-
         if (dimX && dimY) {
             let data: number[][] = [];
 
@@ -62,16 +59,15 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
                 data.push([dimX.data[i], dimY.data[i]]);
             }
 
-            this.chartValues = this.chartRoot.selectAll('dot')
-                .data(data)
-                .enter().append('circle')
-                    .attr('r', 5)
-                    .attr('cx', d => this.xAxis.scale(d[0]))
-                    .attr('cy', d => this.yAxis.scale(d[1]));
+            this.chartValues.setData(data);
+        } else {
+            this.chartValues.clearData();
         }
     }
 
     public createSelectionPolygon(): ChartPolygon {
+        this.initGraph();
+
         let selection = new ChartPolygon();
         selection.init(this.chartRoot);
         return selection;
@@ -96,5 +92,6 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
         this.xAxis = new ChartAxis(this.chartRoot, AxisType.Horizontal, this.width, this.height);
         this.yAxis = new ChartAxis(this.chartRoot, AxisType.Vertical, this.height);
+        this.chartValues = new ChartData(this.chartRoot, this.xAxis.scale, this.yAxis.scale);
     }
 }

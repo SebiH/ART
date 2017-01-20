@@ -20,7 +20,7 @@ export class GraphDataProvider {
                     +mapping.maxValue;
 
                 for (let i = 0; i < 300; i++) {
-                    let val = Math.random() * maxValue - minValue;
+                    let val = Math.random() * (maxValue - 1) + minValue;
                     if (mapping.type === DataRepresentation.Categorical) {
                         val = Math.round(val);
                     }

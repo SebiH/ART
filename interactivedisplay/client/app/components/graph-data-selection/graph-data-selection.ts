@@ -133,8 +133,8 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     }
 
     private handleTouchUp(ev: InteractionEvent): void {
-        this.highlightData();
         this.graph.updateData();
+        // this.highlightData();
     }
 
     private handleTouchMove(ev: InteractionEvent): void {
@@ -145,7 +145,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
         this.currentSelection.push(Point.sub(ev.position, posOffset));
         this.currentPolygon.paint(this.currentSelection);
-        this.highlightData();
+        // this.highlightData();
     }
 
 
@@ -173,10 +173,12 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         }
         this.selectionPolygons = [];
 
-        this.highlightData();
+        this.highlightData(null);
     }
 
-    private highlightData(): void {
+    private highlightData(ids: number[]): void {
+
+
     //     if (this.data) {
     //         while (this.graph.selectedDataIndices.length > 0) {
     //             this.graph.selectedDataIndices.pop();
@@ -216,5 +218,9 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     //             .filter((d, i) => this.graph.selectedDataIndices.indexOf(i) == -1)
     //             .style('fill', 'black');
     //     }
+    }
+
+    private selectData(polygon: Point[]): number[] {
+        return [];
     }
 }
