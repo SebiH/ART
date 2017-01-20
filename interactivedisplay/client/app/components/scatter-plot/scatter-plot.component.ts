@@ -34,10 +34,11 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
     }
 
+    public getValues(): ChartData {
+        return this.chartValues;
+    }
 
     public loadData(dimX: ChartDimension, dimY: ChartDimension): void {
-        this.initGraph();
-
         if (dimX) {
             this.xAxis.setDomain(dimX.domain.min, dimX.domain.max);
         } else {
@@ -66,8 +67,6 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
     }
 
     public createSelectionPolygon(): ChartPolygon {
-        this.initGraph();
-
         let selection = new ChartPolygon();
         selection.init(this.chartRoot);
         return selection;
@@ -75,11 +74,6 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
 
     private initGraph(): void {
-        if (this.chartRoot) {
-            // already initialised
-            return;
-        }
-
         let d3element = d3.select(this.graphElement.nativeElement);
         d3element.html('');
 

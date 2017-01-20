@@ -13,8 +13,8 @@ export class ChartData {
     }
 
     public clearData(): void {
-        // TODO
-        console.log('nyi');
+        this.hasData = false;
+        this.chartRoot.selectAll('circle').remove();
     }
 
     public setData(data: number[][]): void {

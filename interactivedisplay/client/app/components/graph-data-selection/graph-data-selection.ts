@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Graph, Point } from '../../models/index';
@@ -17,7 +17,7 @@ import {
   templateUrl: './app/components/graph-data-selection/graph-data-selection.html',
   styleUrls: ['./app/components/graph-data-selection/graph-data-selection.css'],
 })
-export class GraphDataSelectionComponent implements OnInit, OnDestroy {
+export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     @Input()
     private graph: Graph;
@@ -48,13 +48,11 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         private graphDataProvider: GraphDataProvider,
         private interactionManager: InteractionManager) {}
 
-    ngOnInit() {
+    ngAfterViewInit() {
         this.loadData();
         this.loadExistingSelection();
         this.graphSubscription = this.graph.onDataUpdate
-            .subscribe(() => {
-                this.loadData();
-            });
+            .subscribe(() => this.loadData());
 
         this.registerInteractionListeners();
     }
@@ -80,7 +78,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
                     this.graphDataProvider.getData(this.graph.dimY).first())
                 .subscribe(([dataX, dataY]) => {
                     this.scatterplot.loadData(dataX, dataY);
-                    this.highlightData();
+                    // this.highlightData();
                 });
         }
     }
@@ -159,6 +157,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     }
 
     private handleClick(ev: InteractionEvent): void {
+        console.log(ev.position);
         // TODO.
     }
 
