@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ChartDimension } from '../../models/index';
 import { ChartElement } from './chart-element';
-import { ChartSelection } from './chart-selection';
+import { ChartPolygon } from './chart-polygon';
 import * as d3 from 'd3';
 
 @Component({
@@ -75,8 +75,8 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
                 .attr('cy', d => scaleY(d[1]));
     }
 
-    public createSelectionPolygon(): ChartSelection {
-        let selection = new ChartSelection();
+    public createSelectionPolygon(): ChartPolygon {
+        let selection = new ChartPolygon();
         selection.init(this.chartRoot);
         return selection;
     }

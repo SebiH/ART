@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@ang
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { Graph, Point } from '../../models/index';
-import { ScatterPlotComponent, ChartSelection } from '../scatter-plot/scatter-plot';
+import { ScatterPlotComponent, ChartPolygon } from '../scatter-plot/scatter-plot';
 import {
     GraphProvider,
     GraphDataProvider,
@@ -36,8 +36,8 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     private prevDimY: string;
 
     private currentSelection: Point[];
-    private currentPolygon: ChartSelection;
-    private selectionPolygons: ChartSelection[] = [];
+    private currentPolygon: ChartPolygon;
+    private selectionPolygons: ChartPolygon[] = [];
 
     private clickListener: InteractionListener;
     private touchDownListener: InteractionListener;

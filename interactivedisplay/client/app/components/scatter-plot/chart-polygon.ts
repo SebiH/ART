@@ -5,7 +5,7 @@ import * as d3 from 'd3';
 // documentation: https://riccardoscalco.github.io/textures/
 declare var textures: any;
 
-export class ChartSelection {
+export class ChartPolygon {
     private pathElement: ChartElement;
     private line: d3.Line<Point>;
 
