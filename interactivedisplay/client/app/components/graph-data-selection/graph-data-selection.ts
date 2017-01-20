@@ -28,7 +28,6 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
     private graphContainer: ElementRef;
 
     private graphSubscription: Subscription;
-    private dataSubscription: Subscription;
 
     private data: Point[];
 
@@ -50,24 +49,40 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         private interactionManager: InteractionManager) {}
 
     ngOnInit() {
+        this.loadData();
+        this.loadExistingSelection();
         this.graphSubscription = this.graph.onDataUpdate
             .subscribe(() => {
-                this.initiate();
+                this.loadData();
             });
-
-        // let graph initialise first
-        setTimeout(() => this.initiate());
 
         this.registerInteractionListeners();
     }
 
     ngOnDestroy() {
         this.graphSubscription.unsubscribe();
-        if (this.dataSubscription) {
-            this.dataSubscription.unsubscribe();
-        }
-
         this.deregisterInteractionListeners();
+    }
+
+
+    private loadData() {
+        let hasBothDimensions = this.graph.dimX && this.graph.dimY;
+        let hasNewDimX = this.prevDimX !== this.graph.dimX;
+        let hasNewDimY = this.prevDimY !== this.graph.dimY;
+        let hasNewDimension = hasNewDimX || hasNewDimY;
+
+        if (hasBothDimensions && hasNewDimension) {
+            this.prevDimX = this.graph.dimX;
+            this.prevDimY = this.graph.dimY;
+            Observable
+                .zip(
+                    this.graphDataProvider.getData(this.graph.dimX).first(),
+                    this.graphDataProvider.getData(this.graph.dimY).first())
+                .subscribe(([dataX, dataY]) => {
+                    this.scatterplot.loadData(dataX, dataY);
+                    this.highlightData();
+                });
+        }
     }
 
 
@@ -109,31 +124,6 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         this.interactionManager.off(this.touchUpListener);
     }
 
-
-
-    private initiate() {
-        if (this.dataSubscription) {
-            this.dataSubscription.unsubscribe();
-            this.dataSubscription = null;
-        }
-
-        if (this.graph.dimX.length > 0 && this.graph.dimY.length > 0) {
-
-            if (this.prevDimX !== this.graph.dimX || this.prevDimY !== this.graph.dimY) {
-                this.prevDimX = this.graph.dimX;
-                this.prevDimY = this.graph.dimY;
-                this.dataSubscription = Observable
-                    .zip(
-                        this.graphDataProvider.getData(this.graph.dimX),
-                        this.graphDataProvider.getData(this.graph.dimY))
-                    .subscribe(([dataX, dataY]) => {
-                        this.scatterplot.loadData(dataX, dataY);
-                        this.highlightData();
-                    });
-            }
-        }
-    }
-
     private handleTouchDown(ev: InteractionEvent): void {
         this.currentSelection = [];
         this.graph.selectionPolygon.push(this.currentSelection);
@@ -157,9 +147,20 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         this.highlightData();
     }
 
+
+
+    private loadExistingSelection(): void {
+        for (let path of this.graph.selectionPolygon) {
+            let polygon = this.scatterplot.createSelectionPolygon();
+            polygon.paint(path);
+            this.selectionPolygons.push(polygon);
+        }
+    }
+
     private handleClick(ev: InteractionEvent): void {
         // TODO.
     }
+
 
     private clearSelection(): void {
         while (this.graph.selectionPolygon.length > 0) {

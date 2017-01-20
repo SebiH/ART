@@ -35,6 +35,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
 
     public loadData(dimX: ChartDimension, dimY: ChartDimension): void {
+        this.initGraph();
 
         if (dimX) {
             this.xAxis.setDomain(dimX.domain.min, dimX.domain.max);
@@ -78,6 +79,11 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
 
     private initGraph(): void {
+        if (this.chartRoot) {
+            // already initialised
+            return;
+        }
+
         let d3element = d3.select(this.graphElement.nativeElement);
         d3element.html('');
 
