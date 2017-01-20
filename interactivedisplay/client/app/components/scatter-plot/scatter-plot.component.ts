@@ -35,27 +35,39 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
 
     public loadData(dimX: ChartDimension, dimY: ChartDimension): void {
-        let data: number[][] = [];
 
-        // assuming dimX data length === dimY data length
-        for (let i = 0; i < dimX.data.length; i++) {
-            data.push([dimX.data[i], dimY.data[i]]);
+        if (dimX) {
+            this.xAxis.setDomain(dimX.domain.min, dimX.domain.max);
+        } else {
+            this.xAxis.setDomain(0, 1);
         }
 
-        this.xAxis.setDomain(dimX.domain.min, dimX.domain.max);
-        this.yAxis.setDomain(dimY.domain.min, dimY.domain.max);
+        if (dimY) {
+            this.yAxis.setDomain(dimY.domain.min, dimY.domain.max);
+        } else {
+            this.yAxis.setDomain(0, 1);
+        }
 
         // values
         if (this.chartValues) {
             this.chartValues.remove();
         }
 
-        this.chartValues = this.chartRoot.selectAll('dot')
-            .data(data)
-            .enter().append('circle')
-                .attr('r', 5)
-                .attr('cx', d => this.xAxis.scale(d[0]))
-                .attr('cy', d => this.yAxis.scale(d[1]));
+        if (dimX && dimY) {
+            let data: number[][] = [];
+
+            // assuming dimX data length === dimY data length
+            for (let i = 0; i < dimX.data.length; i++) {
+                data.push([dimX.data[i], dimY.data[i]]);
+            }
+
+            this.chartValues = this.chartRoot.selectAll('dot')
+                .data(data)
+                .enter().append('circle')
+                    .attr('r', 5)
+                    .attr('cx', d => this.xAxis.scale(d[0]))
+                    .attr('cy', d => this.yAxis.scale(d[1]));
+        }
     }
 
     public createSelectionPolygon(): ChartPolygon {

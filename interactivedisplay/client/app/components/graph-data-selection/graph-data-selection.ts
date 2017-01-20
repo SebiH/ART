@@ -50,11 +50,13 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
         private interactionManager: InteractionManager) {}
 
     ngOnInit() {
-        this.initiate();
         this.graphSubscription = this.graph.onDataUpdate
             .subscribe(() => {
                 this.initiate();
             });
+
+        // let graph initialise first
+        setTimeout(() => this.initiate());
 
         this.registerInteractionListeners();
     }
