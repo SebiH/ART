@@ -142,7 +142,13 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     }
 
     private handleTouchUp(ev: InteractionEvent): void {
-        this.graph.updateData();
+        // don't allow very small polygons
+        if (Point.area(this.currentSelection.path) < 200) {
+            this.removeSelection(this.currentSelection);
+        } else {
+            this.graph.updateData();
+        }
+        this.currentSelection = null;
     }
 
     private handleTouchMove(ev: InteractionEvent): void {
@@ -201,6 +207,13 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private clickedSelection: Selection = null;
 
+    private removeSelection(selection: Selection) {
+        selection.polygon.remove();
+        _.pull(this.selections, selection);
+        _.pull(this.graph.selectionPolygons, selection.path);
+        this.graph.updateData();
+    }
+
     private handleClick(ev: InteractionEvent): void {
 
         if (this.clickedSelection) {
@@ -230,12 +243,16 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private popupClick() {
         if (this.clickedSelection) {
-            this.clickedSelection.polygon.remove();
-            _.pull(this.selections, this.clickedSelection);
-            _.pull(this.graph.selectionPolygons, this.clickedSelection.path);
+            this.removeSelection(this.clickedSelection);
             this.popupStyle.visibility = 'hidden';
             this.highlightData();
             this.clickedSelection = null;
+        }
+    }
+
+    private clearAllSelections() {
+        while (this.selections.length > 0) {
+            this.removeSelection(this.selections[0]);
         }
     }
 

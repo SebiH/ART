@@ -172,6 +172,19 @@ export class Point {
         return true;
     }
 
+    // see: http://www.mathopenref.com/coordpolygonarea2.html
+    public static area(path: Point[]): number {
+        let area = 0;
+
+        for (let i = 0; i < path.length; i++) {
+            let curr = path[i];
+            let next = path[(i + 1) % path.length];
+            area += (curr.x + next.x) * (curr.y - next.y);
+        }
+
+        return area/2;
+    }
+
     public toString(): string {
         return '(' + this.x + ',' + this.y + ')';
     }
