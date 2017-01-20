@@ -280,13 +280,15 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             sub.unsubscribe();
         }
 
+        this.highlightGraphData(graphs);
+
         for (let graph of graphs) {
             if (graph !== this.graph) {
                 graph.onDataUpdate
                     .takeWhile(() => this.isActive)
                     .filter((u) => u.changes.indexOf('selectedDataIndices') > -1)
                     .subscribe((g) => {
-                        this.highlightData();
+                        this.highlightGraphData(graphs);
                     });
             }
         }
