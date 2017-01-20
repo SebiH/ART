@@ -112,7 +112,7 @@ export class GraphProvider {
 
     private attachListeners(graph: Graph): void {
         graph.onDataUpdate.subscribe(g => {
-            this.graphDataUpdateQueue[g.id] = g;
+            this.graphDataUpdateQueue[g.id] = g.data;
             this.delayedGraphDataUpdate();
         });
         graph.onPositionUpdate.subscribe(g => {

@@ -85,13 +85,14 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     private selectGraph(graph: Graph): void {
         graph.isSelected = true;
         graph.width = 1500;
-        graph.updateData();
+        graph.updateData(['isSelected']);
+        graph.updatePosition();
     }
 
     private deselectGraph(graph: Graph): void {
         graph.isSelected = false;
         graph.width = 700;
-        graph.updateData();
+        graph.updateData(['isSelected']);
     }
 
     private moveGraph(graph: Graph, event: any): void {

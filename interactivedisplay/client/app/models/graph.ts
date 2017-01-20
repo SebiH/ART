@@ -27,15 +27,18 @@ export class Graph {
         return this.dataSubscription.asObservable();
     }
 
-    public updateData() {
+    public updateData(changes: string[]) {
         this.dataSubscription.next({
-            id: this.id,
-            color: this.color,
-            dimX: this.dimX,
-            dimY: this.dimY,
-            selectedData: this.selectedDataIndices,
-            selectionPolygons: this.selectionPolygons,
-            isSelected: this.isSelected
+            changes: changes,
+            data: {
+                id: this.id,
+                color: this.color,
+                dimX: this.dimX,
+                dimY: this.dimY,
+                selectedData: this.selectedDataIndices,
+                selectionPolygons: this.selectionPolygons,
+                isSelected: this.isSelected
+            }
         });
     }
 

@@ -17,7 +17,7 @@ import * as _ from 'lodash';
 class Selection {
     path: Point[] = [];
     polygon: ChartPolygon;
-    selectedData: number[] = null;
+    selectedData: number[] = [];
 }
 
 
@@ -36,7 +36,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     @ViewChild('plotContainer')
     private graphContainer: ElementRef;
 
-    private graphSubscription: Subscription;
+    // indicate lifetime of this component, for subscriptions
+    private isActive: boolean = true;
 
     private data: Point[];
 
@@ -57,38 +58,44 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         private interactionManager: InteractionManager) {}
 
     ngAfterViewInit() {
-        this.loadData();
+        this.isActive = true;
+        this.loadData(this.graph.dimX, this.graph.dimY);
         this.loadExistingSelection();
-        this.graphSubscription = this.graph.onDataUpdate
-            .subscribe(() => this.loadData());
+        this.graph.onDataUpdate
+            .takeWhile(() => this.isActive)
+            .filter(g => g.changes.indexOf('dimX') > -1 || g.changes.indexOf('dimY') > -1)
+            .subscribe((g) => this.loadData(g.data.dimX, g.data.dimY));
+
+        this.graphProvider.getGraphs()
+            .takeWhile(() => this.isActive)
+            .subscribe((graphs) => this.subscribeGraphChanges(graphs));
 
         this.registerInteractionListeners();
     }
 
     ngOnDestroy() {
-        this.graphSubscription.unsubscribe();
+        this.isActive = false;
         this.deregisterInteractionListeners();
     }
 
-
-    private loadData() {
-        let hasBothDimensions = this.graph.dimX && this.graph.dimY;
-        let hasNewDimX = this.prevDimX !== this.graph.dimX;
-        let hasNewDimY = this.prevDimY !== this.graph.dimY;
-        let hasNewDimension = hasNewDimX || hasNewDimY;
-
-        if (hasBothDimensions && hasNewDimension) {
-            this.prevDimX = this.graph.dimX;
-            this.prevDimY = this.graph.dimY;
+    private loadData(dimX: string, dimY: string) {
+        if (this.graph.dimX && this.graph.dimY) {
             Observable
                 .zip(
-                    this.graphDataProvider.getData(this.graph.dimX).first(),
-                    this.graphDataProvider.getData(this.graph.dimY).first())
+                    this.graphDataProvider.getData(this.graph.dimX)
+                        .first()
+                        // in case dimension changes while loading
+                        .takeWhile(() => dimX === this.graph.dimX),
+                    this.graphDataProvider.getData(this.graph.dimY)
+                        .first()
+                        // in case dimension changes while loading
+                        .takeWhile(() => dimY === this.graph.dimY))
                 .subscribe(([dataX, dataY]) => {
                     this.scatterplot.loadData(dataX, dataY);
                     for (let selection of this.selections) {
                         this.updateSelection(selection);
                     }
+                    this.graph.updateData(['selectedDataIndices']);
                     this.highlightData();
                 });
         }
@@ -145,8 +152,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         // don't allow very small polygons
         if (Point.area(this.currentSelection.path) < 200) {
             this.removeSelection(this.currentSelection);
-        } else {
-            this.graph.updateData();
         }
         this.currentSelection = null;
     }
@@ -154,8 +159,15 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private handleTouchMove(ev: InteractionEvent): void {
         this.currentSelection.path.push(this.positionInGraph(ev.position));
         this.currentSelection.polygon.paint(this.currentSelection.path);
+        let prevSelectionLength = this.currentSelection.selectedData.length;
         this.updateSelection(this.currentSelection);
         this.highlightData();
+
+        let changes = ['selectionPolygons'];
+        if (prevSelectionLength !== this.currentSelection.selectedData.length) {
+            changes.push('selectedDataIndices');
+        }
+        this.graph.updateData(changes);
     }
 
 
@@ -211,7 +223,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         selection.polygon.remove();
         _.pull(this.selections, selection);
         _.pull(this.graph.selectionPolygons, selection.path);
-        this.graph.updateData();
+        this.graph.updateData(['selectionPolygons', 'selectedDataIndices']);
     }
 
     private handleClick(ev: InteractionEvent): void {
@@ -254,6 +266,27 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         while (this.selections.length > 0) {
             this.removeSelection(this.selections[0]);
         }
+        this.highlightData();
+    }
+
+
+    private graphSubscriptions: Subscription[] = []
+
+    private subscribeGraphChanges(graphs: Graph[]) {
+        for (let sub of this.graphSubscriptions) {
+            sub.unsubscribe();
+        }
+
+        for (let graph of graphs) {
+            if (graph !== this.graph) {
+                graph.onDataUpdate
+                    .takeWhile(() => this.isActive)
+                    .filter((u) => u.changes.indexOf('selectedDataIndices') > -1)
+                    .subscribe((g) => {
+                        // TODO
+                    });
+            }
+        }
     }
 
 
@@ -279,9 +312,5 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         let selectedData = _.union.apply(_, selectionArrays);
         let values = this.scatterplot.getValues();
         values.highlight(selectedData);
-    }
-
-    private selectData(polygon: Point[]): number[] {
-        return [];
     }
 }

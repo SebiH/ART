@@ -34,11 +34,11 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
 
     private assignDimX(dim: string): void {
         this.graph.dimX = dim;
-        this.graph.updateData();
+        this.graph.updateData(['dimX']);
     }
 
     private assignDimY(dim: string): void {
         this.graph.dimY = dim;
-        this.graph.updateData();
+        this.graph.updateData(['dimY']);
     }
 }
