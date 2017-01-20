@@ -6,9 +6,7 @@ export class ChartData {
     private hasData: boolean = false;
 
     constructor(
-        private chartRoot: ChartElement,
-        private scaleX: d3.ScaleLinear<number, number>,
-        private scaleY: d3.ScaleLinear<number, number>
+        private chartRoot: ChartElement
         ) {
     }
 
@@ -31,8 +29,8 @@ export class ChartData {
             .data(data)
             .enter().append('circle')
                 .attr('r', 5)
-                .attr('cx', d => this.scaleX(d[0]))
-                .attr('cy', d => this.scaleY(d[1]));
+                .attr('cx', d => d[0])
+                .attr('cy', d => d[1]);
     }
 
     private animateValues(data: number[][]): void {
@@ -41,7 +39,14 @@ export class ChartData {
             .transition()
             .duration(200)
             .ease(d3.easeLinear)
-            .attr('cx', d => this.scaleX(d[0]))
-            .attr('cy', d => this.scaleY(d[1]));
+            .attr('cx', d => d[0])
+            .attr('cy', d => d[1]);
+    }
+
+
+    public highlight(ids: number[]): void {
+        this.chartRoot.selectAll('circle')
+            .filter((d, i) => ids.indexOf(i) > -1)
+            .style('fill', 'red');
     }
 }

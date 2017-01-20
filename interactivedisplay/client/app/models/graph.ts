@@ -10,7 +10,7 @@ export class Graph {
 
     public color: string = "#FFFFFF";
 
-    public selectionPolygon: Point[][] = [];
+    public selectionPolygons: Point[][] = [];
     public selectedDataIndices: number[] = [];
     public isSelected: boolean = false;
 
@@ -34,7 +34,7 @@ export class Graph {
             dimX: this.dimX,
             dimY: this.dimY,
             selectedData: this.selectedDataIndices,
-            selectionPolygon: this.selectionPolygon,
+            selectionPolygons: this.selectionPolygons,
             isSelected: this.isSelected
         });
     }
@@ -63,7 +63,7 @@ export class Graph {
             dimY: this.dimY,
             color: this.color,
             selectedData: this.selectedDataIndices,
-            selectionPolygon: this.selectionPolygon,
+            selectionPolygons: this.selectionPolygons,
             isSelected: this.isSelected,
 
             pos: this.absolutePos,
@@ -82,7 +82,7 @@ export class Graph {
         graph.dimY = jGraph.dimY;
         graph.color = jGraph.color;
         graph.selectedDataIndices = jGraph.selectedData;
-        graph.selectionPolygon = jGraph.selectionPolygon;
+        graph.selectionPolygons = jGraph.selectionPolygons;
         graph.isSelected = jGraph.isSelected;
 
         graph.absolutePos = jGraph.pos;

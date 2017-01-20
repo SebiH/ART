@@ -17,6 +17,8 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
     public height = 500;
     public margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
+    public data: number[][] = [];
+
     @ViewChild('graph')
     private graphElement: ElementRef;
     private chartRoot: ChartElement;
@@ -53,23 +55,25 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
         // values
         if (dimX && dimY) {
-            let data: number[][] = [];
+            this.data = [];
 
             // assuming dimX data length === dimY data length
             for (let i = 0; i < dimX.data.length; i++) {
-                data.push([dimX.data[i], dimY.data[i]]);
+                let x = this.xAxis.scale(dimX.data[i]);
+                let y = this.yAxis.scale(dimY.data[i]);
+                this.data.push([x, y]);
             }
 
-            this.chartValues.setData(data);
+            this.chartValues.setData(this.data);
         } else {
             this.chartValues.clearData();
         }
     }
 
-    public createSelectionPolygon(): ChartPolygon {
-        let selection = new ChartPolygon();
-        selection.init(this.chartRoot);
-        return selection;
+    public createPolygon(): ChartPolygon {
+        let polygon = new ChartPolygon();
+        polygon.init(this.chartRoot);
+        return polygon;
     }
 
 
@@ -86,6 +90,6 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
         this.xAxis = new ChartAxis(this.chartRoot, AxisType.Horizontal, this.width, this.height);
         this.yAxis = new ChartAxis(this.chartRoot, AxisType.Vertical, this.height);
-        this.chartValues = new ChartData(this.chartRoot, this.xAxis.scale, this.yAxis.scale);
+        this.chartValues = new ChartData(this.chartRoot);
     }
 }
