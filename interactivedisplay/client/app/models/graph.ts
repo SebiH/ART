@@ -34,6 +34,7 @@ export class Graph {
             dimX: this.dimX,
             dimY: this.dimY,
             selectedData: this.selectedDataIndices,
+            selectionPolygon: this.selectionPolygon,
             isSelected: this.isSelected
         });
     }
@@ -62,6 +63,7 @@ export class Graph {
             dimY: this.dimY,
             color: this.color,
             selectedData: this.selectedDataIndices,
+            selectionPolygon: this.selectionPolygon,
             isSelected: this.isSelected,
 
             pos: this.absolutePos,
@@ -80,6 +82,7 @@ export class Graph {
         graph.dimY = jGraph.dimY;
         graph.color = jGraph.color;
         graph.selectedDataIndices = jGraph.selectedData;
+        graph.selectionPolygon = jGraph.selectionPolygon;
         graph.isSelected = jGraph.isSelected;
 
         graph.absolutePos = jGraph.pos;

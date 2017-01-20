@@ -134,6 +134,7 @@ export class GraphDataSelectionComponent implements OnInit, OnDestroy {
 
     private handleTouchUp(ev: InteractionEvent): void {
         this.highlightData();
+        this.graph.updateData();
     }
 
     private handleTouchMove(ev: InteractionEvent): void {
