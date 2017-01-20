@@ -44,14 +44,18 @@ export class ChartData {
     }
 
 
-    public highlight(ids: number[]): void {
+    public highlight(selectedIds: number[], filteredIds: number[], useFilter: boolean): void {
         this.chartRoot.selectAll('circle')
             .attr('class', (d, i) => {
-                if (ids.indexOf(i) < 0) {
-                    return 'data';
-                } else {
-                    return 'data selected';
+                let cssClass = 'data';
+                if (selectedIds.indexOf(i) > -1) {
+                    cssClass += ' selected';
                 }
+                if (useFilter && filteredIds.indexOf(i) < 0) {
+                    cssClass += ' filtered';
+                }
+
+                return cssClass;
             });
     }
 }

@@ -286,7 +286,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                     .takeWhile(() => this.isActive)
                     .filter((u) => u.changes.indexOf('selectedDataIndices') > -1)
                     .subscribe((g) => {
-                        // TODO
+                        this.highlightData();
                     });
             }
         }
@@ -307,13 +307,31 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     }
 
     private highlightData(): void {
+        this.graphProvider.getGraphs()
+            .first()
+            .subscribe((graphs) => {
+                this.highlightGraphData(graphs);
+            });
+    }
+
+    private highlightGraphData(graphs: Graph[]): void {
         let selectionArrays = [];
         for (let selection of this.selections) {
             selectionArrays.push(selection.selectedData);
         }
-
         let selectedData = _.union.apply(_, selectionArrays);
+        this.graph.selectedDataIndices = selectedData;
+
+        let filteredArrays = [];
+        for (let graph of graphs) {
+            if (graph.selectedDataIndices.length > 0) {
+                filteredArrays.push(graph.selectedDataIndices);
+            }
+        }
+        let useFilter = filteredArrays.length > 0;
+        let filteredData = _.intersection.apply(_, filteredArrays);
+
         let values = this.scatterplot.getValues();
-        values.highlight(selectedData);
+        values.highlight(selectedData, filteredData, useFilter);
     }
 }

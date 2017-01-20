@@ -3,6 +3,14 @@
 }
 
 .data.selected {
+    fill: green;
+}
+
+.data.filtered {
+    fill: lightgray;
+}
+
+.data.selected.filtered {
     fill: red;
 }
 
