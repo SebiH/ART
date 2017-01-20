@@ -1,3 +1,3 @@
-export * from './plot-element';
-export * from './plot-selection';
+export * from './chart-element';
+export * from './chart-selection';
 export * from './scatter-plot.component';

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { ChartDimension } from '../../models/index';
-import { PlotElement } from './plot-element';
-import { PlotSelection } from './plot-selection';
+import { ChartElement } from './chart-element';
+import { ChartSelection } from './chart-selection';
 import * as d3 from 'd3';
 
 @Component({
@@ -17,10 +17,10 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
     @ViewChild('graph')
     private graphElement: ElementRef;
-    private plotRoot: PlotElement;
-    private xAxis: PlotElement;
-    private yAxis: PlotElement;
-    private plotValues: PlotElement;
+    private chartRoot: ChartElement;
+    private xAxis: ChartElement;
+    private yAxis: ChartElement;
+    private chartValues: ChartElement;
 
     constructor() { }
 
@@ -48,7 +48,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         let scaleX = d3.scaleLinear()
             .range([0, this.width])
             .domain([dimX.domain.min, dimX.domain.max]);
-        this.xAxis = this.plotRoot.append('g')
+        this.xAxis = this.chartRoot.append('g')
             .attr('transform', 'translate(0,' + this.height + ')')
             .call(d3.axisBottom(scaleX));
 
@@ -59,15 +59,15 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         let scaleY = d3.scaleLinear()
             .range([0, this.width])
             .domain([dimY.domain.min, dimY.domain.max]);
-        this.yAxis = this.plotRoot.append('g')
+        this.yAxis = this.chartRoot.append('g')
             .call(d3.axisLeft(scaleY));
 
         // values
-        if (this.plotValues) {
-            this.plotValues.remove();
+        if (this.chartValues) {
+            this.chartValues.remove();
         }
 
-        this.plotValues = this.plotRoot.selectAll('dot')
+        this.chartValues = this.chartRoot.selectAll('dot')
             .data(data)
             .enter().append('circle')
                 .attr('r', 5)
@@ -75,9 +75,9 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
                 .attr('cy', d => scaleY(d[1]));
     }
 
-    public createSelectionPolygon(): PlotSelection {
-        let selection = new PlotSelection();
-        selection.init(this.plotRoot);
+    public createSelectionPolygon(): ChartSelection {
+        let selection = new ChartSelection();
+        selection.init(this.chartRoot);
         return selection;
     }
 
@@ -86,21 +86,21 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         let d3element = d3.select(this.graphElement.nativeElement);
         d3element.html('');
 
-        let plotSvg = d3element.append('svg')
+        let chartSvg = d3element.append('svg')
             .attr('width', this.width + this.margin.left + this.margin.right)
             .attr('height', this.height + this.margin.top + this.margin.bottom);
 
-        this.plotRoot = plotSvg.append('g')
+        this.chartRoot = chartSvg.append('g')
             .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');;
 
         // draw empty axis 
         let scaleX = d3.scaleLinear().range([0, this.width]).domain([0, 1]);
-        this.xAxis = this.plotRoot.append('g')
+        this.xAxis = this.chartRoot.append('g')
             .attr('transform', 'translate(0,' + this.height + ')')
             .call(d3.axisBottom(scaleX));
 
         let scaleY = d3.scaleLinear().range([0, this.height]).domain([0, 1]);
-        this.yAxis = this.plotRoot.append('g')
+        this.yAxis = this.chartRoot.append('g')
             .call(d3.axisLeft(scaleY));
     }
 }

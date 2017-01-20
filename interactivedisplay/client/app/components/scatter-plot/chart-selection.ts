@@ -1,15 +1,15 @@
-import { PlotElement } from './plot-element';
+import { ChartElement } from './chart-element';
 import { Point } from '../../models/index';
 import * as d3 from 'd3';
 
 // documentation: https://riccardoscalco.github.io/textures/
 declare var textures: any;
 
-export class PlotSelection {
-    private pathElement: PlotElement;
+export class ChartSelection {
+    private pathElement: ChartElement;
     private line: d3.Line<Point>;
 
-    public init(svg: PlotElement) {
+    public init(svg: ChartElement) {
         let texture = textures.lines().thicker();
         svg.call(texture);
 
