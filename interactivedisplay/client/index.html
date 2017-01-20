@@ -1,12 +1,12 @@
 <html>
-  <head>
+<head>
     <title>Interactive Display</title>
     <base href="/">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
     <!-- Load libraries -->
-     <!-- Polyfill(s) for older browsers -->
+    <!-- Polyfill(s) for older browsers -->
     <script src="node_modules/core-js/client/shim.min.js"></script>
     <script src="node_modules/zone.js/dist/zone.js"></script>
     <script src="node_modules/reflect-metadata/Reflect.js"></script>
@@ -16,28 +16,30 @@
     <!-- Configure SystemJS -->
     <script src="systemjs.config.js"></script>
     <script>
-      System.import('app').catch(function(err){ console.error(err); });
+        System.import('app').catch(function(err){ console.error(err); });
     </script>
 
     <!-- Styles -->
     <link rel="stylesheet" type="text/css" href="./node_modules/skeleton-css/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="./node_modules/skeleton-css/css/skeleton.css">
+    <!-- Separate stylesheet because angular css files & svg don't mix well -->
+    <link rel="stylesheet" type="text/css" href="./scatterplot.css">
     <style>
         @font-face {
-          font-family: 'geosanslightregular';
-          src: url('geosanslight.woff') format('woff');
-          font-weight: normal;
-          font-style: normal;
-      }
+            font-family: 'geosanslightregular';
+            src: url('geosanslight.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
 
-      * {
-        -ms-touch-action: none;
-        touch-action: none;
-    }
-</style>
+        * {
+            -ms-touch-action: none;
+            touch-action: none;
+        }
+    </style>
 </head>
-  <!-- Display the application -->
-  <body>
+<!-- Display the application -->
+<body>
     <main-app></main-app>
-  </body>
+</body>
 </html>

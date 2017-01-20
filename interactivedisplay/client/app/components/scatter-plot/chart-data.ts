@@ -46,7 +46,12 @@ export class ChartData {
 
     public highlight(ids: number[]): void {
         this.chartRoot.selectAll('circle')
-            .filter((d, i) => ids.indexOf(i) > -1)
-            .style('fill', 'red');
+            .attr('class', (d, i) => {
+                if (ids.indexOf(i) < 0) {
+                    return 'data';
+                } else {
+                    return 'data selected';
+                }
+            });
     }
 }

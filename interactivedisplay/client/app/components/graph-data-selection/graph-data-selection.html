@@ -1,5 +1,8 @@
-<div>
+<div class="root">
     <div #plotContainer>
         <scatter-plot #plot></scatter-plot>
+    </div>
+
+    <div class="popup" [ngStyle]="popupStyle" (click)="popupClick()">
     </div>
 </div>

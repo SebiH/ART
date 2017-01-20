@@ -192,15 +192,50 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    private handleClick(ev: InteractionEvent): void {
-        let pos = this.positionInGraph(ev.position);
-        var isInSelection = false;
+    private popupStyle = {
+        '-webkit-transform': '',
+        '-ms-transform': '',
+        'transform': '',
+        'visibility': 'hidden'
+    }
 
-        for (let selection of this.selections) {
-            let boundingRect = this.buildBoundingRect(selection.path);
-            if (pos.isInPolygon(selection.path, boundingRect)) {
-                isInSelection = true;
+    private clickedSelection: Selection = null;
+
+    private handleClick(ev: InteractionEvent): void {
+
+        if (this.clickedSelection) {
+            this.clickedSelection = null;
+            this.popupStyle.visibility = 'hidden';
+        } else {
+            let pos = this.positionInGraph(ev.position);
+
+            for (let selection of this.selections) {
+                let boundingRect = this.buildBoundingRect(selection.path);
+                if (pos.isInPolygon(selection.path, boundingRect)) {
+                    this.clickedSelection = selection;
+                }
             }
+
+            if (this.clickedSelection !== null) {
+                let transform = 'translate3d(' + pos.x + 'px,' + pos.y + 'px,0)';
+                this.popupStyle.visibility = 'visible';
+                this.popupStyle['-webkit-transform'] = transform;
+                this.popupStyle['-ms-transform'] = transform;
+                this.popupStyle['transform'] = transform;
+            } else {
+                this.popupStyle.visibility = 'hidden';
+            }
+        }
+    }
+
+    private popupClick() {
+        if (this.clickedSelection) {
+            this.clickedSelection.polygon.remove();
+            _.pull(this.selections, this.clickedSelection);
+            _.pull(this.graph.selectionPolygons, this.clickedSelection.path);
+            this.popupStyle.visibility = 'hidden';
+            this.highlightData();
+            this.clickedSelection = null;
         }
     }
 
@@ -219,7 +254,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     }
 
     private highlightData(): void {
-
         let selectionArrays = [];
         for (let selection of this.selections) {
             selectionArrays.push(selection.selectedData);
