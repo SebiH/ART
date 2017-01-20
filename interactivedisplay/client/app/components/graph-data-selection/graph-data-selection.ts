@@ -229,6 +229,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private handleClick(ev: InteractionEvent): void {
 
         if (this.clickedSelection) {
+            this.clickedSelection.polygon.setSelected(false);
             this.clickedSelection = null;
             this.popupStyle.visibility = 'hidden';
         } else {
@@ -242,6 +243,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             }
 
             if (this.clickedSelection !== null) {
+                this.clickedSelection.polygon.setSelected(true);
                 let transform = 'translate3d(' + pos.x + 'px,' + pos.y + 'px,0)';
                 this.popupStyle.visibility = 'visible';
                 this.popupStyle['-webkit-transform'] = transform;
@@ -255,6 +257,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private popupClick() {
         if (this.clickedSelection) {
+            this.clickedSelection.polygon.setSelected(false);
             this.removeSelection(this.clickedSelection);
             this.popupStyle.visibility = 'hidden';
             this.highlightData();

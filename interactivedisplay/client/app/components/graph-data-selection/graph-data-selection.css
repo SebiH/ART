@@ -5,11 +5,13 @@
 .popup {
     position: absolute;
 
-    width: 300px;
+    width: 200px;
     height: 50px;
-    background: red;
+    background: #F44336;
+    border-color: #F44336;
+    color: white;
 
-    left: -150px;
-    top: -25px;
+    left: 0px;
+    top: 0px;
     overflow: visible;
 }

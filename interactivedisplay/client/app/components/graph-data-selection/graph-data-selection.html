@@ -3,8 +3,9 @@
         <scatter-plot #plot></scatter-plot>
     </div>
 
-    <div class="popup" [ngStyle]="popupStyle" (click)="popupClick()">
-    </div>
+    <button class="popup" [ngStyle]="popupStyle" (click)="popupClick()">
+        Remove
+    </button>
 
     <button (click)="clearAllSelections()"> Clear all </button>
 </div>

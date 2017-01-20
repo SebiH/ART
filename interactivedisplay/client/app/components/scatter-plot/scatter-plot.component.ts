@@ -72,8 +72,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
     }
 
     public createPolygon(): ChartPolygon {
-        let polygon = new ChartPolygon();
-        polygon.init(this.polygonRoot);
+        let polygon = new ChartPolygon(this.polygonRoot);
         return polygon;
     }
 

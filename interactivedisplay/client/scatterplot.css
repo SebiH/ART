@@ -5,3 +5,13 @@
 .data.selected {
     fill: red;
 }
+
+.line {
+    stroke: #03A9F4;
+    stroke-width: 2;
+    fill-opacity: 0.4;
+}
+
+.line.selected {
+    stroke: #F44336;
+}

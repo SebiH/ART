@@ -9,15 +9,19 @@ export class ChartPolygon {
     private pathElement: ChartElement;
     private line: d3.Line<Point>;
 
-    public init(svg: ChartElement) {
-        let texture = textures.lines().thicker();
-        svg.call(texture);
+    private selectedTexture;
+    private normalTexture;
+
+    public constructor(svg: ChartElement) {
+        this.normalTexture = textures.lines().thicker();
+        svg.call(this.normalTexture);
+
+        this.selectedTexture = textures.lines().heavier(5).thinner(1.5).stroke('#F44336');
+        svg.call(this.selectedTexture);
 
         this.pathElement = svg.append('path')
-            .attr('stroke', 'blue')
-            .attr('stroke-width', 2)
-            .attr('fill-opacity', '0.4')
-            .attr('fill', texture.url());
+            .attr('class', 'line')
+            .attr('fill', this.normalTexture.url());
 
         this.line = d3.line<Point>()
             .curve(d3.curveBasisClosed)
@@ -27,6 +31,18 @@ export class ChartPolygon {
 
     public paint(path: Point[]) {
         this.pathElement.attr('d', this.line(path));
+    }
+
+    public setSelected(isSelected: boolean) {
+        if (isSelected) {
+            this.pathElement
+                .attr('class', 'line selected')
+                .attr('fill', this.selectedTexture.url());
+        } else {
+            this.pathElement
+                .attr('class', 'line')
+                .attr('fill', this.normalTexture.url());
+        }
     }
 
     public remove() {
