@@ -103,7 +103,7 @@ export class Point {
         }
 
         let intersections = 0;
-        let startPoint = new Point(boundingRect[0].x - Number.EPSILON, this.y);
+        let startPoint = new Point(boundingRect[0].x - 0.0001, this.y - 0.0001);
         for (let index = 0; index < polygon.length; index++) {
             if (Point.areIntersecting(polygon[index], polygon[(index + 1) % polygon.length], startPoint, this)) {
                 intersections++;
@@ -166,6 +166,7 @@ export class Point {
         // means they intersect in any number of points from zero to infinite.
         // TODO: not sure how to handle this case
         // if ((a1 * b2) - (a2 * b1) == 0.0f) return COLLINEAR;
+        if ((a1 * b2) - (a2 * b1) === 0.0) return false;
 
         // If they are not collinear, they must intersect in exactly one point.
         return true;
