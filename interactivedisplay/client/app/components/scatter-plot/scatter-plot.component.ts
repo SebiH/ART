@@ -15,13 +15,14 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
     public width = 960;
     public height = 500;
-    public margin = { top: 20, right: 20, bottom: 30, left: 40 };
+    public margin = { top: 20, right: 20, bottom: 90, left: 90 };
 
     public data: number[][] = [];
 
     @ViewChild('graph')
     private graphElement: ElementRef;
     private chartRoot: ChartElement;
+    private polygonRoot: ChartElement;
     private xAxis: ChartAxis;
     private yAxis: ChartAxis;
     private chartValues: ChartData;
@@ -72,7 +73,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
     public createPolygon(): ChartPolygon {
         let polygon = new ChartPolygon();
-        polygon.init(this.chartRoot);
+        polygon.init(this.polygonRoot);
         return polygon;
     }
 
@@ -90,6 +91,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
 
         this.xAxis = new ChartAxis(this.chartRoot, AxisType.Horizontal, this.width, this.height);
         this.yAxis = new ChartAxis(this.chartRoot, AxisType.Vertical, this.height);
+        this.polygonRoot = this.chartRoot.append('g').attr('id', 'polygons');
         this.chartValues = new ChartData(this.chartRoot);
     }
 }
