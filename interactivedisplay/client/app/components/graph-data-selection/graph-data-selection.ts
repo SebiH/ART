@@ -261,6 +261,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             this.removeSelection(this.clickedSelection);
             this.popupStyle.visibility = 'hidden';
             this.highlightData();
+            this.graph.updateData(['selectedDataIndices']);
             this.clickedSelection = null;
         }
     }
