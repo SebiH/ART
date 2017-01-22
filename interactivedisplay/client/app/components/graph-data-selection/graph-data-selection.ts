@@ -59,8 +59,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.isActive = true;
-        this.loadData(this.graph.dimX, this.graph.dimY);
         this.loadExistingSelection();
+        this.loadData(this.graph.dimX, this.graph.dimY);
         this.graph.onDataUpdate
             .takeWhile(() => this.isActive)
             .filter(g => g.changes.indexOf('dimX') > -1 || g.changes.indexOf('dimY') > -1)
