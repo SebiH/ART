@@ -1,19 +1,15 @@
 import { ChartElement } from './chart-element';
 import * as d3 from 'd3';
 
-export enum AxisType {
-    Vertical, Horizontal
-}
-
 export class ChartAxis {
     private svgElement: ChartElement;
     public scale;
 
     constructor(
         root: ChartElement,
-        private type: AxisType,
+        private type: 'x' | 'y',
         private length: number,
-        private offset?: number) {
+        private offset: number) {
 
         this.svgElement = root.append('g');
         this.scale = d3.scaleLinear().range([0, length]).domain([0, 1]);
@@ -32,12 +28,13 @@ export class ChartAxis {
     }
 
     private paint() {
-        if (this.type == AxisType.Horizontal) {
+        if (this.type === 'x') {
             this.svgElement
                 .attr('transform', 'translate(0, ' + this.offset +')')
                 .call(d3.axisBottom(this.scale));
         } else {
             this.svgElement
+                .attr('transform', 'translate(' + (-this.offset) + ', 0)')
                 .call(d3.axisLeft(this.scale));
         }
     }

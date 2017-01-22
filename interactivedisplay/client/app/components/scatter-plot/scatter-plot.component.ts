@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { ChartDimension } from '../../models/index';
 import { ChartElement } from './chart-element';
 import { ChartPolygon } from './chart-polygon';
-import { ChartAxis, AxisType } from './chart-axis';
+import { ChartAxis } from './chart-axis';
 import { ChartData } from './chart-data';
 import * as d3 from 'd3';
 import * as _ from 'lodash';
@@ -14,9 +14,9 @@ import * as _ from 'lodash';
 })
 export class ScatterPlotComponent implements OnInit, OnDestroy {
 
-    public width = 960;
-    public height = 500;
-    public margin = { top: 20, right: 20, bottom: 90, left: 90 };
+    public width = 1000;
+    public height = 1000;
+    public margin = { top: 50, right: 50, bottom: 120, left: 120 };
 
     public data: number[][] = [];
 
@@ -106,8 +106,9 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         this.chartRoot = chartSvg.append('g')
             .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');;
 
-        this.xAxis = new ChartAxis(this.chartRoot, AxisType.Horizontal, this.width, this.height);
-        this.yAxis = new ChartAxis(this.chartRoot, AxisType.Vertical, this.height);
+        let axisMargin = 50;
+        this.xAxis = new ChartAxis(this.chartRoot, 'x', this.width, this.height + axisMargin);
+        this.yAxis = new ChartAxis(this.chartRoot, 'y', this.height, axisMargin);
         this.polygonRoot = this.chartRoot.append('g').attr('id', 'polygons');
         this.chartValues = new ChartData(this.chartRoot);
     }
