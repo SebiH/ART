@@ -14,9 +14,9 @@ import * as _ from 'lodash';
 })
 export class ScatterPlotComponent implements OnInit, OnDestroy {
 
-    public width = 1000;
-    public height = 1000;
-    public margin = { top: 50, right: 50, bottom: 120, left: 120 };
+    public width = 600;
+    public height = 600;
+    public margin = { top: 50, right: 50, bottom: 100, left: 100 };
 
     public data: number[][] = [];
 

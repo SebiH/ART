@@ -1,3 +1,11 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+}
+
 .column.title {
     text-align: center;
 }
@@ -26,4 +34,25 @@
 .button-selected {
     background: #FFC107;
     border-color: #FFC107;
+}
+
+
+.exit-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 30px;
+    width: 100%;
+}
+
+.exit-buttons .confirm {
+    background: #8BC34A;
+    border-color: #8BC34A;
+    width: 49%;
+}
+
+.exit-buttons .discard {
+    background: #F44336;
+    border-color: #F44336;
+    width: 49%;
 }
