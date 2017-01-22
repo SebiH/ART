@@ -1,5 +1,6 @@
 .data {
     fill: black;
+    transition: r 0.1s linear;
 }
 
 .data.selected {
@@ -7,7 +8,8 @@
 }
 
 .data.filtered {
-    fill: lightgray;
+    fill: gray;
+    r: 3;
 }
 
 .data.selected.filtered {
