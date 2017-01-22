@@ -97,8 +97,7 @@ export class Point {
      * See http://stackoverflow.com/a/218081/4090817
      */
     public isInPolygon(polygon: Point[], boundingRect: Point[]): boolean {
-        if (this.x < boundingRect[0].x || this.x > boundingRect[1].x
-            || this.y < boundingRect[0].y || this.y > boundingRect[1].y) {
+        if (!this.isInRectangle(boundingRect)) {
             return false;
         }
 
@@ -111,6 +110,15 @@ export class Point {
         }
 
         return (intersections & 1) === 1;
+    }
+
+    /**
+     *  Checks if point is inside given rectangle.
+     *  Assuming rectangle[0] == topLeft, rectangle[1] == bottomRight
+     */
+    public isInRectangle(rectangle: Point[]): boolean {
+        return this.x > rectangle[0].x && this.x < rectangle[1].x
+            && this.y > rectangle[0].y && this.y < rectangle[1].y;
     }
 
     /**

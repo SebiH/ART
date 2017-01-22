@@ -237,7 +237,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
             for (let selection of this.selections) {
                 let boundingRect = this.buildBoundingRect(selection.path);
-                if (pos.isInPolygon(selection.path, boundingRect)) {
+                if (pos.isInRectangle(boundingRect)) {
                     this.clickedSelection = selection;
                 }
             }
