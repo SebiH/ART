@@ -5,6 +5,7 @@ import { ChartPolygon } from './chart-polygon';
 import { ChartAxis, AxisType } from './chart-axis';
 import { ChartData } from './chart-data';
 import * as d3 from 'd3';
+import * as _ from 'lodash';
 
 @Component({
     selector: 'scatter-plot',
@@ -42,26 +43,19 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
     }
 
     public loadData(dimX: ChartDimension, dimY: ChartDimension): void {
-        if (dimX) {
-            this.xAxis.setDomain(dimX.domain.min, dimX.domain.max);
-        } else {
-            this.xAxis.setDomain(0, 1);
-        }
-
-        if (dimY) {
-            this.yAxis.setDomain(dimY.domain.min, dimY.domain.max);
-        } else {
-            this.yAxis.setDomain(0, 1);
-        }
+        this.setDomain(dimX, this.xAxis);
+        this.setDomain(dimY, this.yAxis);
 
         // values
         if (dimX && dimY) {
             this.data = [];
+            let dataX = this.convertData(dimX);
+            let dataY = this.convertData(dimY);
 
             // assuming dimX data length === dimY data length
             for (let i = 0; i < dimX.data.length; i++) {
-                let x = this.xAxis.scale(dimX.data[i]);
-                let y = this.yAxis.scale(dimY.data[i]);
+                let x = this.xAxis.scale(dataX[i]);
+                let y = this.yAxis.scale(dataY[i]);
                 this.data.push([x, y]);
             }
 
@@ -74,6 +68,30 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
     public createPolygon(): ChartPolygon {
         let polygon = new ChartPolygon(this.polygonRoot);
         return polygon;
+    }
+
+
+    private setDomain(dim: ChartDimension, axis: ChartAxis) {
+        if (dim) {
+            if (dim.isMetric) {
+                axis.setDomainLinear(dim.domain.min, dim.domain.max);
+            } else {
+                let domain = <string[]>_.map(dim.mappings, 'name');
+                axis.setDomainCategorical(domain);
+            }
+        } else {
+            axis.setDomainLinear(0, 1);
+        }
+    }
+
+    private convertData(dim: ChartDimension): any[] {
+        if (dim.isMetric) {
+            return dim.data;
+        } else {
+            let domain = <string[]>_.map(dim.mappings, 'name');
+            let converter = d => domain[d - dim.domain.min];
+            return _.map(dim.data, converter);
+        }
     }
 
 

@@ -64,7 +64,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         this.graph.onDataUpdate
             .takeWhile(() => this.isActive)
             .filter(g => g.changes.indexOf('dimX') > -1 || g.changes.indexOf('dimY') > -1)
-            .subscribe((g) => this.loadData(g.data.dimX, g.data.dimY));
+            .subscribe(g => this.loadData(g.data.dimX, g.data.dimY));
 
         this.graphProvider.getGraphs()
             .takeWhile(() => this.isActive)

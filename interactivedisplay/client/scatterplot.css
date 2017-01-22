@@ -1,6 +1,7 @@
 .data {
     fill: black;
     transition: r 0.1s linear;
+    r: 5;
 }
 
 .data.selected {

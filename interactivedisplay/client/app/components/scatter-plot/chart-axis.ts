@@ -7,7 +7,7 @@ export enum AxisType {
 
 export class ChartAxis {
     private svgElement: ChartElement;
-    public readonly scale: d3.ScaleLinear<number, number>;
+    public scale;
 
     constructor(
         root: ChartElement,
@@ -20,8 +20,14 @@ export class ChartAxis {
         this.paint();
     }
 
-    public setDomain(min: number, max: number) {
+    public setDomainLinear(min: number, max: number) {
+        this.scale = d3.scaleLinear().range([0, this.length]).domain([min, max]);
         this.scale.domain([min, max]);
+        this.paint();
+    }
+
+    public setDomainCategorical(domain: string[]) {
+        this.scale = d3.scalePoint().domain(domain).range([0, this.length]);
         this.paint();
     }
 

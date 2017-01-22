@@ -28,7 +28,6 @@ export class ChartData {
         this.chartRoot.selectAll('dot')
             .data(data)
             .enter().append('circle')
-                .attr('r', 5)
                 .attr('cx', d => d[0])
                 .attr('cy', d => d[1]);
     }
