@@ -1,9 +1,6 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { Observable, Subscription } from 'rxjs/Rx';
-import { Marker, Point } from '../../models/index';
-import { SocketIO } from '../../services/index';
-
-const MARKER_SIZE_PX = 250;
+import { Marker, MARKER_SIZE_PX, Point } from '../../models/index';
 
 @Component({
     selector: 'ar-marker',
@@ -12,14 +9,16 @@ const MARKER_SIZE_PX = 250;
 })
 export class MarkerComponent implements OnInit, OnDestroy
 {
-    @Input() private marker: Marker;
+    @Input()
+    private marker: Marker;
+
+    @ViewChild('markerElement')
+    private markerElement: ElementRef;
+
     private markerSize = MARKER_SIZE_PX;
-
-    private socketioListener;
     private timerSubscription: Subscription;
-    private prevMarkerPos: Point;
 
-    constructor(private socketio: SocketIO, private elementRef: ElementRef) { }
+    constructor() { }
 
     ngOnInit() {
         let timer = Observable.timer(0, 100);
@@ -32,26 +31,13 @@ export class MarkerComponent implements OnInit, OnDestroy
 
     private checkForChanges() {
         let markerPosition = this.getMarkerPosition();
-
-        if (this.prevMarkerPos == undefined || !this.prevMarkerPos.equalTo(markerPosition)) {
-            this.sendMarkerPosition(markerPosition);
-            this.prevMarkerPos = markerPosition;
-        }
+        this.marker.position = markerPosition;
     }
 
     private getMarkerPosition(): Point {
-        let element = <HTMLElement>this.elementRef.nativeElement;
+        let element = <HTMLElement>this.markerElement.nativeElement;
         let pos = element.getBoundingClientRect();
 
         return new Point(pos.left, pos.top);
-    }
-
-    private sendMarkerPosition(pos: Point) {
-        this.socketio.sendMessage('marker', {
-            id: this.marker.id,
-            posX: pos.x,
-            posY: pos.y,
-            size: this.markerSize
-        });
     }
 }

@@ -43,7 +43,7 @@ export class Graph {
     }
 
 
-    public positionSubscription: Subject<any> = new Subject<any>();
+    private positionSubscription: Subject<any> = new Subject<any>();
     public get onPositionUpdate(): Observable<any> {
         return this.positionSubscription.asObservable();
     }

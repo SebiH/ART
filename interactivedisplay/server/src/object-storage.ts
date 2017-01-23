@@ -25,4 +25,10 @@ export class ObjectStorage {
     public remove(id: number) {
         _.remove(this.storage, o => o.id == id);
     }
+
+    public clear() {
+        while (this.storage.length > 0) {
+            this.storage.pop();
+        }
+    }
 }
