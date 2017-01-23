@@ -63,6 +63,5 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
         this.graphDataSelection.reloadSelection();
         this.graph.selectedDataIndices = <number[]>Array.from(this.unalteredGraph.selectedData);
         this.graph.updateData(['color', 'dimX', 'dimY', 'selectedDataIndices', 'selectionPolygons']);
-        this.close();
     }
 }
