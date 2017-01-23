@@ -4,31 +4,18 @@
          moveable
          (moveStart)="handleMoveStart($event)"
          (moveUpdate)="handleMoveUpdate($event)"
-         (moveEnd)="handleMoveEnd($event)">
+         (moveEnd)="handleMoveEnd($event)"
+         [ngClass]="{ moving: scrollEvents > 0, static: scrollEvents <= 0 }">
 
-        <div class="list-container" [ngStyle]="getContainerStyle()">
-            <div *ngFor="let graph of graphs; trackBy:graph?.id; let isFirst = first"
+        <div class="list-container" [ngStyle]="containerStyle">
+            <div *ngFor="let graph of graphs; trackBy:graph?.id"
                  class="list-item"
                  [ngClass]="{ moving: graph.isPickedUp, static: !graph.isPickedUp }"
-                 [ngStyle]="getStyle(graph)">
-
+                 [ngStyle]="getGraphStyle(graph)">
                 <graph-section 
-                    *ngIf="!graph.isSelected"
                     [graph]="graph"
-                    (onDelete)="deleteGraph(graph, $event)"
-                    (onSelect)="selectGraph(graph, $event)"
-                    (onMove)="moveGraph(graph, $event)"
-                    (onMoveDown)="handleMoveDown(graph)"
-                    (onMoveUp)="handleMoveUp(graph)">
+                    (onMove)="moveGraph(graph, $event)">
                 </graph-section>
-
-                <div class="accordion open"
-                    *ngIf="graph.isSelected">
-                    <graph-detail
-                        [graph]="graph"
-                        (onClose)="deselectGraph(graph)">
-                    </graph-detail>
-                </div>
 
             </div>
         </div>

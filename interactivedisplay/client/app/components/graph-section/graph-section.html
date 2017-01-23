@@ -1,53 +1,71 @@
-<div class="section-root">
+<div class="section-root"
+    [style.background]="graph.color"
+    [style.width.px]="graph.width">
 
     <div class="marker top">
-        <ar-marker [marker]="markerTop"></ar-marker>
+        <ar-marker [marker]="markers[0]"></ar-marker>
     </div>
-
-
-    <div class="dimensions">
-        <div class="y">{{ graph.dimY }}</div>
-        <div class="x">{{ graph.dimX }}</div>
-    </div>
-
     <div class="marker bottom">
-        <ar-marker [marker]="markerBottom"></ar-marker>
+        <ar-marker [marker]="markers[1]"></ar-marker>
     </div>
 
-    <div class="buttons container">
-        <div class="row">
-            <div class="twelve columns">
-                <button (click)="handleSelect()"> Select </button>
+
+
+
+    <div *ngIf="!graph.isSelected">
+
+        <graph-overview [graph]="graph"></graph-overview>
+
+        <div class="buttons container">
+            <div class="row">
+                <div class="twelve columns">
+                    <button (click)="selectGraph()"> Select </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="twelve columns">
+                    <button (click)="deleteGraph()"> Remove </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="columns"
+                    [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }"
+                    (click)="moveDown()">
+                    <button> &lt; </button>
+                </div>
+
+                <div class="columns"
+                    [ngClass]="{ four: graph.width < 400, eight: 400 < graph.width }"
+
+                    moveable
+                    (moveStart)="handleMoveStart(graph, $event)"
+                    (moveUpdate)="handleMoveUpdate(graph, $event)"
+                    (moveEnd)="handleMoveEnd(graph, $event)">
+                    <div class="button"> ↔ </div>
+                </div>
+
+                <div class="columns"
+                    [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }"
+                    (click)="moveUp()">
+                    <button> &gt; </button>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <button (click)="handleDelete()"> Remove </button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="columns"
-                [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }"
-                (click)="moveDown()">
-                <button> &lt; </button>
-            </div>
 
-            <div class="columns"
-                [ngClass]="{ four: graph.width < 400, eight: 400 < graph.width }"
+    </div>
 
-                moveable
-                (moveStart)="handleMoveStart(graph, $event)"
-                (moveUpdate)="handleMoveUpdate(graph, $event)"
-                (moveEnd)="handleMoveEnd(graph, $event)">
-                <div class="button"> ↔ </div>
-            </div>
 
-            <div class="columns"
-                [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }"
-                (click)="moveUp()">
-                <button> &gt; </button>
-            </div>
-        </div>
+
+
+    <div *ngIf="graph.isSelected">
+        <graph-detail
+            [graph]="graph"
+            (onClose)="deselectGraph()">
+        </graph-detail>
     </div>
 
 </div>
+
+
+
+

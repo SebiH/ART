@@ -9,9 +9,7 @@ import { Marker, Graph } from '../../models/index';
 export class GraphOverviewComponent implements OnInit, OnDestroy {
 
     @Input()
-    private topMarker: Marker;
-    @Input()
-    private bottomMarker: Marker;
+    private graph: Graph;
 
     constructor() {}
 

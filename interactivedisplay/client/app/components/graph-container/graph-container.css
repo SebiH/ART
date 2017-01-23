@@ -20,6 +20,16 @@
     box-sizing: border-box;
 }
 
+.list-container.moving {
+    
+}
+
+.list-container.static {
+    -webkit-transition: -webkit-transform 0.2s ease-in-out;
+    -ms-transition: -ms-transform 0.2s ease-in-out;
+    transition:  transform 0.2s ease-in-out;
+}
+
 .list-item {
     position: absolute;
     top: 0;
@@ -57,12 +67,5 @@
     padding: 50px;
     height: 400px;
     vertical-align: middle;
-    z-index: 999
-}
-
-.accordion.open {
-    margin-left: 200px;
-    margin-right: 200px;
-    background: white;
-    height: 100%;
+    z-index: 999;
 }

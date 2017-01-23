@@ -1,12 +1,8 @@
-import { Component, OnInit, OnDestroy, ViewChildren } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
-import { GraphSectionComponent } from '../graph-section/graph-section';
 
 import * as _ from 'lodash';
-
-const CARD_WIDTH = 500;
 
 @Component({
     selector: 'graph-container',
@@ -16,30 +12,35 @@ const CARD_WIDTH = 500;
 export class GraphContainerComponent implements OnInit, OnDestroy {
 
     private graphs: Graph[] = [];
-    private graphSubscription: Subscription;
+    private isActive: boolean = true;
+    private scrollEvents: number = 0;
 
     private scrollOffset: number = 0;
     private selectedGraph: Graph;
 
     private interactionCounter: number = 0;
 
+    private containerStyle = {
+        '-webkit-transform': 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)',
+        '-ms-transform': 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)',
+        transform: 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)'
+    };
+
     constructor(private graphProvider: GraphProvider) {}
 
     ngOnInit() {
-        this.graphSubscription = this.graphProvider.getGraphs()
-            .subscribe(graphs => {
+        this.graphProvider.getGraphs()
+            .takeWhile(() => this.isActive)
+            .subscribe(graphs => { 
                 this.graphs = graphs;
-                for (let graph of this.graphs) {
-                    if (graph.isSelected) {
-                        graph.width = 1500;
-                    }
-                }
+                this.applyScrollOffsetLimits();
             });
     }
 
     ngOnDestroy() {
-        this.graphSubscription.unsubscribe();
+        this.isActive = false;
     }
+
 
     private getOffset(graph: Graph) {
         let offset = 0;
@@ -52,22 +53,21 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         return offset;
     }
 
-    private getContainerStyle(): any {
-        return {
-            '-webkit-transform': 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)',
-            '-ms-transform': 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)',
-            transform: 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)'
-        };
+    private setContainerOffset(offset: number): void {
+        let transform = 'translate3d(' + (-offset) + 'px, 0, 0)';
+        this.containerStyle['-webkit-transform'] = transform;
+        this.containerStyle['-ms-transform'] = transform;
+        this.containerStyle.transform = transform;
     }
 
-    private getStyle(graph: Graph): any {
+    private getGraphStyle(graph: Graph): any {
+        let offset = this.getOffset(graph) + graph.posOffset;
+        let transform = 'translate3d(' + offset +'px, 0, 0)';
         let style = {
-            width: graph.width + 'px',
-            background: graph.color,
             'z-index': graph.listIndex,
-            '-webkit-transform': 'translate3d(' + (this.getOffset(graph) + graph.posOffset) +'px, 0, 0)',
-            '-ms-transform': 'translate3d(' + (this.getOffset(graph) + graph.posOffset) +'px, 0, 0)',
-            transform: 'translate3d(' + (this.getOffset(graph) + graph.posOffset) +'px, 0, 0)'
+            '-webkit-transform': transform,
+            '-ms-transform': transform,
+            transform: transform
         };
 
         if (graph.isPickedUp) {
@@ -75,24 +75,6 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         }
 
         return style;
-    }
-
-    private deleteGraph(graph: Graph, event: any): void {
-        this.graphProvider.removeGraph(graph);
-        this.applyScrollOffsetLimits();
-    }
-
-    private selectGraph(graph: Graph): void {
-        graph.isSelected = true;
-        graph.width = 1500;
-        graph.updateData(['isSelected']);
-        graph.updatePosition();
-    }
-
-    private deselectGraph(graph: Graph): void {
-        graph.isSelected = false;
-        graph.width = 700;
-        graph.updateData(['isSelected']);
     }
 
     private moveGraph(graph: Graph, event: any): void {
@@ -129,12 +111,14 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
 
     private handleMoveStart(event: any): void {
+        this.scrollEvents++;
     }
 
     private handleMoveUpdate(event: any): void {
         let oldOffset = this.scrollOffset;
         this.scrollOffset += event.deltaX;
         this.applyScrollOffsetLimits();
+        this.setContainerOffset(this.scrollOffset);
 
         let appliedDeltaX = this.scrollOffset - oldOffset;
 
@@ -151,14 +135,10 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     }
 
     private handleMoveEnd(event: any): void {
-    }
-
-    private handleMoveDown(graph: Graph): void {
-        this.graphProvider.moveLeft(graph);
-    }
-
-    private handleMoveUp(graph: Graph): void {
-        this.graphProvider.moveRight(graph);
+        this.scrollEvents = Math.max(0, this.scrollEvents - 1);
+        if (this.scrollEvents == 0) {
+            this.applyScrollOffsetLimits();
+        }
     }
 
 
@@ -183,7 +163,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         this.moveGraph(this.createdGraph, {
             end: true
         });
-        this.selectGraph(this.createdGraph);
+        this.createdGraph.isSelected = true;
         this.createdGraph = null;
     }
 }

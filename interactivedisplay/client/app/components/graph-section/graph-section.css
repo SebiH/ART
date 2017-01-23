@@ -1,23 +1,7 @@
 .section-root {
-    width: 100%;
     height: 100%;
-
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.dimensions {
-    font-size: 5em;
-    font-family: "geosanslightregular";
-}
-
-.dimensions > .x {
-}
-
-.dimensions > .y {
-    transform: rotate(-90deg) translateY(-100px);
+    transition: width 0.2s linear;
 }
 
 .buttons {
@@ -25,6 +9,7 @@
     width: 100%;
     left: 0;
     bottom: 0;
+    max-width: 100%;
 }
 
 .buttons .row {
@@ -67,4 +52,11 @@
     padding: 30px;
     background: white;
     box-shadow: inset -6px 0px 28px 0px black;
+}
+
+.accordion.open {
+    margin-left: 200px;
+    margin-right: 200px;
+    background: white;
+    height: 100%;
 }
