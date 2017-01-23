@@ -4,10 +4,12 @@
          moveable
          (moveStart)="handleMoveStart($event)"
          (moveUpdate)="handleMoveUpdate($event)"
-         (moveEnd)="handleMoveEnd($event)"
-         [ngClass]="{ moving: scrollEvents > 0, static: scrollEvents <= 0 }">
+         (moveEnd)="handleMoveEnd($event)">
+         
 
-        <div class="list-container" [ngStyle]="containerStyle">
+        <div class="list-container"
+            [ngStyle]="containerStyle"
+            [ngClass]="{ moving: scrollEvents > 0, static: scrollEvents <= 0 }">
             <div *ngFor="let graph of graphs; trackBy:graph?.id"
                  class="list-item"
                  [ngClass]="{ moving: graph.isPickedUp, static: !graph.isPickedUp }"

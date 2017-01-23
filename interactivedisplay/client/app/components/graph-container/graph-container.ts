@@ -34,6 +34,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
             .subscribe(graphs => { 
                 this.graphs = graphs;
                 this.applyScrollOffsetLimits();
+                this.setContainerOffset(this.scrollOffset);
             });
     }
 
