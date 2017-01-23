@@ -6,6 +6,7 @@
   },
   "description": "InteractiveDisplayNode",
   "main": "app/boot.js",
+  "private": true,
   "author": {
     "name": "Sebastian Hubenschmid",
     "email": ""
