@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, Output, EventEmitter } from '@angular/core';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 import { Marker, Graph, Point } from '../../models/index';
 import { MarkerProvider, GraphProvider } from '../../services/index';
 
@@ -15,7 +15,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     @Output() onMove = new EventEmitter(); 
 
     private markers: Marker[] = [];
-    private timerSubscription: Subscription;
+    private isActive: boolean = true;
 
     constructor (
         private markerProvider: MarkerProvider,
@@ -28,8 +28,20 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
             this.markers.push(this.markerProvider.createMarker());
         }
 
-        let timer = Observable.timer(0, 50);
-        this.timerSubscription = timer.subscribe(this.checkForChanges.bind(this));
+        Observable.timer(0, 50)
+            .takeWhile(() => this.isActive)
+            .subscribe(this.checkForChanges.bind(this));
+
+        this.graph.onDataUpdate
+            .takeWhile(() => this.isActive)
+            .filter(g => g.changes.indexOf('isSelected') > -1)
+            .subscribe(g => {
+                if (this.graph.isSelected) {
+                    this.graph.width *= 2;
+                } else {
+                    this.graph.width /= 2;
+                }
+            });
     }
 
     ngOnDestroy() {
@@ -37,7 +49,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
             this.markerProvider.destroyMarker(marker);
         }
 
-        this.timerSubscription.unsubscribe();
+        this.isActive = false;
     }
 
     private checkForChanges(): void {
@@ -58,13 +70,17 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
 
 
     private selectGraph(): void {
-        this.graph.isSelected = true;
-        this.graph.updateData(['isSelected']);
+        if (!this.graph.isSelected) {
+            this.graph.isSelected = true;
+            this.graph.updateData(['isSelected']);
+        }
     }
 
     private deselectGraph(): void {
-        this.graph.isSelected = false;
-        this.graph.updateData(['isSelected']);
+        if (this.graph.isSelected) {
+            this.graph.isSelected = false;
+            this.graph.updateData(['isSelected']);
+        }
     }
 
     private deleteGraph(): void {

@@ -165,6 +165,7 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
             end: true
         });
         this.createdGraph.isSelected = true;
+        this.createdGraph.updateData(['isSelected']);
         this.createdGraph = null;
     }
 }

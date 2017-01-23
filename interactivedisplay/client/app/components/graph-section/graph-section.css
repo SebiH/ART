@@ -31,30 +31,49 @@
 
 .marker {
     position: absolute;
-    left: 0;
     width: 100%;
 
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: 0.2s linear;
 }
 
 .marker.top {
     top: 200px;
+    right: 0;
+}
+
+.marker.right {
+    top: 200px;
+    right: 25%;
 }
 
 .marker.bottom {
     bottom: 300px;
+    left: 0;
 }
+
+.marker.left {
+    bottom: 200px;
+    left: 25%;
+}
+
 
 .marker > ar-marker {
     padding: 30px;
     background: white;
     box-shadow: inset -6px 0px 28px 0px black;
+    transition: box-shadow 0.2s linear;
 }
 
-.accordion.open {
+.marker.left > ar-marker,
+.marker.right > ar-marker {
+    box-shadow: none;
+}
+
+.detail {
     margin-left: 200px;
     margin-right: 200px;
     background: white;
