@@ -17,6 +17,7 @@
         "noImplicitReturns": true,
         "noImplicitUseStrict": false,
         "noFallthroughCasesInSwitch": true,
+        "strictNullChecks": true,
         "alwaysStrict": true
     },
     "exclude": [

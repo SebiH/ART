@@ -89,7 +89,7 @@ export class UnityServer {
     // TODO: breaks easily, but sufficient for current purpose
     // TODO: see equivalent implementation in unity listener InteractiveSurfaceClient.cs
     private splitJson(text: string): string[] {
-        let jsonPackets = [];
+        let jsonPackets: string[] = [];
 
         let leftBracketIndex = -1;
         let rightBracketIndex = -1;

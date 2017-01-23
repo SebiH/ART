@@ -102,7 +102,7 @@ export class SqlConnection {
             return;
         }
 
-        let requestedData = [];
+        let requestedData: any[] = [];
         let requestSql = '\
             SELECT TOP 1000 User_Id, ' + mapping.dbColumn + '\
             FROM Flat_Dataset_1';

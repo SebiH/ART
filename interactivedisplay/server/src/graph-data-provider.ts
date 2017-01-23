@@ -11,7 +11,7 @@ export class GraphDataProvider {
         if (useRandom) {
             for (let mapping of SmartactMapping) {
                 let dimension = mapping.name;
-                let data = [];
+                let data: any[] = [];
                 let minValue = (mapping.type === DataRepresentation.Categorical) ?
                     +_.minBy(mapping.values, 'dbValue').dbValue :
                     +mapping.minValue;
@@ -66,7 +66,7 @@ export class GraphDataProvider {
         let minValue = 0;
         let maxValue = 1;
         let isMetric = false;
-        let mappings = [];
+        let mappings: any[] | null = [];
 
         switch (mapping.type) {
             case DataRepresentation.Categorical:
