@@ -20,6 +20,7 @@ import { routing } from './routes';
     Components.GraphDataSelectionComponent,
     Components.GraphDetailComponent,
     Components.ScatterPlotComponent,
+    Components.GraphOverviewComponent,
     Directives.MoveableDirective
   ],
   bootstrap:    [ Components.AppComponent ],
