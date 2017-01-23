@@ -19,13 +19,14 @@
         </button>
     </div>
 
-    <graph-data-selection [graph]="graph"></graph-data-selection>
+    <graph-data-selection #selection [graph]="graph">
+    </graph-data-selection>
 
     <div class="exit-buttons">
-        <button class="confirm" (click)="close()">
+        <button class="confirm" (click)="confirm()">
             Close&amp;Apply
         </button>
-        <button class="discard" (click)="close()">
+        <button class="discard" (click)="discard()">
             Close&amp;Discard
         </button>
     </div>

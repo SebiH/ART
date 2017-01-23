@@ -42,7 +42,7 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         return this.chartValues;
     }
 
-    public loadData(dimX: ChartDimension, dimY: ChartDimension): void {
+    public loadData(dimX?: ChartDimension, dimY?: ChartDimension): void {
         this.setDomain(dimX, this.xAxis);
         this.setDomain(dimY, this.yAxis);
 

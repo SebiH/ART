@@ -59,7 +59,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.isActive = true;
-        this.loadExistingSelection();
+        this.reloadSelection();
         this.loadData(this.graph.dimX, this.graph.dimY);
         this.graph.onDataUpdate
             .takeWhile(() => this.isActive)
@@ -98,6 +98,9 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                     this.graph.updateData(['selectedDataIndices']);
                     this.highlightData();
                 });
+        } else {
+            this.scatterplot.loadData(null, null);
+            this.highlightData();
         }
     }
 
@@ -199,7 +202,12 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     }
 
 
-    private loadExistingSelection(): void {
+    public reloadSelection(): void {
+        while (this.selections.length > 0) {
+            let sel = this.selections.pop();
+            sel.polygon.remove();
+        }
+
         for (let path of this.graph.selectionPolygons) {
             let selection = new Selection();
             selection.path = path;
@@ -208,6 +216,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
             this.selections.push(selection);
         }
+
+        this.highlightData();
     }
 
     private popupStyle = {

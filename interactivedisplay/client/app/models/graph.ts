@@ -65,8 +65,8 @@ export class Graph {
             dimX: this.dimX,
             dimY: this.dimY,
             color: this.color,
-            selectedData: this.selectedDataIndices,
-            selectionPolygons: this.selectionPolygons,
+            selectedData: Array.from(this.selectedDataIndices),
+            selectionPolygons: Array.from(this.selectionPolygons),
             isSelected: this.isSelected,
 
             pos: this.absolutePos,
