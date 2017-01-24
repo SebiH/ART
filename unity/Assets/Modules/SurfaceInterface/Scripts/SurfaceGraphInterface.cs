@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Assets.Modules.SurfaceGraph
+namespace Assets.Modules.SurfaceInterface
 {
     [RequireComponent(typeof(GraphManager))]
     public class SurfaceGraphInterface : MonoBehaviour

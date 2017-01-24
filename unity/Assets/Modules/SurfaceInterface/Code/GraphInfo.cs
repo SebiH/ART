@@ -1,6 +1,6 @@
 using System;
 
-namespace Assets.Modules.SurfaceGraph
+namespace Assets.Modules.SurfaceInterface
 {
     [Serializable]
     public class GraphInfo
