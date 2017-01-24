@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine.SceneManagement;
 using Assets.Modules.Tracking;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     [CustomEditor(typeof(DisplayMarker_PerformCalibration))]
     public class DisplayMarkerCalibrationEditor : Editor

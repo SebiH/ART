@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Assets.Modules.Tracking;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     public class Debug_PerpetualTrackNearestMarker : MonoBehaviour
     {

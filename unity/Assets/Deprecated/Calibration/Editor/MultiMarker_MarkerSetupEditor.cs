@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     [CustomEditor(typeof(MultiMarker_MarkerSetup))]
     public class MultiMarker_MarkerSetupEditor : Editor

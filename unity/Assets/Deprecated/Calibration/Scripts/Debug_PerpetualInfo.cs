@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     public class Debug_PerpetualInfo : MonoBehaviour
     {

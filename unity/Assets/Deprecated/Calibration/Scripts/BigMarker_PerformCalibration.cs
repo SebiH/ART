@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine;
 using Valve.VR;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     public class BigMarker_PerformCalibration : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using Assets.Modules.Surfaces;
 using System;
 using UnityEngine;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     [Serializable]
     public class DisplayMap

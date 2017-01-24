@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     [CustomEditor(typeof(SingleMarker_PerformCalibration))]
     class SingleMarkerCalibrationEditor : Editor

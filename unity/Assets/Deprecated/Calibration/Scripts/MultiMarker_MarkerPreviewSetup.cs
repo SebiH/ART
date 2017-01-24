@@ -3,7 +3,7 @@ using Assets.Modules.Tracking;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     public class MultiMarker_MarkerPreviewSetup : MonoBehaviour
     {

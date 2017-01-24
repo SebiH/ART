@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Modules.Calibration
+namespace Assets.Modules.Calibration_Deprecated
 {
     //[CustomEditor(typeof(DisplayMarker_SetupDisplay))]
     public class DisplayMarker_SetupEditor : Editor
