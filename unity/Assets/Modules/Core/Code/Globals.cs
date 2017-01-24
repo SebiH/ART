@@ -17,5 +17,6 @@ namespace Assets.Modules.Core
         public static readonly float OptitrackScaling = 0.8f;
 
         public static readonly string OptitrackCalibratorName = "CalibrationHelper";
+        public static readonly string OptitrackHmdName = "HMD";
     }
 }

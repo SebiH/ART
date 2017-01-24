@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
-    [Serializable]
     public class OptitrackPose
     {
-        [Serializable]
         public class Marker
         {
             public int Id;

@@ -8,46 +8,14 @@ using Assets.Modules.Core;
 
 namespace Assets.Modules.Tracking
 {
-    public delegate void OptitrackPosesReceived(List<OptitrackPose> poses);
 
     public class OptitrackListener : MonoBehaviour
     {
-        private class OptitrackPacket
-        {
-            public OT_Rigidbody[] Rigidbodies = new OT_Rigidbody[] { };
-        }
-
-        private class OT_Rigidbody
-        {
-            public int Id = -1; 
-            public string Name = "";
-
-            public float X = 0;
-            public float Y = 0;
-            public float Z = 0;
-
-            public float QX = 0;
-            public float QY = 0;
-            public float QZ = 0;
-            public float QW = 0;
-
-            public OT_Marker[] Markers = new OT_Marker[] { };
-        }
-
-        private class OT_Marker
-        {
-            public int Id = -1;
-
-            public float X = 0;
-            public float Y = 0;
-            public float Z = 0;
-        }
-
-
-
-        public static OptitrackListener Instance;
+        public static OptitrackListener Instance { get; private set; }
 
         public event OptitrackPosesReceived PosesReceived;
+        public delegate void OptitrackPosesReceived(List<OptitrackPose> poses);
+
 
         private IPEndPoint mRemoteIpEndPoint;
         private Socket mListener;
@@ -56,7 +24,9 @@ namespace Assets.Modules.Tracking
         private int mPreviousSubPacketIndex = 0;
         private const int kMaxSubPacketSize = 1400;
 
-        void Awake()
+        private Dictionary<string, OptitrackPose> _detectedPoses = new Dictionary<string, OptitrackPose>();
+
+        void OnEnable()
         {
             Instance = this;
 
@@ -69,6 +39,16 @@ namespace Assets.Modules.Tracking
 
             mListener.Blocking = false;
             mListener.ReceiveBufferSize = 128 * 1024;
+        }
+
+        void OnDisable()
+        {
+            mListener.Close();
+        }
+
+        void Update()
+        {
+            UDPRead();
         }
 
         private void UDPRead()
@@ -141,6 +121,8 @@ namespace Assets.Modules.Tracking
                         Position = new Vector3(marker.X, marker.Y, marker.Z)
                     });
                 }
+
+                _detectedPoses[body.Name] = pose;
             }
 
             if (PosesReceived != null)
@@ -149,9 +131,56 @@ namespace Assets.Modules.Tracking
             }
         }
 
-        void Update()
+        public bool HasPose(string name)
         {
-            UDPRead();
+            return _detectedPoses.ContainsKey(name);
         }
+
+        public OptitrackPose GetPose(string name)
+        {
+            if (HasPose(name))
+            {
+                return _detectedPoses[name];
+            }
+            return null;
+        }
+
+        #region Serialized classes
+
+        [Serializable]
+        private class OptitrackPacket
+        {
+            public OT_Rigidbody[] Rigidbodies = new OT_Rigidbody[] { };
+        }
+
+        [Serializable]
+        private class OT_Rigidbody
+        {
+            public int Id = -1; 
+            public string Name = "";
+
+            public float X = 0;
+            public float Y = 0;
+            public float Z = 0;
+
+            public float QX = 0;
+            public float QY = 0;
+            public float QZ = 0;
+            public float QW = 0;
+
+            public OT_Marker[] Markers = new OT_Marker[] { };
+        }
+
+        [Serializable]
+        private class OT_Marker
+        {
+            public int Id = -1;
+
+            public float X = 0;
+            public float Y = 0;
+            public float Z = 0;
+        }
+
+        #endregion
     }
 }
