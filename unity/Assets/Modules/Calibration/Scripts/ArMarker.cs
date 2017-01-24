@@ -11,11 +11,13 @@ namespace Assets.Modules.Calibration
         void OnEnable()
         {
             Register();
+            ArMarkers.Add(this);
         }
 
         void OnDisable()
         {
             Deregister();
+            ArMarkers.Remove(this);
         }
 
         void Update()
