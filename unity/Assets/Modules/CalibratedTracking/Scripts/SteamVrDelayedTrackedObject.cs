@@ -1,9 +1,9 @@
-using System;
+using Assets.Modules.Calibration;
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.CalibratedTracking
 {
     /**
      *  Modified SteamVR_TrackedObject script.

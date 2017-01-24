@@ -1,9 +1,11 @@
+using Assets.Modules.Calibration;
+using Assets.Modules.Tracking;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Modules.Tracking.Scripts
+namespace Assets.Modules.CalibratedTracking
 {
-    public class OptitrackCalibratedTrackedObject : MonoBehaviour
+    public class OptitrackTrackedObject : MonoBehaviour
     {
         // Name in OptiTrack
         public string TrackedName = "";

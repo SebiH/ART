@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Calibration
 {
     public static class CalibrationParams
     {

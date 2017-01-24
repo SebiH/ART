@@ -1,5 +1,6 @@
 //#define USE_ARTOOLKIT
 
+using Assets.Modules.Calibration;
 using Assets.Modules.Tracking;
 using System;
 using System.Collections.Generic;
