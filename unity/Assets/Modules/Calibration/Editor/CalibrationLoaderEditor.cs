@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Modules.Tracking
+namespace Assets.Modules.Calibration
 {
     [CustomEditor(typeof(CalibrationParams))]
     class CalibrationLoaderEditor : Editor
