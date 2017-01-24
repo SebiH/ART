@@ -5,7 +5,7 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public static class DataLineManager
     {
-        private static DataLine[] _lines = new DataLine[100];
+        private static DataLine[] _lines = new DataLine[0];
 
         // minor optimisation to avoid extending the array
         public static void SetMaxDataIndex(int max)

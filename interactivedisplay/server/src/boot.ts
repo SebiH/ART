@@ -83,12 +83,20 @@ sioServer.onMessageReceived({
     handler: (msg) => {
         switch (msg.command) {
             case '+marker':
-            case 'marker':
                 markerStorage.set(JSON.parse(msg.payload));
+                break;
+
+            case 'marker':
+                let markers = JSON.parse(msg.payload).markers;
+                for (let marker of markers) {
+                    markerStorage.set(marker);
+                }
                 break;
             case '-marker':
                 markerStorage.remove(<number>msg.payload);
                 break;
+            case 'marker-clear':
+                markerStorage.clear();
         }
     }
 });
