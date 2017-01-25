@@ -184,13 +184,18 @@ void OptitrackInput::DataHandler(sFrameOfMocapData *motion_data, void *user_data
 		// TODO: skeletons?
 		for (const auto &rb_data : motion_data->RigidBodies)
 		{
+			if (rb_data.ID <= 0)
+			{
+				continue;
+			}
+
 			Vector3 position(rb_data.x, rb_data.y, rb_data.z);
 			Quaternion rotation(rb_data.qx, rb_data.qy, rb_data.qz, rb_data.qw);
 			auto name = Instance()->bone_names_[rb_data.ID];
 
 			Rigidbody rigidbody(rb_data.ID, name, position, rotation);
 
-			for (int marker_index; marker_index < rb_data.nMarkers; marker_index++)
+			for (int marker_index = 0; marker_index < rb_data.nMarkers; marker_index++)
 			{
 				const auto marker_data = rb_data.Markers[marker_index];
 				auto marker_id = rb_data.MarkerIDs[marker_index];

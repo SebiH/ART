@@ -16,6 +16,12 @@ UnityServer::~UnityServer()
 void UnityServer::Start()
 {
 	is_running_ = true;
+
+	if (UnityIp.length() == 0)
+	{
+		UnityIp = "127.0.0.1";
+	}
+
 	server_ = std::make_unique<cSlipStream>(UnityIp.c_str(), UnityPort);
 	Log::Info("Starting unity server on %s:%d", UnityIp.c_str(), UnityPort);
 }

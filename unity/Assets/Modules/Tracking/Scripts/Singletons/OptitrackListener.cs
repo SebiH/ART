@@ -122,6 +122,7 @@ namespace Assets.Modules.Tracking
                     });
                 }
 
+                poses.Add(pose);
                 _detectedPoses[body.Name] = pose;
             }
 
