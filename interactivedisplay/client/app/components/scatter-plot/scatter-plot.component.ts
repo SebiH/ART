@@ -106,9 +106,8 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         this.chartRoot = chartSvg.append('g')
             .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');;
 
-        let axisMargin = 50;
-        this.xAxis = new ChartAxis(this.chartRoot, 'x', this.width, this.height + axisMargin);
-        this.yAxis = new ChartAxis(this.chartRoot, 'y', this.height, axisMargin);
+        this.xAxis = new ChartAxis(this.chartRoot, 'x', this.width, this.height);
+        this.yAxis = new ChartAxis(this.chartRoot, 'y', this.height, 0);
         this.polygonRoot = this.chartRoot.append('g').attr('id', 'polygons');
         this.chartValues = new ChartData(this.chartRoot);
     }
