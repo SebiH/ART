@@ -2,11 +2,11 @@
 
 #include <string>
 
-// micro optimisation
-#define MAX_MARKERS 8
-
 namespace Optitrack
 {
+	// micro optimisation
+	const int Max_Markers = 8;
+
 	struct Vector3
 	{
 		float X;
@@ -45,7 +45,7 @@ namespace Optitrack
 		Vector3 Position;
 		Quaternion Rotation;
 
-		Marker Markers[MAX_MARKERS];
+		Marker Markers[Max_Markers];
 
 		Rigidbody(const int id, const std::string &name, const Vector3 &pos, const Quaternion &rot)
 			: Id(id), Name(name), Position(pos), Rotation(rot)
@@ -53,7 +53,7 @@ namespace Optitrack
 
 		void AddMarker(int id, const Vector3 &pos)
 		{
-			if (id < MAX_MARKERS)
+			if (id < Max_Markers)
 			{
 				Markers[id].IsValid = true;
 				Markers[id].Id = id;

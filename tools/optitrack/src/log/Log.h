@@ -9,10 +9,12 @@ namespace Optitrack
 	class Log
 	{
 	public:
-		static void Debug(const std::string &fmt_str, ...);
-		static void Info(const std::string &fmt_str, ...);
-		static void Warning(const std::string &fmt_str, ...);
-		static void Error(const std::string &fmt_str, ...);
+		static void Debug(const std::string &msg);
+		static void Info(const std::string &msg);
+		static void Warning(const std::string &msg);
+		static void Error(const std::string &msg);
+
+		static std::string Format(const std::string &format, ...);
 
 		static void Init(int log_level, LoggerCallback callback);
 
