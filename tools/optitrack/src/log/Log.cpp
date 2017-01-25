@@ -19,8 +19,15 @@ void Log::Debug(const std::string &fmt_str, ...)
 		return;
 	}
 
+	if (fmt_str.length() == 0)
+	{
+		Instance()->logger_->WriteLine("");
+		return;
+	}
+
+
 	// Taken from http://stackoverflow.com/a/8098080/4090817
-	int final_n, n = ((int)fmt_str.size()) * 2; /* Reserve two times as much as the length of the fmt_str */
+	int final_n, n = ((int)fmt_str.size()) * 2; /* Reserve two times as much as the length() of the fmt_str */
 	std::string str;
 	std::unique_ptr<char[]> formatted;
 	va_list ap;
@@ -44,8 +51,14 @@ void Log::Debug(const std::string &fmt_str, ...)
 
 void Log::Info(const std::string &fmt_str, ...)
 {
+	if (fmt_str.length() == 0)
+	{
+		Instance()->logger_->WriteLine("");
+		return;
+	}
+
 	// Taken from http://stackoverflow.com/a/8098080/4090817
-	int final_n, n = ((int)fmt_str.size()) * 2; /* Reserve two times as much as the length of the fmt_str */
+	int final_n, n = ((int)fmt_str.size()) * 2; /* Reserve two times as much as the length() of the fmt_str */
 	std::string str;
 	std::unique_ptr<char[]> formatted;
 	va_list ap;
@@ -67,8 +80,14 @@ void Log::Info(const std::string &fmt_str, ...)
 
 void Log::Warning(const std::string &fmt_str, ...)
 {
+	if (fmt_str.length() == 0)
+	{
+		Instance()->logger_->WriteLine("");
+		return;
+	}
+
 	// Taken from http://stackoverflow.com/a/8098080/4090817
-	int final_n, n = ((int)fmt_str.size()) * 2; /* Reserve two times as much as the length of the fmt_str */
+	int final_n, n = ((int)fmt_str.size()) * 2; /* Reserve two times as much as the length() of the fmt_str */
 	std::string str;
 	std::unique_ptr<char[]> formatted;
 	va_list ap;
@@ -92,8 +111,14 @@ void Log::Warning(const std::string &fmt_str, ...)
 
 void Log::Error(const std::string &fmt_str, ...)
 {
+	if (fmt_str.length() == 0)
+	{
+		Instance()->logger_->WriteLine("");
+		return;
+	}
+
 	// Taken from http://stackoverflow.com/a/8098080/4090817
-	int final_n, n = ((int)fmt_str.size()) * 2; /* Reserve two times as much as the length of the fmt_str */
+	int final_n, n = ((int)fmt_str.size()) * 2; /* Reserve two times as much as the length() of the fmt_str */
 	std::string str;
 	std::unique_ptr<char[]> formatted;
 	va_list ap;

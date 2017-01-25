@@ -4,7 +4,8 @@ using namespace Optitrack;
 
 
 JsonOptitrackMessage::JsonOptitrackMessage()
-	: is_sealed_(false)
+	: is_sealed_(false),
+	  writer_(buffer_)
 {
 	writer_.StartObject();
 	writer_.String("Rigidbodies");
