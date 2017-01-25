@@ -16,16 +16,15 @@ export class ChartData {
     }
 
     public setData(data: number[][]): void {
-        // if (!this.hasData) {
-            // this.hasData = true;
+        if (!this.hasData) {
+            this.hasData = true;
             this.initValues(data);
-        // } else {
-            // this.animateValues(data);
-        // }
+        } else {
+            this.animateValues(data);
+        }
     }
 
     private initValues(data: number[][]): void {
-        this.chartRoot.selectAll('circle').remove();
         this.chartRoot.selectAll('dot')
             .data(data)
             .enter().append('circle')
@@ -34,15 +33,15 @@ export class ChartData {
                 .attr('r', 5);
     }
 
-    // private animateValues(data: number[][]): void {
-    //     this.chartRoot.selectAll('circle')
-    //         .data(data)
-    //         .transition()
-    //         .duration(200)
-    //         .ease(d3.easeLinear)
-    //         .attr('cx', d => d[0])
-    //         .attr('cy', d => d[1]);
-    // }
+    private animateValues(data: number[][]): void {
+        this.chartRoot.selectAll('circle')
+            .data(data)
+            .transition()
+            .duration(200)
+            .ease(d3.easeLinear)
+            .attr('cx', d => d[0])
+            .attr('cy', d => d[1]);
+    }
 
 
     public highlight(selectedIds: number[], filteredIds: number[], useFilter: boolean): void {
