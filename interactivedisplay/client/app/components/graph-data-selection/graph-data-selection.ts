@@ -163,8 +163,11 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         this.currentSelection.path.push(this.positionInGraph(ev.position));
         this.currentSelection.polygon.paint(this.currentSelection.path);
         let prevSelectionLength = this.currentSelection.selectedData.length;
-        this.updateSelection(this.currentSelection);
-        this.highlightData();
+
+        if (this.currentSelection.path.length % 10 === 0) {
+            this.updateSelection(this.currentSelection);
+            this.highlightData();
+        }
 
         let changes = ['selectionPolygons'];
         if (prevSelectionLength !== this.currentSelection.selectedData.length) {
