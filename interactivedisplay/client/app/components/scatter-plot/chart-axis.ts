@@ -17,13 +17,26 @@ export class ChartAxis {
     }
 
     public setDomainLinear(min: number, max: number) {
-        this.scale = d3.scaleLinear().range([0, this.length]).domain([min, max]);
-        this.scale.domain([min, max]);
+        let range = this.type === 'x' ? [0, this.length] : [this.length, 0];
+
+        this.scale = d3.scaleLinear()
+            .range(range)
+            .domain([min, max]);
         this.paint();
     }
 
     public setDomainCategorical(domain: string[]) {
-        this.scale = d3.scalePoint().domain(domain).range([0, this.length]);
+        if (this.type === 'y') {
+            let flipped: string[] = [];
+            for (let i = 0; i < domain.length; i++) {
+                flipped[domain.length - 1 - i] = domain[i];
+            }
+            domain = flipped;
+        }
+
+        this.scale = d3.scalePoint()
+            .domain(domain)
+            .range([0, this.length]);
         this.paint();
     }
 
