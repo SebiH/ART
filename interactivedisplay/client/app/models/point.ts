@@ -190,7 +190,7 @@ export class Point {
             area += (curr.x + next.x) * (curr.y - next.y);
         }
 
-        return area/2;
+        return Math.abs(area/2);
     }
 
     public toString(): string {

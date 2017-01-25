@@ -152,14 +152,16 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     }
 
     private handleTouchUp(ev: InteractionEvent): void {
-        this.updateSelection(this.currentSelection);
-        this.highlightData();
-        this.graph.updateData(['selectedDataIndices']);
-        
         // don't allow very small polygons
         if (Point.area(this.currentSelection.path) < 200) {
             this.removeSelection(this.currentSelection);
+        } else { 
+            this.updateSelection(this.currentSelection);
         }
+        
+        this.highlightData();
+        this.graph.updateData(['selectedDataIndices']);
+
         this.currentSelection = null;
     }
 
