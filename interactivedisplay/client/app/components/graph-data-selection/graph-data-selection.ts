@@ -279,14 +279,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    private clearAllSelections() {
-        while (this.selections.length > 0) {
-            this.removeSelection(this.selections[0]);
-        }
-        this.highlightData();
-        this.graph.updateData(['selectedDataIndices', 'selectionPolygons'])
-    }
-
 
     private graphSubscriptions: Subscription[] = []
 
