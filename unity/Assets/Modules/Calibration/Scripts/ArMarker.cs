@@ -5,7 +5,7 @@ namespace Assets.Modules.Calibration
 {
     public class ArMarker : MonoBehaviour
     {
-        public int Id { get; set; }
+        public int Id = -1;
         public float LastChangeTime { get; private set; }
 
         private Vector2 _position = Vector2.zero;
@@ -44,6 +44,10 @@ namespace Assets.Modules.Calibration
             if (ArucoListener.Instance)
             {
                 ArucoListener.Instance.NewPoseDetected += OnArPose;
+            }
+            else
+            {
+                Debug.Log("No ArucoListener found!");
             }
         }
 
