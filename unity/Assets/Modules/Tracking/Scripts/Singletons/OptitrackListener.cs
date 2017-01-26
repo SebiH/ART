@@ -110,15 +110,18 @@ namespace Assets.Modules.Tracking
                 pose.DetectionTime = Time.unscaledTime;
                 pose.Id = body.Id;
                 pose.RigidbodyName = body.Name;
-                pose.Position = new Vector3(body.X, body.Y, body.Z);
-                pose.Rotation = new Quaternion(body.QX, body.QY, body.QZ, body.QW);
+
+                // right to left handed conversion
+                pose.Position = new Vector3(body.X, body.Y, -body.Z) * Globals.OptitrackScaling; // z -> -z
+                pose.Rotation = new Quaternion(body.QX, body.QY, -body.QZ, -body.QW); // qz -> -qz, qw -> -qw
 
                 foreach (var marker in body.Markers)
                 {
                     pose.Markers.Add(new OptitrackPose.Marker
                     {
                         Id = marker.Id,
-                        Position = new Vector3(marker.X, marker.Y, marker.Z)
+                        // right to left handed conversion
+                        Position = new Vector3(marker.X, marker.Y, -marker.Z)
                     });
                 }
 
