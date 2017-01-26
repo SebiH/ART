@@ -41,14 +41,20 @@ namespace Assets.Modules.Calibration
         {
             Register();
             ArMarkers.Add(this);
-            ArucoListener.Instance.NewPoseDetected += OnArPose;
+            if (ArucoListener.Instance)
+            {
+                ArucoListener.Instance.NewPoseDetected += OnArPose;
+            }
         }
 
         void OnDisable()
         {
             Deregister();
             ArMarkers.Remove(this);
-            ArucoListener.Instance.NewPoseDetected -= OnArPose;
+            if (ArucoListener.Instance)
+            {
+                ArucoListener.Instance.NewPoseDetected -= OnArPose;
+            }
         }
 
         private void Register()
