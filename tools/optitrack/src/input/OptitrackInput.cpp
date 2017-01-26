@@ -56,17 +56,17 @@ void OptitrackInput::CreateClient()
 
 	unsigned char ver[4];
 	client_->NatNetVersion(ver);
-	Log::Info(Log::Format("NatNet Sample Client (NatNet ver. %d.%d.%d.%d)", ver[0], ver[1], ver[2], ver[3]));
+	Log::Info(Log::Format("NatNet Client (NatNet ver. %d.%d.%d.%d)", ver[0], ver[1], ver[2], ver[3]));
 
 	client_->SetMessageCallback(OptitrackInput::ErrorHandler);
 	client_->SetVerbosityLevel(Verbosity_Error);
 	client_->SetDataCallback(OptitrackInput::DataHandler, client_.get());
 
 	local_ip_ = std::unique_ptr<char[]>(new char[LocalIp.length() + 1]);
-	std::copy(LocalIp.begin(), LocalIp.end(), local_ip_.get());
+	strncpy(local_ip_.get(), LocalIp.c_str(), LocalIp.length() + 1);
 
 	optitrack_ip_ = std::unique_ptr<char[]>(new char[OptitrackIp.length() + 1]);
-	std::copy(OptitrackIp.begin(), OptitrackIp.end(), optitrack_ip_.get());
+	strncpy(optitrack_ip_.get(), OptitrackIp.c_str(), OptitrackIp.length() + 1);
 
 	// TODO: randomly crashes..?
 	int ret_code = client_->Initialize(local_ip_.get(), optitrack_ip_.get());
@@ -85,7 +85,7 @@ void OptitrackInput::CreateClient()
 		throw std::exception("Unable to connect to server: Host not present");
 	}
 
-	Log::Info("[SampleClient] Server application info:");
+	Log::Info("[Client] Server application info:");
 	Log::Info(Log::Format("Application: %s (ver. %d.%d.%d.%d)", srv_description.szHostApp, srv_description.HostAppVersion[0],
 		srv_description.HostAppVersion[1], srv_description.HostAppVersion[2], srv_description.HostAppVersion[3]));
 	Log::Info(Log::Format("NatNet Version: %d.%d.%d.%d", srv_description.NatNetVersion[0], srv_description.NatNetVersion[1],
