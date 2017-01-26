@@ -40,14 +40,14 @@ namespace Assets.Modules.Calibration_Deprecated
         {
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
             SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
-            InteractiveSurfaceClient.Instance.OnMessageReceived += HandleMarkerMessage;
+            //InteractiveSurfaceClient.Instance.OnMessageReceived += HandleMarkerMessage;
         }
 
         void OnDisable()
         {
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
             SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
-            InteractiveSurfaceClient.Instance.OnMessageReceived -= HandleMarkerMessage;
+            //InteractiveSurfaceClient.Instance.OnMessageReceived -= HandleMarkerMessage;
         }
 
         private List<Vector3> _perMarkerPosCalib = new List<Vector3>();
@@ -57,37 +57,37 @@ namespace Assets.Modules.Calibration_Deprecated
         private bool _isInitialised = false;
         void Update()
         {
-            if (!_isInitialised)
-            {
-                if (SurfaceManager.Instance.Has(SurfaceName))
-                {
-                    _isInitialised = true;
-                    var command = UseMaps ? "get-maps" : "get-marker";
-                    // fetch markers once display is initialised
-                    InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand
-                    {
-                        command = command,
-                        payload = null,
-                        target = SurfaceName
-                    });
-                }
-            }
+            //if (!_isInitialised)
+            //{
+            //    if (SurfaceManager.Instance.Has(SurfaceName))
+            //    {
+            //        _isInitialised = true;
+            //        var command = UseMaps ? "get-maps" : "get-marker";
+            //        // fetch markers once display is initialised
+            //        InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand
+            //        {
+            //            command = command,
+            //            payload = null,
+            //            target = SurfaceName
+            //        });
+            //    }
+            //}
 
             if (SurfaceManager.Instance.Has(SurfaceName) && Time.unscaledTime - _optitrackPoseTime < OptitrackCutoffTime)
             {
                 var surface = SurfaceManager.Instance.Get(SurfaceName);
 
-                if (UseMaps)
-                {
-                    DoMapCalibration(surface);
-                }
-                else
-                {
+                //if (UseMaps)
+                //{
+                //    DoMapCalibration(surface);
+                //}
+                //else
+                //{
                     if (UseMultiMarker)
                         DoMultiMarkerCalibration(surface);
                     else
                         DoSingleMarkerCalibration(surface);
-                }
+                //}
             }
         }
 
@@ -301,8 +301,10 @@ namespace Assets.Modules.Calibration_Deprecated
 
         private Vector3 GetMarkerWorldPosition(int id)
         {
-            var marker = _markers.FirstOrDefault((m) => m.id == id);
-            var surface = SurfaceManager.Instance.Get(SurfaceName);
+            var marker = ArMarkers.Get(id);
+
+            //var marker = _markers.FirstOrDefault((m) => m.id == id);
+            //var surface = SurfaceManager.Instance.Get(SurfaceName);
 
             if (marker == null)
             {
@@ -311,10 +313,12 @@ namespace Assets.Modules.Calibration_Deprecated
                 return Vector3.zero;
             }
 
-            var worldOffsetFromTopLeft = marker.GetUnityPosition(surface);
-            var localOffsetFromTopLeft = surface.Rotation * worldOffsetFromTopLeft;
+            return marker.transform.position;
 
-            return surface.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
+            //var worldOffsetFromTopLeft = marker.GetUnityPosition(surface);
+            //var localOffsetFromTopLeft = surface.Rotation * worldOffsetFromTopLeft;
+
+            //return surface.GetCornerPosition(Corner.TopLeft) + localOffsetFromTopLeft;
         }
 
         private void OnOptitrackPose(List<OptitrackPose> poses)
@@ -348,66 +352,66 @@ namespace Assets.Modules.Calibration_Deprecated
         }
 
 
-        private void HandleMarkerMessage(IncomingCommand cmd)
-        {
-            if (cmd.command == "map" && UseMaps)
-            {
-                var payload = JsonUtility.FromJson<DisplayMap>(cmd.payload);
-                var existingMap = _maps.FirstOrDefault((m) => m.id == payload.id);
+        //private void HandleMarkerMessage(IncomingCommand cmd)
+        //{
+        //    if (cmd.command == "map" && UseMaps)
+        //    {
+        //        var payload = JsonUtility.FromJson<DisplayMap>(cmd.payload);
+        //        var existingMap = _maps.FirstOrDefault((m) => m.id == payload.id);
 
-                if (existingMap == null)
-                {
-                    _maps.Add(payload);
-                    var registeredMaps = ArucoMapListener.Instance.GetMaps();
-                    registeredMaps.Add(new Vision.Processors.ArucoMapProcessor.Map
-                    {
-                        id = payload.id,
-                        marker_size_m = 0.025f,
-                        path = payload.GetConfigurationPath()
-                    });
-                    ArucoMapListener.Instance.UpdateMaps();
-                    Debug.Log("registered map " + payload.id);
-                }
-                else
-                {
-                    existingMap.posX = payload.posX;
-                    existingMap.posY = payload.posY;
-                    existingMap.sizeX = payload.sizeX;
-                    existingMap.sizeY = payload.sizeY;
-                }
+        //        if (existingMap == null)
+        //        {
+        //            _maps.Add(payload);
+        //            var registeredMaps = ArucoMapListener.Instance.GetMaps();
+        //            registeredMaps.Add(new Vision.Processors.ArucoMapProcessor.Map
+        //            {
+        //                id = payload.id,
+        //                marker_size_m = 0.025f,
+        //                path = payload.GetConfigurationPath()
+        //            });
+        //            ArucoMapListener.Instance.UpdateMaps();
+        //            Debug.Log("registered map " + payload.id);
+        //        }
+        //        else
+        //        {
+        //            existingMap.posX = payload.posX;
+        //            existingMap.posY = payload.posY;
+        //            existingMap.sizeX = payload.sizeX;
+        //            existingMap.sizeY = payload.sizeY;
+        //        }
 
-                // TODO.
-                //var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
-                //ArucoMapListener.Instance.MarkerSizeInMeter = unitySize;
-            }
+        //        // TODO.
+        //        //var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
+        //        //ArucoMapListener.Instance.MarkerSizeInMeter = unitySize;
+        //    }
 
-            if (cmd.command == "marker-data")
-            {
-                var payload = JsonUtility.FromJson<DisplayMarker>(cmd.payload);
-                var existingMarker = _markers.FirstOrDefault((m) => m.id == payload.id);
+        //    if (cmd.command == "marker-data")
+        //    {
+        //        var payload = JsonUtility.FromJson<DisplayMarker>(cmd.payload);
+        //        var existingMarker = _markers.FirstOrDefault((m) => m.id == payload.id);
 
-                if (existingMarker == null)
-                {
-                    _markers.Add(payload);
-                }
-                else
-                {
-                    existingMarker.posX = payload.posX;
-                    existingMarker.posY = payload.posY;
-                    existingMarker.size = payload.size;
-                }
+        //        if (existingMarker == null)
+        //        {
+        //            _markers.Add(payload);
+        //        }
+        //        else
+        //        {
+        //            existingMarker.posX = payload.posX;
+        //            existingMarker.posY = payload.posY;
+        //            existingMarker.size = payload.size;
+        //        }
 
-                // TODO1
-                //var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
-                //ArucoListener.Instance.MarkerSizeInMeter = unitySize;
-            }
+        //        // TODO1
+        //        //var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
+        //        //ArucoListener.Instance.MarkerSizeInMeter = unitySize;
+        //    }
 
-            if (cmd.command == "remove-marker")
-            {
-                var payload = int.Parse(cmd.payload);
-                _markers.RemoveAll((m) => m.id == payload);
-            }
-        }
+        //    if (cmd.command == "remove-marker")
+        //    {
+        //        var payload = int.Parse(cmd.payload);
+        //        _markers.RemoveAll((m) => m.id == payload);
+        //    }
+        //}
 
 
         #region Debugging
