@@ -55,9 +55,14 @@ export const SmartactMapping: SqlColumnMapping[] = [
                 name: "Baseline 3"
             },
             {
-                // TODO
+                // TODO ?
                 dbValue: "6",
                 name: "Unknown"
+            },
+            {
+                // TODO ?
+                dbValue: "0",
+                name: "Also unknown"
             }
         ]
     },
