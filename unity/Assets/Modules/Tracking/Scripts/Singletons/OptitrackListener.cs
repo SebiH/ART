@@ -121,7 +121,7 @@ namespace Assets.Modules.Tracking
                     {
                         Id = marker.Id,
                         // right to left handed conversion
-                        Position = new Vector3(marker.X, marker.Y, -marker.Z)
+                        Position = new Vector3(marker.X, marker.Y, -marker.Z) * Globals.OptitrackScaling
                     });
                 }
 
