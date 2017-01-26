@@ -30,7 +30,8 @@ export class ChartData {
             .enter().append('circle')
                 .attr('cx', d => d[0])
                 .attr('cy', d => d[1])
-                .attr('r', 5);
+                .attr('r', 5)
+                .attr('fill', 'black');
     }
 
     private animateValues(data: number[][]): void {
@@ -46,29 +47,43 @@ export class ChartData {
 
     public highlight(selectedIds: number[], filteredIds: number[], useFilter: boolean): void {
         this.chartRoot.selectAll('circle')
-            .attr('class', (d, i) => {
-                let cssClass = 'data';
-                if (selectedIds.indexOf(i) > -1) {
-                    cssClass += ' selected';
-                }
-                if (useFilter && filteredIds.indexOf(i) < 0) {
-                    cssClass += ' filtered';
-                }
-
-                return cssClass;
-            });
-            // .transition()
-            // .duration(100)
-            // .attr('r', (d, i) => {
-            //     let radius = 5;
+            // .attr('class', (d, i) => {
+            //     let cssClass = 'data';
             //     if (selectedIds.indexOf(i) > -1) {
-            //         radius = 7;
+            //         cssClass += ' selected';
             //     }
             //     if (useFilter && filteredIds.indexOf(i) < 0) {
-            //         radius = 3;
+            //         cssClass += ' filtered';
             //     }
 
-            //     return radius;
+            //     return cssClass;
             // });
+            // .transition()
+            // .duration(100)
+            // .ease(d3.easeLinear)
+            .each(function(d, i) {
+                let isSelected = (selectedIds.indexOf(i) > -1);
+                let isFiltered = (useFilter && filteredIds.indexOf(i) < 0);
+
+                let radius = 5;
+                let fill = 'black';
+                if (isFiltered && isSelected) {
+                    fill = 'red';
+                    radius = 5;
+                } else if (isSelected) {
+                    radius = 7;
+                    fill = 'green';
+                } else if (isFiltered) {
+                    radius = 3;
+                    fill = 'gray';
+                }
+
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .ease(d3.easeLinear)
+                    .attr('r', radius)
+                    .attr('fill', fill);
+            });
     }
 }
