@@ -21,7 +21,7 @@ namespace Assets.Modules.Calibration
             }
         }
 
-        private float _size = 0.25f;
+        private float _size = 0.04f;
         public float Size
         {
             get { return _size; }
@@ -47,7 +47,7 @@ namespace Assets.Modules.Calibration
             }
             else
             {
-                Debug.Log("No ArucoListener found!");
+                Debug.LogWarning("No ArucoListener found!");
             }
         }
 
@@ -86,7 +86,7 @@ namespace Assets.Modules.Calibration
             Matrix4x4 cam = marker.inverse;
 
             HasDetectedCamera = true;
-            DetectedCameraPosition = transform.position + cam.GetPosition();
+            DetectedCameraPosition = transform.position + transform.rotation * cam.GetPosition();
             DetectedCameraRotation = transform.rotation * cam.GetRotation();
             CameraDetectionTime = Time.unscaledTime;
         }
