@@ -111,6 +111,7 @@ void OptitrackInput::InitClient()
 	// Retrieve Data Descriptions from server
 	Log::Info("Requesting Data Descriptions...");
 	sDataDescriptions* data_refs = NULL;
+	client_->GetDataDescriptions(&data_refs);
 
 	if (!data_refs)
 	{
