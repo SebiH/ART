@@ -3,12 +3,11 @@ using Assets.Modules.Vision.Outputs;
 using Assets.Modules.Vision.Processors;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
-    public class ArucoListener : MonoBehaviour
+    public class ArucoListener : ArMarkerTracker
     {
         #region JSON message content
 
@@ -57,13 +56,8 @@ namespace Assets.Modules.Tracking
 
         #endregion
 
-        public static ArucoListener Instance;
-
         // Cannot be changed once script is running
         public Pipeline ArucoPipeline;
-
-        public float MarkerSizeInMeter = 0.15f;
-        private float _prevMarkerSize;
 
         public bool UseTracker = false;
         private bool _prevUseTracker;
@@ -72,20 +66,14 @@ namespace Assets.Modules.Tracking
         public float TrackerErrorRatio = 4.0f;
         private float _prevTrackerErrorRatio;
 
-        public readonly Dictionary<int, MarkerPose> DetectedPoses = new Dictionary<int, MarkerPose>();
-
-        public delegate void NewPoseHandler(MarkerPose pose);
-        public event NewPoseHandler NewPoseDetected;
-
         private ArucoProcessor _arProcessor;
         private JsonOutput _arOutput;
 
         private Queue _currentOutput;
 
-        void OnEnable()
+        protected override void OnEnable()
         {
-            Instance = this;
-
+            base.OnEnable();
             _currentOutput = Queue.Synchronized(new Queue());
 
             _arProcessor = new ArucoProcessor(MarkerSizeInMeter)
@@ -99,7 +87,6 @@ namespace Assets.Modules.Tracking
             _arOutput = new JsonOutput(OnPoseChanged);
             ArucoPipeline.AddOutput(_arOutput);
 
-            _prevMarkerSize = MarkerSizeInMeter;
             _prevUseTracker = UseTracker;
             _prevTrackerErrorRatio = TrackerErrorRatio;
         }
@@ -125,35 +112,35 @@ namespace Assets.Modules.Tracking
                 foreach (var marker in output.markers_left)
                 {
                     var markerPose = ProcessOutput(marker);
-
-                    if (DetectedPoses.ContainsKey(marker.id))
-                        DetectedPoses[marker.id] = markerPose;
-                    else
-                        DetectedPoses.Add(marker.id, markerPose);
-                    
-                    if (NewPoseDetected != null)
-                        NewPoseDetected(markerPose);
+                    OnNewPoseDetected(markerPose);
                 }
             }
 
             // TODO: refactor
             bool hasPropertyChanged =
-                (_prevMarkerSize != MarkerSizeInMeter) ||
                 (_prevUseTracker != UseTracker) ||
                 (_prevTrackerErrorRatio != TrackerErrorRatio);
 
             if (hasPropertyChanged)
             {
-                _arProcessor.MarkerSizeInMeter = MarkerSizeInMeter;
                 _arProcessor.UseTracker = UseTracker;
                 _arProcessor.TrackerErrorRatio = TrackerErrorRatio;
-
-                _arProcessor.UpdateProperties();
-
-                _prevMarkerSize = MarkerSizeInMeter;
-                _prevUseTracker = UseTracker;
-                _prevTrackerErrorRatio = TrackerErrorRatio;
+                UpdateProcessorProperties();
             }
+        }
+
+        protected override void UpdateMarkerSize(float size)
+        {
+            _arProcessor.MarkerSizeInMeter = MarkerSizeInMeter;
+            UpdateProcessorProperties();
+        }
+
+        private void UpdateProcessorProperties()
+        {
+            _arProcessor.UpdateProperties();
+
+            _prevUseTracker = UseTracker;
+            _prevTrackerErrorRatio = TrackerErrorRatio;
         }
 
 

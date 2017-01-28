@@ -68,8 +68,6 @@ namespace Assets.Modules.Calibration
             {
                 marker.Size = size;
             }
-
-            // TODO: register new size in imageprocessing
         }
 
         public void ClearMarkers()

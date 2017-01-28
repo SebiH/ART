@@ -39,36 +39,24 @@ namespace Assets.Modules.Calibration
 
         void OnEnable()
         {
-            Register();
             ArMarkers.Add(this);
-            if (ArucoListener.Instance)
+            if (ArMarkerTracker.Instance)
             {
-                ArucoListener.Instance.NewPoseDetected += OnArPose;
+                ArMarkerTracker.Instance.NewPoseDetected += OnArPose;
             }
             else
             {
-                Debug.LogWarning("No ArucoListener found!");
+                Debug.LogWarning("No ArMarkerTracker found!");
             }
         }
 
         void OnDisable()
         {
-            Deregister();
             ArMarkers.Remove(this);
             if (ArucoListener.Instance)
             {
                 ArucoListener.Instance.NewPoseDetected -= OnArPose;
             }
-        }
-
-        private void Register()
-        {
-            // TODO?
-        }
-
-        private void Deregister()
-        {
-            // TODO?
         }
 
 
