@@ -12,12 +12,12 @@ namespace Assets.Modules.Tracking
 
         void OnEnable()
         {
-            ArucoListener.Instance.NewPoseDetected += OnNewPose;
+            ArucoMarkerTracker.Instance.NewPoseDetected += OnNewPose;
         }
 
         void OnDisable()
         {
-            ArucoListener.Instance.NewPoseDetected -= OnNewPose;
+            ArucoMarkerTracker.Instance.NewPoseDetected -= OnNewPose;
         }
 
         void OnNewPose(MarkerPose pose)

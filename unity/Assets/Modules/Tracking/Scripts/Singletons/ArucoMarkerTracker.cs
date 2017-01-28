@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
-    public class ArucoListener : ArMarkerTracker
+    public class ArucoMarkerTracker : ArMarkerTracker
     {
         #region JSON message content
 
