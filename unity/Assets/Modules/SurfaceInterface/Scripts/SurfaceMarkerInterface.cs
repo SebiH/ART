@@ -1,6 +1,7 @@
 using Assets.Modules.Calibration;
 using Assets.Modules.Core;
 using Assets.Modules.Surfaces;
+using Assets.Modules.Tracking;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -79,6 +80,7 @@ namespace Assets.Modules.SurfaceInterface
 
             var markerSize = _surface.PixelToUnityCoord(markerInfo.size);
             _markerSpawner.SetMarkerSize(markerSize);
+            ArMarkerTracker.Instance.MarkerSizeInMeter = markerInfo.size;
 
             var posX = _surface.PixelToUnityCoord(markerInfo.posX);
             var posY = _surface.PixelToUnityCoord(_surface.DisplayResolution.height - markerInfo.posY);
