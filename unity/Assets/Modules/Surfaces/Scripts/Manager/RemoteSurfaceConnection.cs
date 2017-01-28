@@ -44,10 +44,11 @@ namespace Assets.Modules.Surfaces
             {
                 _socket.Connect(Globals.SurfaceServerIp, Globals.SurfaceServerPort);
                 _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
+                Debug.Log("Connection to web server established");
             }
             catch (SocketException ex)
             {
-                Debug.Log(ex.Message);
+                Debug.LogError(ex.Message);
             }
         }
 
