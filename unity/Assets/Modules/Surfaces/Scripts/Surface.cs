@@ -115,6 +115,10 @@ namespace Assets.Modules.Surfaces
             Gizmos.DrawLine(br, tr);
             Gizmos.DrawLine(tr, tl);
 
+            // draw topleft corner for orientation
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(tl, 0.02f);
+
             // draw coordinates as calculated via pixelToCm Ratio and displaySize
             Gizmos.color = Color.red;
             var uh = PixelToUnityCoord(DisplayResolution.height);

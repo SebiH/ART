@@ -63,12 +63,12 @@ namespace Assets.Modules.Calibration
 
         private void Register()
         {
-            // TODO
+            // TODO?
         }
 
         private void Deregister()
         {
-            // TODO
+            // TODO?
         }
 
 
@@ -96,19 +96,22 @@ namespace Assets.Modules.Calibration
         {
             // Draw center
             Gizmos.color = Color.white;
-            Gizmos.DrawWireSphere(transform.position, 0.01f);
+            Gizmos.DrawWireSphere(transform.position, 0.001f);
 
             // Draw marker contour
-            var tl = transform.position - (transform.rotation * new Vector3(-Size / 2, 0, -Size / 2));
-            var tr = transform.position - (transform.rotation * new Vector3(Size / 2, 0, -Size / 2));
-            var bl = transform.position - (transform.rotation * new Vector3(-Size / 2, 0, Size / 2));
-            var br = transform.position - (transform.rotation * new Vector3(Size / 2, 0, Size / 2));
+            var tl = transform.position + (transform.rotation * new Vector3(-Size / 2, 0, Size / 2));
+            var tr = transform.position + (transform.rotation * new Vector3(Size / 2, 0, Size / 2));
+            var bl = transform.position + (transform.rotation * new Vector3(-Size / 2, 0, -Size / 2));
+            var br = transform.position + (transform.rotation * new Vector3(Size / 2, 0, -Size / 2));
 
             Gizmos.color = Color.red;
             Gizmos.DrawLine(tl, bl);
             Gizmos.DrawLine(bl, br);
             Gizmos.DrawLine(br, tr);
             Gizmos.DrawLine(tr, tl);
+
+            // Draw topleft corner for orientation
+            Gizmos.DrawSphere(tl, 0.002f);
 
             if (HasDetectedCamera)
             {
