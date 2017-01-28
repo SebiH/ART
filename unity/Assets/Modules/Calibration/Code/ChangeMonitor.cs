@@ -4,27 +4,23 @@ namespace Assets.Modules.Calibration
 {
     public class ChangeMonitor
     {
-        // 0: unstable; 1: stable
+        /// <summary>
+        /// 0: unstable - 1: stable
+        /// </summary>
         public float StabilityLevel { get; private set; }
 
 
-        public ChangeMonitor(Vector3 initialValue)
+        public ChangeMonitor()
+        {
+            StabilityLevel = 1;
+        }
+
+        public void Update(Vector3 nextPosition, Quaternion nextRotation)
         {
 
         }
 
-        public ChangeMonitor(Quaternion intialValue)
-        {
-
-        }
-
-
-        public void Update(Vector3 nextValue)
-        {
-
-        }
-
-        public void Update(Quaternion nextValue)
+        public void Reset()
         {
 
         }

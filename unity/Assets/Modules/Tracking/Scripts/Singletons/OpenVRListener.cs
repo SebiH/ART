@@ -9,7 +9,7 @@ namespace Assets.Modules.Tracking.Scripts
 
         public Vector3 CurrentPosition { get; private set; }
         public Quaternion CurrentRotation { get; private set; }
-        public float UpdateTime { get; private set; }
+        public float PoseUpdateTime { get; private set; }
 
         void OnEnable()
         {
@@ -39,7 +39,7 @@ namespace Assets.Modules.Tracking.Scripts
 
             CurrentRotation = pose.rot;
             CurrentPosition = pose.pos;
-            UpdateTime = Time.unscaledTime;
+            PoseUpdateTime = Time.unscaledTime;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Assets.Modules.Tracking
         private int mPreviousSubPacketIndex = 0;
         private const int kMaxSubPacketSize = 1400;
 
-        private Dictionary<string, OptitrackPose> _detectedPoses = new Dictionary<string, OptitrackPose>();
+        private Dictionary<string, OptitrackPose> _detectedPoses = new Dictionary<string, OptitrackPose>(3);
 
         void OnEnable()
         {
