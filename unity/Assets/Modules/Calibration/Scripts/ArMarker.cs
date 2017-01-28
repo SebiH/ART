@@ -53,9 +53,9 @@ namespace Assets.Modules.Calibration
         void OnDisable()
         {
             ArMarkers.Remove(this);
-            if (ArucoListener.Instance)
+            if (ArMarkerTracker.Instance)
             {
-                ArucoListener.Instance.NewPoseDetected -= OnArPose;
+                ArMarkerTracker.Instance.NewPoseDetected -= OnArPose;
             }
         }
 

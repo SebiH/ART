@@ -23,7 +23,7 @@ namespace Assets.Modules.Calibration_Deprecated
                 TrackingScript.TrackedId = CalibrationScript.__nearestMarkerId;
             }
 
-            transform.localScale = Vector3.one * ArucoListener.Instance.MarkerSizeInMeter;
+            transform.localScale = Vector3.one * ArMarkerTracker.Instance.MarkerSizeInMeter;
         }
     }
 }

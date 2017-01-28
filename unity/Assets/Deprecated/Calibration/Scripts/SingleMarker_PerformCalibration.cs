@@ -61,7 +61,7 @@ namespace Assets.Modules.Calibration_Deprecated
 #if (USE_ARTOOLKIT)
             ArToolkitListener.Instance.NewPoseDetected += OnArtkPose;
 #else
-            ArucoListener.Instance.NewPoseDetected += OnArucoPose;
+            ArMarkerTracker.Instance.NewPoseDetected += OnArucoPose;
 #endif
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
             SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
@@ -72,7 +72,7 @@ namespace Assets.Modules.Calibration_Deprecated
 #if (USE_ARTOOLKIT)
             ArToolkitListener.Instance.NewPoseDetected -= OnArtkPose;
 #else
-            ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
+            ArMarkerTracker.Instance.NewPoseDetected -= OnArucoPose;
 #endif
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
             SteamVR_Events.NewPoses.Remove(OnSteamVrPose);

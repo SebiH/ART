@@ -115,7 +115,7 @@ namespace Assets.Modules.Calibration_Deprecated
             if (hasIntersection)
             {
                 __intersection = intersection;
-                var poses = UseMaps ? ArucoMapListener.Instance.DetectedPoses.Values : ArucoListener.Instance.DetectedPoses.Values;
+                var poses = UseMaps ? ArucoMapListener.Instance.DetectedPoses.Values : ArMarkerTracker.Instance.DetectedPoses.Values;
 
                 foreach (var marker in poses)
                 {
@@ -211,7 +211,7 @@ namespace Assets.Modules.Calibration_Deprecated
             if (hasIntersection)
             {
                 __intersection = intersection;
-                var poses = UseMaps ? ArucoMapListener.Instance.DetectedPoses.Values : ArucoListener.Instance.DetectedPoses.Values;
+                var poses = UseMaps ? ArucoMapListener.Instance.DetectedPoses.Values : ArMarkerTracker.Instance.DetectedPoses.Values;
 
                 foreach (var marker in poses)
                 {
@@ -453,8 +453,8 @@ namespace Assets.Modules.Calibration_Deprecated
                 else
                 {
                     Gizmos.color = Color.blue;
-                    if (!UseMaps && ArucoListener.Instance.DetectedPoses.ContainsKey(marker.id)
-                        && Time.unscaledTime - ArucoListener.Instance.DetectedPoses[marker.id].DetectionTime < ArCutoffTime)
+                    if (!UseMaps && ArMarkerTracker.Instance.DetectedPoses.ContainsKey(marker.id)
+                        && Time.unscaledTime - ArMarkerTracker.Instance.DetectedPoses[marker.id].DetectionTime < ArCutoffTime)
                     {
                         Gizmos.color = Color.yellow;
                     }
@@ -475,11 +475,11 @@ namespace Assets.Modules.Calibration_Deprecated
                 Gizmos.DrawLine(bottomright, topright);
                 Gizmos.DrawLine(topright, topleft);
 
-                bool isValidMarker = ArucoListener.Instance.DetectedPoses.ContainsKey(marker.id) && Time.unscaledTime - ArucoListener.Instance.DetectedPoses[marker.id].DetectionTime < ArCutoffTime;
+                bool isValidMarker = ArMarkerTracker.Instance.DetectedPoses.ContainsKey(marker.id) && Time.unscaledTime - ArMarkerTracker.Instance.DetectedPoses[marker.id].DetectionTime < ArCutoffTime;
 
                 if (isValidMarker)
                 {
-                    var arMarker = ArucoListener.Instance.DetectedPoses[marker.id];
+                    var arMarker = ArMarkerTracker.Instance.DetectedPoses[marker.id];
 
                     var markerMatrix = Matrix4x4.TRS(arMarker.Position, arMarker.Rotation, Vector3.one);
                     var cameraMatrix = markerMatrix.inverse;

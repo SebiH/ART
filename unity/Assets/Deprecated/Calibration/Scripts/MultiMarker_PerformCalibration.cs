@@ -64,7 +64,7 @@ namespace Assets.Modules.Calibration_Deprecated
         {
             IsReadyForCalibration = false;
 
-            ArucoListener.Instance.NewPoseDetected += OnArucoPose;
+            ArMarkerTracker.Instance.NewPoseDetected += OnArucoPose;
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
             SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
 
@@ -73,7 +73,7 @@ namespace Assets.Modules.Calibration_Deprecated
 
         void OnDisable()
         {
-            ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
+            ArMarkerTracker.Instance.NewPoseDetected -= OnArucoPose;
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
             SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
         }

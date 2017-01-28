@@ -20,15 +20,15 @@ namespace Assets.Modules.Calibration_Deprecated
 
         void OnEnable()
         {
-            ArucoListener.Instance.NewPoseDetected += OnArucoPose;
-            var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
+            ArMarkerTracker.Instance.NewPoseDetected += OnArucoPose;
+            var markerSize = ArMarkerTracker.Instance.MarkerSizeInMeter;
             Visuals.localScale = new Vector3(markerSize, 0.001f, markerSize);
             _indicationColor = UnityEngine.Random.ColorHSV();
         }
 
         void OnDisable()
         {
-            ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
+            ArMarkerTracker.Instance.NewPoseDetected -= OnArucoPose;
         }
 
         void OnArucoPose(MarkerPose pose)

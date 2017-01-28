@@ -53,7 +53,7 @@ namespace Assets.Modules.Calibration_Deprecated
 
             _markerPreview = Instantiate(MarkerPreviewPrefab);
 
-            var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
+            var markerSize = ArMarkerTracker.Instance.MarkerSizeInMeter;
             _markerPreview.transform.localScale = new Vector3(markerSize, 0.001f, markerSize);
 
             OptitrackListener.Instance.PosesReceived += OnOptitrackPoses;

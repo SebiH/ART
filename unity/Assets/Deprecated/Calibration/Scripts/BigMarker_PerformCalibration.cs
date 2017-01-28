@@ -66,14 +66,14 @@ namespace Assets.Modules.Calibration_Deprecated
             CalibrationOffsets = new MarkerOffset[MarkersPerRow * MarkersPerColumn];
             for (int i = 0; i < CalibrationOffsets.Length; i++) CalibrationOffsets[i] = new MarkerOffset { ArMarkerId = i };
 
-            ArucoListener.Instance.NewPoseDetected += OnArucoPose;
+            ArMarkerTracker.Instance.NewPoseDetected += OnArucoPose;
             OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
             SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
         }
 
         void OnDisable()
         {
-            ArucoListener.Instance.NewPoseDetected -= OnArucoPose;
+            ArMarkerTracker.Instance.NewPoseDetected -= OnArucoPose;
             OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
             SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
         }
@@ -246,7 +246,7 @@ namespace Assets.Modules.Calibration_Deprecated
 
             int row = markerIndex / MarkersPerRow;
             int column = markerIndex % MarkersPerRow;
-            var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
+            var markerSize = ArMarkerTracker.Instance.MarkerSizeInMeter;
 
             var markerOffsetX = MarginLeft + column * (MarginMarker + markerSize) + markerSize / 2f;
             var markerOffsetZ = -MarginTop - row * (MarginMarker + markerSize) - markerSize / 2f;
@@ -303,7 +303,7 @@ namespace Assets.Modules.Calibration_Deprecated
                     // draw virtual position of calibrated markers, based on optitrack + measurements
                     Gizmos.color = Color.cyan;
                     var markerPosWorld = GetMarkerWorldPosition(i, tableRotation);
-                    var markerSize = ArucoListener.Instance.MarkerSizeInMeter;
+                    var markerSize = ArMarkerTracker.Instance.MarkerSizeInMeter;
                     Gizmos.DrawWireSphere(markerPosWorld, 0.01f);
                     Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(markerSize / 2, 0, markerSize / 2), markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, markerSize / 2));
                     Gizmos.DrawLine(markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, markerSize / 2), markerPosWorld + tableRotation * new Vector3(-markerSize / 2, 0, -markerSize / 2));
