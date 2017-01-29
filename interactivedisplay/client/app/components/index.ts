@@ -1,3 +1,4 @@
+export * from './admin-change-monitor/admin-change-monitor.component';
 export * from './app/app';
 export * from './graph-container/graph-container';
 export * from './graph-data-selection/graph-data-selection';

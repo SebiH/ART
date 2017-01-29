@@ -11,6 +11,7 @@ import { routing } from './routes';
 @NgModule({
   imports:      [ BrowserModule, HttpModule, routing ],
   declarations: [
+    Components.AdminChangeMonitorComponent,
     Components.AppComponent,
     Components.MenuComponent,
     Components.MarkerComponent,
