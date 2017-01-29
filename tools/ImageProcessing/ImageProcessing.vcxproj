@@ -114,6 +114,7 @@
     <ClCompile Include="src\outputs\UnityTextureOutput.cpp" />
     <ClCompile Include="src\pipelines\PipelineManager.cpp" />
     <ClCompile Include="src\processors\ArToolkitProcessor.cpp" />
+    <ClCompile Include="src\processors\ArToolkitStereoProcessor.cpp" />
     <ClCompile Include="src\processors\ArucoMapProcessor.cpp" />
     <ClCompile Include="src\processors\ArucoProcessor.cpp" />
     <ClCompile Include="src\processors\Stereo3DProcessor.cpp" />
@@ -143,6 +144,7 @@
     <ClInclude Include="src\pipelines\PipelineManager.h" />
     <ClInclude Include="src\pipelines\ThreadedPipeline.h" />
     <ClInclude Include="src\processors\ArToolkitProcessor.h" />
+    <ClInclude Include="src\processors\ArToolkitStereoProcessor.h" />
     <ClInclude Include="src\processors\ArucoMapProcessor.h" />
     <ClInclude Include="src\processors\ArucoProcessor.h" />
     <ClInclude Include="src\processors\Processor.h" />
