@@ -90,6 +90,9 @@ namespace GUI
         #region processor_factory
 
         [DllImport("ImageProcessing")]
+        public static extern int AddArToolkitStereoProcessor(int pipeline_id, string json_config);
+
+        [DllImport("ImageProcessing")]
         public static extern int AddArToolkitProcessor(int pipeline_id, string json_config);
 
         [DllImport("ImageProcessing")]
