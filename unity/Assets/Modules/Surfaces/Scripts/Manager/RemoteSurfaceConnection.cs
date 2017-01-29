@@ -10,25 +10,7 @@ namespace Assets.Modules.Surfaces
 {
     public class RemoteSurfaceConnection : MonoBehaviour
     {
-        #region Serializing
-
-        [Serializable]
-        private class InPacket
-        {
-            public string origin = "";
-            public string command = "";
-            public string payload = "";
-        }
-
-        [Serializable]
-        private class OutPacket
-        {
-            public string target = "";
-            public string command = "";
-            public string payload = "";
-        }
-
-        #endregion
+        public static RemoteSurfaceConnection Instance;
 
         // see: https://forum.unity3d.com/threads/c-tcp-ip-socket-how-to-receive-from-server.227259/
         private Socket _socket;
@@ -37,6 +19,8 @@ namespace Assets.Modules.Surfaces
 
         void OnEnable()
         {
+            Instance = this;
+
             _queuedCommands = Queue.Synchronized(new Queue());
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -165,7 +149,7 @@ namespace Assets.Modules.Surfaces
             _socket.SendAsync(socketAsyncData);
         }
 
-        public void SendMessage(string target, string command, string payload)
+        public void SendCommand(string target, string command, string payload)
         {
             var packet = new OutPacket
             {
@@ -178,5 +162,26 @@ namespace Assets.Modules.Surfaces
             var rawData = encoding.GetBytes(JsonUtility.ToJson(packet));
             SendData(rawData);
         }
+
+        #region Serializing
+
+        [Serializable]
+        private class InPacket
+        {
+            public string origin = "";
+            public string command = "";
+            public string payload = "";
+        }
+
+        [Serializable]
+        private class OutPacket
+        {
+            public string target = "";
+            public string command = "";
+            public string payload = "";
+        }
+
+        #endregion
+
     }
 }

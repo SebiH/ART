@@ -7,13 +7,14 @@ namespace Assets.Modules.Calibration
 {
     public class DynamicCalibration : MonoBehaviour
     {
+        public ChangeMonitor OptitrackMonitor;
+        public ChangeMonitor OvrMonitor;
+
         private const float OptitrackCutoffTime = 0.2f;
         private const float OptitrackChangeTolerance = 0.8f;
-        private readonly ChangeMonitor OptitrackMonitor = new ChangeMonitor("Optitrack", 20f);
 
         private const float OvrCutoffTime = 0.2f;
         private const float OvrChangeTolerance = 0.8f;
-        private readonly ChangeMonitor OvrMonitor = new ChangeMonitor("Ovr", 20f);
 
         void Update()
         {
@@ -56,12 +57,12 @@ namespace Assets.Modules.Calibration
             var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
             if (optitrackPose != null)
             {
-                OptitrackMonitor.Update(optitrackPose.Position, optitrackPose.Rotation);
+                OptitrackMonitor.UpdateStability(optitrackPose.Position, optitrackPose.Rotation);
             }
 
             var ovrPosition = OpenVRListener.Instance.CurrentPosition;
             var ovrRotation = OpenVRListener.Instance.CurrentRotation;
-            OvrMonitor.Update(ovrPosition, ovrRotation);
+            OvrMonitor.UpdateStability(ovrPosition, ovrRotation);
         }
 
 
