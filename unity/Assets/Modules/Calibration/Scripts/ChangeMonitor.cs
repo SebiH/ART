@@ -39,9 +39,9 @@ namespace Assets.Modules.Calibration
             var maxPosDiff = 0f;
             foreach (var pos in _positions)
             {
-                maxPosDiff = Mathf.Max((pos - avgPosition).sqrMagnitude, maxPosDiff);
+                maxPosDiff = Mathf.Max(Mathf.Abs((pos - avgPosition).magnitude), maxPosDiff);
             }
-            PositionStability = Mathf.Clamp(1 - maxPosDiff * Sensitivity * 10, 0f, 1f);
+            PositionStability = Mathf.Clamp(1 - maxPosDiff * Sensitivity, 0f, 1f);
 
 
             _rotations.Add(nextRotation);
