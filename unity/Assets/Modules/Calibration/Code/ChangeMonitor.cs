@@ -44,7 +44,7 @@ namespace Assets.Modules.Calibration
             {
                 maxPosDiff = Mathf.Max((pos - avgPosition).sqrMagnitude, maxPosDiff);
             }
-            var positionStability = Mathf.Clamp(1 - maxPosDiff * _sensitivity, 0f, 1f);
+            var positionStability = Mathf.Clamp(1 - maxPosDiff * _sensitivity * 10, 0f, 1f);
 
 
             _rotations.Add(nextRotation);
@@ -70,7 +70,7 @@ namespace Assets.Modules.Calibration
                 InteractiveSurfaceClient.Instance.SendCommand(new OutgoingCommand
                 {
                     command = "debug-cm-val-" + _name,
-                    payload = Stability.ToString(),
+                    payload = string.Format("{{\"stability\": {0}, \"position\": {1}, \"rotation\": {2} }}", Stability, positionStability, rotationStability),
                     target = "Surface"
                 });
             }

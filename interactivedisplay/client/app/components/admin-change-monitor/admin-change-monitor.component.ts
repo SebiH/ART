@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { SocketIO } from '../../services/index';
 import { ScatterPlotComponent } from '../scatter-plot/scatter-plot';
 
@@ -13,18 +13,28 @@ const MAX_SAMPLES = 100;
 })
 export class AdminChangeMonitorComponent implements OnInit, OnDestroy {
 
-    @ViewChild('plot')
-    private plot: ElementRef;
+    @ViewChild('plot') private plot: ElementRef;
 
-    private data: number[] = [];
-    private path: any;
+    @Input() private height: number = 500;
+    @Input() private width: number = 500;
+    @Input() private name: string = 'dummy';
+
+    private data: any[] = [];
+
+    private stabilityPath: any;
+    private stabilityLine: any;
+
+    private positionPath: any;
+    private positionLine: any;
+
+    private rotationPath: any;
+    private rotationLine: any;
 
     constructor (private socketio: SocketIO) { }
 
     ngOnInit() {
-        this.socketio.on('debug-cm-val-dummy', (data) => this.onSocketData(data));
+        this.socketio.on('debug-cm-val-' + this.name, (data) => this.onSocketData(data));
         this.initD3();
-        window['data'] = this.data;
     }
 
     ngOnDestroy() {
@@ -33,78 +43,87 @@ export class AdminChangeMonitorComponent implements OnInit, OnDestroy {
     }
 
     private onSocketData(dataPoint): void {
-        this.data.push(dataPoint);
+        this.data.push(JSON.parse(dataPoint));
         this.updateD3();
         while (this.data.length > MAX_SAMPLES) {
             this.data.shift();
         }
     }
 
-    private line: any;
-    private x: any;
-    private y: any;
 
     private initD3(): void {
         let svg = d3.select(this.plot.nativeElement).append('svg');
         let margin = {top: 20, right: 20, bottom: 20, left: 40};
-        let width = window.innerWidth - margin.left - margin.right;
-        let height = window.innerHeight - margin.top - margin.bottom;
-        svg.attr('height', window.innerHeight);
-        svg.attr('width', window.innerWidth);
+        let actualWidth = this.width - margin.left - margin.right;
+        let actualHeight = this.height - margin.top - margin.bottom;
+        svg.attr('height', this.height);
+        svg.attr('width', this.width);
 
         let g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        this.x = d3.scaleLinear()
+        let x = d3.scaleLinear()
             .domain([0, MAX_SAMPLES - 1])
-            .range([0, width]);
-        this.y = d3.scaleLinear()
+            .range([0, actualWidth]);
+        let y = d3.scaleLinear()
             .domain([0, 1])
-            .range([height, 0]);
+            .range([actualHeight, 0]);
 
-        this.line = d3.line()
-            .x((d, i) => this.x(i))
-            .y((d, i) => this.y(d));
+        this.stabilityLine = d3.line()
+            .x((d, i) => x(i))
+            .y((d:any, i) => y(d.stability));
+        this.positionLine = d3.line()
+            .x((d, i) => x(i))
+            .y((d:any, i) => y(d.position));
+        this.rotationLine = d3.line()
+            .x((d, i) => x(i))
+            .y((d:any, i) => y(d.rotation));
 
         g.append("defs").append("clipPath")
             .attr("id", "clip")
             .append("rect")
-            .attr("width", width)
-            .attr("height", height);
+            .attr("width", actualWidth)
+            .attr("height", actualHeight);
         g.append("g")
             .attr("class", "axis axis--x")
-            .attr("transform", "translate(0," + this.y(0) + ")")
-            .call(d3.axisBottom(this.x));
+            .attr("transform", "translate(0," + y(0) + ")")
+            .call(d3.axisBottom(x));
         g.append("g")
             .attr("class", "axis axis--y")
-            .call(d3.axisLeft(this.y));
-        this.path = //g.append("g")
-            //.attr("clip-path", "url(#clip)")
-            g.append("path")
+            .call(d3.axisLeft(y));
+        this.stabilityPath = g.append("path");
+        this.positionPath = g.append("path");
+        this.rotationPath = g.append("path");
 
-            this.path
-                .datum(this.data)
-                .attr('fill', 'none')
-                .attr('stroke', 'black')
-                .attr('stroke-width', '1.5px')
-                .attr('d', this.line);
-            // .transition()
-            //     .duration(500)
-            //     .ease(d3.easeLinear)
-            //     .on("start", tick);
+        this.stabilityPath
+            .datum(this.data)
+            .attr('fill', 'none')
+            .attr('stroke', 'black')
+            .attr('stroke-width', '1.5px')
+            .attr('d', this.stabilityLine);
+
+        this.positionPath
+            .datum(this.data)
+            .attr('fill', 'none')
+            .attr('stroke', 'green')
+            .attr('stroke-width', '1px')
+            .attr('d', this.positionLine);
+
+        this.rotationPath
+            .datum(this.data)
+            .attr('fill', 'none')
+            .attr('stroke', 'blue')
+            .attr('stroke-width', '1px')
+            .attr('d', this.rotationLine);
     }
 
     private updateD3(): void {
-        if (this.path) {
-            this.path
-                .datum(this.data)
-                .attr('d', this.line);
-                // .each(function() {
-                //     d3.select(this)
-                //         .attr('d', this.line)
-                //         .attr('transform', null);
-
-                //     d3.active(this)
-                //         .attr('transform', 'translate(' + this.x(-1) + ',0)')
-                // })
-        }
+        this.stabilityPath
+            .datum(this.data)
+            .attr('d', this.stabilityLine);
+        this.positionPath
+            .datum(this.data)
+            .attr('d', this.positionLine);
+        this.rotationPath
+            .datum(this.data)
+            .attr('d', this.rotationLine);
     }
 }
