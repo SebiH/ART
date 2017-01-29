@@ -22,7 +22,7 @@ export class AdminChangeMonitorComponent implements OnInit, OnDestroy {
     constructor (private socketio: SocketIO) { }
 
     ngOnInit() {
-        this.socketio.on('debug-cm-val', (data) => this.onSocketData(data));
+        this.socketio.on('debug-cm-val-dummy', (data) => this.onSocketData(data));
         this.initD3();
         window['data'] = this.data;
     }

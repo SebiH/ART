@@ -9,11 +9,11 @@ namespace Assets.Modules.Calibration
     {
         private const float OptitrackCutoffTime = 0.2f;
         private const float OptitrackChangeTolerance = 0.8f;
-        private readonly ChangeMonitor OptitrackMonitor = new ChangeMonitor();
+        private readonly ChangeMonitor OptitrackMonitor = new ChangeMonitor("Optitrack", 20f);
 
         private const float OvrCutoffTime = 0.2f;
         private const float OvrChangeTolerance = 0.8f;
-        private readonly ChangeMonitor OvrMonitor = new ChangeMonitor();
+        private readonly ChangeMonitor OvrMonitor = new ChangeMonitor("Ovr", 20f);
 
         void Update()
         {
@@ -33,14 +33,14 @@ namespace Assets.Modules.Calibration
             var isOptitrackPoseRecent = IsRecent(optitrackPose.DetectionTime, OptitrackCutoffTime);
             if (!isOptitrackPoseRecent) return false;
 
-            var isOptitrackStable = OptitrackMonitor.StabilityLevel > OptitrackChangeTolerance;
+            var isOptitrackStable = OptitrackMonitor.Stability > OptitrackChangeTolerance;
             if (!isOptitrackStable) return false;
 
 
             var isHmdPoseRecent = IsRecent(OpenVRListener.Instance.PoseUpdateTime, OvrCutoffTime);
             if (!isHmdPoseRecent) return false;
 
-            var isHmdPoseStable = OvrMonitor.StabilityLevel > OvrChangeTolerance;
+            var isHmdPoseStable = OvrMonitor.Stability > OvrChangeTolerance;
             if (!isHmdPoseStable) return false;
 
             return true;
