@@ -7,6 +7,7 @@ namespace Assets.Modules.SurfaceInterface
     [RequireComponent(typeof(ChangeMonitor))]
     public class PropagateChangeMonitor : MonoBehaviour
     {
+        public string MonitorName = "";
         private ChangeMonitor _monitor;
 
         private void OnEnable()
@@ -18,7 +19,7 @@ namespace Assets.Modules.SurfaceInterface
         {
             if (RemoteSurfaceConnection.Instance)
             {
-                RemoteSurfaceConnection.Instance.SendCommand("Surface", "debug-cm-val-" + _monitor.MonitorName,
+                RemoteSurfaceConnection.Instance.SendCommand("Surface", "debug-cm-val-" + MonitorName,
                     string.Format("{{\"stability\": {0}, \"position\": {1}, \"rotation\": {2} }}", _monitor.Stability, _monitor.PositionStability, _monitor.RotationStability));
             }
         }

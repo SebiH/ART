@@ -15,7 +15,6 @@ namespace Assets.Modules.Calibration
         private readonly List<Quaternion> _rotations = new List<Quaternion>();
         private const int SAMPLES = 30;
 
-        public string MonitorName = "";
         public float Sensitivity = 20f;
 
         public void Reset()
