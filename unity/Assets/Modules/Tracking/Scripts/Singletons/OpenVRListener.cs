@@ -1,7 +1,7 @@
 using UnityEngine;
 using Valve.VR;
 
-namespace Assets.Modules.Tracking.Scripts
+namespace Assets.Modules.Tracking
 {
     public class OpenVRListener : MonoBehaviour
     {

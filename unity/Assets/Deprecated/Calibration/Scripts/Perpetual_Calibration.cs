@@ -54,7 +54,7 @@ namespace Assets.Modules.Calibration_Deprecated
         private List<Quaternion> _perMarkerRotCalib = new List<Quaternion>();
 
 
-        private bool _isInitialised = false;
+        //private bool _isInitialised = false;
         void Update()
         {
             //if (!_isInitialised)
