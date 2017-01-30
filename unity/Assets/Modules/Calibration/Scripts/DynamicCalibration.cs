@@ -1,6 +1,7 @@
 using Assets.Modules.Core;
+using Assets.Modules.Surfaces;
 using Assets.Modules.Tracking;
-using Assets.Modules.Tracking.Scripts;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.Calibration
@@ -10,13 +11,20 @@ namespace Assets.Modules.Calibration
         public ChangeMonitor OptitrackMonitor;
         public ChangeMonitor OvrMonitor;
 
-        private const float OptitrackCutoffTime = 0.2f;
-        private const float OptitrackChangeTolerance = 0.8f;
+        private const float OptitrackCutoffTime = 0.3f;
+        private const float OptitrackChangeTolerance = 0.85f;
 
-        private const float OvrCutoffTime = 0.2f;
-        private const float OvrChangeTolerance = 0.8f;
+        private const float OvrCutoffTime = 0.3f;
+        private const float OvrChangeTolerance = 0.9f;
 
-        void Update()
+        // angle between calibrated scene camera and surface
+        private const float MinSurfaceAngle = 35f;
+
+        private const float MarkerDetectionCutoffTime = 0.3f;
+        private const float MarkerChangeCutoffTime = 0.6f;
+        private const float MaxMarkerHmdDistance = 0.6f;
+
+        void LateUpdate()
         {
             UpdateTracking();
 
@@ -29,20 +37,56 @@ namespace Assets.Modules.Calibration
         private bool ShouldCalibrate()
         {
             var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
-            if (optitrackPose == null) return false;
+            if (optitrackPose == null) { return false; }
 
             var isOptitrackPoseRecent = IsRecent(optitrackPose.DetectionTime, OptitrackCutoffTime);
-            if (!isOptitrackPoseRecent) return false;
+            if (!isOptitrackPoseRecent) { return false; }
 
             var isOptitrackStable = OptitrackMonitor.Stability > OptitrackChangeTolerance;
-            if (!isOptitrackStable) return false;
+            if (!isOptitrackStable) { return false; }
 
 
             var isHmdPoseRecent = IsRecent(OpenVRListener.Instance.PoseUpdateTime, OvrCutoffTime);
-            if (!isHmdPoseRecent) return false;
+            if (!isHmdPoseRecent) { return false; }
 
             var isHmdPoseStable = OvrMonitor.Stability > OvrChangeTolerance;
-            if (!isHmdPoseStable) return false;
+            if (!isHmdPoseStable) { return false; }
+
+
+            // TODO: surface lookup based on current view direction? (needs initial calibration & multiple clients)
+            var hasSurface = SurfaceManager.Instance.Has(Globals.DefaultSurfaceName);
+            if (!hasSurface) { return false; }
+
+            if (CalibrationParams.HasStablePosition && CalibrationParams.HasStableRotation)
+            {
+                var surface = SurfaceManager.Instance.Get(Globals.DefaultSurfaceName);
+                var trackedCamera = SceneCameraTracker.Instance;
+
+                // TODO: needs testing!
+                //var angle = MathUtility.AngleVectorPlane(trackedCamera.transform.forward, surface.Normal);
+                //var isAngleTooFlat = Mathf.Abs(angle) < MinSurfaceAngle;
+                //if (isAngleTooFlat) { return false; }
+            }
+
+            return true;
+        }
+
+        private bool IsArMarkerValid(ArMarker marker)
+        {
+            if (!marker.HasDetectedCamera) { return false; }
+
+            var isMarkerRecent = IsRecent(marker.CameraDetectionTime, MarkerDetectionCutoffTime);
+            if (!isMarkerRecent) { return false; }
+
+            var hasMarkerChangedRecently = IsRecent(marker.LastChangeTime, MarkerChangeCutoffTime);
+            if (hasMarkerChangedRecently) { return false; }
+
+            var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
+            var isTooFarAway = Mathf.Abs((optitrackPose.Position - marker.transform.position).magnitude) > MaxMarkerHmdDistance;
+            if (isTooFarAway) { return false; }
+
+            // TODO: angle between hmd direction & marker? (probably not necessary) - needs intersection
+            // TODO: confidence, if available?
 
             return true;
         }
@@ -68,10 +112,24 @@ namespace Assets.Modules.Calibration
 
         private void PerformCalibration()
         {
-#if UNITY_EDITOR
+            var validMarkers = ArMarkers.GetAll().Where(m => IsArMarkerValid(m));
 
-#endif
+            if (validMarkers.Count() > 0)
+            {
+                var camPositions = validMarkers.Select(m => m.DetectedCameraPosition);
+                var avgCamPosition = MathUtility.Average(camPositions);
+                var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
+                Debug.Assert(optitrackPose != null, "OptitrackPose shall not be null, since we checked for that in ShouldCalibrate??");
+                CalibrationParams.PositionOffset = Quaternion.Inverse(optitrackPose.Rotation) * (avgCamPosition - optitrackPose.Position);
 
+                var camRotations = validMarkers.Select(m => m.DetectedCameraRotation);
+                var avgCamRotation = MathUtility.Average(camRotations);
+                var ovrRotation = OpenVRListener.Instance.CurrentRotation;
+
+                // MarkerRotation = Offset * Ovr
+                // => Offset = MarkerRotation * inv(Ovr)
+                CalibrationParams.RotationOffset = avgCamRotation * Quaternion.Inverse(ovrRotation);
+            }
         }
     }
 }

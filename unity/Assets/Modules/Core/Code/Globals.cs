@@ -18,5 +18,7 @@ namespace Assets.Modules.Core
 
         public static readonly string OptitrackCalibratorName = "CalibrationHelper";
         public static readonly string OptitrackHmdName = "HMD";
+
+        public static readonly string DefaultSurfaceName = "Surface";
     }
 }
