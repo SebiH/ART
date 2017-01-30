@@ -11,20 +11,27 @@ namespace Assets.Modules.SurfaceInterface.Scripts
     {
         private Surface _surface;
         private OvrvisionCameraSource _camera;
+        private bool _isInitialized = false;
 
-        private void OnEnable()
+        private void Update()
         {
-            // TODO: surface name? listen globally?
-            _surface = SurfaceManager.Instance.Get("Surface");
-            _surface.OnAction += OnAction;
+            if (!_isInitialized && SurfaceManager.Instance.Has("Surface"))
+            {
+                // TODO: surface name? listen globally?
+                _surface = SurfaceManager.Instance.Get("Surface");
+                _surface.OnAction += OnAction;
 
-            _camera = GetComponent<OvrvisionCameraSource>();
+                _camera = GetComponent<OvrvisionCameraSource>();
+                _isInitialized = true;
+            }
         }
 
         private void OnDisable()
         {
-            // TODO: surface name? listen globally?
-            _surface.OnAction -= OnAction;
+            if (_isInitialized)
+            {
+                _surface.OnAction -= OnAction;
+            }
         }
 
 
