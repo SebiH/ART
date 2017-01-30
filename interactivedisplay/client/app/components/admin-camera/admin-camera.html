@@ -2,17 +2,23 @@
     <h2> Camera </h2>
     <div class="row">
         <span class="two columns">Gain</span>
-        <span class="two columns">70</span>
-        <input class="eight columns" type="range">
+        <span class="two columns">{{gain}}</span>
+        <input #gainInput class="eight columns" type="range"
+            (input)="setGain(gainInput.value)"
+            min="1" max="47" steps="1" value="{{gain}}">
     </div>
     <div class="row">
         <span class="two columns">Exposure</span>
-        <span class="two columns">70</span>
-        <input class="eight columns" type="range">
+        <span class="two columns">{{exposure}}</span>
+        <input #exposureInput class="eight columns" type="range"
+            (input)="setExposure(exposureInput.value)"
+            min="0" max="32767" steps="1" value="{{exposure}}">
     </div>
     <div class="row">
         <span class="two columns">BLC</span>
-        <span class="two columns">70</span>
-        <input class="eight columns" type="range">
+        <span class="two columns">{{blc}}</span>
+        <input #blcInput class="eight columns" type="range"
+            (input)="setBlc(blcInput.value)"
+            min="0" max="1023" steps="1" value="{{blc}}">
     </div>
 </div>
