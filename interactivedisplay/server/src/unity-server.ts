@@ -66,7 +66,6 @@ export class UnityServer {
     }
 
     private handleSocketData(socket: net.Socket, data: Buffer): void {
-        console.log(LOG_PREFIX + "" + data);
         let msgs = this.splitJson(data + '');
 
         for (let msgText of msgs) {
