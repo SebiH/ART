@@ -6,16 +6,21 @@ using UnityEngine;
 
 namespace Assets.Modules.SurfaceInterface
 {
-    [RequireComponent(typeof(DynamicCalibration))]
+    [RequireComponent(typeof(DynamicCalibration), typeof(ChangeMonitor))]
     public class Debug_PropagateCalibrationParams : MonoBehaviour
     {
-        public ChangeMonitor Monitor;
+        private ChangeMonitor _monitor;
+
+        private void OnEnable()
+        {
+            _monitor = GetComponent<ChangeMonitor>();
+        }
 
         private void Update()
         {
             // TODO: dynamic calibration debug info?
 
-            Monitor.UpdateStability(CalibrationParams.PositionOffset, CalibrationParams.RotationOffset);
+            _monitor.UpdateStability(CalibrationParams.PositionOffset, CalibrationParams.RotationOffset);
             RemoteSurfaceConnection.Instance.SendCommand(Globals.DefaultSurfaceName, "debug-calibration", JsonUtility.ToJson(new Packet
             {
                 posOffsetX = CalibrationParams.PositionOffset.x,
@@ -27,9 +32,7 @@ namespace Assets.Modules.SurfaceInterface
                 rotOffsetZ = CalibrationParams.RotationOffset.z,
                 rotOffsetW = CalibrationParams.RotationOffset.w,
 
-                stability = Monitor.Stability,
-                posStability = Monitor.PositionStability,
-                rotStability = Monitor.RotationStability
+                lastUpdateTime = CalibrationParams.LastCalibrationTime
             }));
         }
 
@@ -44,10 +47,6 @@ namespace Assets.Modules.SurfaceInterface
             public float rotOffsetY;
             public float rotOffsetZ;
             public float rotOffsetW;
-
-            public float stability;
-            public float posStability;
-            public float rotStability;
 
             public float lastUpdateTime;
         }
