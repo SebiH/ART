@@ -1,5 +1,14 @@
 <div class="root">
-    <div class="container">
+    <div class="tabs">
+        <button *ngFor="let tab of tabs"
+            class="tab"
+            [ngClass]="{ active: activeTab === tab }"
+            (click)="activeTab = tab">
+            {{tab}}
+        </button>
+    </div>
+
+    <div class="container" *ngIf="activeTab === 'Stability'">
         <div class="row">
             <div class="four columns" style="color: #03A9F4;">Rotation</div>
             <div class="four columns" style="color: #4CAF50;">Position</div>
@@ -14,12 +23,14 @@
         <h2>OVR</h2>
         <admin-change-monitor [height]="300" [width]="width" [name]="'ovr'"></admin-change-monitor>
 
-        <hr/>
+    </div>
 
+    <div class="container" *ngIf="activeTab === 'Camera'">
         <admin-camera></admin-camera>
+    </div>
 
-        <hr/>
 
+    <div class="container" *ngIf="activeTab === 'Actions'">
         <div class="buttons row">
             <select name="corners" class="four columns">
                 <option value="topleft">Top Left</option>

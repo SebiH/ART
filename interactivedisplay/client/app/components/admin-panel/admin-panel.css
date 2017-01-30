@@ -1,6 +1,6 @@
 .root {
     position: relative;
-    background: #eee;
+    background: white;
     color: #222;
     width: 100%;
     min-height: 100%;
@@ -8,4 +8,29 @@
 
 .container {
     max-width: 100%;
+}
+
+.tabs {
+    display: -ms-flex;
+    -ms-flex-direction: row;
+    -ms-flex-wrap: nowrap;
+
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-flex-wrap: nowrap;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.tab {
+    -webkit-flex-grow: 1;
+    -ms-flex-grow: 1;
+    flex-grow: 1;
+    border-radius: 0;
+}
+
+.tab.active {
+    background: #8BC34A;
 }
