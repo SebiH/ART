@@ -80,7 +80,7 @@ namespace Assets.Modules.SurfaceInterface
 
             var markerSize = _surface.PixelToUnityCoord(markerInfo.size);
             _markerSpawner.SetMarkerSize(markerSize);
-            ArMarkerTracker.Instance.MarkerSizeInMeter = markerInfo.size;
+            ArMarkerTracker.Instance.MarkerSizeInMeter = markerSize;
 
             var posX = _surface.PixelToUnityCoord(markerInfo.posX);
             var posY = _surface.PixelToUnityCoord(_surface.DisplayResolution.height - markerInfo.posY);
