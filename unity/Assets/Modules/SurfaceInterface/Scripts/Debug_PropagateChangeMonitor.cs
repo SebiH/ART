@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Assets.Modules.SurfaceInterface
 {
     [RequireComponent(typeof(ChangeMonitor))]
-    public class PropagateChangeMonitor : MonoBehaviour
+    public class Debug_PropagateChangeMonitor : MonoBehaviour
     {
         public string MonitorName = "";
         private ChangeMonitor _monitor;
