@@ -1,0 +1,19 @@
+<h2> Stability </h2>
+<div class="row">
+    <div class="four columns" style="color: #03A9F4;">Rotation</div>
+    <div class="four columns" style="color: #4CAF50;">Position</div>
+    <div class="four columns" style="color: black;">Overall</div>
+</div>
+
+<admin-change-monitor [height]="300" [width]="width" [name]="'calibration'"></admin-change-monitor>
+
+<hr/>
+
+<h2> Offsets </h2>
+
+LastUpdateTime: {{lastUpdateTime}}
+
+<div class="row">
+    <div class="six columns" #rotationOffset></div>
+    <div class="six columns" #positionOffset></div>
+</div>

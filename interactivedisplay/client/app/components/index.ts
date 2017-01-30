@@ -1,3 +1,4 @@
+export * from './admin-calibration/admin-calibration.component';
 export * from './admin-camera/admin-camera.component';
 export * from './admin-change-monitor/admin-change-monitor.component';
 export * from './admin-panel/admin-panel.component';

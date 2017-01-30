@@ -24,6 +24,7 @@
     "@types/d3": "^4.4.0",
     "@types/lodash": "^4.14.38",
     "@types/socket.io-client": "^1.4.28",
+    "@types/three": "^0.83.1",
     "core-js": "^2.4.1",
     "d3": "^4.4.0",
     "lodash": "^4.16.6",
@@ -33,6 +34,7 @@
     "socket.io-client": "^1.5.1",
     "systemjs": "0.19.39",
     "textures": "^1.0.4",
+    "three": "^0.84.0",
     "zone.js": "^0.7.2"
   },
   "devDependencies": {
