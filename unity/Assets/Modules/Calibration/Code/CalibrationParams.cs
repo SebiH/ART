@@ -15,6 +15,8 @@ namespace Assets.Modules.Calibration
 
         #region Rotation
 
+        public static float LastCalibrationTime { get; private set; }
+
         private static Quaternion _rotationOffset = Quaternion.identity;
         public static Quaternion RotationOffset
         {
@@ -57,6 +59,8 @@ namespace Assets.Modules.Calibration
 
                 _rotationOffset = new Quaternion(x, y, z, w);
             }
+
+            LastCalibrationTime = Time.unscaledTime;
         }
 
         #endregion
@@ -105,6 +109,8 @@ namespace Assets.Modules.Calibration
 
                 _positionOffset = new Vector3(x, y, z);
             }
+
+            LastCalibrationTime = Time.unscaledTime;
         }
 
         #endregion
