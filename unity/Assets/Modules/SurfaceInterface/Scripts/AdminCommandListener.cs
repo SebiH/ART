@@ -18,6 +18,11 @@ namespace Assets.Modules.SurfaceInterface.Scripts
             _connection.OnCommandReceived += OnCommand;
         }
 
+        private void OnDisable()
+        {
+            _connection.OnCommandReceived -= OnCommand;
+        }
+
         private void OnCommand(string cmd, string payload)
         {
             switch (cmd)
@@ -43,11 +48,6 @@ namespace Assets.Modules.SurfaceInterface.Scripts
                     SurfaceFileLoader.SaveToFile("default_surfaces.json");
                     break;
             }
-        }
-
-        private void OnDisable()
-        {
-
         }
     }
 }

@@ -113,26 +113,4 @@ export class QuatVisualisation {
         this.scene.add(vectorObject);
     }
 
-    private initLineTrace() {
-        var meshTraceMat = new THREE.MeshBasicMaterial({color: 0x0066cc, side:THREE.DoubleSide, transparent: true, opacity: 0.05,});
-        var lineTraceMat = new THREE.LineBasicMaterial({color: 0x0066cc});
-        var meshTraceGeom = new THREE.Geometry();
-        var lineTraceGeom = new THREE.Geometry();
-        meshTraceGeom.vertices.push(new THREE.Vector3(0,0,0));
-        for (var i=0; i<= TRACE_SEGMENTS; i++) {
-            var currentQuat = new THREE.Quaternion().slerp(vectorQuaternion, i / TRACE_SEGMENTS);
-            var currentVector = new THREE.Vector3(AXIS_LENGTH, 0, 0);
-            currentVector.applyQuaternion(currentQuat);
-            meshTraceGeom.vertices.push(currentVector);
-            lineTraceGeom.vertices.push(currentVector);
-        }
-        for (var i=0; i <= TRACE_SEGMENTS; i++) {
-            meshTraceGeom.faces.push(new THREE.Face3(0, i, i+1));
-        }
-
-        let meshTraceObject = new THREE.Mesh(meshTraceGeom, meshTraceMat);
-        let lineTraceObject = new THREE.Line(lineTraceGeom, lineTraceMat);
-        this.scene.add(meshTraceObject);
-        this.scene.add(lineTraceObject);
-    }
 }
