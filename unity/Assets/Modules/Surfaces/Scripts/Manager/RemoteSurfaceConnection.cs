@@ -17,6 +17,9 @@ namespace Assets.Modules.Surfaces
         private byte[] _receiveBuffer = new byte[256 * 256];
         private Queue _queuedCommands;
 
+        public delegate void CommandReceivedHandler(string cmd, string payload);
+        public event CommandReceivedHandler OnCommandReceived;
+
         void OnEnable()
         {
             Instance = this;
@@ -59,6 +62,11 @@ namespace Assets.Modules.Surfaces
                 {
                     var surface = surfaceManager.Get(cmd.origin);
                     surface.TriggerAction(cmd.command, cmd.payload);
+                }
+
+                if (OnCommandReceived != null)
+                {
+                    OnCommandReceived(cmd.command, cmd.payload);
                 }
             }
         }
