@@ -70,13 +70,16 @@ namespace Assets.Modules.Calibration
 
         private void OnArPose(MarkerPose pose)
         {
-            Matrix4x4 marker = Matrix4x4.TRS(pose.Position, pose.Rotation, Vector3.one);
-            Matrix4x4 cam = marker.inverse;
+            if (pose.Id == Id)
+            {
+                Matrix4x4 marker = Matrix4x4.TRS(pose.Position, pose.Rotation, Vector3.one);
+                Matrix4x4 cam = marker.inverse;
 
-            HasDetectedCamera = true;
-            DetectedCameraPosition = transform.position + transform.rotation * cam.GetPosition();
-            DetectedCameraRotation = transform.rotation * cam.GetRotation();
-            CameraDetectionTime = Time.unscaledTime;
+                HasDetectedCamera = true;
+                DetectedCameraPosition = transform.position + transform.rotation * cam.GetPosition();
+                DetectedCameraRotation = transform.rotation * cam.GetRotation();
+                CameraDetectionTime = Time.unscaledTime;
+            }
         }
 
 
