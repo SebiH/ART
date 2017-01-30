@@ -24,6 +24,7 @@ import { routing } from './routes';
     Components.GraphDetailComponent,
     Components.ScatterPlotComponent,
     Components.GraphOverviewComponent,
+    Components.SurfaceComponent,
     Directives.MoveableDirective
   ],
   bootstrap:    [ Components.AppComponent ],

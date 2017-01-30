@@ -4,7 +4,7 @@ import {
     AppComponent,
     MenuComponent,
     MeasurementComponent,
-    GraphContainerComponent
+    SurfaceComponent
 } from './components/index';
 
 const routes: Routes = [
@@ -22,7 +22,7 @@ const routes: Routes = [
     },
     {
         path: 'graph',
-        component: GraphContainerComponent
+        component: SurfaceComponent
     },
     {
         path: '',

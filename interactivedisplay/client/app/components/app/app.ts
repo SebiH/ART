@@ -1,8 +1,4 @@
-import {Component, ViewEncapsulation, OnInit, HostListener} from '@angular/core';
-import {Router} from '@angular/router';
-
-import {MenuComponent} from '../menu/menu';
-import {SurfaceProvider} from '../../services/index';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'main-app',
@@ -11,15 +7,5 @@ import {SurfaceProvider} from '../../services/index';
     encapsulation: ViewEncapsulation.None
 })
 
-export class AppComponent implements OnInit
-{
-    constructor (private surfaceProvider: SurfaceProvider) { }
-
-    ngOnInit() {
-    }
-
-    @HostListener('window:resize', ['$event'])
-    private onResize(event) {
-        this.surfaceProvider.setSize(window.innerWidth, window.innerHeight);
-    }
+export class AppComponent {
 }

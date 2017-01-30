@@ -11,3 +11,4 @@ export * from './marker/marker.component';
 export * from './measurement/measurement';
 export * from './menu/menu';
 export * from './scatter-plot/scatter-plot';
+export * from './surface/surface.component';
