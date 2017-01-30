@@ -72,7 +72,7 @@ namespace Assets.Modules.Calibration
         public static Vector3 PositionOffset
         {
             get { return _positionOffset; }
-            set { CalculateOffset(_positionOffset); }
+            set { CalculateOffset(value); }
         }
 
         public static bool HasStablePosition
