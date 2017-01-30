@@ -38,6 +38,6 @@ export class MarkerComponent implements OnInit, OnDestroy
         let element = <HTMLElement>this.markerElement.nativeElement;
         let pos = element.getBoundingClientRect();
 
-        return new Point(pos.left, pos.top);
+        return new Point(pos.left + (MARKER_SIZE_PX / 2), pos.top + (MARKER_SIZE_PX / 2));
     }
 }
