@@ -84,11 +84,9 @@ export class AdminChangeMonitorComponent implements OnInit, OnDestroy {
             .attr("height", actualHeight);
         g.append("g")
             .attr("transform", "translate(0," + y(0) + ")")
-            .attr("stroke", "white")
             .call(d3.axisBottom(x).tickValues([]));
         g.append("g")
-            .attr("stroke", "white")
-            .call(d3.axisLeft(y).tickValues([]));
+            .call(d3.axisLeft(y).tickSizeInner(-this.width));
         this.stabilityPath = g.append("path");
         this.positionPath = g.append("path");
         this.rotationPath = g.append("path");
@@ -96,7 +94,7 @@ export class AdminChangeMonitorComponent implements OnInit, OnDestroy {
         this.stabilityPath
             .datum(this.data)
             .attr('fill', 'none')
-            .attr('stroke', 'white')
+            .attr('stroke', 'black')
             .attr('stroke-width', '2px')
             .attr('d', this.stabilityLine);
 

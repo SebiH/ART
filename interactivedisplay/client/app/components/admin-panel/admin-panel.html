@@ -3,10 +3,55 @@
         <div class="row">
             <div class="four columns" style="color: #03A9F4;">Rotation</div>
             <div class="four columns" style="color: #4CAF50;">Position</div>
-            <div class="four columns" style="color: white;">Overall</div>
+            <div class="four columns" style="color: black;">Overall</div>
         </div>
 
-        <admin-change-monitor [height]="300" [width]="width" [name]="'dummy'"></admin-change-monitor>
-        <admin-change-monitor [height]="300" [width]="width" [name]="'dummy2'"></admin-change-monitor>
+        <h2>Optitrack</h2>
+        <admin-change-monitor [height]="300" [width]="width" [name]="'optitrack'"></admin-change-monitor>
+
+        <hr/>
+
+        <h2>OVR</h2>
+        <admin-change-monitor [height]="300" [width]="width" [name]="'ovr'"></admin-change-monitor>
+
+        <hr/>
+
+        <div class="sliders">
+            <h2> Camera </h2>
+            <div class="row">
+                <span class="two columns">Gain</span>
+                <span class="two columns">70</span>
+                <input class="eight columns" type="range">
+            </div>
+            <div class="row">
+                <span class="two columns">Exposure</span>
+                <span class="two columns">70</span>
+                <input class="eight columns" type="range">
+            </div>
+            <div class="row">
+                <span class="two columns">BLC</span>
+                <span class="two columns">70</span>
+                <input class="eight columns" type="range">
+            </div>
+        </div>
+
+        <hr/>
+
+        <div class="buttons row">
+            <select name="corners" class="six columns">
+                <option value="topleft">Top Left</option>
+                <option value="bottomleft">Bottom Left</option>
+                <option value="topright">Top Right</option>
+                <option value="bottomright">Bottom Right</option>
+            </select>
+            <button class="button-primary six columns"> Set Corner </button>
+        </div>
+
+        <hr/>
+        
+        <div class="buttons">
+            <button class="button-primary">Reset Calibration</button>
+            <button class="button-primary">Save surfaces</button>
+        </div>
     </div>
 </div>
