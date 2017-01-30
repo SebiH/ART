@@ -12,6 +12,7 @@ import { routing } from './routes';
   imports:      [ BrowserModule, HttpModule, routing ],
   declarations: [
     Components.AdminChangeMonitorComponent,
+    Components.AdminPanelComponent,
     Components.AppComponent,
     Components.MenuComponent,
     Components.MarkerComponent,

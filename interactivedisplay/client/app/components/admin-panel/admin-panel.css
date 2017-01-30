@@ -1,0 +1,17 @@
+.root {
+    background: #222;
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+    max-width: 100%;
+}
+
+.sliders {
+    padding: 30px;
+}
+
+.sliders > row {
+    margin-top: 30px;
+}

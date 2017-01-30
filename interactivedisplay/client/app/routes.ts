@@ -1,6 +1,6 @@
 import { Routes, RouterModule } from '@angular/router';
 import {
-    AdminChangeMonitorComponent,
+    AdminPanelComponent,
     AppComponent,
     MenuComponent,
     MeasurementComponent,
@@ -14,7 +14,7 @@ const routes: Routes = [
     },
     {
         path: 'admin',
-        component: AdminChangeMonitorComponent
+        component: AdminPanelComponent
     },
     {
         path: 'measurement',

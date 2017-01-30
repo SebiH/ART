@@ -17,7 +17,7 @@ export class AdminChangeMonitorComponent implements OnInit, OnDestroy {
 
     @Input() private height: number = 500;
     @Input() private width: number = 500;
-    @Input() private name: string = 'dummy';
+    @Input() private name: string = '';
 
     private data: any[] = [];
 
@@ -83,12 +83,12 @@ export class AdminChangeMonitorComponent implements OnInit, OnDestroy {
             .attr("width", actualWidth)
             .attr("height", actualHeight);
         g.append("g")
-            .attr("class", "axis axis--x")
             .attr("transform", "translate(0," + y(0) + ")")
-            .call(d3.axisBottom(x));
+            .attr("stroke", "white")
+            .call(d3.axisBottom(x).tickValues([]));
         g.append("g")
-            .attr("class", "axis axis--y")
-            .call(d3.axisLeft(y));
+            .attr("stroke", "white")
+            .call(d3.axisLeft(y).tickValues([]));
         this.stabilityPath = g.append("path");
         this.positionPath = g.append("path");
         this.rotationPath = g.append("path");
@@ -96,21 +96,21 @@ export class AdminChangeMonitorComponent implements OnInit, OnDestroy {
         this.stabilityPath
             .datum(this.data)
             .attr('fill', 'none')
-            .attr('stroke', 'black')
-            .attr('stroke-width', '1.5px')
+            .attr('stroke', 'white')
+            .attr('stroke-width', '2px')
             .attr('d', this.stabilityLine);
 
         this.positionPath
             .datum(this.data)
             .attr('fill', 'none')
-            .attr('stroke', 'green')
+            .attr('stroke', '#4CAF50')
             .attr('stroke-width', '1px')
             .attr('d', this.positionLine);
 
         this.rotationPath
             .datum(this.data)
             .attr('fill', 'none')
-            .attr('stroke', 'blue')
+            .attr('stroke', '#03A9F4')
             .attr('stroke-width', '1px')
             .attr('d', this.rotationLine);
     }
