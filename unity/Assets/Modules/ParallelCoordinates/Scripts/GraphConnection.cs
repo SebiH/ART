@@ -39,7 +39,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (_startGraph && _endGraph)
             {
-                var scale = Mathf.Abs(_endGraph.Position - _startGraph.Position);
+                var scale = Mathf.Abs((_endGraph.Position + _endGraph.Width / 2) - (_startGraph.Position + _startGraph.Width / 2));
                 // TODO1: don't depend on findchild?
                 transform.FindChild("Lines").localScale = new Vector3(1, 1, scale);
             }
