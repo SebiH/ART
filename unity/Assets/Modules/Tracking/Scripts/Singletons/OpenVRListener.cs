@@ -62,6 +62,7 @@ namespace Assets.Modules.Tracking
             var node = VRNode.Head;
             CurrentPosition = InputTracking.GetLocalPosition(node);
             CurrentRotation = InputTracking.GetLocalRotation(node);
+            PoseUpdateTime = Time.unscaledTime;
         }
 
 #endif
