@@ -45,7 +45,7 @@ namespace Assets.Modules.SurfaceInterface.Scripts
                     CalibrationParams.Reset();
                     break;
                 case "admin-cmd-save-surfaces":
-                    SurfaceFileLoader.SaveToFile("default_surfaces.json");
+                    SurfaceFileLoader.SaveToFile("default_displays.json");
                     break;
             }
         }
