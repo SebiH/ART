@@ -11,7 +11,22 @@
 
 <h2> Offsets </h2>
 
-LastUpdateTime: {{lastUpdateTime}}
+<div>LastUpdateTime: {{lastUpdateTime}}</div>
+
+<br/>
+
+<h1>PositionOffset:</h1> 
+<h1>{{packet?.posOffsetX}}</h1>
+<h1>{{packet?.posOffsetY}}</h1>
+<h1>{{packet?.posOffsetZ}}</h1>
+
+<br/>
+
+<h1>RotationOffset:</h1> 
+<h1>{{packet?.rotOffsetX}}</h1>
+<h1>{{packet?.rotOffsetY}}</h1>
+<h1>{{packet?.rotOffsetZ}}</h1>
+<h1>{{packet?.rotOffsetW}}</h1>
 
 <div class="row">
     <div class="six columns" #rotationOffset></div>

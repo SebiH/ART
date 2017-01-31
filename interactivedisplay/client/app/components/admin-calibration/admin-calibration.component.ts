@@ -20,6 +20,8 @@ export class AdminCalibrationComponent implements OnInit, OnDestroy {
     private width: number = window.innerWidth * 0.8;
     private lastUpdateTime: number = 0;
 
+    private packet: any;
+
     private socketiofn: any;
     private quatVis: QuatVisualisation;
     private vecVis: VecVisualisation;
@@ -46,6 +48,7 @@ export class AdminCalibrationComponent implements OnInit, OnDestroy {
     private onSocketData(data: any) {
         let packet = JSON.parse(data);
         this.lastUpdateTime = packet.lastUpdateTime;
+        this.packet = packet;
         this.vecVis.setVector(packet.posOffsetX, packet.posOffsetY, packet.posOffsetZ);
         this.quatVis.setQuat(packet.rotOffsetX, packet.rotOffsetY,
             packet.rotOffsetZ, packet.rotOffsetW);
