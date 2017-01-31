@@ -30,7 +30,7 @@ namespace Assets.Modules.SurfaceInterface.Scripts
                 case "admin-cmd-set-corner":
                     if (DisplayCalibration)
                     {
-                        var corner = (Corner)(int.Parse(payload));
+                        var corner = (Corner)(int.Parse(payload.Replace("\"", "")));
                         DisplayCalibration.CurrentCorner = corner;
                         DisplayCalibration.StartCalibration();
                     }
