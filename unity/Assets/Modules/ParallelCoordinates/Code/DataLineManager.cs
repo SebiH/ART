@@ -24,6 +24,8 @@ namespace Assets.Modules.ParallelCoordinates
                 {
                     lines[i] = _lines[i];
                 }
+
+                _lines = lines;
             }
 
             if (_lines[index] == null)
