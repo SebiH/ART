@@ -1,5 +1,10 @@
+#define USE_OCULUS
+//#define USE_OPENVR
+
 using UnityEngine;
+using UnityEngine.VR;
 using Valve.VR;
+
 
 namespace Assets.Modules.Tracking
 {
@@ -11,6 +16,7 @@ namespace Assets.Modules.Tracking
         public Quaternion CurrentRotation { get; private set; }
         public float PoseUpdateTime { get; private set; }
 
+#if USE_OPENVR
         void OnEnable()
         {
             Instance = this;
@@ -41,5 +47,23 @@ namespace Assets.Modules.Tracking
             CurrentPosition = pose.pos;
             PoseUpdateTime = Time.unscaledTime;
         }
+
+#endif
+
+#if USE_OCULUS
+
+        private void OnEnable()
+        {
+            Instance = this;
+        }
+
+        private void Update()
+        {
+            var node = VRNode.Head;
+            CurrentPosition = InputTracking.GetLocalPosition(node);
+            CurrentRotation = InputTracking.GetLocalRotation(node);
+        }
+
+#endif
     }
 }
