@@ -24,8 +24,8 @@ namespace Assets.Modules.SurfaceInterface
             foreach (var graph in _manager.GetAllGraphs())
             {
                 graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
-                var unityPos = _surface.PixelToUnityCoord(graph.Position + graph.Width / 2);
-                graph.transform.localPosition = new Vector3(unityPos, 0.5f, 0.5f);
+                var actualPosition = graph.Position + graph.Width / 2;
+                graph.transform.localPosition = new Vector3(actualPosition, 0.5f, 0.5f);
             }
         }
     }

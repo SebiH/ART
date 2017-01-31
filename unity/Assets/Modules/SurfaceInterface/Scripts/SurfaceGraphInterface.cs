@@ -188,8 +188,8 @@ namespace Assets.Modules.SurfaceInterface
         private void UpdateGraphPosition(GraphInfo graphInfo)
         {
             var graph = _graphManager.GetGraph(graphInfo.id);
-            graph.Position = graphInfo.pos;
-            graph.Width = graphInfo.width;
+            graph.Position = _surface.PixelToUnityCoord(graphInfo.pos);
+            graph.Width = _surface.PixelToUnityCoord(graphInfo.width);
 
             var nextGraphInfo = _currentGraphs.FirstOrDefault(g => g.id == graphInfo.nextId);
 

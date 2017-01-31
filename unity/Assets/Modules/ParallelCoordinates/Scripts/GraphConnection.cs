@@ -39,8 +39,8 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (_startGraph && _endGraph)
             {
-                var scale = Mathf.Abs(_endGraph.transform.localPosition.z - _startGraph.transform.localPosition.z);
-                // TODO1
+                var scale = Mathf.Abs(_endGraph.Position - _startGraph.Position);
+                // TODO1: don't depend on findchild?
                 transform.FindChild("Lines").localScale = new Vector3(1, 1, scale);
             }
         }
