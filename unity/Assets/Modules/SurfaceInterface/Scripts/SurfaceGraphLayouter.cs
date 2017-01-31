@@ -25,7 +25,8 @@ namespace Assets.Modules.SurfaceInterface
             {
                 graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
                 var actualPosition = graph.Position + graph.Width / 2;
-                graph.transform.localPosition = new Vector3(actualPosition, 0.5f, 0.5f);
+                var zOffset = IsGraphSelected ? 1f : 0.5f;
+                graph.transform.localPosition = new Vector3(actualPosition, 0.5f, zOffset);
             }
         }
     }
