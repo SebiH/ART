@@ -22,7 +22,7 @@ namespace Assets.Modules.Calibration
 
         private const float MarkerDetectionCutoffTime = 0.3f;
         private const float MarkerChangeCutoffTime = 0.6f;
-        private const float MaxMarkerHmdDistance = 0.6f;
+        private const float MaxMarkerHmdDistance = 0.9f;
 
         void LateUpdate()
         {
