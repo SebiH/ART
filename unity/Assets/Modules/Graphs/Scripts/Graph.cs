@@ -12,6 +12,9 @@ namespace Assets.Modules.Graphs
         public event DataChangeHandler OnDataChange;
 
         public DataPoint2D[] Data { get; private set; }
+        public float Position { get; set; }
+        public float Width { get; set; }
+        public float Length { get; set; }
 
         private string _currentDimX = null;
         private DataPoint[] _dataX = null;

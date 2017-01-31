@@ -31,6 +31,11 @@ namespace Assets.Modules.Graphs
             return _graphs.FirstOrDefault(g => g.Id == id);
         }
 
+        public IEnumerable<Graph> GetAllGraphs()
+        {
+            return _graphs;
+        }
+
         public bool HasGraph(int id)
         {
             return _graphs.Any(g => g.Id == id);

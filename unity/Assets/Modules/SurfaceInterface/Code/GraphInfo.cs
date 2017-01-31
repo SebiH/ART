@@ -15,6 +15,7 @@ namespace Assets.Modules.SurfaceInterface
         public bool isSelected = false;
 
         public float pos = 0;
+        public float width = 0;
         public int nextId = 0;
     }
 }

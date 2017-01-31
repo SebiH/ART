@@ -10,10 +10,11 @@ using UnityEngine;
 
 namespace Assets.Modules.SurfaceInterface
 {
-    [RequireComponent(typeof(GraphManager))]
+    [RequireComponent(typeof(GraphManager), typeof(SurfaceGraphLayouter))]
     public class SurfaceGraphInterface : MonoBehaviour
     {
         private Surface _surface;
+        private SurfaceGraphLayouter _layout;
         private GraphManager _graphManager;
 
         private readonly List<GraphInfo> _currentGraphs = new List<GraphInfo>();
@@ -26,6 +27,7 @@ namespace Assets.Modules.SurfaceInterface
             _surface.OnAction += HandleSurfaceAction;
 
             _graphManager = GetComponent<GraphManager>();
+            _layout = GetComponent<SurfaceGraphLayouter>();
 
             StartCoroutine(InitWebData());
         }
@@ -137,7 +139,9 @@ namespace Assets.Modules.SurfaceInterface
                 UpdateGraphData(updatedGraph);
             }
 
-            // TODO1 isSelected
+            var hasSelectedGraph = _currentGraphs.Any(g => g.isSelected);
+            _layout.IsGraphSelected = hasSelectedGraph;
+
             DataLineManager.ClearFilter();
 
             foreach (var gi in _currentGraphs)
@@ -184,7 +188,8 @@ namespace Assets.Modules.SurfaceInterface
         private void UpdateGraphPosition(GraphInfo graphInfo)
         {
             var graph = _graphManager.GetGraph(graphInfo.id);
-            graph.transform.localPosition += new Vector3(0, 0, -graph.transform.localPosition.z + _surface.PixelToUnityCoord(graphInfo.pos));
+            graph.Position = graphInfo.pos;
+            graph.Width = graphInfo.width;
 
             var nextGraphInfo = _currentGraphs.FirstOrDefault(g => g.id == graphInfo.nextId);
 

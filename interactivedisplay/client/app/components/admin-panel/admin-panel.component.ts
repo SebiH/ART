@@ -29,4 +29,3 @@ export class AdminPanelComponent {
         this.socketio.sendMessage('admin-cmd-save-surfaces', null);
     }
 }
-
