@@ -41,6 +41,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
                 } else {
                     this.graph.width /= 2;
                 }
+                this.graph.updatePosition();
             });
     }
 
