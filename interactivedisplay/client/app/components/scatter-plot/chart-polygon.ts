@@ -9,24 +9,33 @@ export class ChartPolygon {
     private pathElement: ChartElement;
     private line: d3.Line<Point>;
 
-    private selectedTexture;
-    private normalTexture;
+    private selectedTextureFill: string;
+    private normalTextureFill: string;
 
     public constructor(svg: ChartElement) {
-        this.normalTexture = textures.lines().thicker();
-        svg.call(this.normalTexture);
+        let normalTexture = textures.lines().thicker();
+        svg.call(normalTexture);
+        this.normalTextureFill = this.getAbsoluteTextureUrl(normalTexture.url());
 
-        this.selectedTexture = textures.lines().heavier(5).thinner(1.5).stroke('#F44336');
-        svg.call(this.selectedTexture);
+        let selectedTexture = textures.lines().heavier(5).thinner(1.5).stroke('#F44336');
+        svg.call(selectedTexture);
+        this.selectedTextureFill = this.getAbsoluteTextureUrl(selectedTexture.url());
 
         this.pathElement = svg.append('path')
             .attr('class', 'line')
-            .attr('fill', this.normalTexture.url());
+            .attr('fill', this.normalTextureFill);
 
         this.line = d3.line<Point>()
             .curve(d3.curveBasisClosed)
             .x(d => d.x)
             .y(d => d.y);
+    }
+
+    // Texture.js returns relative url as 'url(#xyz)', 
+    // but Edge/Firefox need absolute url: 'url(localhost#324)'
+    private getAbsoluteTextureUrl(url: string) {
+        let baseUrl = window.location.href;
+        return url.replace('url(', 'url(' + baseUrl);
     }
 
     public paint(path: Point[]) {
@@ -37,11 +46,11 @@ export class ChartPolygon {
         if (isSelected) {
             this.pathElement
                 .attr('class', 'line selected')
-                .attr('fill', this.selectedTexture.url());
+                .attr('fill', this.selectedTextureFill);
         } else {
             this.pathElement
                 .attr('class', 'line')
-                .attr('fill', this.normalTexture.url());
+                .attr('fill', this.normalTextureFill);
         }
     }
 
