@@ -13,7 +13,7 @@ import * as _ from 'lodash';
 
 const MAX_PRESS_TIME = 300; // in ms
 const MAX_PRESS_DISTANCE = 5; // in pixel
-
+const FORBIDDEN_ELEMENTS = [ 'button', 'option', 'select' ];
 
 @Injectable()
 export class InteractionManager {
@@ -111,9 +111,11 @@ export class InteractionManager {
 
     private addMouseInteraction(el: HTMLElement): void {
         el.onmousedown = (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            this.onMouseDown(el, ev);
+            if (FORBIDDEN_ELEMENTS.indexOf(ev.srcElement.tagName.toLowerCase()) < 0) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.onMouseDown(el, ev);
+            }
         }
 
         el.onmousemove = (ev) => {
@@ -291,7 +293,7 @@ export class InteractionManager {
 
     private addTouchInteraction(el: HTMLElement): void {
         el.ontouchstart = (ev) => {
-            if (ev.srcElement.tagName.toLowerCase() !== 'button') {
+            if (FORBIDDEN_ELEMENTS.indexOf(ev.srcElement.tagName.toLowerCase()) < 0) {
                 ev.preventDefault();
                 ev.stopPropagation();
                 this.onTouchStart(el, ev);
@@ -308,11 +310,9 @@ export class InteractionManager {
         }
 
         el.ontouchend = (ev) => {
-            if (ev.srcElement.tagName.toLowerCase() !== 'button') {
-                ev.preventDefault();
-                ev.stopPropagation();
-                this.onTouchEnd(ev);
-            }
+            ev.preventDefault();
+            ev.stopPropagation();
+            this.onTouchEnd(ev);
             this.ngZone.run(() => {});
         }
 
