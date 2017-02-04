@@ -131,8 +131,11 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
     }
 
     private applyScrollOffsetLimits(): void {
-        let maxWidth = _.sumBy(this.graphs, 'width') - window.innerWidth;
-        this.scrollOffset = Math.max(0, Math.min(this.scrollOffset, maxWidth));
+        const minVisiblePercent = 0.9;
+        let minVisible = window.innerWidth * minVisiblePercent;
+        let totalGraphWidth = _.sumBy(this.graphs, 'width');
+        let maxOffset = totalGraphWidth * minVisiblePercent;
+        this.scrollOffset = Math.max(-minVisible, Math.min(this.scrollOffset, maxOffset));
     }
 
     private handleMoveEnd(event: any): void {
