@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, Input, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, EventEmitter, Output } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { GraphDataProvider } from '../../services/index';
-import { Graph, Point } from '../../models/index';
-import { GraphDataSelectionComponent } from '../graph-data-selection/graph-data-selection';
+import { Graph } from '../../models/index';
 
 @Component({
     selector: 'graph-detail',
@@ -17,20 +16,14 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
     @Output()
     onClose = new EventEmitter();
 
-    @ViewChild('selection')
-    graphDataSelection: GraphDataSelectionComponent;
-
     private dimensions: string[];
     private dimensionSubscription: Subscription;
-
-    private unalteredGraph: any;
 
     constructor (private graphDataProvider: GraphDataProvider) {}
 
     ngOnInit() {
         this.dimensionSubscription = this.graphDataProvider.getDimensions()
             .subscribe((dims) => this.dimensions = dims);
-        this.unalteredGraph = this.graph.toJson();
     }
 
     ngOnDestroy() {
@@ -49,19 +42,5 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
     private assignDimY(dim: string): void {
         this.graph.dimY = dim;
         this.graph.updateData(['dimY']);
-    }
-
-    private confirm() {
-        this.close();
-    }
-
-    private discard() {
-        this.graph.color = this.unalteredGraph.color;
-        this.graph.dimX = this.unalteredGraph.dimX;
-        this.graph.dimY = this.unalteredGraph.dimY;
-        this.graph.selectionPolygons = <Point[][]>Array.from(this.unalteredGraph.selectionPolygons);
-        this.graphDataSelection.reloadSelection();
-        this.graph.selectedDataIndices = <number[]>Array.from(this.unalteredGraph.selectedData);
-        this.graph.updateData(['color', 'dimX', 'dimY', 'selectedDataIndices', 'selectionPolygons']);
     }
 }
