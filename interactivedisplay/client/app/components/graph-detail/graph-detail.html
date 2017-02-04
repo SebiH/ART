@@ -1,26 +1,31 @@
-<div class="root">
-    <div class="buttons">
-        <h2> X </h2>
-        <button *ngFor="let dim of this.dimensions"
-                class="button-primary"
-                [ngClass]="{ 'button-selected': graph.dimX === dim }"
-                (click)="assignDimX(dim)">
-            {{dim}}
-        </button>
+<div class="container root">
+
+    <div class="row" style="height: 800px;">
+        <div class="three columns selection">
+            <div>
+                <select [ngModel]="graph.dimY" (ngModelChange)="assignDimY($event)">
+                    <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="nine columns">
+            <graph-data-selection #selection [graph]="graph">
+            </graph-data-selection>
+        </div>
+
     </div>
 
-    <div class="buttons">
-        <h2> Y </h2>
-        <button *ngFor="let dim of this.dimensions"
-                class="button-primary"
-                [ngClass]="{ 'button-selected': graph.dimY === dim }"
-                (click)="assignDimY(dim)">
-            {{dim}}
-        </button>
+    <div class="row">
+        <div class="three columns"></div>
+        <div class="nine columns selection">
+            <div>
+                <select [ngModel]="graph.dimX" (ngModelChange)="assignDimX($event)">
+                    <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
+                </select>
+            </div>
+        </div>
     </div>
-
-    <graph-data-selection #selection [graph]="graph">
-    </graph-data-selection>
 
     <div class="exit-buttons">
         <button class="confirm" (click)="confirm()">

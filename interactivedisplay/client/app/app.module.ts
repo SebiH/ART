@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 
 import * as Components from './components/index';
@@ -9,7 +10,7 @@ import * as Services from './services/index';
 import { routing } from './routes';
 
 @NgModule({
-  imports:      [ BrowserModule, HttpModule, routing ],
+  imports:      [ BrowserModule, HttpModule, FormsModule, routing ],
   declarations: [
     Components.AdminCalibrationComponent,
     Components.AdminCameraComponent,
