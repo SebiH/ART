@@ -1,7 +1,7 @@
 .section-root {
     height: 100%;
     position: relative;
-    transition: width 0.2s linear;
+    transition: width 0.4s linear;
 }
 
 .buttons {

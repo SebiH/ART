@@ -26,9 +26,9 @@
 }
 
 .list-container.static {
-    -webkit-transition: -webkit-transform 0.2s ease-in-out;
-    -ms-transition: -ms-transform 0.2s ease-in-out;
-    transition:  transform 0.2s ease-in-out;
+    -webkit-transition: -webkit-transform 0.7s ease-in-out;
+    -ms-transition: -ms-transform 0.7s ease-in-out;
+    transition:  transform 0.7s ease-in-out;
 }
 
 .list-item {
@@ -40,9 +40,9 @@
     display: inline-block;
     box-shadow: -6px 0px 28px 0px black;
 
-    -webkit-transition: top 0.05s linear, width 0.2s linear;
-    -ms-transition: top 0.05s linear, width 0.2s linear;
-    transition: top 0.05s linear, width 0.2s linear;
+    -webkit-transition: top 0.1s linear, width 1s linear;
+    -ms-transition: top 0.1s linear, width 1s linear;
+    transition: top 0.1s linear, width 1s linear;
 }
 
 .list-item.moving {
@@ -50,9 +50,9 @@
 }
 
 .list-item.static {
-    -webkit-transition: top 0.05s linear, -webkit-transform 0.2s ease-in-out, width 0.2s linear;
-    -ms-transition: top 0.05s linear, -ms-transform 0.2s ease-in-out, width 0.2s linear;
-    transition: top 0.05s linear, transform 0.2s ease-in-out, width 0.2s linear;
+    -webkit-transition: top 0.1s linear, -webkit-transform 0.5s ease-in-out, width 1s linear;
+    -ms-transition: top 0.1s linear, -ms-transform 0.5s ease-in-out, width 1s linear;
+    transition: top 0.1s linear, transform 0.5s ease-in-out, width 1s linear;
 }
 
 .graph-creation-button {
