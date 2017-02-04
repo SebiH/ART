@@ -13,8 +13,8 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
     private graphs: Graph[] = [];
     private isActive: boolean = true;
-    private scrollEvents: number = 0;
 
+    private isScrolling: boolean = false;
     private scrollOffset: number = 0;
     private selectedGraph: Graph;
 
@@ -112,13 +112,14 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
 
 
     private handleMoveStart(event: any): void {
-        this.scrollEvents++;
+        // TODO: multitouch??
+        this.isScrolling = true;
     }
 
     private handleMoveUpdate(event: any): void {
+        this.isScrolling = true;
         let oldOffset = this.scrollOffset;
         this.scrollOffset += event.deltaX;
-        this.applyScrollOffsetLimits();
         this.setContainerOffset(this.scrollOffset);
 
         let appliedDeltaX = this.scrollOffset - oldOffset;
@@ -136,13 +137,12 @@ export class GraphContainerComponent implements OnInit, OnDestroy {
         let totalGraphWidth = _.sumBy(this.graphs, 'width');
         let maxOffset = totalGraphWidth * minVisiblePercent;
         this.scrollOffset = Math.max(-minVisible, Math.min(this.scrollOffset, maxOffset));
+        this.setContainerOffset(this.scrollOffset);
     }
 
     private handleMoveEnd(event: any): void {
-        this.scrollEvents = Math.max(0, this.scrollEvents - 1);
-        if (this.scrollEvents == 0) {
-            this.applyScrollOffsetLimits();
-        }
+        this.isScrolling = false;
+        this.applyScrollOffsetLimits();
     }
 
 

@@ -9,7 +9,7 @@
 
         <div class="list-container"
             [ngStyle]="containerStyle"
-            [ngClass]="{ moving: scrollEvents > 0, static: scrollEvents <= 0 }">
+            [ngClass]="{ moving: isScrolling, static: !isScrolling }">
             <div *ngFor="let graph of graphs; trackBy:graph?.id"
                  class="list-item"
                  [ngClass]="{ moving: graph.isPickedUp, static: !graph.isPickedUp }"
