@@ -5,11 +5,14 @@ namespace Assets.Modules.Graphs
 {
     public class GraphLabel : MonoBehaviour
     {
-        public Text Label;
+        public Text Front;
+        public Text Back;
 
         private void OnEnable()
         {
-            Label.text = "Here be dragons";
+            var text = "Here be dragons";
+            Front.text = text;
+            Back.text = text;
         }
     }
 }
