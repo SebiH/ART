@@ -8,9 +8,9 @@ using Valve.VR;
 
 namespace Assets.Modules.Tracking
 {
-    public class OpenVRListener : MonoBehaviour
+    public class VRListener : MonoBehaviour
     {
-        public static OpenVRListener Instance { get; private set; }
+        public static VRListener Instance { get; private set; }
 
         public Vector3 CurrentPosition { get; private set; }
         public Quaternion CurrentRotation { get; private set; }

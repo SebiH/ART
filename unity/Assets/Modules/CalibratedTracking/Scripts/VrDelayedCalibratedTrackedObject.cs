@@ -1,4 +1,4 @@
-﻿using Assets.Modules.Calibration;
+using Assets.Modules.Calibration;
 using Assets.Modules.Tracking;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,9 +30,9 @@ namespace Assets.Modules.CalibratedTracking.Scripts
 
         private void StashPose()
         {
-            var pos = OpenVRListener.Instance.CurrentPosition;
-            var rot = OpenVRListener.Instance.CurrentRotation;
-            var time = OpenVRListener.Instance.PoseUpdateTime;
+            var pos = VRListener.Instance.CurrentPosition;
+            var rot = VRListener.Instance.CurrentRotation;
+            var time = VRListener.Instance.PoseUpdateTime;
 
             _trackedPoses.Enqueue(new DelayedPose
             {
