@@ -1,6 +1,4 @@
-#define USE_OCULUS
-//#define USE_OPENVR
-
+using Assets.Modules.Core;
 using UnityEngine;
 using UnityEngine.VR;
 using Valve.VR;
@@ -16,16 +14,24 @@ namespace Assets.Modules.Tracking
         public Quaternion CurrentRotation { get; private set; }
         public float PoseUpdateTime { get; private set; }
 
-#if USE_OPENVR
         void OnEnable()
         {
             Instance = this;
-            SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
+
+            if (VrUtility.CurrentMode == VrUtility.VrMode.OpenVR)
+            {
+                // TODO: doesn't work..?
+                SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
+            }
         }
 
         void OnDisable()
         {
-            SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
+            if (VrUtility.CurrentMode == VrUtility.VrMode.OpenVR)
+            {
+                // TODO: doesn't work..?
+                SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
+            }
         }
 
         private void OnSteamVrPose(TrackedDevicePose_t[] poses)
@@ -48,23 +54,16 @@ namespace Assets.Modules.Tracking
             PoseUpdateTime = Time.unscaledTime;
         }
 
-#endif
-
-#if USE_OCULUS
-
-        private void OnEnable()
-        {
-            Instance = this;
-        }
 
         private void Update()
         {
-            var node = VRNode.Head;
-            CurrentPosition = InputTracking.GetLocalPosition(node);
-            CurrentRotation = InputTracking.GetLocalRotation(node);
-            PoseUpdateTime = Time.unscaledTime;
+            if (VrUtility.CurrentMode == VrUtility.VrMode.Native)
+            {
+                var node = VRNode.Head;
+                CurrentPosition = InputTracking.GetLocalPosition(node);
+                CurrentRotation = InputTracking.GetLocalRotation(node);
+                PoseUpdateTime = Time.unscaledTime;
+            }
         }
-
-#endif
     }
 }
