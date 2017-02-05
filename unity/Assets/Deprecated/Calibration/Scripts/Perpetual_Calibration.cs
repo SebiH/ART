@@ -401,7 +401,6 @@ namespace Assets.Modules.Calibration_Deprecated
         //            existingMarker.size = payload.size;
         //        }
 
-        //        // TODO1
         //        //var unitySize = DisplayUtility.PixelToUnityCoord(payload.size);
         //        //ArucoListener.Instance.MarkerSizeInMeter = unitySize;
         //    }

@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using Assets.Modules.Graphs;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         void OnEnable()
         {
-            StartGraph = GetComponent<Graph>();
+            StartGraph = UnityUtility.FindParent<Graph>(this);
         }
         
         void OnDisable()
@@ -40,8 +41,7 @@ namespace Assets.Modules.ParallelCoordinates
             if (_startGraph && _endGraph)
             {
                 var scale = Mathf.Abs((_endGraph.Position + _endGraph.Width / 2) - (_startGraph.Position + _startGraph.Width / 2));
-                // TODO1: don't depend on findchild?
-                transform.FindChild("Lines").localScale = new Vector3(1, 1, scale);
+                transform.localScale = new Vector3(1, 1, scale);
             }
         }
 
@@ -112,8 +112,7 @@ namespace Assets.Modules.ParallelCoordinates
                 for (int i = 0; i < _startGraph.Data.Length; i++)
                 {
                     var go = Instantiate(LineTemplate);
-                    // TODO1
-                    go.transform.parent = transform.FindChild("Lines");
+                    go.transform.parent = transform;
                     go.transform.localPosition = Vector3.zero;
                     go.transform.localRotation = Quaternion.identity;
                     go.transform.localScale = Vector3.one;

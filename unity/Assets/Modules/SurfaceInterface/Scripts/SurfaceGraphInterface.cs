@@ -99,9 +99,10 @@ namespace Assets.Modules.SurfaceInterface
         private void AddGraph(GraphInfo graphInfo)
         {
             var graph = _graphManager.CreateGraph(graphInfo.id);
+            var graphConnection = graph.GetComponentInChildren<GraphConnection>();
 
-            Debug.Assert(graph.GetComponent<GraphConnection>() != null, "GraphTemplate used by GraphManager must have GraphConnection script attached");
-            _graphConnections.Add(graph.GetComponent<GraphConnection>());
+            Debug.Assert(graphConnection != null, "GraphTemplate used by GraphManager must have GraphConnection script in children");
+            _graphConnections.Add(graphConnection);
 
             var existingGraphInfo = GetExistingGraphInfo(graphInfo.id);
             if (existingGraphInfo == null)
