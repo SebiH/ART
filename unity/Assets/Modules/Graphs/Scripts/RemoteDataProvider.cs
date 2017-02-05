@@ -11,7 +11,7 @@ namespace Assets.Modules.Graphs
         private Dictionary<string, DataPoint[]> _loadedData = new Dictionary<string, DataPoint[]>();
         private Dictionary<string, List<Action<string, DataPoint[]>>> _loadOperations = new Dictionary<string, List<Action<string, DataPoint[]>>>();
 
-        public void LoadDataAsync(string dimension, Action<string, DataPoint[]> onDataLoaded)
+        public virtual void LoadDataAsync(string dimension, Action<string, DataPoint[]> onDataLoaded)
         {
             if (_loadedData.ContainsKey(dimension))
             {
@@ -30,7 +30,7 @@ namespace Assets.Modules.Graphs
         }
 
 
-        public IEnumerator LoadData(string dimension)
+        private IEnumerator LoadData(string dimension)
         {
             var dataRequestForm = new WWWForm();
             dataRequestForm.AddField("dimension", dimension);
