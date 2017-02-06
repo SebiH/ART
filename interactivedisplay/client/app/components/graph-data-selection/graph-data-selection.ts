@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { Graph, Point } from '../../models/index';
+import { Graph, PathElement, Point } from '../../models/index';
 import { ScatterPlotComponent, ChartPolygon } from '../scatter-plot/scatter-plot';
 import {
     GraphProvider,
@@ -15,7 +15,7 @@ import {
 import * as _ from 'lodash';
 
 class Selection {
-    path: Point[] = [];
+    path: PathElement[] = [];
     polygon: ChartPolygon;
     selectedData: number[] = [];
 }
@@ -153,7 +153,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private handleTouchUp(ev: InteractionEvent): void {
         // don't allow very small polygons
-        if (Point.area(this.currentSelection.path) < 200) {
+        if (Point.areaOf(this.currentSelection.path) < 200) {
             this.removeSelection(this.currentSelection);
         } else { 
             this.updateSelection(this.currentSelection);
@@ -166,7 +166,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     }
 
     private handleTouchMove(ev: InteractionEvent): void {
-        this.currentSelection.path.push(this.positionInGraph(ev.position));
+        let pos = this.positionInGraph(ev.position);
+        this.currentSelection.path.push([pos.x, pos.y]);
         this.currentSelection.polygon.paint(this.currentSelection.path);
         let prevSelectionLength = this.currentSelection.selectedData.length;
 
@@ -192,19 +193,19 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         return Point.sub(p, posOffset);
     }
 
-    private buildBoundingRect(polygon: Point[]): Point[] {
+    private buildBoundingRect(polygon: number[][]): Point[] {
         if (polygon.length === 0) {
             return [new Point(0, 0), new Point(0, 0)];
         }
 
-        let topLeft = new Point(polygon[0].x, polygon[0].y);
-        let bottomRight = new Point(polygon[0].x, polygon[0].y);
+        let topLeft = new Point(polygon[0][0], polygon[0][1]);
+        let bottomRight = new Point(polygon[0][1], polygon[0][1]);
 
         for (let p of polygon) {
-            topLeft.x = Math.min(topLeft.x, p.x);
-            topLeft.y = Math.min(topLeft.y, p.y);
-            bottomRight.x = Math.max(bottomRight.x, p.x);
-            bottomRight.y = Math.max(bottomRight.y, p.y);
+            topLeft.x = Math.min(topLeft.x, p[0]);
+            topLeft.y = Math.min(topLeft.y, p[1]);
+            bottomRight.x = Math.max(bottomRight.x, p[0]);
+            bottomRight.y = Math.max(bottomRight.y, p[1]);
         }
 
         return [topLeft, bottomRight];
@@ -315,7 +316,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
         for (let i = 0; i < data.length; i++) {
             let p = new Point(data[i][0], data[i][1]);
-            if (p.isInPolygon(selection.path, boundingRect)) {
+            if (p.isInPolygonOf(selection.path, boundingRect)) {
                 selection.selectedData.push(i);
             }
         }

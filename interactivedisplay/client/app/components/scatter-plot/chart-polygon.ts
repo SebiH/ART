@@ -7,7 +7,7 @@ declare var textures: any;
 
 export class ChartPolygon {
     private pathElement: ChartElement;
-    private line: d3.Line<Point>;
+    private line: d3.Line<number[]>;
 
     private selectedTextureFill: string;
     private normalTextureFill: string;
@@ -25,10 +25,10 @@ export class ChartPolygon {
             .attr('class', 'line')
             .attr('fill', this.normalTextureFill);
 
-        this.line = d3.line<Point>()
+        this.line = d3.line()
             .curve(d3.curveBasisClosed)
-            .x(d => d.x)
-            .y(d => d.y);
+            .x(d => d[0])
+            .y(d => d[1]);
     }
 
     // Texture.js returns relative url as 'url(#xyz)', 
@@ -38,7 +38,7 @@ export class ChartPolygon {
         return url.replace('url(', 'url(' + baseUrl);
     }
 
-    public paint(path: Point[]) {
+    public paint(path: number[][]) {
         this.pathElement.attr('d', this.line(path));
     }
 

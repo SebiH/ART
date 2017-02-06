@@ -2,6 +2,8 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Point } from './point';
 
+export type PathElement = [number, number];
+
 export class Graph {
     public id: number = -1;
 
@@ -10,7 +12,7 @@ export class Graph {
 
     public color: string = "#FFFFFF";
 
-    public selectionPolygons: Point[][] = [];
+    public selectionPolygons: PathElement[][] = [];
     public selectedDataIndices: number[] = [];
     public isSelected: boolean = false;
 
@@ -65,8 +67,8 @@ export class Graph {
             dimX: this.dimX,
             dimY: this.dimY,
             color: this.color,
-            selectedData: Array.from(this.selectedDataIndices),
-            selectionPolygons: Array.from(this.selectionPolygons),
+            selectedData: this.selectedDataIndices,
+            selectionPolygons: this.selectionPolygons,
             isSelected: this.isSelected,
 
             pos: this.absolutePos,

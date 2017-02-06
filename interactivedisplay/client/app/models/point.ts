@@ -112,6 +112,22 @@ export class Point {
         return (intersections & 1) === 1;
     }
 
+    public isInPolygonOf(polygon: number[][], boundingRect: Point[]): boolean {
+        if (!this.isInRectangle(boundingRect)) {
+            return false;
+        }
+
+        let intersections = 0;
+        let startPoint = new Point(boundingRect[0].x - 0.0001, this.y - 0.0001);
+        for (let index = 0; index < polygon.length; index++) {
+            if (Point.areIntersecting2(polygon[index], polygon[(index + 1) % polygon.length], startPoint, this)) {
+                intersections++;
+            }
+        }
+
+        return (intersections & 1) === 1;
+    }
+
     /**
      *  Checks if point is inside given rectangle.
      *  Assuming rectangle[0] == topLeft, rectangle[1] == bottomRight
@@ -180,6 +196,37 @@ export class Point {
         return true;
     }
 
+    // .. workaround to accept number[2]
+    // see areIntersecting
+    private static areIntersecting2(v1start: number[], v1end: number[], v2start: Point, v2end: Point): boolean {
+
+        let a1 = v1end[1] - v1start[1];
+        let b1 = v1start[0] - v1end[0];
+        let c1 = (v1end[0] * v1start[1]) - (v1start[0] * v1end[1]);
+
+        let d1 = (a1 * v2start.x) + (b1 * v2start.y) + c1;
+        let d2 = (a1 * v2end.x) + (b1 * v2end.y) + c1;
+
+        if (d1 > 0 && d2 > 0) return false;
+        if (d1 < 0 && d2 < 0) return false;
+
+        let a2 = v2end.y - v2start.y;
+        let b2 = v2start.x - v2end.x;
+        let c2 = (v2end.x * v2start.y) - (v2start.x * v2end.y);
+
+        d1 = (a2 * v1start[0]) + (b2 * v1start[1]) + c2;
+        d2 = (a2 * v1end[0]) + (b2 * v1end[1]) + c2;
+
+        if (d1 > 0 && d2 > 0) return false;
+        if (d1 < 0 && d2 < 0) return false;
+
+        // TODO: not sure how to handle this case
+        // if ((a1 * b2) - (a2 * b1) == 0.0f) return COLLINEAR;
+        if ((a1 * b2) - (a2 * b1) === 0.0) return false;
+
+        return true;
+    }
+
     // see: http://www.mathopenref.com/coordpolygonarea2.html
     public static area(path: Point[]): number {
         let area = 0;
@@ -188,6 +235,18 @@ export class Point {
             let curr = path[i];
             let next = path[(i + 1) % path.length];
             area += (curr.x + next.x) * (curr.y - next.y);
+        }
+
+        return Math.abs(area/2);
+    }
+
+    public static areaOf(path: number[][]): number {
+        let area = 0;
+
+        for (let i = 0; i < path.length; i++) {
+            let curr = path[i];
+            let next = path[(i + 1) % path.length];
+            area += (curr[0] + next[0]) * (curr[1] - next[1]);
         }
 
         return Math.abs(area/2);
