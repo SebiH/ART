@@ -160,6 +160,11 @@ namespace Assets.Modules.SurfaceInterface
         {
             var graph = _graphManager.GetGraph(graphInfo.id);
             graph.SetData(graphInfo.dimX, graphInfo.dimY);
+
+            var graphVisualisation = graph.GetComponentInChildren<GraphVisualisation>();
+            Debug.Assert(graphVisualisation, "Graphs must have GraphVisualisation in children!");
+            graphVisualisation.SetDimensionX(graphInfo.dimX, 0, 1);
+            graphVisualisation.SetDimensionY(graphInfo.dimY, 0, 1);
         }
 
         private void UpdateGraphPosition(GraphInfoWrapper graphInfoWrapper)

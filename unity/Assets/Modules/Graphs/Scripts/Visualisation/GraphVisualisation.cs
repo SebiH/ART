@@ -8,14 +8,20 @@ namespace Assets.Modules.Graphs
         public GraphLabel LabelY;
         public GraphDataField DataField;
 
-        public void SetDimensionX(string x, float domainMin, float domainMax)
+        public void SetDimensionX(string name, float domainMin, float domainMax)
         {
-
+            if (LabelX)
+            {
+                LabelX.Text = name;
+            }
         }
 
-        public void SetDimensionY(string y, float domainMin, float domainMax)
+        public void SetDimensionY(string name, float domainMin, float domainMax)
         {
-
+            if (LabelY)
+            {
+                LabelY.Text = name;
+            }
         }
     }
 }

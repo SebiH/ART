@@ -8,11 +8,9 @@ namespace Assets.Modules.Graphs
         public Text Front;
         public Text Back;
 
-        private void OnEnable()
+        public string Text
         {
-            var text = "Here be dragons";
-            Front.text = text;
-            Back.text = text;
+            set { Front.text = value; Back.text = value; }
         }
     }
 }
