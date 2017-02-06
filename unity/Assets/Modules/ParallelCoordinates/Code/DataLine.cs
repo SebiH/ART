@@ -12,8 +12,10 @@ namespace Assets.Modules.ParallelCoordinates
         private int _dataIndex = -1;
         public int DataIndex { get { return _dataIndex; } }
 
-        private List<LineSegment> _lineSegments = new List<LineSegment>();
+        private const float DEFAULT_WIDTH = 0.003f;
+        private const float FILTERED_WIDTH = 0.0005f;
 
+        private List<LineSegment> _lineSegments = new List<LineSegment>();
         private Color _color;
 
         public DataLine(int dataIndex)
@@ -26,6 +28,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _lineSegments.Add(segment);
             segment.SetColor(_color);
+            segment.SetWidth(DEFAULT_WIDTH);
         }
 
         public void RemoveSegment(LineSegment segment)
@@ -40,10 +43,12 @@ namespace Assets.Modules.ParallelCoordinates
                 if (isHighlighted)
                 {
                     segment.SetColor(_color);
+                    segment.SetWidth(DEFAULT_WIDTH);
                 }
                 else
                 {
                     segment.SetColor(Color.gray);
+                    segment.SetWidth(FILTERED_WIDTH);
                 }
             }
         }

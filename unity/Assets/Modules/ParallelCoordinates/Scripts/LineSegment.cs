@@ -33,10 +33,16 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-        // best called from ContinualLine
         public void SetColor(Color col)
         {
             _lineRenderer.material.color = col;
+        }
+
+        public void SetWidth(float width)
+        {
+            // TODO: animate
+            _lineRenderer.startWidth = width;
+            _lineRenderer.endWidth = width;
         }
     }
 }
