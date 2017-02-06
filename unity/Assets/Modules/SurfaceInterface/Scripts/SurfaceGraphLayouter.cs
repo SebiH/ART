@@ -13,10 +13,8 @@ namespace Assets.Modules.SurfaceInterface
         private GraphManager _manager;
         private Surface _surface;
 
-        // avoid recalculating value
-        private readonly Quaternion GraphRotation = Quaternion.Euler(0, 90, 0);
         // for selection, etc.
-        const float NormalAnimationSpeed = 5f;
+        const float NormalAnimationSpeed = 4f;
         // for scrolling, smoothing out values from webapp
         const float FastAnimationSpeed = 15f;
 
@@ -25,18 +23,22 @@ namespace Assets.Modules.SurfaceInterface
         {
             _surface = UnityUtility.FindParent<Surface>(this);
             _manager = GetComponent<GraphManager>();
+            _manager.OnGraphAdded += HandleNewGraph;
+        }
+
+        private void OnDisable()
+        {
+            _manager.OnGraphAdded -= HandleNewGraph;
         }
 
         private void Update()
         {
             foreach (var graph in _manager.GetAllGraphs())
             {
-                graph.transform.localRotation = GraphRotation;
-
                 // TODO: minor performance improvement: only calculate once globally for all graphs?
                 // selection animation
                 var currentOffset = graph.transform.localPosition.z;
-                var targetOffset = IsGraphSelected ? 1f : 0.5f;
+                var targetOffset = GetZOffset();
                 var actualOffset = Mathf.Lerp(currentOffset, targetOffset, Time.unscaledDeltaTime * NormalAnimationSpeed);
 
                 // smooth out scrolling
@@ -44,8 +46,25 @@ namespace Assets.Modules.SurfaceInterface
                 var targetPosition = graph.Position + graph.Width / 2;
                 var actualPosition = Mathf.Lerp(currentPosition, targetPosition, Time.unscaledDeltaTime * FastAnimationSpeed);
 
-                graph.transform.localPosition = new Vector3(actualPosition, 0.5f, actualOffset);
+                // creation / deletion
+                var currentHeight = graph.transform.localPosition.y;
+                var targetHeight = 0.5f;
+                var actualHeight = Mathf.Lerp(currentHeight, targetHeight, Time.unscaledDeltaTime * NormalAnimationSpeed);
+
+                graph.transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
             }
+        }
+
+
+        private void HandleNewGraph(Graph graph)
+        {
+            graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
+            graph.transform.localPosition = new Vector3(0, -0.5f, GetZOffset());
+        }
+
+        private float GetZOffset()
+        {
+            return IsGraphSelected ? 1f : 0.5f;
         }
     }
 }
