@@ -11,6 +11,10 @@ namespace Assets.Modules.Graphs
 
         private readonly List<Graph> _graphs = new List<Graph>();
 
+        public delegate void GraphEventHandler(Graph graph);
+        public event GraphEventHandler OnGraphAdded;
+        public event GraphEventHandler OnGraphDeleted;
+
         void OnEnable()
         {
 
@@ -53,6 +57,11 @@ namespace Assets.Modules.Graphs
             graph.Id = id;
             graph.DataProvider = DataProvider;
             _graphs.Add(graph);
+
+            if (OnGraphAdded != null)
+            {
+                OnGraphAdded(graph);
+            }
             
             return graph;
         }
@@ -63,6 +72,12 @@ namespace Assets.Modules.Graphs
             if (graph)
             {
                 _graphs.Remove(graph);
+
+                if (OnGraphDeleted != null)
+                {
+                    OnGraphDeleted(graph);
+                }
+
                 Destroy(graph.gameObject);
             }
         }
