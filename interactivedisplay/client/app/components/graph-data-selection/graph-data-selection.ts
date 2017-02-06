@@ -169,13 +169,27 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         let pos = this.positionInGraph(ev.position);
         this.currentSelection.path.push([pos.x, pos.y]);
         this.currentSelection.polygon.paint(this.currentSelection.path);
-        let prevSelectionLength = this.currentSelection.selectedData.length;
+
+        let length = this.currentSelection.path.length;
+        // try to reduce points by detecting straight lines
+        if (length > 2)
+        {
+            let lineStart = this.currentSelection.path[length - 3];
+            let lineEnd = this.currentSelection.path[length - 1];
+            let point = this.currentSelection.path[length - 2];
+
+            if (Point.isOnLine(point, lineStart, lineEnd)) {
+                this.currentSelection.path.splice(length - 1, 1);
+                console.log('detected straight line');
+            }
+        }
 
         if (this.currentSelection.path.length % 10 === 0) {
             this.updateSelection(this.currentSelection);
             this.highlightData();
         }
 
+        let prevSelectionLength = this.currentSelection.selectedData.length;
         let changes = ['selectionPolygons'];
         if (prevSelectionLength !== this.currentSelection.selectedData.length) {
             changes.push('selectedDataIndices');

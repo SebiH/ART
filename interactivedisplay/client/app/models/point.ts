@@ -91,6 +91,21 @@ export class Point {
         return this.x == p2.x && this.y == p2.y;
     }
 
+    public static isOnLine(point: number[], lineStart: number[], lineEnd: number[]): boolean {
+        // see: https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line#Line_defined_by_two_points
+        let x0 = point[0];
+        let y0 = point[1];
+        let x1 = lineStart[0];
+        let y1 = lineStart[1];
+        let x2 = lineEnd[0];
+        let y2 = lineEnd[1];
+
+        let distance = (Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1))
+            / Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
+
+        return Math.abs(distance) < 0.1;
+    }
+
     /**
      * Checks if the point is contained inside a given polygon.
      * BoundingRect[0] == topLeft, BoundingRect[1] == bottomRight
