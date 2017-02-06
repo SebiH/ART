@@ -194,13 +194,17 @@ namespace Assets.Modules.SurfaceInterface
 
             var nextGraphInfo = _currentGraphs.FirstOrDefault(g => g.id == graphInfo.nextId);
 
-            if (nextGraphInfo != null)
+            var graphConnection = _graphConnections.FirstOrDefault(c => c.StartGraph != null && c.StartGraph.Id == graphInfo.id);
+            if (graphConnection)
             {
-                var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
-                var graphConnection = _graphConnections.FirstOrDefault(c => c.StartGraph != null && c.StartGraph.Id == graphInfo.id);
-                if (graphConnection)
+                if (nextGraphInfo != null)
                 {
+                    var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
                     graphConnection.EndGraph = nextGraph;
+                }
+                else
+                {
+                    graphConnection.EndGraph = null;
                 }
             }
         }
