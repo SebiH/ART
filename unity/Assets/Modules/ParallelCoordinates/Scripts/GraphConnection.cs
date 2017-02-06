@@ -40,7 +40,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (_startGraph && _endGraph)
             {
-                var scale = Mathf.Abs((_endGraph.Position + _endGraph.Width / 2) - (_startGraph.Position + _startGraph.Width / 2));
+                var scale = (_endGraph.Position + _endGraph.Width / 2) - (_startGraph.Position + _startGraph.Width / 2);
                 transform.localScale = new Vector3(1, 1, scale);
             }
         }
