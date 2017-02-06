@@ -14,7 +14,7 @@ namespace Assets.Modules.Surfaces
 
         // see: https://forum.unity3d.com/threads/c-tcp-ip-socket-how-to-receive-from-server.227259/
         private Socket _socket;
-        private byte[] _receiveBuffer = new byte[256 * 256];
+        private byte[] _receiveBuffer = new byte[1024 * 1024];
         private Queue _queuedCommands;
 
         public delegate void CommandReceivedHandler(string cmd, string payload);
@@ -43,7 +43,10 @@ namespace Assets.Modules.Surfaces
         {
             try
             {
-                _socket.Disconnect(false);
+                if (_socket.Connected)
+                {
+                    _socket.Disconnect(false);
+                }
             }
             catch (SocketException ex)
             {
@@ -100,7 +103,6 @@ namespace Assets.Modules.Surfaces
                 _queuedCommands.Enqueue(incomingCmd);
             }
 
-
             // Start receiving again
             _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
         }
@@ -133,7 +135,7 @@ namespace Assets.Modules.Surfaces
                 {
                     bracketCounter--;
 
-                    if (bracketCounter <= 0)
+                    if (bracketCounter == 0)
                     {
                         rightBracketIndex = i;
                         bracketCounter = 0;
@@ -143,6 +145,18 @@ namespace Assets.Modules.Surfaces
                         leftBracketIndex = -1;
                         rightBracketIndex = -1;
                     }
+                    else if (bracketCounter < 0)
+                    {
+                        // invalid packet!
+                        // TODO handling???
+                        Debug.Log("Received incomplete packet!");
+                        return new string[0];
+                    }
+                }
+                else if (ch == '\\')
+                {
+                    // skip next char
+                    i++;
                 }
 
             }

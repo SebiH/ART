@@ -74,6 +74,11 @@ namespace Assets.Modules.SurfaceInterface
                     UpdateGraphPosition(info);
                     break;
 
+                /*
+                 * Graph updates are split into two channels:
+                 * - graph-data for infrequent updates with big payload (due to array of selectionpolygon & selected ids)
+                 * - graph-position with high-frequency positional data
+                 */
                 case "graph-data":
                     wrapper = JsonUtility.FromJson<GraphInfoWrapper>(payload);
                     UpdateGraphData(wrapper);
