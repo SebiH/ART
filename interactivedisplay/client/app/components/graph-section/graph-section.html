@@ -1,6 +1,5 @@
 <div class="section-root"
-    [style.background]="graph.color"
-    [style.width.px]="graph.width">
+    [style.background]="graph.color">
 
     <div class="marker" [ngClass]="{ top: !graph.isSelected, right: graph.isSelected }">
         <ar-marker [marker]="markers[0]"></ar-marker>
@@ -38,9 +37,9 @@
                     [ngClass]="{ four: graph.width < 400, eight: 400 < graph.width }"
 
                     moveable
-                    (moveStart)="handleMoveStart(graph, $event)"
-                    (moveUpdate)="handleMoveUpdate(graph, $event)"
-                    (moveEnd)="handleMoveEnd(graph, $event)">
+                    (moveStart)="handleMoveStart($event)"
+                    (moveUpdate)="handleMoveUpdate($event)"
+                    (moveEnd)="handleMoveEnd($event)">
                     <div class="button"> ↔ </div>
                 </div>
 

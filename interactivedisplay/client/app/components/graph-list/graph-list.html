@@ -1,0 +1,29 @@
+<!-- Container for layout & to catch events for scrolling -->
+<div class="root"
+     moveable
+     (moveStart)="handleMoveStart($event)"
+     (moveUpdate)="handleMoveUpdate($event)"
+     (moveEnd)="handleMoveEnd($event)">
+
+    <!-- Button to add new graphs -->
+    <div class="add-button-container">
+        <graph-create-button class="add-button"
+            (graphCreation)="onGraphCreation($event)">
+        </graph-create-button>
+    </div>
+
+
+    <div class="list-container">
+
+        <!-- Scrollable list -->
+        <div class="list"
+             [ngStyle]="listStyle"
+             [ngClass]="{ moving: isScrolling }">
+            <!-- Graph visualisation that can be dragged&dropped -->
+            <graph-list-item *ngFor="let graph of graphs; trackBy: graph?.id"
+                [graph]="graph" [offset]="getOffset(graph)"
+                [style.z-index]="graph.isPickedUp ? 100 : graph.listIndex">
+            </graph-list-item>
+        </div>
+    </div>
+</div>

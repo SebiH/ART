@@ -88,22 +88,17 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         this.graphProvider.removeGraph(this.graph);
     }
 
-    private handleMoveStart(graph: Graph, event: any) {
-        this.onMove.emit({
-            start: true,
-        });
+    private handleMoveStart(event: any) {
+        this.graph.isPickedUp = true;
     }
 
-    private handleMoveUpdate(graph: Graph, event: any) {
-        this.onMove.emit({
-            delta: event.deltaX
-        });
+    private handleMoveUpdate(event: any) {
+        this.graphProvider.setGraphOffset(this.graph, this.graph.posOffset - event.deltaX);
     }
 
-    private handleMoveEnd(graph: Graph, event: any) {
-        this.onMove.emit({
-            end: true,
-        });
+    private handleMoveEnd(event: any) {
+        this.graph.isPickedUp = false;
+        this.graphProvider.setGraphOffset(this.graph, 0);
     }
 
 }

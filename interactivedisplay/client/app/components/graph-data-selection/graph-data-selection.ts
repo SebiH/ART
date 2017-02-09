@@ -180,7 +180,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
             if (Point.isOnLine(point, lineStart, lineEnd)) {
                 this.currentSelection.path.splice(length - 1, 1);
-                console.log('detected straight line');
             }
         }
 

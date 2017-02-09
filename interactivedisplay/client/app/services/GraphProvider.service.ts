@@ -50,6 +50,29 @@ export class GraphProvider {
         this.delayedGraphPositionUpdate = _.debounce(this.updateGraphPosition, 0);
     }
 
+    public setGraphOffset(graph: Graph, offset: number) {
+        graph.posOffset = offset;
+
+        let sortedGraphs = _.sortBy(this.graphs, 'listIndex');
+        let graphIndex = sortedGraphs.indexOf(graph);
+
+        if (graph.posOffset < 0 && graphIndex > 0) {
+            let prevGraph = sortedGraphs[graphIndex - 1];
+            while (-graph.posOffset > prevGraph.width / 2) {
+                this.moveLeft(graph);
+                graph.posOffset += prevGraph.width;
+            }
+        } else if (graph.posOffset > 0 && graphIndex < sortedGraphs.length - 1) {
+            let nextGraph = sortedGraphs[graphIndex + 1];
+            while (graph.posOffset > nextGraph.width / 2) {
+                this.moveRight(graph);
+                graph.posOffset -= nextGraph.width;
+            }
+        }
+
+        graph.updatePosition();
+    }
+
     public moveLeft(graph: Graph) {
         let prevGraph = _.find(this.graphs, g => g.nextGraphId === graph.id);
 

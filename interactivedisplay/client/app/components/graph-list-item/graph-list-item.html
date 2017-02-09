@@ -1,0 +1,18 @@
+<div class="list-item" 
+     [ngStyle]="getListItemStyle()"
+     [ngClass]="{ moving: graph.isPickedUp }">
+
+    <div class="list-item-container">
+        <!-- Placeholder to display original position -->
+        <div class="placeholder">
+            &lt;Placeholder&gt;
+        </div>
+
+        <!-- Drag&Drop content -->
+        <div class="content"
+            [ngStyle]="getGraphStyle()"
+            [ngClass]="{ moving: graph.isPickedUp }">
+            <graph-section [graph]="graph"></graph-section>
+        </div>
+    </div>
+</div>

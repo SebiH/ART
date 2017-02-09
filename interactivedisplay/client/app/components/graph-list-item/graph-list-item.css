@@ -1,0 +1,60 @@
+.list-item {
+    position: absolute;
+    top: 0;
+
+    flex-shrink: 0;
+    height: 100%;
+    display: inline-block;
+
+    -webkit-transition: top 0.1s linear, -webkit-transform 0.5s ease-in-out, width 1s linear;
+    -ms-transition: top 0.1s linear, -ms-transform 0.5s ease-in-out, width 1s linear;
+    transition: top 0.1s linear, transform 0.5s ease-in-out, width 1s linear;
+}
+
+.list-item.moving {
+    -webkit-transition: top 0.1s linear, width 1s linear;
+    -ms-transition: top 0.1s linear, width 1s linear;
+    transition: top 0.1s linear, width 1s linear;
+}
+
+.list-item-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    box-shadow: -6px 0px 28px 0px black;
+    
+    -webkit-transition: top 0.1s linear, -webkit-transform 0.5s ease-in-out, width 1s linear;
+    -ms-transition: top 0.1s linear, -ms-transform 0.5s ease-in-out, width 1s linear;
+    transition: top 0.1s linear, transform 0.5s ease-in-out, width 1s linear;
+}
+
+.content.moving {
+    top: -25px;
+
+    -webkit-transition: top 0.1s linear, width 1s linear;
+    -ms-transition: top 0.1s linear, width 1s linear;
+    transition: top 0.1s linear, width 1s linear;
+}

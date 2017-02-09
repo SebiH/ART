@@ -1,21 +1,21 @@
 .scatter-point {
-    fill: black;
+    fill: white;
     transition: 0.3s linear;
     r: 5;
 }
 
 .scatter-point.selected {
-    fill: green;
+    fill: #03A9F4;
     r: 7;
 }
 
 .scatter-point.filtered {
-    fill: gray;
+    fill: #607D8B;
     r: 3;
 }
 
 .scatter-point.selected.filtered {
-    fill: red;
+    fill: #FF5722;
 }
 
 .line {
