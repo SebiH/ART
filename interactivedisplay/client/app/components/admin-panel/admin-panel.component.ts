@@ -11,7 +11,9 @@ export class AdminPanelComponent {
     private tabs: string[] = ['Calibration', 'Stability', 'Actions', 'Camera'];
     private activeTab = this.tabs[0];
 
-    constructor(private socketio: SocketIO) {}
+    constructor(private socketio: SocketIO) {
+        socketio.connect(true);
+    }
 
     private setCorner(corner: number) {
         this.socketio.sendMessage('admin-cmd-set-corner', corner);

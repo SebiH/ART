@@ -3,11 +3,30 @@ import * as io from 'socket.io-client';
 
 @Injectable()
 export class SocketIO {
+    private isDebug: boolean = false;
     private socket: SocketIOClient.Socket = undefined;
     private subscriptions: { [channel: string]: Function[]; } = {};
 
     constructor() {
         this.socket = io.connect();
+    }
+
+    public connect(debug: boolean = false) {
+        // avoid unecessary reconnects
+        if (this.isDebug !== debug) {
+
+            this.isDebug = debug;
+
+            if (this.socket.connected) {
+                this.socket.disconnect();
+            }
+
+            if (debug) {
+                this.socket = io.connect({ query: 'debug=true' });
+            } else {
+                this.socket = io.connect();
+            }
+        }
     }
 
     public on(name: string, onMsgReceived: Function): void {

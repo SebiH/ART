@@ -12,6 +12,7 @@ export class SocketIOServer {
 
     private ioServer: SocketIO.Server;
     private clients: SocketIO.Socket[] = [];
+    private debugClients: SocketIO.Socket[] = [];
     private msgListeners: SocketIOMessageListener[] = [];
 
     public start(webserver: WebServer): void {
@@ -29,9 +30,15 @@ export class SocketIOServer {
     }
 
     public broadcast(channel: string, msg: any, target?: string): void {
-        for (let client of this.clients) {
-            // TODO: check target
-            client.emit(channel, msg);
+        if (channel.startsWith('debug') || channel.startsWith('admin')) {
+            for (let client of this.debugClients) {
+                client.emit(channel, msg);
+            }
+        } else {
+            for (let client of this.clients) {
+                // TODO: check target
+                client.emit(channel, msg);
+            }
         }
     }
 
@@ -46,7 +53,13 @@ export class SocketIOServer {
     }
 
     private handleConnection(socket: SocketIO.Socket): void {
-        this.handleNewConnection(socket);
+
+        let isDebug = socket.handshake.query.debug;
+        if (isDebug) {
+            this.handleNewDebugConnection(socket);
+        } else {
+            this.handleNewClientConnection(socket);
+        }
 
         socket.on('command', (data) => {
             this.handleCommand(socket, data);
@@ -57,9 +70,14 @@ export class SocketIOServer {
         });
     }
 
-    private handleNewConnection(socket: SocketIO.Socket): void {
+    private handleNewClientConnection(socket: SocketIO.Socket): void {
         console.log(LOG_PREFIX + "New SocketIO client connected from " + socket.id);
         this.clients.push(socket);
+    }
+
+    private handleNewDebugConnection(socket: SocketIO.Socket): void {
+        console.log(LOG_PREFIX + "New SocketIO debug client connected from " + socket.id);
+        this.debugClients.push(socket);
     }
 
     private handleCommand(socket: SocketIO.Socket, data: any): void {

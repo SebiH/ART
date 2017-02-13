@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { SurfaceProvider } from '../../services/index';
+import { SurfaceProvider, SocketIO } from '../../services/index';
 
 @Component({
     selector: 'surface-container',
@@ -8,7 +8,9 @@ import { SurfaceProvider } from '../../services/index';
 })
 
 export class SurfaceComponent {
-    constructor (private surfaceProvider: SurfaceProvider) { }
+    constructor (private surfaceProvider: SurfaceProvider, private socketio: SocketIO) {
+        socketio.connect();
+    }
 
     @HostListener('window:resize', ['$event'])
     private onResize(event) {
