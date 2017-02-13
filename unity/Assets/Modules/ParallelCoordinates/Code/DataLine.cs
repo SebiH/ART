@@ -16,19 +16,19 @@ namespace Assets.Modules.ParallelCoordinates
         private const float FILTERED_WIDTH = 0.0005f;
 
         private List<LineSegment> _lineSegments = new List<LineSegment>();
-        private Color _color;
+        private Color _defaultColor;
+        private bool _isHighlighted = false;
 
         public DataLine(int dataIndex)
         {
             _dataIndex = dataIndex;
-            _color = Theme.GetColor(dataIndex);
+            _defaultColor = Theme.GetColor(dataIndex);
         }
 
         public void AddSegment(LineSegment segment)
         {
             _lineSegments.Add(segment);
-            segment.SetColor(_color);
-            segment.SetWidth(DEFAULT_WIDTH);
+            SetHighlight(_isHighlighted, segment);
         }
 
         public void RemoveSegment(LineSegment segment)
@@ -38,18 +38,24 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void SetHighlight(bool isHighlighted)
         {
+            _isHighlighted = isHighlighted;
             foreach (var segment in _lineSegments)
             {
-                if (isHighlighted)
-                {
-                    segment.SetColor(_color);
-                    segment.SetWidth(DEFAULT_WIDTH);
-                }
-                else
-                {
-                    segment.SetColor(Color.gray);
-                    segment.SetWidth(FILTERED_WIDTH);
-                }
+                SetHighlight(isHighlighted, segment);
+            }
+        }
+
+        private void SetHighlight(bool isHighlighted, LineSegment segment)
+        {
+            if (isHighlighted)
+            {
+                segment.SetColor(_defaultColor);
+                segment.SetWidth(DEFAULT_WIDTH);
+            }
+            else
+            {
+                segment.SetColor(Color.gray);
+                segment.SetWidth(FILTERED_WIDTH);
             }
         }
     }

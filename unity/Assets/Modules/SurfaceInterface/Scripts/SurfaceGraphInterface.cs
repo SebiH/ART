@@ -60,7 +60,8 @@ namespace Assets.Modules.SurfaceInterface
 
                 yield return new WaitForEndOfFrame();
 
-                SetDataFilters();
+                if (graphInfo.data.hasFilter) { DataLineManager.SetFilter(null); }
+                else { DataLineManager.SetFilter(graphInfo.data.selectedDataIndices); }
             }
         }
 
@@ -96,6 +97,12 @@ namespace Assets.Modules.SurfaceInterface
                 case "-graph":
                     var graphId = int.Parse(payload);
                     RemoveGraph(graphId);
+                    break;
+
+                case "selectedDataIndices":
+                    var dataWrapper = JsonUtility.FromJson<DataWrapper>(payload);
+                    if (dataWrapper.hasFilter) { DataLineManager.SetFilter(null); }
+                    else { DataLineManager.SetFilter(dataWrapper.selectedDataIndices); }
                     break;
             }
         }
@@ -139,7 +146,6 @@ namespace Assets.Modules.SurfaceInterface
                     existingGraph.color = updatedGraph.color;
                     existingGraph.dimX = updatedGraph.dimX;
                     existingGraph.dimY = updatedGraph.dimY;
-                    existingGraph.selectedData = updatedGraph.selectedData;
                     existingGraph.isSelected = updatedGraph.isSelected;
                 }
             }
@@ -151,23 +157,6 @@ namespace Assets.Modules.SurfaceInterface
 
             var hasSelectedGraph = _currentGraphs.Any(g => g.isSelected);
             _layout.IsGraphSelected = hasSelectedGraph;
-
-            SetDataFilters();
-        }
-
-        private void SetDataFilters()
-        {
-            DataLineManager.ClearFilter();
-
-            foreach (var gi in _currentGraphs)
-            {
-                if (gi.selectedData != null && gi.selectedData.Length > 0)
-                {
-                    DataLineManager.AddFilter(gi.selectedData);
-                }
-            }
-
-            DataLineManager.ApplyFilter();
         }
 
         private void UpdateGraphData(GraphInfo graphInfo)
@@ -255,6 +244,14 @@ namespace Assets.Modules.SurfaceInterface
         private class GraphInfoWrapper
         {
             public GraphInfo[] graphs = new GraphInfo[0];
+            public DataWrapper data = null;
+        }
+
+        [Serializable]
+        private class DataWrapper
+        {
+            public int[] selectedDataIndices = new int[0];
+            public bool hasFilter = false;
         }
     }
 }

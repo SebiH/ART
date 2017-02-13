@@ -1,11 +1,12 @@
-using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
     public static class DataLineManager
     {
         private static DataLine[] _lines = new DataLine[0];
+        private static int[] _filter = null;
 
         // minor optimisation to avoid extending the array
         public static void SetMaxDataIndex(int max)
@@ -30,53 +31,27 @@ namespace Assets.Modules.ParallelCoordinates
 
             if (_lines[index] == null)
             {
-                _lines[index] = new DataLine(index);
+                var line = new DataLine(index);
+                _lines[index] = line;
+                SetFilter(line);
             }
 
             return _lines[index];
         }
 
-        #region Filtering
-
-        private static int[] _idFilter = null;
-
-        public static void ClearFilter()
+        public static void SetFilter(int[] filter)
         {
-            _idFilter = null;
-        }
-
-        public static void AddFilter(int[] remainingIds)
-        {
-            if (_idFilter == null)
-            {
-                _idFilter = remainingIds;
-            }
-            else
-            {
-                var newFilter = new List<int>();
-
-                foreach (var id in remainingIds)
-                {
-                    if (_idFilter.Contains(id))
-                    {
-                        newFilter.Add(id);
-                    }
-                }
-
-                _idFilter = newFilter.ToArray();
-            }
-
-        }
-
-        public static void ApplyFilter()
-        {
+            _filter = filter;
             foreach (var line in _lines)
             {
-                var isHighlighted = (_idFilter == null) || _idFilter.Contains(line.DataIndex);
-                line.SetHighlight(isHighlighted);
+                SetFilter(line);
             }
         }
 
-        #endregion
+        private static void SetFilter(DataLine line)
+        {
+            var isHighlighted = (_filter == null) || _filter.Contains(line.DataIndex);
+            line.SetHighlight(isHighlighted);
+        }
     }
 }

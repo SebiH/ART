@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { GraphProvider } from './GraphProvider.service';
+import { SocketIO } from './SocketIO.service';
 import { Graph } from '../models/index';
 
 import * as _ from 'lodash';
@@ -15,7 +16,7 @@ export class DataFilter {
 
     private currentFilter: number[] = null;
 
-    constructor(private graphProvider: GraphProvider) {
+    constructor(private graphProvider: GraphProvider, private socketio: SocketIO) {
         // null => no filter
         this.filterSubject.next(null);
 
@@ -65,5 +66,9 @@ export class DataFilter {
         }
 
         this.filterSubject.next(this.currentFilter);
+        this.socketio.sendMessage('selectedDataIndices', {
+            selectedDataIndices: this.currentFilter,
+            hasFilter: this.currentFilter === null
+        });
     }
 }
