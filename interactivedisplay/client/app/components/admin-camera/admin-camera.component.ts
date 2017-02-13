@@ -13,6 +13,8 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
     private blc: number = 0;
     private gap: number = 0;
 
+    private camerasActive: boolean = true;
+
     constructor(private socketio: SocketIO) {}
 
     ngOnInit() {
@@ -48,5 +50,12 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
     private setGap(val: number) {
         this.gap = val / (100 * 100);
         this.socketio.sendMessage('camera-gap', this.gap);
+    }
+
+    private setCamerasActive(val: boolean) {
+        if (this.camerasActive !== val) {
+            this.camerasActive = val;
+            this.socketio.sendMessage('camera-active', this.camerasActive);
+        }
     }
 }

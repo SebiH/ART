@@ -21,7 +21,9 @@
             (input)="setBlc(blcInput.value)"
             min="0" max="1023" steps="1" value="{{blc}}">
     </div>
+
     <br/>
+
     <div class="row">
         <span class="two columns">Camera Gap Offset</span>
         <span class="two columns">{{gap * 100}}cm</span>
@@ -29,4 +31,19 @@
             (input)="setGap(gapInput.value)"
             min="-750" max="750" value="{{gap * 100 * 100}}">
     </div>
+
+    <br/>
+
+    <div class="row">
+    <button class="six columns toggle-button"
+            [ngClass]="{ toggled: camerasActive }"
+            (click)="setCamerasActive(true)">
+        Activate Cameras
+    </button>
+
+    <button class="six columns toggle-button"
+            [ngClass]="{ toggled: !camerasActive }"
+            (click)="setCamerasActive(false)">
+        Deactivate Cameras
+    </button>
 </div>

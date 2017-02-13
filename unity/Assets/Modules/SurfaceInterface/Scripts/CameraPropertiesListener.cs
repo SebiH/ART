@@ -48,6 +48,13 @@ namespace Assets.Modules.SurfaceInterface.Scripts
                 if (LeftEye) { LeftEye.localPosition = _originalLeftEyePosition + new Vector3(offset, 0, 0); }
                 if (RightEye) { RightEye.localPosition = _originalRightEyePosition + new Vector3(-offset, 0, 0); }
             }
+
+            if (cmd == "camera-active")
+            {
+                var status = bool.Parse(payload.Replace("\"", ""));
+                if (LeftEye) { LeftEye.gameObject.GetComponent<Renderer>().enabled = status; }
+                if (RightEye) { RightEye.GetComponent<Renderer>().enabled = status; }
+            }
         }
 
 
