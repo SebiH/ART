@@ -10,10 +10,20 @@ namespace Assets.Modules.SurfaceInterface.Scripts
     {
         private OvrvisionCameraSource _camera;
 
+        public Transform LeftEye;
+        private Vector3 _originalLeftEyePosition;
+
+        public Transform RightEye;
+        private Vector3 _originalRightEyePosition;
+
+
         private void OnEnable()
         {
             RemoteSurfaceConnection.Instance.OnCommandReceived += OnAction;
             _camera = GetComponent<OvrvisionCameraSource>();
+
+            if (LeftEye) { _originalLeftEyePosition = LeftEye.localPosition; }
+            if (RightEye) { _originalRightEyePosition = RightEye.localPosition; }
         }
 
         private void OnDisable()
@@ -30,6 +40,13 @@ namespace Assets.Modules.SurfaceInterface.Scripts
                 _camera.Gain = props.gain;
                 _camera.Exposure = props.exposure;
                 _camera.BLC = props.blc;
+            }
+
+            if (cmd == "camera-gap")
+            {
+                var offset = float.Parse(payload.Replace("\"", ""));
+                if (LeftEye) { LeftEye.localPosition = _originalLeftEyePosition + new Vector3(offset, 0, 0); }
+                if (RightEye) { RightEye.localPosition = _originalRightEyePosition + new Vector3(-offset, 0, 0); }
             }
         }
 

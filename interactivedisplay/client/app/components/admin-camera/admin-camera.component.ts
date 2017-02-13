@@ -11,6 +11,7 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
     private gain: number = 1;
     private exposure: number = 8600;
     private blc: number = 0;
+    private gap: number = 0;
 
     constructor(private socketio: SocketIO) {}
 
@@ -42,5 +43,10 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
             exposure: this.exposure,
             blc: this.blc
         })
+    }
+
+    private setGap(val: number) {
+        this.gap = val / (100 * 100);
+        this.socketio.sendMessage('camera-gap', this.gap);
     }
 }
