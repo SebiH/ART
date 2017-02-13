@@ -95,7 +95,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                     for (let selection of this.selections) {
                         this.updateSelection(selection);
                     }
-                    this.graph.updateData(['selectedDataIndices']);
                     this.highlightData();
                 });
         } else {
@@ -350,6 +349,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         }
         let selectedData = _.union.apply(_, selectionArrays);
         this.graph.selectedDataIndices = selectedData;
+        this.graph.updateData(['selectedDataIndices']);
 
         let filteredArrays = [];
         for (let graph of graphs) {
