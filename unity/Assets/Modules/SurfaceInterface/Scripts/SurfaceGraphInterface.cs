@@ -57,6 +57,10 @@ namespace Assets.Modules.SurfaceInterface
                     UpdateGraphData(graph);
                     UpdateGraphPosition(graph);
                 }
+
+                yield return new WaitForEndOfFrame();
+
+                SetDataFilters();
             }
         }
 
@@ -148,6 +152,11 @@ namespace Assets.Modules.SurfaceInterface
             var hasSelectedGraph = _currentGraphs.Any(g => g.isSelected);
             _layout.IsGraphSelected = hasSelectedGraph;
 
+            SetDataFilters();
+        }
+
+        private void SetDataFilters()
+        {
             DataLineManager.ClearFilter();
 
             foreach (var gi in _currentGraphs)
