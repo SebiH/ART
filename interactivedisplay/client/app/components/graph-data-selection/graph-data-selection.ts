@@ -9,7 +9,8 @@ import {
     InteractionManager,
     InteractionEvent,
     InteractionListener,
-    InteractionEventType
+    InteractionEventType,
+    DataFilter
 } from '../../services/index';
 
 import * as _ from 'lodash';
@@ -55,7 +56,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     constructor(
         private graphProvider: GraphProvider,
         private graphDataProvider: GraphDataProvider,
-        private interactionManager: InteractionManager) {}
+        private interactionManager: InteractionManager,
+        private dataFilter: DataFilter) {}
 
     ngAfterViewInit() {
         this.isActive = true;
@@ -65,10 +67,9 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             .takeWhile(() => this.isActive)
             .filter(g => g.changes.indexOf('dimX') > -1 || g.changes.indexOf('dimY') > -1)
             .subscribe(g => this.loadData(g.data.dimX, g.data.dimY));
-
-        this.graphProvider.getGraphs()
+        this.dataFilter.getFilter()
             .takeWhile(() => this.isActive)
-            .subscribe((graphs) => this.subscribeGraphChanges(graphs));
+            .subscribe(this.highlightData.bind(this));
 
         this.registerInteractionListeners();
     }
@@ -93,13 +94,12 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                 .subscribe(([dataX, dataY]) => {
                     this.scatterplot.loadData(dataX, dataY);
                     for (let selection of this.selections) {
-                        this.updateSelection(selection);
+                        this.calculateSelectedData(selection);
                     }
-                    this.highlightData();
+                    this.highlightData(this.dataFilter.getCurrentFilter());
                 });
         } else {
             this.scatterplot.loadData(null, null);
-            this.highlightData();
         }
     }
 
@@ -151,15 +151,13 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     }
 
     private handleTouchUp(ev: InteractionEvent): void {
-        // don't allow very small polygons
         if (Point.areaOf(this.currentSelection.path) < 200) {
+            // avoid small polygons
             this.removeSelection(this.currentSelection);
         } else { 
-            this.updateSelection(this.currentSelection);
+            this.calculateSelectedData(this.currentSelection);
+            this.updateSelectedGraphData();
         }
-        
-        this.highlightData();
-        this.graph.updateData(['selectedDataIndices']);
 
         this.currentSelection = null;
     }
@@ -183,16 +181,10 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         }
 
         if (this.currentSelection.path.length % 10 === 0) {
-            this.updateSelection(this.currentSelection);
-            this.highlightData();
+            this.calculateSelectedData(this.currentSelection);
         }
 
-        let prevSelectionLength = this.currentSelection.selectedData.length;
-        let changes = ['selectionPolygons'];
-        if (prevSelectionLength !== this.currentSelection.selectedData.length) {
-            changes.push('selectedDataIndices');
-        }
-        this.graph.updateData(changes);
+        this.graph.updateData(['selectionPolygons']);
     }
 
 
@@ -238,9 +230,43 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
             this.selections.push(selection);
         }
-
-        this.highlightData();
     }
+
+    private calculateSelectedData(selection: Selection): void {
+        let data = this.scatterplot.data;
+        let boundingRect = this.buildBoundingRect(selection.path);
+        selection.selectedData = [];
+
+        for (let i = 0; i < data.length; i++) {
+            let p = new Point(data[i][0], data[i][1]);
+            if (p.isInPolygonOf(selection.path, boundingRect)) {
+                selection.selectedData.push(i);
+            }
+        }
+
+        this.updateSelectedGraphData();
+    }
+
+    private updateSelectedGraphData(): void {
+        let selectionArrays = [];
+        for (let selection of this.selections) {
+            selectionArrays.push(selection.selectedData);
+        }
+        let selectedData = _.union.apply(_, selectionArrays);
+        this.graph.selectedDataIndices = selectedData;
+        this.graph.updateData(['selectedDataIndices']);
+    }
+
+    private highlightData(globalFilter: number[]): void {
+        let values = this.scatterplot.getValues();
+        values.highlight(this.graph.selectedDataIndices, globalFilter);
+    }
+
+
+
+    /*
+     * selection removal
+     */
 
     private popupStyle = {
         '-webkit-transform': '',
@@ -255,7 +281,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         selection.polygon.remove();
         _.pull(this.selections, selection);
         _.pull(this.graph.selectionPolygons, selection.path);
-        this.graph.updateData(['selectionPolygons', 'selectedDataIndices']);
+        this.graph.updateData(['selectionPolygons']);
+        this.updateSelectedGraphData();
     }
 
     private handleClick(ev: InteractionEvent): void {
@@ -292,75 +319,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             this.clickedSelection.polygon.setSelected(false);
             this.removeSelection(this.clickedSelection);
             this.popupStyle.visibility = 'hidden';
-            this.highlightData();
-            this.graph.updateData(['selectedDataIndices']);
             this.clickedSelection = null;
         }
-    }
-
-
-    private graphSubscriptions: Subscription[] = []
-
-    private subscribeGraphChanges(graphs: Graph[]) {
-        for (let sub of this.graphSubscriptions) {
-            sub.unsubscribe();
-        }
-
-        this.highlightGraphData(graphs);
-
-        for (let graph of graphs) {
-            if (graph !== this.graph) {
-                graph.onDataUpdate
-                    .takeWhile(() => this.isActive)
-                    .filter((u) => u.changes.indexOf('selectedDataIndices') > -1)
-                    .subscribe((g) => {
-                        this.highlightGraphData(graphs);
-                    });
-            }
-        }
-    }
-
-
-    private updateSelection(selection: Selection): void {
-        let data = this.scatterplot.data;
-        let boundingRect = this.buildBoundingRect(selection.path);
-        selection.selectedData = [];
-
-        for (let i = 0; i < data.length; i++) {
-            let p = new Point(data[i][0], data[i][1]);
-            if (p.isInPolygonOf(selection.path, boundingRect)) {
-                selection.selectedData.push(i);
-            }
-        }
-    }
-
-    private highlightData(): void {
-        this.graphProvider.getGraphs()
-            .first()
-            .subscribe((graphs) => {
-                this.highlightGraphData(graphs);
-            });
-    }
-
-    private highlightGraphData(graphs: Graph[]): void {
-        let selectionArrays = [];
-        for (let selection of this.selections) {
-            selectionArrays.push(selection.selectedData);
-        }
-        let selectedData = _.union.apply(_, selectionArrays);
-        this.graph.selectedDataIndices = selectedData;
-        this.graph.updateData(['selectedDataIndices']);
-
-        let filteredArrays = [];
-        for (let graph of graphs) {
-            if (graph.selectedDataIndices.length > 0) {
-                filteredArrays.push(graph.selectedDataIndices);
-            }
-        }
-        let useFilter = filteredArrays.length > 0;
-        let filteredData = _.intersection.apply(_, filteredArrays);
-
-        let values = this.scatterplot.getValues();
-        values.highlight(selectedData, filteredData, useFilter);
     }
 }

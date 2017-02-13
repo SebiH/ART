@@ -45,11 +45,11 @@ export class ChartData {
     }
 
 
-    public highlight(selectedIds: number[], filteredIds: number[], useFilter: boolean): void {
+    public highlight(selectedIds: number[], filteredIds: number[]): void {
         this.chartRoot.selectAll('circle')
             .each(function(d, i) {
                 let isSelected = (selectedIds.indexOf(i) > -1);
-                let isFiltered = (useFilter && filteredIds.indexOf(i) < 0);
+                let isFiltered = (filteredIds && filteredIds.indexOf(i) < 0);
                 let cssClass = 'scatter-point';
 
                 let radius = 5;

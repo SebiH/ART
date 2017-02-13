@@ -33,13 +33,14 @@ import { routing } from './routes';
   ],
   bootstrap:    [ Components.AppComponent ],
   providers:    [
-    Services.SocketIO,
-    Services.MarkerProvider,
-    Services.MapProvider,
-    Services.Logger,
-    Services.InteractionManager,
-    Services.GraphProvider,
+    Services.DataFilter,
     Services.GraphDataProvider,
+    Services.GraphProvider,
+    Services.InteractionManager,
+    Services.Logger,
+    Services.MapProvider,
+    Services.MarkerProvider,
+    Services.SocketIO,
     Services.SurfaceProvider
   ]
 })
