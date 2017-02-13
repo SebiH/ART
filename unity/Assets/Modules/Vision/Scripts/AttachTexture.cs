@@ -14,7 +14,7 @@ namespace Assets.Modules.Vision
         private DirectXOutput _output;
 
 
-        void Start()
+        void OnEnable()
         {
             VisionManager.Instance.CameraSourceChanged += Init;
             Init(VisionManager.Instance.ActiveCamera);
@@ -62,7 +62,7 @@ namespace Assets.Modules.Vision
 
         }
 
-        void OnDestroy()
+        void OnDisable()
         {
             VisionManager.Instance.CameraSourceChanged -= Init;
             ProcessingPipeline.RemoveOutput(_output);
