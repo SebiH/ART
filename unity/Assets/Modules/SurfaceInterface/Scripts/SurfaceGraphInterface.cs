@@ -58,10 +58,13 @@ namespace Assets.Modules.SurfaceInterface
                     UpdateGraphPosition(graph);
                 }
 
+                // create all graph/line objects
                 yield return new WaitForEndOfFrame();
 
                 if (graphInfo.data.hasFilter) { DataLineManager.SetFilter(null); }
                 else { DataLineManager.SetFilter(graphInfo.data.selectedDataIndices); }
+
+                UpdateGraphSelection();
             }
         }
 
@@ -155,6 +158,11 @@ namespace Assets.Modules.SurfaceInterface
                 UpdateGraphData(updatedGraph);
             }
 
+            UpdateGraphSelection();
+        }
+
+        private void UpdateGraphSelection()
+        {
             var hasSelectedGraph = _currentGraphs.Any(g => g.isSelected);
             _layout.IsGraphSelected = hasSelectedGraph;
         }
