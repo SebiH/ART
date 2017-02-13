@@ -26,6 +26,10 @@ export class ChartAxis {
     }
 
     public setDomainCategorical(domain: string[]) {
+        // create gap between axis start/end
+        domain.unshift('');
+        domain.push(' ');
+
         if (this.type === 'y') {
             let flipped: string[] = [];
             for (let i = 0; i < domain.length; i++) {
