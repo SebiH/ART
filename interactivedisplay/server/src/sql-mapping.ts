@@ -58,11 +58,6 @@ export const SmartactMapping: SqlColumnMapping[] = [
                 // TODO ?
                 dbValue: "6",
                 name: "Unknown"
-            },
-            {
-                // TODO ?
-                dbValue: "0",
-                name: "Also unknown"
             }
         ]
     },
@@ -119,7 +114,7 @@ export const SmartactMapping: SqlColumnMapping[] = [
         name: "Uhrzeit",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 240000000
+        maxValue: 24000
     },
 
     // TODO: Richtige Spalte??
@@ -128,7 +123,7 @@ export const SmartactMapping: SqlColumnMapping[] = [
         name: "Dauer der Mahlzeit",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 240000000
+        maxValue: 24000
     },
 
 
@@ -139,42 +134,42 @@ export const SmartactMapping: SqlColumnMapping[] = [
         name: "Portionen Getreide",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "Sum_Obst_1",
         name: "Portionen Obst",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "Sum_Gemu_1",
         name: "Portionen Gemüse",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "Sum_Flei_1",
         name: "Portionen Fleisch",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "Sum_Milch_1",
         name: "Portionen Milch",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "Sum_Extra_1",
         name: "Portionen Extra",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
 
     // TODO: not available?
@@ -231,104 +226,104 @@ export const SmartactMapping: SqlColumnMapping[] = [
         name: "Bewertung App?",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Gewo",
         name: "Bewertung Gewohnheit",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Hu",
         name: "Bewertung Hunger",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Gesu",
         name: "Bewertung Gesund",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Aufw",
         name: "Bewertung Aufwand",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Freud",
         name: "Bewertung Freud?",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Trad",
         name: "Bewertung Trad",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Eth",
         name: "Bewertung Eth",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Gesell",
         name: "Bewertung Gesellschaft",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Preis",
         name: "Bewertung Preis",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Angespr",
         name: "Bewertung Angespr?",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Gk",
         name: "Bewertung Gk?",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Emot",
         name: "Bewertung Emot?",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Erw",
         name: "Bewertung Erw?",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     },
     {
         dbColumn: "TEMS_Andg",
         name: "Bewertung Andg?",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 100
+        maxValue: 10
     }
 ];
