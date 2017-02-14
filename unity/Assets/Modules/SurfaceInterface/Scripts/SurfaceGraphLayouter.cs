@@ -60,6 +60,8 @@ namespace Assets.Modules.SurfaceInterface
         {
             graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
             graph.transform.localPosition = new Vector3(0, -0.5f, GetZOffset());
+            var scale = 0.75f;
+            graph.transform.localScale = new Vector3(scale, scale, 1);
         }
 
         private float GetZOffset()
