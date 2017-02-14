@@ -45,7 +45,8 @@ namespace Assets.Modules.Graphs
             var dataPoints = new DataPoint[dimData.Length];
             for (int i = 0; i < dimData.Length; i++)
             {
-                dataPoints[i] = new DataPoint { Index = i, Value = (dimData[i] - response.domain.min) / range - 0.5f };
+                // TODO: fix cause of invalid data
+                dataPoints[i] = new DataPoint { Index = i, Value = Mathf.Clamp((dimData[i] - response.domain.min) / range - 0.5f, -0.5f, 0.5f) };
             }
 
             _loadedData[dimension] = dataPoints;
