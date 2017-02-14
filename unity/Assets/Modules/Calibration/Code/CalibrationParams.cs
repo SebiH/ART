@@ -5,7 +5,7 @@ namespace Assets.Modules.Calibration
     public static class CalibrationParams
     {
         private static readonly int STABLE_SAMPLE_COUNT = 100;
-        private static readonly float AVG_WEIGHT = 0.9f;
+        private static readonly float AVG_WEIGHT = 0.95f;
 
         public static void Reset()
         {

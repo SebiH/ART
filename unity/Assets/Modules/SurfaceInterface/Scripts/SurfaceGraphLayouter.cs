@@ -14,9 +14,9 @@ namespace Assets.Modules.SurfaceInterface
         private Surface _surface;
 
         // for selection, etc.
-        const float NormalAnimationSpeed = 4f;
+        const float NormalAnimationSpeed = 1f;
         // for scrolling, smoothing out values from webapp
-        const float FastAnimationSpeed = 15f;
+        const float FastAnimationSpeed = 20f;
 
 
         private void OnEnable()
