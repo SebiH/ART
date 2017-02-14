@@ -38,7 +38,7 @@ export class VecVisualisation {
     }
 
     public setVector(x: number, y: number, z: number): void {
-        this.positionBox.position.set(x, y, z);
+        this.positionBox.position.set(x * 100, y * 100, z * 100);
         this.positionIndicator.vertices.pop();
         this.positionIndicator.vertices.push(new THREE.Vector3(x, y, z));
         this.renderer.render(this.scene, this.camera);

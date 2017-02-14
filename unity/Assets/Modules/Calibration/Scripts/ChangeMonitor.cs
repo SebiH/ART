@@ -13,8 +13,8 @@ namespace Assets.Modules.Calibration
 
         private readonly List<Vector3> _positions = new List<Vector3>();
         private readonly List<Quaternion> _rotations = new List<Quaternion>();
-        private const int SAMPLES = 30;
 
+        public int Samples = 100;
         public float Sensitivity = 20f;
 
         public void Reset()
@@ -29,7 +29,7 @@ namespace Assets.Modules.Calibration
         public void UpdateStability(Vector3 nextPosition, Quaternion nextRotation)
         {
             _positions.Add(nextPosition);
-            while (_positions.Count > SAMPLES)
+            while (_positions.Count > Samples)
             {
                 _positions.RemoveAt(0);
             }
@@ -44,7 +44,7 @@ namespace Assets.Modules.Calibration
 
 
             _rotations.Add(nextRotation);
-            while (_rotations.Count > SAMPLES)
+            while (_rotations.Count > Samples)
             {
                 _rotations.RemoveAt(0);
             }

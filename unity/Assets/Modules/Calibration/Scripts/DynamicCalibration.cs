@@ -11,6 +11,9 @@ namespace Assets.Modules.Calibration
         public ChangeMonitor OptitrackMonitor;
         public ChangeMonitor OvrMonitor;
 
+        private Vector3 _lastOptitrackPos;
+        private Quaternion _lastOptitrackRot;
+
         private const float OptitrackCutoffTime = 0.3f;
         private const float OptitrackChangeTolerance = 0.85f;
 
@@ -101,7 +104,15 @@ namespace Assets.Modules.Calibration
             var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
             if (optitrackPose != null)
             {
-                OptitrackMonitor.UpdateStability(optitrackPose.Position, optitrackPose.Rotation);
+                var hasPositionChanged = Mathf.Abs((_lastOptitrackPos - optitrackPose.Position).magnitude) > Mathf.Epsilon;
+                var hasRotationChanged = Mathf.Abs(Quaternion.Angle(_lastOptitrackRot, optitrackPose.Rotation)) > Mathf.Epsilon;
+
+                if (hasPositionChanged || hasRotationChanged)
+                {
+                    _lastOptitrackPos = optitrackPose.Position;
+                    _lastOptitrackRot = optitrackPose.Rotation;
+                    OptitrackMonitor.UpdateStability(optitrackPose.Position, optitrackPose.Rotation);
+                }
             }
 
             var ovrPosition = VRListener.Instance.CurrentPosition;
