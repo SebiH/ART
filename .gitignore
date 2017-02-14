@@ -26,8 +26,9 @@ sysinfo.txt
 # Visual Studio
 */.vs/*
 
-# csv are loaded on per-application basis
+# Temp / Local data
 /unity/data/*.csv
+/unity/data/*.json
 
 # ==========
 # c++ / clr
