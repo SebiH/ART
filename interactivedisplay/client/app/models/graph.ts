@@ -65,8 +65,6 @@ export class Graph {
             dimX: this.dimX,
             dimY: this.dimY,
             color: this.color,
-            selectedData: this.selectedDataIndices,
-            selectionPolygons: this.selectionPolygons,
             isSelected: this.isSelected,
 
             pos: this.absolutePos,
@@ -84,8 +82,6 @@ export class Graph {
         graph.dimX = jGraph.dimX;
         graph.dimY = jGraph.dimY;
         graph.color = jGraph.color;
-        graph.selectedDataIndices = jGraph.selectedData;
-        graph.selectionPolygons = jGraph.selectionPolygons;
         graph.isSelected = jGraph.isSelected;
 
         graph.absolutePos = jGraph.pos;
