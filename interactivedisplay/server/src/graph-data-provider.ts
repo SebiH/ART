@@ -8,7 +8,10 @@ export class GraphDataProvider {
     private dataCache: { [id: string]: any } = {};
 
     public constructor(useRandom?: boolean) {
-        if (useRandom) {
+        let config = require('../sql.conf.json');
+
+        if (config.debug) {
+            console.log('Using random data');
             for (let mapping of SmartactMapping) {
                 let dimension = mapping.name;
                 let data: any[] = [];
@@ -19,7 +22,7 @@ export class GraphDataProvider {
                     +_.maxBy(mapping.values, 'dbValue').dbValue :
                     +mapping.maxValue;
 
-                for (let i = 0; i < 300; i++) {
+                for (let i = 0; i < 1000; i++) {
                     let val = Math.random() * (maxValue - 1) + minValue;
                     if (mapping.type === DataRepresentation.Categorical) {
                         val = Math.round(val);
@@ -29,7 +32,7 @@ export class GraphDataProvider {
                 this.dataCache[dimension] = this.convertData(dimension, data);
             }
         } else {
-            this.sqlConnection.connect();
+            this.sqlConnection.connect(config.sqlSecrets);
         }
     }
 
@@ -41,14 +44,12 @@ export class GraphDataProvider {
     public getData(dimension: string, onDataRetrieved: (data: any) => void): void {
         if (this.dataCache[dimension] === undefined) {
 
-            console.log('Loading \'' + dimension + '\' from sql server');
             this.sqlConnection.getData(dimension, (data) => {
                 this.dataCache[dimension] = this.convertData(dimension, data);
                 onDataRetrieved(this.dataCache[dimension]);
             });
 
         } else {
-            console.log('Loading \'' + dimension + '\' from cache');
             onDataRetrieved(this.dataCache[dimension]);
         }
     }

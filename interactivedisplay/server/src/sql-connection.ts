@@ -50,14 +50,13 @@ export class SqlConnection {
     private sqlConnection: sql.Connection;
     private status: Status = new Status();
 
-    public connect() {
+    public connect(config: any) {
 
         if (this.status.isConnected()) {
             console.error('Cannot connect to sql server: Already connected');
             return;
         }
 
-        let config = require('../sql.conf.json');
         this.sqlConnection = new sql.Connection(config);
 
         this.sqlConnection.on('connect', (error) => {

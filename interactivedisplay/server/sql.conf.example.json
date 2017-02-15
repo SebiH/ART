@@ -1,9 +1,12 @@
 {
-    "server": "",
-    "userName": "",
-    "password": "",
-    "options": {
-        "encrypt": true,
-        "database": ""
-    }
+    "sqlSecrets": {
+        "server": "",
+        "userName": "",
+        "password": "",
+        "options": {
+            "encrypt": true,
+            "database": ""
+        }
+    },
+    "debug": false
 }
