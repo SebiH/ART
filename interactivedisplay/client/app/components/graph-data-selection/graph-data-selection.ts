@@ -183,8 +183,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         if (this.currentSelection.path.length % 10 === 0) {
             this.calculateSelectedData(this.currentSelection);
         }
-
-        this.graph.updateData(['selectionPolygons']);
     }
 
 
@@ -281,7 +279,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         selection.polygon.remove();
         _.pull(this.selections, selection);
         _.pull(this.graph.selectionPolygons, selection.path);
-        this.graph.updateData(['selectionPolygons']);
         this.updateSelectedGraphData();
     }
 

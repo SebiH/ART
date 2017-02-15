@@ -37,7 +37,6 @@ export class Graph {
                 color: this.color,
                 dimX: this.dimX,
                 dimY: this.dimY,
-                selectionPolygons: this.selectionPolygons,
                 isSelected: this.isSelected
             }
         });
