@@ -47,9 +47,13 @@ unityServer.onMessageReceived({
 
 
 let graphStorage = new ObjectStorage();
+let selectedDataIndices = null;
 
 webServer.addPath('/api/graph/list', (req, res, next) => {
-    res.json({ graphs: graphStorage.getAll() });
+    res.json({
+        graphs: graphStorage.getAll(),
+        data: selectedDataIndices
+    });
 });
 
 sioServer.onMessageReceived({
@@ -68,6 +72,10 @@ sioServer.onMessageReceived({
                 break;
             case '-graph':
                 graphStorage.remove(<number>msg.payload);
+                break;
+
+            case 'selectedDataIndices':
+                selectedDataIndices = JSON.parse(msg.payload);
                 break;
         }
     }
