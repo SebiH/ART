@@ -91,6 +91,8 @@ namespace Assets.Modules.Graphs
             graph.transform.localRotation = Quaternion.identity;
             graph.transform.localScale = Vector3.one;
 
+            graph.gameObject.SetActive(true);
+
             return graph;
         }
     }
