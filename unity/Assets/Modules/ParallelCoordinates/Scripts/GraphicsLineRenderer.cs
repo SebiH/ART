@@ -6,6 +6,10 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class GraphicsLineRenderer : MonoBehaviour
     {
+        // keep track if a linerenderer was active during this update cycle, 
+        // to avoid scheduling too many linerenderers per cycle
+        private static bool WasActiveDuringCycle = false;
+
         public Material LineMaterial;
         private Mesh _lineMesh;
         private const float LINE_WIDTH = 0.005f;
@@ -24,9 +28,9 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void Update()
         {
-            if (_lines.Count > 0)
+            if (_lines.Count > 0 && !WasActiveDuringCycle)
             {
-                var batchAmount = Mathf.Min(_lines.Count, 100);
+                var batchAmount = Mathf.Min(_lines.Count, 200);
                 var lineBatch = new Line[batchAmount];
                 for (int i = 0; i < batchAmount; i++)
                 {
@@ -34,10 +38,16 @@ namespace Assets.Modules.ParallelCoordinates
                     _lines.RemoveAt(0);
                 }
                 AddLines(lineBatch);
+                WasActiveDuringCycle = true;
             }
 
             // TODO: replaced by MeshFilter, probably needs performance testing?
             //Graphics.DrawMesh(_lineMesh, transform.localToWorldMatrix, LineMaterial, 0);
+        }
+
+        private void LateUpdate()
+        {
+            WasActiveDuringCycle = false;
         }
 
         public void AddLine(Vector3 start, Vector3 end)
@@ -48,7 +58,6 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void AddLines(Line[] lines)
         {
-
             var quads = new Vector3[4 * lines.Length];
             var quadIndices = 0;
 
@@ -67,7 +76,7 @@ namespace Assets.Modules.ParallelCoordinates
             var currentVerticesCount = _lineMesh.vertices.Length;
             var currentTriangleCount = _lineMesh.triangles.Length;
 
-            // TODO: mesh should never exceed 65536 vertices
+            // TODO: mesh cannot exceed 65536 vertices -> split into multiple meshes?
             if (currentVerticesCount + quadIndices < 65536)
             {
                 var vertices = new Vector3[currentVerticesCount + quadIndices];
