@@ -121,27 +121,37 @@ namespace Assets.Modules.ParallelCoordinates
 
         private IEnumerator GenerateLinesBatched()
         {
-            _lineSegments = new LineSegment[_startGraph.Data.Length];
-            for (int i = 0; i < _startGraph.Data.Length; i++)
+            using (var wd = new WorkDistributor())
             {
-                var go = Instantiate(LineTemplate);
-                go.transform.parent = transform;
-                go.transform.localPosition = Vector3.zero;
-                go.transform.localRotation = Quaternion.identity;
-                go.transform.localScale = Vector3.one;
-                // reduce editor load (?)
-                go.gameObject.hideFlags = HideFlags.HideAndDontSave;
-
-                var segment = go.GetComponent<LineSegment>();
-                var startPoint = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
-                var endPoint = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
-                segment.SetPositions(startPoint, endPoint);
-
-                DataLineManager.GetLine(i).AddSegment(segment);
-                _lineSegments[i] = segment;
-
-                if (i % 100 == 0)
+                _lineSegments = new LineSegment[_startGraph.Data.Length];
+                for (int i = 0; i < _startGraph.Data.Length; i++)
                 {
+                    if (wd.CanWork())
+                    {
+                        int batchCounter = 0;
+                        while (batchCounter < 20 && i < _startGraph.Data.Length)
+                        {
+                            var go = Instantiate(LineTemplate);
+                            go.transform.parent = transform;
+                            go.transform.localPosition = Vector3.zero;
+                            go.transform.localRotation = Quaternion.identity;
+                            go.transform.localScale = Vector3.one;
+                            // reduce editor load (?)
+                            go.gameObject.hideFlags = HideFlags.HideAndDontSave;
+
+                            var segment = go.GetComponent<LineSegment>();
+                            var startPoint = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
+                            var endPoint = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
+                            segment.SetPositions(startPoint, endPoint);
+
+                            DataLineManager.GetLine(i).AddSegment(segment);
+                            _lineSegments[i] = segment;
+
+                            batchCounter++;
+                            i++;
+                        }
+                    }
+
                     yield return new WaitForEndOfFrame();
                 }
             }
@@ -153,9 +163,12 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 for (int i = 0; i < _lineSegments.Length; i++)
                 {
-                    DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
-                    var go = _lineSegments[i].gameObject;
-                    Destroy(go);
+                    if (_lineSegments[i] != null)
+                    {
+                        DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
+                        var go = _lineSegments[i].gameObject;
+                        Destroy(go);
+                    }
                 }
 
                 _lineSegments = null;
