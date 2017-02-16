@@ -111,12 +111,12 @@ namespace Assets.Modules.ParallelCoordinates
 
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    triangles[currentTriangleCount + 6 * i] = currentVerticesCount + i;
-                    triangles[currentTriangleCount + 6 * i + 1] = currentVerticesCount + i + 1;
-                    triangles[currentTriangleCount + 6 * i + 2] = currentVerticesCount + i + 2;
-                    triangles[currentTriangleCount + 6 * i + 3] = currentVerticesCount + i + 1;
-                    triangles[currentTriangleCount + 6 * i + 4] = currentVerticesCount + i + 3;
-                    triangles[currentTriangleCount + 6 * i + 5] = currentVerticesCount + i + 2;
+                    triangles[currentTriangleCount + 6 * i] = currentVerticesCount + i *  4;
+                    triangles[currentTriangleCount + 6 * i + 1] = currentVerticesCount + i * 4 + 1;
+                    triangles[currentTriangleCount + 6 * i + 2] = currentVerticesCount + i * 4 + 2;
+                    triangles[currentTriangleCount + 6 * i + 3] = currentVerticesCount + i * 4 + 1;
+                    triangles[currentTriangleCount + 6 * i + 4] = currentVerticesCount + i * 4 + 3;
+                    triangles[currentTriangleCount + 6 * i + 5] = currentVerticesCount + i * 4 + 2;
                 }
 
                 _lineMesh.vertices = vertices;
