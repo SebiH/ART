@@ -5,11 +5,19 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class GraphicsLineSegment : LineSegment
     {
+        private GraphicsLineRenderer _renderer;
+        private int _lineIndex = -1;
+
+        private void OnEnable()
+        {
+            _renderer = UnityUtility.FindParent<GraphicsLineRenderer>(this);
+        }
+
         public override void SetPositions(Vector3 start, Vector3 end)
         {
-            // TODO
-            var renderer = UnityUtility.FindParent<GraphicsLineRenderer>(this);
-            renderer.AddLine(start, end);
+            // TODO: add line in OnEnable, manipulate position after
+            _renderer = UnityUtility.FindParent<GraphicsLineRenderer>(this);
+            _lineIndex = _renderer.AddLine(start, end);
         }
 
         public override void SetStartAnimated(Vector3 start)
@@ -25,7 +33,14 @@ namespace Assets.Modules.ParallelCoordinates
 
         public override void SetColor(Color col)
         {
-            // TODO
+            if (col == Color.gray)
+            {
+                _renderer.SetLineColor(_lineIndex, new Color32(0, 0, 0, 0));
+            }
+            else
+            {
+                _renderer.SetLineColor(_lineIndex, new Color32(0, 255, 0, 255));
+            }
         }
 
         public override void SetWidth(float width)

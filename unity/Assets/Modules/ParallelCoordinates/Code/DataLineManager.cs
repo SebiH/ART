@@ -50,8 +50,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         private static void SetFilter(DataLine line)
         {
-            var isHighlighted = (_filter == null) || _filter.Contains(line.DataIndex);
-            line.SetHighlight(isHighlighted);
+            if (line != null)
+            {
+                var isHighlighted = (_filter == null) || _filter.Contains(line.DataIndex);
+                line.SetHighlight(isHighlighted);
+            }
         }
     }
 }

@@ -8,9 +8,12 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class GraphicsLineRenderer : MonoBehaviour
     {
-        public Material LineMaterial;
+        public MeshFilter HighlightedRenderer;
+        public MeshFilter FilteredRenderer;
+
         private Mesh _lineMesh;
         private bool _isGenerating = false;
+        private int _lineIndex = 0;
         private const float LINE_WIDTH = 0.005f;
 
         private struct Line { public Vector3 start; public Vector3 end; }
@@ -22,7 +25,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _lineMesh = new Mesh();
                 _lineMesh.MarkDynamic();
-                GetComponent<MeshFilter>().mesh = _lineMesh;
+                HighlightedRenderer.mesh = _lineMesh;
             }
         }
 
@@ -32,15 +35,13 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 StartCoroutine(AddLineAsync());
             }
-
-            // TODO: replaced by MeshFilter, probably needs performance testing?
-            //Graphics.DrawMesh(_lineMesh, transform.localToWorldMatrix, LineMaterial, 0);
         }
 
-        public void AddLine(Vector3 start, Vector3 end)
+        public int AddLine(Vector3 start, Vector3 end)
         {
             // adding lines over multiple update()s to avoid extreme lag
             _lines.Add(new Line { start = start, end = end });
+            return _lineIndex++;
         }
 
         private IEnumerator AddLineAsync()
@@ -97,12 +98,19 @@ namespace Assets.Modules.ParallelCoordinates
             // TODO: mesh cannot exceed 65536 vertices -> split into multiple meshes?
             if (currentVerticesCount + quadIndices < 65536)
             {
+                var colors = new Color32[currentVerticesCount + quadIndices];
+                Array.Copy(_lineMesh.colors32, colors, currentVerticesCount);
                 var vertices = new Vector3[currentVerticesCount + quadIndices];
                 Array.Copy(_lineMesh.vertices, vertices, currentVerticesCount);
 
+                var col = new Color32(0, 0, 0, 0);
                 for (int i = 0; i < quadIndices; i++)
                 {
                     vertices[currentVerticesCount + i] = quads[i];
+
+                    if (i % 4 == 0)
+                        //col = Theme.GetColor32(UnityEngine.Random.Range(0, 100));
+                    colors[currentVerticesCount + i] = col;
                 }
 
 
@@ -121,14 +129,33 @@ namespace Assets.Modules.ParallelCoordinates
 
                 _lineMesh.vertices = vertices;
                 _lineMesh.triangles = triangles;
+                _lineMesh.colors32 = colors;
                 _lineMesh.RecalculateBounds();
             }
             else
             {
                 Debug.LogWarning("Tried to add too many quads to mesh");
             }
-
         }
 
+
+        public void SetLineColor(int index, Color32 col)
+        {
+            if (index < 0)
+            {
+                Debug.LogWarning("Tried to manipulate line before line was added");
+                return;
+            }
+
+            var cols = _lineMesh.colors32;
+            if (cols.Length > index + 4) // TODO: ...
+            {
+                cols[index * 4] = col;
+                cols[index * 4 + 1] = col;
+                cols[index * 4 + 2] = col;
+                cols[index * 4 + 3] = col;
+                _lineMesh.colors32 = cols;
+            }
+        }
     }
 }

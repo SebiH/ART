@@ -28,10 +28,35 @@ namespace Assets.Modules.Core
         //    new Color(96f/255f, 125f/255f, 139f/255f) // blue grey
         //};
 
+        private static Color32[] _themeColors32 =
+        {
+            // indigo
+            new Color32(121, 134, 203, 255), // 300
+            new Color32(92, 107, 192, 255), // 400
+            new Color32(63, 81, 181, 255), // 500
+            new Color32(57, 73, 171, 255), // 600
+            new Color32(48, 63, 159, 255), // 700
+
+            // blue
+            new Color32(100, 181, 246, 255), // 300
+            new Color32(66, 165, 245, 255), // 400
+            new Color32(33, 150, 243, 255), // 500
+            new Color32(30, 136, 229, 255), // 600
+            new Color32(25, 118, 210, 255), // 700
+
+            // light blue
+            new Color32(79, 195, 247, 255), // 300
+            new Color32(41, 182, 246, 255), // 400
+            new Color32(3, 169, 244, 255), // 500
+            new Color32(3, 155, 229, 255), // 600
+            new Color32(2, 136, 209, 255) // 700
+
+        };
+
         private static Color[] _themeColors =
         {
             //// purples
-            //new Color(186f/255f, 104f/255f, 200f/255f), // 300
+            //new Color(186/255f, 104f/255f, 200f/255f), // 300
             //new Color(171f/255f, 71f/255f, 188f/255f), // 400 
             //new Color(156f/255f, 39f/255f, 176f/255f), // 500
             //new Color(142f/255f, 36f/255f, 170f/255f), // 600
@@ -67,9 +92,16 @@ namespace Assets.Modules.Core
 
         };
 
+
+
         public static Color GetColor(int index)
         {
             return _themeColors[index % _themeColors.Length];
+        }
+
+        public static Color32 GetColor32(int index)
+        {
+            return _themeColors32[index % _themeColors.Length];
         }
     }
 }
