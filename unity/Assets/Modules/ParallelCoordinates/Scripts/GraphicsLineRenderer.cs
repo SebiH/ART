@@ -21,6 +21,7 @@ namespace Assets.Modules.ParallelCoordinates
             if (_lineMesh == null)
             {
                 _lineMesh = new Mesh();
+                _lineMesh.MarkDynamic();
                 GetComponent<MeshFilter>().mesh = _lineMesh;
             }
         }
@@ -53,7 +54,7 @@ namespace Assets.Modules.ParallelCoordinates
                 {
                     wd.TriggerUpdate();
 
-                    if (wd.AvailableCycles > 200)
+                    if (wd.AvailableCycles > 400)
                     {
                         var batchAmount = Mathf.Min(_lines.Count, wd.DepleteAll());
 
@@ -105,21 +106,21 @@ namespace Assets.Modules.ParallelCoordinates
                 }
 
 
-                var ts = new int[currentTriangleCount + lines.Length * 6];
-                Array.Copy(_lineMesh.triangles, ts, currentTriangleCount);
+                var triangles = new int[currentTriangleCount + lines.Length * 6];
+                Array.Copy(_lineMesh.triangles, triangles, currentTriangleCount);
 
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    ts[currentTriangleCount + 6 * i] = currentVerticesCount + i;
-                    ts[currentTriangleCount + 6 * i + 1] = currentVerticesCount + i + 1;
-                    ts[currentTriangleCount + 6 * i + 2] = currentVerticesCount + i + 2;
-                    ts[currentTriangleCount + 6 * i + 3] = currentVerticesCount + i + 1;
-                    ts[currentTriangleCount + 6 * i + 4] = currentVerticesCount + i + 3;
-                    ts[currentTriangleCount + 6 * i + 5] = currentVerticesCount + i + 2;
+                    triangles[currentTriangleCount + 6 * i] = currentVerticesCount + i;
+                    triangles[currentTriangleCount + 6 * i + 1] = currentVerticesCount + i + 1;
+                    triangles[currentTriangleCount + 6 * i + 2] = currentVerticesCount + i + 2;
+                    triangles[currentTriangleCount + 6 * i + 3] = currentVerticesCount + i + 1;
+                    triangles[currentTriangleCount + 6 * i + 4] = currentVerticesCount + i + 3;
+                    triangles[currentTriangleCount + 6 * i + 5] = currentVerticesCount + i + 2;
                 }
 
                 _lineMesh.vertices = vertices;
-                _lineMesh.triangles = ts;
+                _lineMesh.triangles = triangles;
                 _lineMesh.RecalculateBounds();
             }
             else
