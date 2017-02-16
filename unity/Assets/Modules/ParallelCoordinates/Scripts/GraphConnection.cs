@@ -123,33 +123,36 @@ namespace Assets.Modules.ParallelCoordinates
         {
             using (var wd = new WorkDistributor())
             {
+                yield return new WaitForEndOfFrame();
+
                 _lineSegments = new LineSegment[_startGraph.Data.Length];
                 for (int i = 0; i < _startGraph.Data.Length; i++)
                 {
-                    if (wd.CanWork())
+                    int batchCounter = 0;
+
+                    wd.TriggerUpdate();
+                    var maxBatch = wd.DepleteAll();
+
+                    while (batchCounter < maxBatch && i < _startGraph.Data.Length)
                     {
-                        int batchCounter = 0;
-                        while (batchCounter < 20 && i < _startGraph.Data.Length)
-                        {
-                            var go = Instantiate(LineTemplate);
-                            go.transform.parent = transform;
-                            go.transform.localPosition = Vector3.zero;
-                            go.transform.localRotation = Quaternion.identity;
-                            go.transform.localScale = Vector3.one;
-                            // reduce editor load (?)
-                            go.gameObject.hideFlags = HideFlags.HideAndDontSave;
+                        var go = Instantiate(LineTemplate);
+                        go.transform.parent = transform;
+                        go.transform.localPosition = Vector3.zero;
+                        go.transform.localRotation = Quaternion.identity;
+                        go.transform.localScale = Vector3.one;
+                        // reduce editor load (?)
+                        go.gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-                            var segment = go.GetComponent<LineSegment>();
-                            var startPoint = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
-                            var endPoint = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
-                            segment.SetPositions(startPoint, endPoint);
+                        var segment = go.GetComponent<LineSegment>();
+                        var startPoint = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
+                        var endPoint = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
+                        segment.SetPositions(startPoint, endPoint);
 
-                            DataLineManager.GetLine(i).AddSegment(segment);
-                            _lineSegments[i] = segment;
+                        DataLineManager.GetLine(i).AddSegment(segment);
+                        _lineSegments[i] = segment;
 
-                            batchCounter++;
-                            i++;
-                        }
+                        batchCounter++;
+                        i++;
                     }
 
                     yield return new WaitForEndOfFrame();

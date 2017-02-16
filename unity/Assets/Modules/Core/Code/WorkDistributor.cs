@@ -1,27 +1,38 @@
 using System;
+using UnityEngine;
 
 namespace Assets.Modules.Core
 {
     public class WorkDistributor : IDisposable
     {
-        public static int GlobalOperations = 0;
+        private static int GlobalOperations = 0;
+        private static readonly int MAX_WORKLOAD = 250;
+
+        public int AvailableCycles { get; private set; }
 
         public WorkDistributor()
         {
             GlobalOperations++;
+            AvailableCycles = 0;
         }
 
-        public bool CanWork()
+        // workaround since this is not an attachable script
+        public void TriggerUpdate()
         {
-            if (GlobalOperations > 3)
-            {
-                // TODO: more elaborate work distribution
-                //       e.g. return amount of loops client can perform, allow saving of loops for
-                //       operations requiring array resizing etc.
-                return UnityEngine.Random.Range(0, GlobalOperations) < 3;
-            }
+            // make sure cycles vary for each object, to avoid framedrop once multiple stashed workers reach threshold
+            AvailableCycles += Mathf.FloorToInt((MAX_WORKLOAD / GlobalOperations) * UnityEngine.Random.Range(0.3f, 1.7f));
+        }
 
-            return true;
+        public void Deplete(int amount)
+        {
+            AvailableCycles -= amount;
+        }
+
+        public int DepleteAll()
+        {
+            var cycles = AvailableCycles;
+            AvailableCycles = 0;
+            return cycles;
         }
 
         public void Dispose()

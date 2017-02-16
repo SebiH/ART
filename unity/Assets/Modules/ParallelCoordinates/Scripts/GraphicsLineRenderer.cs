@@ -10,6 +10,7 @@ namespace Assets.Modules.ParallelCoordinates
     {
         public Material LineMaterial;
         private Mesh _lineMesh;
+        private bool _isGenerating = false;
         private const float LINE_WIDTH = 0.005f;
 
         private struct Line { public Vector3 start; public Vector3 end; }
@@ -26,7 +27,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void Update()
         {
-            if (_lines.Count > 0)
+            if (_lines.Count > 0 && !_isGenerating)
             {
                 StartCoroutine(AddLineAsync());
             }
@@ -45,11 +46,17 @@ namespace Assets.Modules.ParallelCoordinates
         {
             using (var wd = new WorkDistributor())
             {
+                _isGenerating = true;
+                yield return new WaitForEndOfFrame();
+
                 while (_lines.Count > 0)
                 {
-                    if (wd.CanWork())
+                    wd.TriggerUpdate();
+
+                    if (wd.AvailableCycles > 200)
                     {
-                        var batchAmount = Mathf.Min(_lines.Count, 200);
+                        var batchAmount = Mathf.Min(_lines.Count, wd.DepleteAll());
+
                         var lineBatch = new Line[batchAmount];
                         for (int i = 0; i < batchAmount; i++)
                         {
@@ -61,6 +68,8 @@ namespace Assets.Modules.ParallelCoordinates
 
                     yield return new WaitForEndOfFrame();
                 }
+
+                _isGenerating = false;
             }
         }
 
