@@ -22,7 +22,7 @@ export class GraphDataProvider {
                     +_.maxBy(mapping.values, 'dbValue').dbValue :
                     +mapping.maxValue;
 
-                for (let i = 0; i < 5000; i++) {
+                for (let i = 0; i < 15000; i++) {
                     let val = Math.random() * (maxValue - 1) + minValue;
                     if (mapping.type === DataRepresentation.Categorical) {
                         val = Math.round(val);

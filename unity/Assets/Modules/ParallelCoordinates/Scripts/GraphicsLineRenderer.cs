@@ -26,8 +26,14 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (_lines.Count > 0)
             {
-                AddLine(_lines.ToArray());
-                _lines.Clear();
+                var batchAmount = Mathf.Min(_lines.Count, 100);
+                var lineBatch = new Line[batchAmount];
+                for (int i = 0; i < batchAmount; i++)
+                {
+                    lineBatch[i] = _lines[0];
+                    _lines.RemoveAt(0);
+                }
+                AddLines(lineBatch);
             }
 
             // TODO: replaced by MeshFilter, probably needs performance testing?
@@ -40,8 +46,9 @@ namespace Assets.Modules.ParallelCoordinates
             _lines.Add(new Line { start = start, end = end });
         }
 
-        private void AddLine(Line[] lines)
+        private void AddLines(Line[] lines)
         {
+
             var quads = new Vector3[4 * lines.Length];
             var quadIndices = 0;
 
@@ -93,6 +100,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 Debug.LogWarning("Tried to add too many quads to mesh");
             }
+
         }
 
     }
