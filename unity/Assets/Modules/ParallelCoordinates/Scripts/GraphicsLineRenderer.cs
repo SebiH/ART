@@ -61,7 +61,7 @@ namespace Assets.Modules.ParallelCoordinates
                     wd.TriggerUpdate();
                     var totalLineNum = _lineCreationQueue.Count;
 
-                    if (wd.AvailableCycles > 100)
+                    if (wd.AvailableCycles > 200)
                     {
                         var batchAmount = Mathf.Min(_lineCreationQueue.Count, wd.DepleteAll());
 
@@ -71,7 +71,7 @@ namespace Assets.Modules.ParallelCoordinates
                             lineBatch[i] = _lineCreationQueue[0];
                             _lineCreationQueue.RemoveAt(0);
                         }
-                        AddLines(lineBatch, totalLineNum);
+                        CreateLines(lineBatch, totalLineNum);
                     }
 
                     yield return new WaitForEndOfFrame();
@@ -93,7 +93,7 @@ namespace Assets.Modules.ParallelCoordinates
                 maxWaitCounter++;
             }
 
-            SetLineAttributes(_lineUpdateQueue.ToArray());
+            SetLineAttributes(_lineUpdateQueue);
             _lineUpdateQueue.Clear();
             _isBusy = false;
         }
@@ -101,8 +101,7 @@ namespace Assets.Modules.ParallelCoordinates
         private int vertexCounter = 0;
         private int triangleCounter = 0;
 
-        // TODO: need not be array
-        private void AddLines(LineSegment[] lines, int expectedLineCount)
+        private void CreateLines(IEnumerable<LineSegment> lines, int expectedLineCount)
         {
             var expectedVerticesNum = vertexCounter + expectedLineCount * 4;
             var currentVerticesNum = _lineMesh.vertices.Length;
@@ -134,12 +133,10 @@ namespace Assets.Modules.ParallelCoordinates
 
             var quad = new Vector3[4];
             Vector3 normal, ortho;
-            int indexOffset = vertexCounter / 4;
 
-            for (int i = 0; i < lines.Length; i++)
+            foreach (var line in lines)
             {
-                var line = lines[i];
-                line.MeshIndex = indexOffset + i;
+                line.MeshIndex = vertexCounter / 4;
                 normal = Vector3.Cross(line.Start, line.End);
                 ortho = Vector3.Cross(normal, line.End - line.Start);
                 ortho.Normalize();
@@ -178,7 +175,7 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-        private void SetLineAttributes(LineSegment[] lines)
+        private void SetLineAttributes(IEnumerable<LineSegment> lines)
         {
             var colors = _lineMesh.colors32;
             var vertices = _lineMesh.vertices;
@@ -187,9 +184,8 @@ namespace Assets.Modules.ParallelCoordinates
             var quad = new Vector3[4];
             Vector3 normal, ortho;
 
-            for (int i = 0; i < lines.Length; i++)
+            foreach (var line in lines)
             {
-                var line = lines[i];
                 var vertex = line.MeshIndex * 4;
 
                 // TODO: cache in vector on demand?
