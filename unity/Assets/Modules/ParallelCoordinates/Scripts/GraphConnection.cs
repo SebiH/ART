@@ -131,7 +131,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 var segment = new LineSegment();
                 _lineSegments[i] = segment;
-                DataLineManager.GetLine(i).AddSegment(segment);
+                DataLineManager.Instance.GetLine(i).AddSegment(segment);
 
                 segment.Start = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
                 segment.End = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
@@ -158,7 +158,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 for (int i = 0; i < _lineSegments.Length; i++)
                 {
-                    DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
+                    DataLineManager.Instance.GetLine(i).RemoveSegment(_lineSegments[i]);
                 }
 
                 _lineRenderer.ClearLines();

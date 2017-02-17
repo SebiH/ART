@@ -3,18 +3,20 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    public static class DataLineManager
+    public class DataLineManager : MonoBehaviour
     {
-        private static DataLine[] _lines = new DataLine[0];
-        private static int[] _filter = null;
+        public static DataLineManager Instance { get; set; }
+
+        private DataLine[] _lines = new DataLine[0];
+        private int[] _filter = null;
 
         // minor optimisation to avoid extending the array
-        public static void SetMaxDataIndex(int max)
+        public void SetMaxDataIndex(int max)
         {
             _lines = new DataLine[max + 1];
         }
 
-        public static DataLine GetLine(int index)
+        public DataLine GetLine(int index)
         {
             // should not happen
             if (index >= _lines.Length)
@@ -39,7 +41,7 @@ namespace Assets.Modules.ParallelCoordinates
             return _lines[index];
         }
 
-        public static void SetFilter(int[] filter)
+        public void SetFilter(int[] filter)
         {
             _filter = filter;
             foreach (var line in _lines)
@@ -48,7 +50,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private static void SetFilter(DataLine line)
+        private void SetFilter(DataLine line)
         {
             if (line != null)
             {

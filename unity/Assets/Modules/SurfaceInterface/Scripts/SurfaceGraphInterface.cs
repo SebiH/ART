@@ -61,8 +61,8 @@ namespace Assets.Modules.SurfaceInterface
                 // create all graph/line objects
                 yield return new WaitForEndOfFrame();
 
-                if (graphInfo.data.hasFilter) { DataLineManager.SetFilter(null); }
-                else { DataLineManager.SetFilter(graphInfo.data.selectedDataIndices); }
+                if (graphInfo.data.hasFilter) { DataLineManager.Instance.SetFilter(null); }
+                else { DataLineManager.Instance.SetFilter(graphInfo.data.selectedDataIndices); }
 
                 UpdateGraphSelection();
             }
@@ -104,8 +104,8 @@ namespace Assets.Modules.SurfaceInterface
 
                 case "selectedDataIndices":
                     var dataWrapper = JsonUtility.FromJson<DataWrapper>(payload);
-                    if (dataWrapper.hasFilter) { DataLineManager.SetFilter(null); }
-                    else { DataLineManager.SetFilter(dataWrapper.selectedDataIndices); }
+                    if (dataWrapper.hasFilter) { DataLineManager.Instance.SetFilter(null); }
+                    else { DataLineManager.Instance.SetFilter(dataWrapper.selectedDataIndices); }
                     break;
             }
         }
