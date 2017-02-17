@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    public class GraphicsLineSegment : LineSegment
+    public class GraphicsLineSegment : LineSegment_Old
     {
         private GraphicsLineRenderer _renderer;
         private int _lineIndex = -1;

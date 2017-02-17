@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Assets.Modules.ParallelCoordinates
 {
     [RequireComponent(typeof(LineRenderer))]
-    public class LRLineSegment : LineSegment
+    public class LRLineSegment : LineSegment_Old
     {
         private LineRenderer _lineRenderer;
 

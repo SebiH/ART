@@ -7,7 +7,7 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class GraphConnection : MonoBehaviour
     {
-        public LineSegment LineTemplate;
+        public LineSegment_Old LineTemplate;
 
         private Coroutine _lineGenerationRoutine;
 
@@ -25,7 +25,7 @@ namespace Assets.Modules.ParallelCoordinates
             set { if (value != _endGraph) { SetEndGraph(value); } }
         }
 
-        private LineSegment[] _lineSegments;
+        private LineSegment_Old[] _lineSegments;
 
         void OnEnable()
         {
@@ -125,7 +125,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 yield return new WaitForEndOfFrame();
 
-                _lineSegments = new LineSegment[_startGraph.Data.Length];
+                _lineSegments = new LineSegment_Old[_startGraph.Data.Length];
                 for (int i = 0; i < _startGraph.Data.Length; i++)
                 {
                     int batchCounter = 0;
@@ -143,7 +143,7 @@ namespace Assets.Modules.ParallelCoordinates
                         // reduce editor load (?)
                         go.gameObject.hideFlags = HideFlags.HideAndDontSave;
 
-                        var segment = go.GetComponent<LineSegment>();
+                        var segment = go.GetComponent<LineSegment_Old>();
                         var startPoint = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
                         var endPoint = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
                         segment.SetPositions(startPoint, endPoint);

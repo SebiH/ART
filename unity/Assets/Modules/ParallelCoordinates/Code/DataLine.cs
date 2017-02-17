@@ -15,7 +15,7 @@ namespace Assets.Modules.ParallelCoordinates
         private const float DEFAULT_WIDTH = 0.003f;
         private const float FILTERED_WIDTH = 0.0005f;
 
-        private List<LineSegment> _lineSegments = new List<LineSegment>();
+        private List<LineSegment_Old> _lineSegments = new List<LineSegment_Old>();
         private Color _defaultColor;
         private bool _isHighlighted = false;
 
@@ -25,13 +25,13 @@ namespace Assets.Modules.ParallelCoordinates
             _defaultColor = Theme.GetColor(dataIndex);
         }
 
-        public void AddSegment(LineSegment segment)
+        public void AddSegment(LineSegment_Old segment)
         {
             _lineSegments.Add(segment);
             SetHighlight(_isHighlighted, segment);
         }
 
-        public void RemoveSegment(LineSegment segment)
+        public void RemoveSegment(LineSegment_Old segment)
         {
             _lineSegments.Remove(segment);
         }
@@ -45,7 +45,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private void SetHighlight(bool isHighlighted, LineSegment segment)
+        private void SetHighlight(bool isHighlighted, LineSegment_Old segment)
         {
             if (isHighlighted)
             {

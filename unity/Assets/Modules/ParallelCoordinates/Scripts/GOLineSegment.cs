@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    public class GOLineSegment : LineSegment
+    public class GOLineSegment : LineSegment_Old
     {
         public override void SetColor(Color col)
         {
