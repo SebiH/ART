@@ -1,3 +1,6 @@
+using Assets.Modules.Core;
+using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -9,6 +12,8 @@ namespace Assets.Modules.ParallelCoordinates
 
         private DataLine[] _lines = new DataLine[0];
         private int[] _filter = null;
+        private Coroutine _filterRoutine = null;
+
         private void OnEnable()
         {
             Instance = this;
@@ -47,9 +52,38 @@ namespace Assets.Modules.ParallelCoordinates
         public void SetFilter(int[] filter)
         {
             _filter = filter;
-            foreach (var line in _lines)
+
+            if (_filterRoutine != null)
             {
-                SetFilter(line);
+                StopCoroutine(_filterRoutine);
+            }
+
+            _filterRoutine = StartCoroutine(SetFilterAsync());
+        }
+
+        private IEnumerator SetFilterAsync()
+        {
+            using (var wd = new WorkDistributor())
+            {
+                yield return new WaitForEndOfFrame();
+                wd.TriggerUpdate();
+
+                foreach (var line in _lines)
+                {
+                    SetFilter(line);
+                    wd.Deplete(1);
+
+                    if (wd.AvailableCycles <= 0)
+                    {
+                        while (wd.AvailableCycles < 200)
+                        {
+                            yield return new WaitForEndOfFrame();
+                            wd.TriggerUpdate();
+                        }
+                    }
+                }
+
+                _filterRoutine = null;
             }
         }
 
