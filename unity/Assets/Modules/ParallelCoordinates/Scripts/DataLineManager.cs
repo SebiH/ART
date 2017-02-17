@@ -12,12 +12,16 @@ namespace Assets.Modules.ParallelCoordinates
         private void OnEnable()
         {
             Instance = this;
+            SetMaxDataIndex(15000);
         }
 
         // minor optimisation to avoid extending the array
         public void SetMaxDataIndex(int max)
         {
-            _lines = new DataLine[max + 1];
+            if (_lines.Length < max + 1)
+            {
+                _lines = new DataLine[max + 1];
+            }
         }
 
         public DataLine GetLine(int index)
@@ -26,12 +30,7 @@ namespace Assets.Modules.ParallelCoordinates
             if (index >= _lines.Length)
             {
                 var lines = new DataLine[index + 1];
-
-                for (int i = 0; i < _lines.Length; i++)
-                {
-                    lines[i] = _lines[i];
-                }
-
+                Array.Copy(_lines, lines, _lines.Length);
                 _lines = lines;
             }
 
