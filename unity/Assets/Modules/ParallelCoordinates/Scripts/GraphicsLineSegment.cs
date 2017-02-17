@@ -17,7 +17,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             // TODO: add line in OnEnable, manipulate position after
             _renderer = UnityUtility.FindParent<GraphicsLineRenderer>(this);
-            _lineIndex = _renderer.AddLine(start, end);
+            //_lineIndex = _renderer.AddLine(start, end);
         }
 
         public override void SetStartAnimated(Vector3 start)

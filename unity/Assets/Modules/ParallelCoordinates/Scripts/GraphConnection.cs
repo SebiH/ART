@@ -5,11 +5,11 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
+    [RequireComponent(typeof(GraphicsLineRenderer))]
     public class GraphConnection : MonoBehaviour
     {
-        public LineSegment_Old LineTemplate;
-
-        private Coroutine _lineGenerationRoutine;
+        private LineSegment[] _lineSegments;
+        private GraphicsLineRenderer _lineRenderer;
 
         private Graph _startGraph = null;
         public Graph StartGraph
@@ -25,11 +25,10 @@ namespace Assets.Modules.ParallelCoordinates
             set { if (value != _endGraph) { SetEndGraph(value); } }
         }
 
-        private LineSegment_Old[] _lineSegments;
-
         void OnEnable()
         {
             StartGraph = UnityUtility.FindParent<Graph>(this);
+            _lineRenderer = GetComponent<GraphicsLineRenderer>();
         }
         
         void OnDisable()
@@ -104,61 +103,55 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void GenerateLines()
         {
-            ClearLines();
-
             if (_startGraph != null && _endGraph != null && _startGraph.Data != null && _endGraph.Data != null)
             {
                 Debug.Assert(_startGraph.Data.Length == _endGraph.Data.Length);
+                var dataLength = _startGraph.Data.Length;
 
-                if (_lineGenerationRoutine != null)
+                if (_lineSegments != null && _lineSegments.Length == dataLength)
                 {
-                    StopCoroutine(_lineGenerationRoutine);
+                    AdjustLines();
                 }
-
-                _lineGenerationRoutine = StartCoroutine(GenerateLinesBatched());
+                else
+                {
+                    ClearLines();
+                    InitializeLines();
+                }
             }
-        }
-
-        private IEnumerator GenerateLinesBatched()
-        {
-            using (var wd = new WorkDistributor())
+            else
             {
-                yield return new WaitForEndOfFrame();
-
-                _lineSegments = new LineSegment_Old[_startGraph.Data.Length];
-                for (int i = 0; i < _startGraph.Data.Length; i++)
-                {
-                    int batchCounter = 0;
-
-                    wd.TriggerUpdate();
-                    var maxBatch = wd.DepleteAll();
-
-                    while (batchCounter < maxBatch && i < _startGraph.Data.Length)
-                    {
-                        var go = Instantiate(LineTemplate);
-                        go.transform.parent = transform;
-                        go.transform.localPosition = Vector3.zero;
-                        go.transform.localRotation = Quaternion.identity;
-                        go.transform.localScale = Vector3.one;
-                        // reduce editor load (?)
-                        go.gameObject.hideFlags = HideFlags.HideAndDontSave;
-
-                        var segment = go.GetComponent<LineSegment_Old>();
-                        var startPoint = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
-                        var endPoint = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
-                        segment.SetPositions(startPoint, endPoint);
-
-                        DataLineManager.GetLine(i).AddSegment(segment);
-                        _lineSegments[i] = segment;
-
-                        batchCounter++;
-                        i++;
-                    }
-
-                    yield return new WaitForEndOfFrame();
-                }
+                ClearLines();
             }
         }
+
+        private void InitializeLines()
+        {
+            _lineSegments = new LineSegment[_startGraph.Data.Length];
+
+            for (int i = 0; i < _lineSegments.Length; i++)
+            {
+                var segment = new LineSegment();
+                _lineSegments[i] = segment;
+                DataLineManager.GetLine(i).AddSegment(segment);
+
+                segment.Start = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
+                segment.End = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
+
+                segment.SetRenderer(_lineRenderer);
+            }
+        }
+
+        private void AdjustLines()
+        {
+            for (int i = 0; i < _lineSegments.Length; i++)
+            {
+                var segment = _lineSegments[i];
+                segment.Start = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
+                segment.End = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
+                segment.UpdateVisual();
+            }
+        }
+
 
         private void ClearLines()
         {
@@ -166,13 +159,10 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 for (int i = 0; i < _lineSegments.Length; i++)
                 {
-                    if (_lineSegments[i] != null)
-                    {
-                        DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
-                        var go = _lineSegments[i].gameObject;
-                        Destroy(go);
-                    }
+                    DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
                 }
+
+                _lineRenderer.ClearLines();
 
                 _lineSegments = null;
             }

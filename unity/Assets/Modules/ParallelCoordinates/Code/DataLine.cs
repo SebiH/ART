@@ -1,5 +1,6 @@
 using Assets.Modules.Core;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -9,54 +10,58 @@ namespace Assets.Modules.ParallelCoordinates
     /// </summary>
     public class DataLine
     {
-        private int _dataIndex = -1;
-        public int DataIndex { get { return _dataIndex; } }
+        public int DataIndex { get; private set; }
 
         private const float DEFAULT_WIDTH = 0.003f;
         private const float FILTERED_WIDTH = 0.0005f;
 
-        private List<LineSegment_Old> _lineSegments = new List<LineSegment_Old>();
-        private Color _defaultColor;
+        private List<LineSegment> _lineSegments = new List<LineSegment>();
+        private Color32 _defaultColor;
         private bool _isHighlighted = false;
 
         public DataLine(int dataIndex)
         {
-            _dataIndex = dataIndex;
-            _defaultColor = Theme.GetColor(dataIndex);
+            DataIndex = dataIndex;
+            _defaultColor = Theme.GetColor32(dataIndex);
         }
 
-        public void AddSegment(LineSegment_Old segment)
+        public void AddSegment(LineSegment segment)
         {
             _lineSegments.Add(segment);
             SetHighlight(_isHighlighted, segment);
         }
 
-        public void RemoveSegment(LineSegment_Old segment)
+        public void RemoveSegment(LineSegment segment)
         {
             _lineSegments.Remove(segment);
         }
 
         public void SetHighlight(bool isHighlighted)
         {
-            _isHighlighted = isHighlighted;
-            foreach (var segment in _lineSegments)
+            if (_isHighlighted != isHighlighted)
             {
-                SetHighlight(isHighlighted, segment);
+                _isHighlighted = isHighlighted;
+                foreach (var segment in _lineSegments)
+                {
+                    SetHighlight(isHighlighted, segment);
+                }
             }
         }
 
-        private void SetHighlight(bool isHighlighted, LineSegment_Old segment)
+        private void SetHighlight(bool isHighlighted, LineSegment segment)
         {
             if (isHighlighted)
             {
-                segment.SetColor(_defaultColor);
-                segment.SetWidth(DEFAULT_WIDTH);
+                segment.Color = _defaultColor;
+                segment.Width = DEFAULT_WIDTH;
             }
             else
             {
-                segment.SetColor(Color.gray);
-                segment.SetWidth(FILTERED_WIDTH);
+                segment.Color = new Color32(0, 0, 0, 255);
+                segment.Width = FILTERED_WIDTH;
             }
+
+            segment.UpdateVisual();
         }
     }
 }

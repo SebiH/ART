@@ -16,8 +16,7 @@ namespace Assets.Modules.ParallelCoordinates
         private int _lineIndex = 0;
         private const float LINE_WIDTH = 0.005f;
 
-        private struct Line { public Vector3 start; public Vector3 end; }
-        private List<Line> _lines = new List<Line>();
+        private List<LineSegment> _lineCreationQueue = new List<LineSegment>();
 
         private void OnEnable()
         {
@@ -31,17 +30,16 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void Update()
         {
-            if (_lines.Count > 0 && !_isGenerating)
+            if (_lineCreationQueue.Count > 0 && !_isGenerating)
             {
                 StartCoroutine(AddLineAsync());
             }
         }
 
-        public int AddLine(Vector3 start, Vector3 end)
+        public void AddLine(LineSegment line)
         {
             // adding lines over multiple update()s to avoid extreme lag
-            _lines.Add(new Line { start = start, end = end });
-            return _lineIndex++;
+            _lineCreationQueue.Add(line);
         }
 
         private IEnumerator AddLineAsync()
@@ -51,19 +49,19 @@ namespace Assets.Modules.ParallelCoordinates
                 _isGenerating = true;
                 yield return new WaitForEndOfFrame();
 
-                while (_lines.Count > 0)
+                while (_lineCreationQueue.Count > 0)
                 {
                     wd.TriggerUpdate();
 
                     if (wd.AvailableCycles > 400)
                     {
-                        var batchAmount = Mathf.Min(_lines.Count, wd.DepleteAll());
+                        var batchAmount = Mathf.Min(_lineCreationQueue.Count, wd.DepleteAll());
 
-                        var lineBatch = new Line[batchAmount];
+                        var lineBatch = new LineSegment[batchAmount];
                         for (int i = 0; i < batchAmount; i++)
                         {
-                            lineBatch[i] = _lines[0];
-                            _lines.RemoveAt(0);
+                            lineBatch[i] = _lineCreationQueue[0];
+                            _lineCreationQueue.RemoveAt(0);
                         }
                         AddLines(lineBatch);
                     }
@@ -75,21 +73,22 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private void AddLines(Line[] lines)
+        // TODO: add hint for max lines, so we don't need to do array.copy each time
+        private void AddLines(LineSegment[] lines)
         {
             var quads = new Vector3[4 * lines.Length];
             var quadIndices = 0;
 
             foreach (var line in lines)
             {
-                var normal = Vector3.Cross(line.start, line.end);
-                var lineVector = Vector3.Cross(normal, line.end - line.start);
+                var normal = Vector3.Cross(line.Start, line.End);
+                var lineVector = Vector3.Cross(normal, line.End - line.Start);
                 lineVector.Normalize();
 
-                quads[quadIndices++] = line.start + lineVector * LINE_WIDTH;
-                quads[quadIndices++] = line.start + lineVector * -LINE_WIDTH;
-                quads[quadIndices++] = line.end + lineVector * LINE_WIDTH;
-                quads[quadIndices++] = line.end + lineVector * -LINE_WIDTH;
+                quads[quadIndices++] = line.Start + lineVector * LINE_WIDTH;
+                quads[quadIndices++] = line.Start + lineVector * -LINE_WIDTH;
+                quads[quadIndices++] = line.End + lineVector * LINE_WIDTH;
+                quads[quadIndices++] = line.End + lineVector * -LINE_WIDTH;
             }
 
             var currentVerticesCount = _lineMesh.vertices.Length;
@@ -103,13 +102,13 @@ namespace Assets.Modules.ParallelCoordinates
                 var vertices = new Vector3[currentVerticesCount + quadIndices];
                 Array.Copy(_lineMesh.vertices, vertices, currentVerticesCount);
 
-                var col = new Color32(0, 0, 0, 0);
+                var col = new Color32(255, 0, 0, 255);
                 for (int i = 0; i < quadIndices; i++)
                 {
                     vertices[currentVerticesCount + i] = quads[i];
 
                     if (i % 4 == 0)
-                        //col = Theme.GetColor32(UnityEngine.Random.Range(0, 100));
+                        col = Theme.GetColor32(UnityEngine.Random.Range(0, 100));
                     colors[currentVerticesCount + i] = col;
                 }
 
@@ -147,8 +146,9 @@ namespace Assets.Modules.ParallelCoordinates
                 return;
             }
 
+            // for some reason we cannot use _lineMesh.color32[] directly
             var cols = _lineMesh.colors32;
-            if (cols.Length > index + 4) // TODO: ...
+            if (cols.Length > index * 4 + 4) // TODO: ... should not occur??
             {
                 cols[index * 4] = col;
                 cols[index * 4 + 1] = col;
@@ -156,6 +156,11 @@ namespace Assets.Modules.ParallelCoordinates
                 cols[index * 4 + 3] = col;
                 _lineMesh.colors32 = cols;
             }
+        }
+
+        public void ClearLines()
+        {
+            _lineMesh.Clear();
         }
     }
 }
