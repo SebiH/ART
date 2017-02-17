@@ -3,7 +3,7 @@ using Assets.Modules.Vision.CameraSources;
 using System;
 using UnityEngine;
 
-namespace Assets.Modules.SurfaceInterface.Scripts
+namespace Assets.Modules.SurfaceInterface
 {
     [RequireComponent(typeof(OvrvisionCameraSource))]
     public class CameraPropertiesListener : MonoBehaviour
