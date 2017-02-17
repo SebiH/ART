@@ -1,6 +1,5 @@
 using Assets.Modules.Core;
 using Assets.Modules.Graphs;
-using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates

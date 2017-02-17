@@ -33,14 +33,14 @@ namespace Assets.Modules.ParallelCoordinates
 
         public override void SetColor(Color col)
         {
-            if (col == Color.gray)
-            {
-                _renderer.SetLineColor(_lineIndex, new Color32(0, 0, 0, 0));
-            }
-            else
-            {
-                _renderer.SetLineColor(_lineIndex, new Color32(0, 255, 0, 255));
-            }
+            //if (col == Color.gray)
+            //{
+            //    _renderer.SetLineColor(_lineIndex, new Color32(0, 0, 0, 0));
+            //}
+            //else
+            //{
+            //    _renderer.SetLineColor(_lineIndex, new Color32(0, 255, 0, 255));
+            //}
         }
 
         public override void SetWidth(float width)

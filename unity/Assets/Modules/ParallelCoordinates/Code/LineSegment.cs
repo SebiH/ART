@@ -25,7 +25,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (MeshIndex >= 0)
             {
-                // TODO ..
+                _renderer.UpdateLine(this);
             }
         }
     }

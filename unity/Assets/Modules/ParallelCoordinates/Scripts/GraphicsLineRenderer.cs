@@ -15,6 +15,7 @@ namespace Assets.Modules.ParallelCoordinates
         private bool _isGenerating = false;
 
         private List<LineSegment> _lineCreationQueue = new List<LineSegment>();
+        private List<LineSegment> _lineUpdateQueue = new List<LineSegment>();
 
         private void OnEnable()
         {
@@ -32,12 +33,23 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 StartCoroutine(AddLineAsync());
             }
+
+            if (_lineUpdateQueue.Count > 0 && !_isGenerating)
+            {
+                SetLineAttributes(_lineUpdateQueue.ToArray());
+                _lineUpdateQueue.Clear();
+            }
         }
 
         public void AddLine(LineSegment line)
         {
             // adding lines over multiple update()s to avoid extreme lag
             _lineCreationQueue.Add(line);
+        }
+
+        public void UpdateLine(LineSegment line)
+        {
+            _lineUpdateQueue.Add(line);
         }
 
         private IEnumerator AddLineAsync()
@@ -52,7 +64,7 @@ namespace Assets.Modules.ParallelCoordinates
                     wd.TriggerUpdate();
                     var totalLineNum = _lineCreationQueue.Count;
 
-                    if (wd.AvailableCycles > 400)
+                    if (wd.AvailableCycles > 100)
                     {
                         var batchAmount = Mathf.Min(_lineCreationQueue.Count, wd.DepleteAll());
 
@@ -75,7 +87,7 @@ namespace Assets.Modules.ParallelCoordinates
         private int vertexCounter = 0;
         private int triangleCounter = 0;
 
-
+        // TODO: need not be array
         private void AddLines(LineSegment[] lines, int expectedLineCount)
         {
             var expectedVerticesNum = vertexCounter + expectedLineCount * 4;
@@ -108,7 +120,7 @@ namespace Assets.Modules.ParallelCoordinates
 
             var quad = new Vector3[4];
             Vector3 normal, ortho;
-            int indexOffset = currentVerticesNum / 4;
+            int indexOffset = vertexCounter / 4;
 
             for (int i = 0; i < lines.Length; i++)
             {
@@ -152,26 +164,48 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-
-        public void SetLineColor(int index, Color32 col)
+        private void SetLineAttributes(LineSegment[] lines)
         {
-            if (index < 0)
+            var colors = _lineMesh.colors32;
+            var vertices = _lineMesh.vertices;
+            var triangles = _lineMesh.triangles;
+
+            var quad = new Vector3[4];
+            Vector3 normal, ortho;
+
+            for (int i = 0; i < lines.Length; i++)
             {
-                Debug.LogWarning("Tried to manipulate line before line was added");
-                return;
+                var line = lines[i];
+                var vertex = line.MeshIndex * 4;
+
+                // TODO: cache in vector on demand?
+                normal = Vector3.Cross(line.Start, line.End);
+                ortho = Vector3.Cross(normal, line.End - line.Start);
+                ortho.Normalize();
+
+                quad[0] = line.Start + ortho * line.Width;
+                quad[1] = line.Start + ortho * -line.Width;
+                quad[2] = line.End + ortho * line.Width;
+                quad[3] = line.End + ortho * -line.Width;
+
+                vertices[vertex] = quad[0];
+                vertices[vertex + 1] = quad[1];
+                vertices[vertex + 2] = quad[2];
+                vertices[vertex + 3] = quad[3];
+
+                colors[vertex] = line.Color;
+                colors[vertex + 1] = line.Color;
+                colors[vertex + 2] = line.Color;
+                colors[vertex + 3] = line.Color;
             }
 
-            // for some reason we cannot use _lineMesh.color32[] directly
-            var cols = _lineMesh.colors32;
-            if (cols.Length > index * 4 + 4) // TODO: ... should not occur??
-            {
-                cols[index * 4] = col;
-                cols[index * 4 + 1] = col;
-                cols[index * 4 + 2] = col;
-                cols[index * 4 + 3] = col;
-                _lineMesh.colors32 = cols;
-            }
+
+            _lineMesh.vertices = vertices;
+            _lineMesh.triangles = triangles;
+            _lineMesh.colors32 = colors;
+            _lineMesh.RecalculateBounds();
         }
+
 
         public void ClearLines()
         {
