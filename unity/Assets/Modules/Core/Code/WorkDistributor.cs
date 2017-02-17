@@ -6,7 +6,7 @@ namespace Assets.Modules.Core
     public class WorkDistributor : IDisposable
     {
         private static int GlobalOperations = 0;
-        private static readonly int MAX_WORKLOAD = 200;
+        private static readonly int MAX_WORKLOAD = 300;
 
         public int AvailableCycles { get; private set; }
 

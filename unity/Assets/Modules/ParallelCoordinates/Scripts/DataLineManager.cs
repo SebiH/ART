@@ -17,7 +17,7 @@ namespace Assets.Modules.ParallelCoordinates
         private void OnEnable()
         {
             Instance = this;
-            SetMaxDataIndex(15000);
+            SetMaxDataIndex(5000);
         }
 
         // minor optimisation to avoid extending the array
@@ -70,12 +70,12 @@ namespace Assets.Modules.ParallelCoordinates
 
                 foreach (var line in _lines)
                 {
-                    SetFilter(line);
-                    wd.Deplete(1);
-
-                    if (wd.AvailableCycles <= 0)
+                    if (line != null)
                     {
-                        while (wd.AvailableCycles < 200)
+                        SetFilter(line);
+                        wd.Deplete(line.SegmentCount);
+
+                        if (wd.AvailableCycles <= 0)
                         {
                             yield return new WaitForEndOfFrame();
                             wd.TriggerUpdate();
@@ -89,11 +89,8 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void SetFilter(DataLine line)
         {
-            if (line != null)
-            {
-                var isHighlighted = (_filter == null) || _filter.Contains(line.DataIndex);
-                line.SetHighlight(isHighlighted);
-            }
+            var isHighlighted = (_filter == null) || _filter.Contains(line.DataIndex);
+            line.SetHighlight(isHighlighted);
         }
     }
 }

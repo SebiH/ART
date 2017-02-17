@@ -11,6 +11,7 @@ namespace Assets.Modules.ParallelCoordinates
     public class DataLine
     {
         public int DataIndex { get; private set; }
+        public int SegmentCount { get { return _lineSegments.Count; } }
 
         private const float DEFAULT_WIDTH = 0.003f;
         private const float FILTERED_WIDTH = 0.0005f;

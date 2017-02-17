@@ -12,8 +12,8 @@ namespace Assets.Modules.ParallelCoordinates
         private Mesh _lineMesh;
         private bool _isBusy = false;
 
-        private List<LineSegment> _lineCreationQueue = new List<LineSegment>();
-        private List<LineSegment> _lineUpdateQueue = new List<LineSegment>();
+        private Queue<LineSegment> _lineCreationQueue = new Queue<LineSegment>();
+        private Queue<LineSegment> _lineUpdateQueue = new Queue<LineSegment>();
 
         private void OnEnable()
         {
@@ -41,12 +41,12 @@ namespace Assets.Modules.ParallelCoordinates
         public void AddLine(LineSegment line)
         {
             // adding lines over multiple update()s to avoid extreme lag
-            _lineCreationQueue.Add(line);
+            _lineCreationQueue.Enqueue(line);
         }
 
         public void UpdateLine(LineSegment line)
         {
-            _lineUpdateQueue.Add(line);
+            _lineUpdateQueue.Enqueue(line);
         }
 
         private IEnumerator AddLineAsync()
@@ -59,18 +59,18 @@ namespace Assets.Modules.ParallelCoordinates
                 while (_lineCreationQueue.Count > 0)
                 {
                     wd.TriggerUpdate();
-                    var totalLineNum = _lineCreationQueue.Count;
 
                     if (wd.AvailableCycles > 200)
                     {
+                        var totalLineNum = _lineCreationQueue.Count;
                         var batchAmount = Mathf.Min(_lineCreationQueue.Count, wd.DepleteAll());
 
                         var lineBatch = new LineSegment[batchAmount];
                         for (int i = 0; i < batchAmount; i++)
                         {
-                            lineBatch[i] = _lineCreationQueue[0];
-                            _lineCreationQueue.RemoveAt(0);
+                            lineBatch[i] = _lineCreationQueue.Dequeue();
                         }
+
                         CreateLines(lineBatch, totalLineNum);
                     }
 
@@ -83,19 +83,33 @@ namespace Assets.Modules.ParallelCoordinates
 
         private IEnumerator UpdateLineAsync()
         {
-            var maxWaitCounter = 0;
-            _isBusy = true;
-            yield return new WaitForEndOfFrame();
-
-            while (_lineUpdateQueue.Count < 50 && maxWaitCounter < 100)
+            using (var wd = new WorkDistributor())
             {
+                _isBusy = true;
                 yield return new WaitForEndOfFrame();
-                maxWaitCounter++;
-            }
 
-            SetLineAttributes(_lineUpdateQueue);
-            _lineUpdateQueue.Clear();
-            _isBusy = false;
+                while (_lineUpdateQueue.Count > 0)
+                {
+                    wd.TriggerUpdate();
+
+                    if (wd.AvailableCycles > 200)
+                    {
+                        var batchAmount = Mathf.Min(_lineUpdateQueue.Count, wd.DepleteAll());
+
+                        var lineBatch = new LineSegment[batchAmount];
+                        for (int i = 0; i < batchAmount; i++)
+                        {
+                            lineBatch[i] = _lineUpdateQueue.Dequeue();
+                        }
+
+                        SetLineAttributes(lineBatch);
+                    }
+
+                    yield return new WaitForEndOfFrame();
+                }
+
+                _isBusy = false;
+            }
         }
 
         private int vertexCounter = 0;
