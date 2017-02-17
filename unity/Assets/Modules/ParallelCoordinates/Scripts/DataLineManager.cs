@@ -9,6 +9,10 @@ namespace Assets.Modules.ParallelCoordinates
 
         private DataLine[] _lines = new DataLine[0];
         private int[] _filter = null;
+        private void OnEnable()
+        {
+            Instance = this;
+        }
 
         // minor optimisation to avoid extending the array
         public void SetMaxDataIndex(int max)
