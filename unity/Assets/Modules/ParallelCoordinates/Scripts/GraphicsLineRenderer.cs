@@ -13,8 +13,6 @@ namespace Assets.Modules.ParallelCoordinates
 
         private Mesh _lineMesh;
         private bool _isGenerating = false;
-        private int _lineIndex = 0;
-        private const float LINE_WIDTH = 0.005f;
 
         private List<LineSegment> _lineCreationQueue = new List<LineSegment>();
 
@@ -52,6 +50,7 @@ namespace Assets.Modules.ParallelCoordinates
                 while (_lineCreationQueue.Count > 0)
                 {
                     wd.TriggerUpdate();
+                    var totalLineNum = _lineCreationQueue.Count;
 
                     if (wd.AvailableCycles > 400)
                     {
@@ -63,7 +62,7 @@ namespace Assets.Modules.ParallelCoordinates
                             lineBatch[i] = _lineCreationQueue[0];
                             _lineCreationQueue.RemoveAt(0);
                         }
-                        AddLines(lineBatch);
+                        AddLines(lineBatch, totalLineNum);
                     }
 
                     yield return new WaitForEndOfFrame();
@@ -73,69 +72,85 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        // TODO: add hint for max lines, so we don't need to do array.copy each time
-        private void AddLines(LineSegment[] lines)
+        private int vertexCounter = 0;
+        private int triangleCounter = 0;
+
+
+        private void AddLines(LineSegment[] lines, int expectedLineCount)
         {
-            var quads = new Vector3[4 * lines.Length];
-            var quadIndices = 0;
+            var expectedVerticesNum = vertexCounter + expectedLineCount * 4;
+            var currentVerticesNum = _lineMesh.vertices.Length;
 
-            foreach (var line in lines)
+            var expectedTriangleNum = triangleCounter + expectedLineCount * 6;
+            var currentTriangleNum = _lineMesh.triangles.Length;
+
+            Color32[] colors;
+            Vector3[] vertices;
+            int[] triangles;
+
+            if (expectedVerticesNum > currentVerticesNum)
             {
-                var normal = Vector3.Cross(line.Start, line.End);
-                var lineVector = Vector3.Cross(normal, line.End - line.Start);
-                lineVector.Normalize();
+                colors = new Color32[expectedVerticesNum];
+                Array.Copy(_lineMesh.colors32, colors, currentVerticesNum);
+                vertices = new Vector3[expectedVerticesNum];
+                Array.Copy(_lineMesh.vertices, vertices, currentVerticesNum);
 
-                quads[quadIndices++] = line.Start + lineVector * LINE_WIDTH;
-                quads[quadIndices++] = line.Start + lineVector * -LINE_WIDTH;
-                quads[quadIndices++] = line.End + lineVector * LINE_WIDTH;
-                quads[quadIndices++] = line.End + lineVector * -LINE_WIDTH;
-            }
-
-            var currentVerticesCount = _lineMesh.vertices.Length;
-            var currentTriangleCount = _lineMesh.triangles.Length;
-
-            // TODO: mesh cannot exceed 65536 vertices -> split into multiple meshes?
-            if (currentVerticesCount + quadIndices < 65536)
-            {
-                var colors = new Color32[currentVerticesCount + quadIndices];
-                Array.Copy(_lineMesh.colors32, colors, currentVerticesCount);
-                var vertices = new Vector3[currentVerticesCount + quadIndices];
-                Array.Copy(_lineMesh.vertices, vertices, currentVerticesCount);
-
-                var col = new Color32(255, 0, 0, 255);
-                for (int i = 0; i < quadIndices; i++)
-                {
-                    vertices[currentVerticesCount + i] = quads[i];
-
-                    if (i % 4 == 0)
-                        col = Theme.GetColor32(UnityEngine.Random.Range(0, 100));
-                    colors[currentVerticesCount + i] = col;
-                }
-
-
-                var triangles = new int[currentTriangleCount + lines.Length * 6];
-                Array.Copy(_lineMesh.triangles, triangles, currentTriangleCount);
-
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    triangles[currentTriangleCount + 6 * i] = currentVerticesCount + i *  4;
-                    triangles[currentTriangleCount + 6 * i + 1] = currentVerticesCount + i * 4 + 1;
-                    triangles[currentTriangleCount + 6 * i + 2] = currentVerticesCount + i * 4 + 2;
-                    triangles[currentTriangleCount + 6 * i + 3] = currentVerticesCount + i * 4 + 1;
-                    triangles[currentTriangleCount + 6 * i + 4] = currentVerticesCount + i * 4 + 3;
-                    triangles[currentTriangleCount + 6 * i + 5] = currentVerticesCount + i * 4 + 2;
-                }
-
-                _lineMesh.vertices = vertices;
-                _lineMesh.triangles = triangles;
-                _lineMesh.colors32 = colors;
-                _lineMesh.RecalculateBounds();
+                triangles = new int[expectedTriangleNum];
+                Array.Copy(_lineMesh.triangles, triangles, currentTriangleNum);
             }
             else
             {
-                Debug.LogWarning("Tried to add too many quads to mesh");
+                colors = _lineMesh.colors32;
+                vertices = _lineMesh.vertices;
+                triangles = _lineMesh.triangles;
             }
+
+
+            var quad = new Vector3[4];
+            Vector3 normal, ortho;
+            int indexOffset = currentVerticesNum / 4;
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                line.MeshIndex = indexOffset + i;
+                normal = Vector3.Cross(line.Start, line.End);
+                ortho = Vector3.Cross(normal, line.End - line.Start);
+                ortho.Normalize();
+
+                quad[0] = line.Start + ortho * line.Width;
+                quad[1] = line.Start + ortho * -line.Width;
+                quad[2] = line.End + ortho * line.Width;
+                quad[3] = line.End + ortho * -line.Width;
+
+                vertices[vertexCounter] = quad[0];
+                vertices[vertexCounter + 1] = quad[1];
+                vertices[vertexCounter + 2] = quad[2];
+                vertices[vertexCounter + 3] = quad[3];
+
+                colors[vertexCounter] = line.Color;
+                colors[vertexCounter + 1] = line.Color;
+                colors[vertexCounter + 2] = line.Color;
+                colors[vertexCounter + 3] = line.Color;
+
+                triangles[triangleCounter] = vertexCounter;
+                triangles[triangleCounter + 1] = vertexCounter + 1;
+                triangles[triangleCounter + 2] = vertexCounter + 2;
+                triangles[triangleCounter + 3] = vertexCounter + 1;
+                triangles[triangleCounter + 4] = vertexCounter + 3;
+                triangles[triangleCounter + 5] = vertexCounter + 2;
+
+                vertexCounter += 4;
+                triangleCounter += 6;
+            }
+
+
+            _lineMesh.vertices = vertices;
+            _lineMesh.triangles = triangles;
+            _lineMesh.colors32 = colors;
+            _lineMesh.RecalculateBounds();
         }
+
 
 
         public void SetLineColor(int index, Color32 col)
