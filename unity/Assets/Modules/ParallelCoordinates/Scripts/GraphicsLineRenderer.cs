@@ -10,7 +10,7 @@ namespace Assets.Modules.ParallelCoordinates
     public class GraphicsLineRenderer : MonoBehaviour
     {
         private Mesh _lineMesh;
-        private bool _isGenerating = false;
+        private bool _isBusy = false;
 
         private List<LineSegment> _lineCreationQueue = new List<LineSegment>();
         private List<LineSegment> _lineUpdateQueue = new List<LineSegment>();
@@ -27,15 +27,14 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void Update()
         {
-            if (_lineCreationQueue.Count > 0 && !_isGenerating)
+            if (_lineCreationQueue.Count > 0 && !_isBusy)
             {
                 StartCoroutine(AddLineAsync());
             }
 
-            if (_lineUpdateQueue.Count > 0 && !_isGenerating)
+            if (_lineUpdateQueue.Count > 0 && !_isBusy)
             {
-                SetLineAttributes(_lineUpdateQueue.ToArray());
-                _lineUpdateQueue.Clear();
+                StartCoroutine(UpdateLineAsync());
             }
         }
 
@@ -54,7 +53,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             using (var wd = new WorkDistributor())
             {
-                _isGenerating = true;
+                _isBusy = true;
                 yield return new WaitForEndOfFrame();
 
                 while (_lineCreationQueue.Count > 0)
@@ -78,8 +77,25 @@ namespace Assets.Modules.ParallelCoordinates
                     yield return new WaitForEndOfFrame();
                 }
 
-                _isGenerating = false;
+                _isBusy = false;
             }
+        }
+
+        private IEnumerator UpdateLineAsync()
+        {
+            var maxWaitCounter = 0;
+            _isBusy = true;
+            yield return new WaitForEndOfFrame();
+
+            while (_lineUpdateQueue.Count < 50 && maxWaitCounter < 100)
+            {
+                yield return new WaitForEndOfFrame();
+                maxWaitCounter++;
+            }
+
+            SetLineAttributes(_lineUpdateQueue.ToArray());
+            _lineUpdateQueue.Clear();
+            _isBusy = false;
         }
 
         private int vertexCounter = 0;
