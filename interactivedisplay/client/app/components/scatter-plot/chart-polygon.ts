@@ -35,7 +35,7 @@ export class ChartPolygon {
     // but Edge/Firefox need absolute url: 'url(localhost#324)'
     private getAbsoluteTextureUrl(url: string) {
         let baseUrl = window.location.href;
-        return url.replace('url(', 'url(' + baseUrl);
+        return url.replace('url(', 'url(' + baseUrl).replace('#!', '');
     }
 
     public paint(path: number[][]) {
