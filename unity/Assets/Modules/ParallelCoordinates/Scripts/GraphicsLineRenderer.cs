@@ -146,19 +146,19 @@ namespace Assets.Modules.ParallelCoordinates
 
 
             var quad = new Vector3[4];
-            Vector3 normal, ortho;
+            Vector3 widthDirection = Vector3.up;
+            Vector3 normal;
 
             foreach (var line in lines)
             {
                 line.MeshIndex = vertexCounter / 4;
+                // TODO: could be cached on demand in line
                 normal = Vector3.Cross(line.Start, line.End);
-                ortho = Vector3.Cross(normal, line.End - line.Start);
-                ortho.Normalize();
 
-                quad[0] = line.Start + ortho * line.Width;
-                quad[1] = line.Start + ortho * -line.Width;
-                quad[2] = line.End + ortho * line.Width;
-                quad[3] = line.End + ortho * -line.Width;
+                quad[0] = line.Start + widthDirection * line.Width;
+                quad[1] = line.Start + widthDirection * -line.Width;
+                quad[2] = line.End + widthDirection * line.Width;
+                quad[3] = line.End + widthDirection * -line.Width;
 
                 vertices[vertexCounter] = quad[0];
                 vertices[vertexCounter + 1] = quad[1];
@@ -193,24 +193,22 @@ namespace Assets.Modules.ParallelCoordinates
         {
             var colors = _lineMesh.colors32;
             var vertices = _lineMesh.vertices;
-            var triangles = _lineMesh.triangles;
 
             var quad = new Vector3[4];
-            Vector3 normal, ortho;
+            Vector3 widthDirection = Vector3.up;
+            Vector3 normal;
 
             foreach (var line in lines)
             {
                 var vertex = line.MeshIndex * 4;
 
-                // TODO: cache in vector on demand?
+                // TODO: could be cached on demand in line
                 normal = Vector3.Cross(line.Start, line.End);
-                ortho = Vector3.Cross(normal, line.End - line.Start);
-                ortho.Normalize();
 
-                quad[0] = line.Start + ortho * line.Width;
-                quad[1] = line.Start + ortho * -line.Width;
-                quad[2] = line.End + ortho * line.Width;
-                quad[3] = line.End + ortho * -line.Width;
+                quad[0] = line.Start + widthDirection * line.Width;
+                quad[1] = line.Start + widthDirection * -line.Width;
+                quad[2] = line.End + widthDirection * line.Width;
+                quad[3] = line.End + widthDirection * -line.Width;
 
                 vertices[vertex] = quad[0];
                 vertices[vertex + 1] = quad[1];
@@ -225,7 +223,6 @@ namespace Assets.Modules.ParallelCoordinates
 
 
             _lineMesh.vertices = vertices;
-            _lineMesh.triangles = triangles;
             _lineMesh.colors32 = colors;
             _lineMesh.RecalculateBounds();
         }
