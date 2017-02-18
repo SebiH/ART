@@ -17,7 +17,7 @@ namespace Assets.Modules.ParallelCoordinates
         private void OnEnable()
         {
             Instance = this;
-            SetMaxDataIndex(5000);
+            SetMaxDataIndex(1000);
         }
 
         // minor optimisation to avoid extending the array
