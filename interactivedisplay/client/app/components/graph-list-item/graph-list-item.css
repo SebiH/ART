@@ -6,15 +6,15 @@
     height: 100%;
     display: inline-block;
 
-    -webkit-transition: top 0.1s linear, -webkit-transform 0.5s ease-in-out, width 1s linear;
-    -ms-transition: top 0.1s linear, -ms-transform 0.5s ease-in-out, width 1s linear;
-    transition: top 0.1s linear, transform 0.5s ease-in-out, width 1s linear;
+    -webkit-transition: top 0.1s linear, -webkit-transform 0.5s linear, width 0.5s linear;
+    -ms-transition: top 0.1s linear, -ms-transform 0.5s linear, width 0.5s linear;
+    transition: top 0.1s linear, transform 0.5s linear, width 0.5s linear;
 }
 
 .list-item.moving {
-    -webkit-transition: top 0.1s linear, width 1s linear;
-    -ms-transition: top 0.1s linear, width 1s linear;
-    transition: top 0.1s linear, width 1s linear;
+    -webkit-transition: top 0.1s linear, width 0.5s linear;
+    -ms-transition: top 0.1s linear, width 0.5s linear;
+    transition: top 0.1s linear, width 0.5s linear;
 }
 
 .list-item-container {
@@ -46,15 +46,15 @@
 
     box-shadow: -6px 0px 28px 0px black;
     
-    -webkit-transition: top 0.1s linear, -webkit-transform 0.5s ease-in-out, width 1s linear;
-    -ms-transition: top 0.1s linear, -ms-transform 0.5s ease-in-out, width 1s linear;
-    transition: top 0.1s linear, transform 0.5s ease-in-out, width 1s linear;
+    -webkit-transition: top 0.1s linear, -webkit-transform 0.5s linear, width 0.5s linear;
+    -ms-transition: top 0.1s linear, -ms-transform 0.5s linear, width 0.5s linear;
+    transition: top 0.1s linear, transform 0.5s linear, width 0.5s linear;
 }
 
 .content.moving {
     top: -25px;
 
-    -webkit-transition: top 0.1s linear, width 1s linear;
-    -ms-transition: top 0.1s linear, width 1s linear;
-    transition: top 0.1s linear, width 1s linear;
+    -webkit-transition: top 0.1s linear, width 0.5s linear;
+    -ms-transition: top 0.1s linear, width 0.5s linear;
+    transition: top 0.1s linear, width 0.5s linear;
 }
