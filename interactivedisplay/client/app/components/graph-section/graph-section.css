@@ -82,3 +82,40 @@
     background: white;
     height: 100%;
 }
+
+
+.dimension {
+    font-size: 5em;
+    font-family: "geosanslightregular";
+    position: absolute;
+
+    -webkit-transition: left 0.5s ease-in-out, top 0.5s ease-in-out, opacity 0.4s linear;
+    -ms-transition: left 0.5s ease-in-out, top 0.5s ease-in-out, opacity 0.4s linear;
+    transition: left 0.5s ease-in-out, top 0.5s ease-in-out, opacity 0.4s linear;
+}
+
+.dimension.x {
+    left: 30%;
+    top: 60%;
+    opacity: 1;
+}
+
+.dimension.x.selected {
+    top: 90%;
+    left: 40%;
+    opacity: 0;
+}
+
+.dimension.y {
+    transform: rotate(-90deg);
+    transform-origin: left top 0;
+    left: 25%;
+    top: 60%;
+    opacity: 1;
+}
+
+.dimension.y.selected {
+    top: 80%;
+    left: 10%;
+    opacity: 0;
+}

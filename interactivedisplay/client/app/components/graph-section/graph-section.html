@@ -9,11 +9,14 @@
     </div>
 
 
-
+    <div class="dimension x" [ngClass]="{ selected: graph.isSelected }">
+        {{ graph.dimX }}
+    </div>
+    <div class="dimension y" [ngClass]="{ selected: graph.isSelected }">
+        {{ graph.dimY }}
+    </div>
 
     <div *ngIf="!graph.isSelected">
-
-        <graph-overview [graph]="graph"></graph-overview>
 
         <div class="buttons container">
             <div class="row">
