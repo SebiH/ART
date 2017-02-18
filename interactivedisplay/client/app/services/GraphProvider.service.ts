@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { SocketIO } from './SocketIO.service';
 import { Graph } from '../models/index';
@@ -21,6 +22,7 @@ const COLOURS = [
 export class GraphProvider {
     private graphs: Graph[] = [];
     private graphObserver: ReplaySubject<Graph[]> = new ReplaySubject<Graph[]>(1);
+    private graphSelectionChanged: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     private idCounter: number = 0;
 
     private delayedGraphDataUpdate: Function;
@@ -35,8 +37,12 @@ export class GraphProvider {
                     this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
                 }
 
+                this.graphSelectionChanged.next(false);
                 for (let graph of this.graphs) {
                     this.attachListeners(graph);
+                    if (graph.isSelected) {
+                        this.graphSelectionChanged.next(true);
+                    }
                 }
 
                 this.recalculateGraphIndices();
@@ -48,6 +54,27 @@ export class GraphProvider {
 
         this.delayedGraphDataUpdate = _.debounce(this.updateGraphData, 0);
         this.delayedGraphPositionUpdate = _.debounce(this.updateGraphPosition, 0);
+    }
+
+    public onGraphSelectionChanged(): Observable<boolean> {
+        return this.graphSelectionChanged.asObservable();
+    }
+
+    public selectGraph(graph: Graph) {
+        for (let g of this.graphs) {
+            if (g.isSelected && g !== graph) {
+                g.isSelected = false;
+                g.updateData(['isSelected']);
+            }
+        }
+
+        if (graph) {
+            graph.isSelected = true;
+            graph.updateData(['isSelected']);
+            this.graphSelectionChanged.next(true);
+        } else {
+            this.graphSelectionChanged.next(false);
+        }
     }
 
     public setGraphOffset(graph: Graph, offset: number) {
@@ -144,8 +171,8 @@ export class GraphProvider {
         });
     }
 
-    public getGraphs(): ReplaySubject<Graph[]> {
-        return this.graphObserver;
+    public getGraphs(): Observable<Graph[]> {
+        return this.graphObserver.asObservable();
     }
 
     public removeGraph(graph: Graph): void {

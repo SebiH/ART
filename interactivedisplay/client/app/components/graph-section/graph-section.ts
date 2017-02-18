@@ -31,18 +31,6 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         Observable.timer(0, 50)
             .takeWhile(() => this.isActive)
             .subscribe(this.checkForChanges.bind(this));
-
-        this.graph.onDataUpdate
-            .takeWhile(() => this.isActive)
-            .filter(g => g.changes.indexOf('isSelected') > -1)
-            .subscribe(g => {
-                if (this.graph.isSelected) {
-                    this.graph.width *= 2;
-                } else {
-                    this.graph.width /= 2;
-                }
-                this.graph.updatePosition();
-            });
     }
 
     ngOnDestroy() {
@@ -71,17 +59,11 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
 
 
     private selectGraph(): void {
-        if (!this.graph.isSelected) {
-            this.graph.isSelected = true;
-            this.graph.updateData(['isSelected']);
-        }
+        this.graphProvider.selectGraph(this.graph);
     }
 
     private deselectGraph(): void {
-        if (this.graph.isSelected) {
-            this.graph.isSelected = false;
-            this.graph.updateData(['isSelected']);
-        }
+        this.graphProvider.selectGraph(null);
     }
 
     private deleteGraph(): void {

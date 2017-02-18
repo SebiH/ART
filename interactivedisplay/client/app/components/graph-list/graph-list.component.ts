@@ -45,6 +45,17 @@ export class GraphListComponent implements OnInit, OnDestroy {
                 this.graphs = graphs;
                 this.applyScrollOffsetLimits();
             });
+
+        this.graphProvider.onGraphSelectionChanged()
+            .takeWhile(() => this.isActive)
+            .filter(val => val) // only interested if graph was selected
+            .subscribe(isSelected => {
+                for (let graph of this.graphs) {
+                    if (graph.isSelected) {
+                        this.focusGraph(graph);
+                    }
+                }
+            });
     }
 
     ngOnDestroy() {
@@ -56,7 +67,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
         let offset = 0;
         for (let g of this.graphs) {
             if (g.listIndex < graph.listIndex) {
-                offset += g.width;
+                offset += g.isSelected ? Graph.SelectedWidth : g.width;
             }
         }
         
@@ -99,5 +110,9 @@ export class GraphListComponent implements OnInit, OnDestroy {
     private onGraphCreation(graph: Graph): void {
         // TODO: adjust scrolloffset so that graph is only slightly in view
         this.graphProvider.setGraphOffset(graph, graph.posOffset + this.scrollOffset);
+    }
+
+    private focusGraph(graph: Graph): void {
+        this.scrollOffset = this.getOffset(graph) + Graph.SelectedWidth / 2 - window.innerWidth / 2;
     }
 }

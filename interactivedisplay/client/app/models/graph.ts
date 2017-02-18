@@ -5,6 +5,10 @@ import { Point } from './point';
 export type PathElement = [number, number];
 
 export class Graph {
+    public static get SelectedWidth(): number {
+        return window.innerWidth * 0.9;
+    }
+
     public id: number = -1;
 
     public dimY: string = "";
