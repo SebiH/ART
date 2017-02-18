@@ -27,26 +27,13 @@
                 </div>
             </div>
             <div class="row">
-                <div class="columns"
-                    [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }"
-                    (click)="moveDown()">
-                    <button> &lt; </button>
-                </div>
-
-                <div class="columns"
-                    [ngClass]="{ four: graph.width < 400, eight: 400 < graph.width }"
+                <div class="twelve columns"
 
                     moveable
                     (moveStart)="handleMoveStart($event)"
                     (moveUpdate)="handleMoveUpdate($event)"
                     (moveEnd)="handleMoveEnd($event)">
                     <div class="button"> ↔ </div>
-                </div>
-
-                <div class="columns"
-                    [ngClass]="{ four: graph.width < 400, two: 400 < graph.width }"
-                    (click)="moveUp()">
-                    <button> &gt; </button>
                 </div>
             </div>
         </div>
