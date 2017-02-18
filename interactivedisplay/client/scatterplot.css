@@ -1,22 +1,28 @@
-.scatter-point {
-    fill: white;
+/* Scatterplot */
+
+.point {
+    fill: black;
     transition: 0.3s linear;
     r: 5;
 }
 
-.scatter-point.selected {
+.point.selected {
     fill: #03A9F4;
     r: 7;
 }
 
-.scatter-point.filtered {
+.point.filtered {
     fill: #607D8B;
     r: 3;
 }
 
-.scatter-point.selected.filtered {
+.point.selected.filtered {
     fill: #FF5722;
 }
+
+
+
+/* Line Graphs */
 
 .line {
     stroke: #03A9F4;

@@ -31,7 +31,7 @@ export class ChartData {
                 .attr('cx', d => d[0])
                 .attr('cy', d => d[1])
                 .attr('r', 5)
-                .attr('class', 'scatter-point');
+                .attr('class', 'point');
     }
 
     private animateValues(data: number[][]): void {
@@ -50,7 +50,7 @@ export class ChartData {
             .each(function(d, i) {
                 let isSelected = (selectedIds.indexOf(i) > -1);
                 let isFiltered = (filteredIds && filteredIds.indexOf(i) < 0);
-                let cssClass = 'scatter-point';
+                let cssClass = 'point';
 
                 let radius = 5;
                 if (isFiltered && isSelected) {
