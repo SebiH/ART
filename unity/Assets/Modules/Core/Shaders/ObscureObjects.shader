@@ -1,4 +1,4 @@
-﻿Shader "Custom/ObscureObjects" {
+Shader "Custom/ObscureObjects" {
 	SubShader{
 		// See: http://answers.unity3d.com/questions/316064/can-i-obscure-an-object-using-an-invisible-object.html
 		Tags { "Queue" = "Geometry-1" }
