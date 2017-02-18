@@ -30,7 +30,8 @@ export class GraphListItemComponent {
             '-webkit-transform': transform,
             '-ms-transform': transform,
             transform: transform,
-            width: this.graph.width
+            width: this.graph.width,
+            'z-index': this.graph.listIndex + (this.graph.isPickedUp ? 100 : 0)
         };
 
         return style;

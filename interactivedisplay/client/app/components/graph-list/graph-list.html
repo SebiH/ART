@@ -21,8 +21,7 @@
              [ngClass]="{ moving: isScrolling }">
             <!-- Graph visualisation that can be dragged&dropped -->
             <graph-list-item *ngFor="let graph of graphs; trackBy: graph?.id"
-                [graph]="graph" [offset]="getOffset(graph)"
-                [style.z-index]="graph.isPickedUp ? 100 : graph.listIndex">
+                [graph]="graph" [offset]="getOffset(graph)">
             </graph-list-item>
         </div>
     </div>
