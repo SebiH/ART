@@ -125,9 +125,11 @@ export class InteractionManager {
         }
 
         el.onmouseup = (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            this.onMouseUp(el, ev);
+            if (FORBIDDEN_ELEMENTS.indexOf(ev.srcElement.tagName.toLowerCase()) < 0) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.onMouseUp(el, ev);
+            }
         }
 
         el.onmousewheel = (ev) => {
@@ -310,9 +312,12 @@ export class InteractionManager {
         }
 
         el.ontouchend = (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            this.onTouchEnd(ev);
+            if (FORBIDDEN_ELEMENTS.indexOf(ev.srcElement.tagName.toLowerCase()) < 0) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                this.onTouchEnd(ev);
+            }
+            
             this.ngZone.run(() => {});
         }
 
