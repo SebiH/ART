@@ -300,7 +300,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
             if (this.clickedSelection !== null) {
                 this.clickedSelection.polygon.setSelected(true);
-                let transform = 'translate3d(' + pos.x + 'px,' + pos.y + 'px,0)';
+                let transform = 'translate3d(' + pos.x + 'px,' + (pos.y + 25) + 'px,0)';
                 this.popupStyle.visibility = 'visible';
                 this.popupStyle['-webkit-transform'] = transform;
                 this.popupStyle['-ms-transform'] = transform;
