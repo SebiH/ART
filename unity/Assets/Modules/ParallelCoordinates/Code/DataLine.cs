@@ -1,6 +1,5 @@
 using Assets.Modules.Core;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -12,24 +11,25 @@ namespace Assets.Modules.ParallelCoordinates
     {
         public int DataIndex { get; private set; }
         public int SegmentCount { get { return _lineSegments.Count; } }
+        public bool IsHighlighted { get; private set; }
 
         private const float DEFAULT_WIDTH = 0.003f;
         private const float FILTERED_WIDTH = 0.0005f;
 
         private List<LineSegment> _lineSegments = new List<LineSegment>();
         private Color32 _defaultColor;
-        private bool _isHighlighted = false;
 
         public DataLine(int dataIndex)
         {
             DataIndex = dataIndex;
             _defaultColor = Theme.GetColor32(dataIndex);
+            IsHighlighted = false;
         }
 
         public void AddSegment(LineSegment segment)
         {
             _lineSegments.Add(segment);
-            SetHighlight(_isHighlighted, segment);
+            SetHighlight(IsHighlighted, segment);
         }
 
         public void RemoveSegment(LineSegment segment)
@@ -39,13 +39,10 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void SetHighlight(bool isHighlighted)
         {
-            if (_isHighlighted != isHighlighted)
+            IsHighlighted = isHighlighted;
+            foreach (var segment in _lineSegments)
             {
-                _isHighlighted = isHighlighted;
-                foreach (var segment in _lineSegments)
-                {
-                    SetHighlight(isHighlighted, segment);
-                }
+                SetHighlight(isHighlighted, segment);
             }
         }
 

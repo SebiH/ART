@@ -72,8 +72,11 @@ namespace Assets.Modules.ParallelCoordinates
                 {
                     if (line != null)
                     {
-                        SetFilter(line);
-                        wd.Deplete(line.SegmentCount);
+                        var hasChanged = SetFilter(line);
+                        if (hasChanged)
+                        {
+                            wd.Deplete(line.SegmentCount / 4);
+                        }
 
                         if (wd.AvailableCycles <= 0)
                         {
@@ -87,10 +90,15 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private void SetFilter(DataLine line)
+        private bool SetFilter(DataLine line)
         {
             var isHighlighted = (_filter == null) || _filter.Contains(line.DataIndex);
-            line.SetHighlight(isHighlighted);
+            if (line.IsHighlighted != isHighlighted)
+            {
+                line.SetHighlight(isHighlighted);
+                return true;
+            }
+            return false;
         }
     }
 }
