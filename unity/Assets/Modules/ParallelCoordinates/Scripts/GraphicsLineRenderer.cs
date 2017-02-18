@@ -120,7 +120,7 @@ namespace Assets.Modules.ParallelCoordinates
             var expectedVerticesNum = vertexCounter + expectedLineCount * 4;
             var currentVerticesNum = _lineMesh.vertices.Length;
 
-            var expectedTriangleNum = triangleCounter + expectedLineCount * 6;
+            var expectedTriangleNum = triangleCounter + expectedLineCount * 12;
             var currentTriangleNum = _lineMesh.triangles.Length;
 
             Color32[] colors;
@@ -170,6 +170,8 @@ namespace Assets.Modules.ParallelCoordinates
                 colors[vertexCounter + 2] = line.Color;
                 colors[vertexCounter + 3] = line.Color;
 
+
+                // front
                 triangles[triangleCounter] = vertexCounter;
                 triangles[triangleCounter + 1] = vertexCounter + 1;
                 triangles[triangleCounter + 2] = vertexCounter + 2;
@@ -177,8 +179,17 @@ namespace Assets.Modules.ParallelCoordinates
                 triangles[triangleCounter + 4] = vertexCounter + 3;
                 triangles[triangleCounter + 5] = vertexCounter + 2;
 
+
+                // back
+                triangles[triangleCounter + 6] = vertexCounter;
+                triangles[triangleCounter + 7] = vertexCounter + 2;
+                triangles[triangleCounter + 8] = vertexCounter + 1;
+                triangles[triangleCounter + 9] = vertexCounter + 1;
+                triangles[triangleCounter + 10] = vertexCounter + 2;
+                triangles[triangleCounter + 11] = vertexCounter + 3;
+
+                triangleCounter += 12;
                 vertexCounter += 4;
-                triangleCounter += 6;
             }
 
 

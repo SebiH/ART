@@ -14,7 +14,7 @@ namespace Assets.Modules.ParallelCoordinates
         public bool IsHighlighted { get; private set; }
 
         private const float DEFAULT_WIDTH = 0.003f;
-        private const float FILTERED_WIDTH = 0.0004f;
+        private const float FILTERED_WIDTH = 0.0002f;
 
         private List<LineSegment> _lineSegments = new List<LineSegment>();
         private Color32 _defaultColor;
