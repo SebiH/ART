@@ -19,14 +19,17 @@
 .buttons button, .buttons .button {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 0;
     border-color: transparent;
-    font-size: 2em;
+    font-size: 2.5em;
     font-family: "geosanslightregular";
+    font-weight: normal;
     color: white;
-    text-align: center;
-    vertical-align: middle;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .marker {
