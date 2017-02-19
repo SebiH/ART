@@ -7,6 +7,7 @@ namespace Assets.Modules.Graphs
         public GraphLabel LabelX;
         public GraphLabel LabelY;
         public GraphDataField DataField;
+        public GameObject FilterSymbol;
 
         public void SetDimensionX(string name, float domainMin, float domainMax)
         {
@@ -21,6 +22,14 @@ namespace Assets.Modules.Graphs
             if (LabelY)
             {
                 LabelY.Text = name;
+            }
+        }
+
+        public void SetFilterActive(bool status)
+        {
+            if (FilterSymbol)
+            {
+                FilterSymbol.SetActive(status);
             }
         }
     }

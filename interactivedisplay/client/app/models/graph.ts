@@ -42,7 +42,8 @@ export class Graph {
                 color: this.color,
                 dimX: this.dimX,
                 dimY: this.dimY,
-                isSelected: this.isSelected
+                isSelected: this.isSelected,
+                hasFilter: this.selectedDataIndices !== null && this.selectedDataIndices.length > 0
             }
         });
     }
@@ -71,6 +72,7 @@ export class Graph {
             dimY: this.dimY,
             color: this.color,
             isSelected: this.isSelected,
+                hasFilter: this.selectedDataIndices !== null && this.selectedDataIndices.length > 0,
 
             pos: this.absolutePos,
             width: this.width,

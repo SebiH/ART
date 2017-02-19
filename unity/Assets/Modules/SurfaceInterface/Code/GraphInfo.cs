@@ -12,6 +12,7 @@ namespace Assets.Modules.SurfaceInterface
         public string color = "#FFFFFF";
 
         public bool isSelected = false;
+        public bool hasFilter = false;
 
         public float pos = 0;
         public float width = 0;

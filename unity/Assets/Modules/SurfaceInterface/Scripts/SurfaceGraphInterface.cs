@@ -176,6 +176,7 @@ namespace Assets.Modules.SurfaceInterface
             Debug.Assert(graphVisualisation, "Graphs must have GraphVisualisation in children!");
             graphVisualisation.SetDimensionX(graphInfo.dimX, 0, 1);
             graphVisualisation.SetDimensionY(graphInfo.dimY, 0, 1);
+            graphVisualisation.SetFilterActive(graphInfo.hasFilter);
         }
 
         private void UpdateGraphPosition(GraphInfoWrapper graphInfoWrapper)
