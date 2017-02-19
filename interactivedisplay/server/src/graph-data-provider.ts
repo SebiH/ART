@@ -92,6 +92,13 @@ export class GraphDataProvider {
                 break;
         }
 
+        // force-clamp values to their given domain (assuming data is number[])
+        // TODO: falsifies data, but that's preferable to interface bugs atm!
+        for (let i = 0; i < data.length; i++) {
+            let datum = data[i];
+            data[i] = Math.max(minValue, Math.min(datum, maxValue));
+        }
+
         // mirror chart-dimension model in web app
         return {
             data: values,
