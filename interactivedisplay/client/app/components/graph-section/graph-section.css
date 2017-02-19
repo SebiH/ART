@@ -109,7 +109,7 @@
 .dimension.y {
     transform: rotate(-90deg);
     transform-origin: left top 0;
-    left: 25%;
+    left: 20%;
     top: 60%;
     opacity: 1;
 }
