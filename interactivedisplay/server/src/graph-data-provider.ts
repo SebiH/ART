@@ -95,8 +95,29 @@ export class GraphDataProvider {
         // force-clamp values to their given domain (assuming data is number[])
         // TODO: falsifies data, but that's preferable to interface bugs atm!
         for (let i = 0; i < data.length; i++) {
-            let datum = data[i];
-            data[i] = Math.max(minValue, Math.min(datum, maxValue));
+            data[i].value = Math.max(minValue, Math.min(data[i].value, maxValue));
+        }
+
+        // calculate dynamic range
+        if (mapping.type === DataRepresentation.Metric) {
+            // start with opposite value, so that we can search for the actual min/max value
+            let dynMinValue = maxValue;
+            let dynMaxValue = minValue;
+
+            for (let i = 0; i < data.length; i++) {
+                dynMinValue = Math.min(dynMinValue, data[i].value);
+                dynMaxValue = Math.max(dynMaxValue, data[i].value);
+            }
+
+            // let range = (maxValue - minValue);
+            // let margin = range / 10;
+            // if (range > 50000) {
+            //     margin = range / 10000;
+            // }
+            let margin = 0;
+
+            maxValue = Math.min(Math.ceil(dynMaxValue + margin), maxValue);
+            minValue = Math.max(Math.floor(dynMinValue - margin), minValue);
         }
 
         // mirror chart-dimension model in web app
