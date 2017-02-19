@@ -7,6 +7,7 @@ Shader "ParallelCoordinates/Line"
     {
         // Tags { "RenderType"="Transparent" "Queue" = "Geometry+3000" "IgnoreProjector"="True"} 
         // Tags { "RenderType"="Transparent" "Queue" = "Geometry" "IgnoreProjector"="True"} 
+        // Tags { "RenderType"="Transparent" "Queue"="Geometry" }
 
         ZTest Always
         ZWrite On
