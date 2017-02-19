@@ -37,16 +37,15 @@ export class GraphProvider {
                     this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
                 }
 
-                this.graphSelectionChanged.next(false);
+                let hasSelectedGraph = false;
                 for (let graph of this.graphs) {
                     this.attachListeners(graph);
-                    if (graph.isSelected) {
-                        this.graphSelectionChanged.next(true);
-                    }
+                    hasSelectedGraph = graph.isSelected || hasSelectedGraph;
                 }
 
                 this.recalculateGraphIndices();
                 this.graphObserver.next(this.graphs);
+                this.graphSelectionChanged.next(hasSelectedGraph);
 
                 // for live editing via console
                 window['graphs'] = this.graphs;
