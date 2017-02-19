@@ -43,9 +43,20 @@ namespace Assets.Modules.Graphs
             var range = response.domain.max - response.domain.min;
 
             var dataPoints = new DataPoint[dimData.Length];
-            for (int i = 0; i < dimData.Length; i++)
+            if (response.isMetric)
             {
-                dataPoints[i] = new DataPoint { Index = i, Value = (dimData[i] - response.domain.min) / range - 0.5f };
+                for (int i = 0; i < dimData.Length; i++)
+                {
+                    dataPoints[i] = new DataPoint { Index = i, Value = (dimData[i] - response.domain.min) / range - 0.5f };
+                }
+            }
+            else
+            {
+                for (int i = 0; i < dimData.Length; i++)
+                {
+                    var adjustedValue = (dimData[i] + 1 - response.domain.min) / (range + 2) - 0.5f;
+                    dataPoints[i] = new DataPoint { Index = i, Value = adjustedValue };
+                }
             }
 
             _loadedData[dimension] = dataPoints;
