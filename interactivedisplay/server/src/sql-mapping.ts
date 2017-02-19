@@ -114,7 +114,7 @@ export const SmartactMapping: SqlColumnMapping[] = [
         name: "Uhrzeit",
         type: DataRepresentation.Metric,
         minValue: 0,
-        maxValue: 24000
+        maxValue: 240000000
     },
 
     // TODO: Richtige Spalte??
