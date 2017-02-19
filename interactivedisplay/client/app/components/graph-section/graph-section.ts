@@ -49,11 +49,11 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     }
 
     private checkForChanges(): void {
-        let currentPosition = this.getSectionPosition().x;
+        let width = this.graph.isSelected ? Graph.SelectedWidth : this.graph.width;
+        let currentPosition = this.getSectionPosition().x + width / 2;
 
         if (this.graph.absolutePos == undefined || this.graph.absolutePos !== currentPosition) {
-            let width = this.graph.isSelected ? Graph.SelectedWidth : this.graph.width;
-            this.graph.absolutePos = currentPosition + width / 2;
+            this.graph.absolutePos = currentPosition;
             this.graph.updatePosition();
         }
     }
