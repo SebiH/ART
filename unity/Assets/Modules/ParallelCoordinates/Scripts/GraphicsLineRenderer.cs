@@ -147,18 +147,18 @@ namespace Assets.Modules.ParallelCoordinates
 
             var quad = new Vector3[4];
             Vector3 widthDirection = Vector3.up;
-            Vector3 normal;
 
             foreach (var line in lines)
             {
                 line.MeshIndex = vertexCounter / 4;
-                // TODO: could be cached on demand in line
-                normal = Vector3.Cross(line.Start, line.End);
 
-                quad[0] = line.Start + widthDirection * line.Width;
-                quad[1] = line.Start + widthDirection * -line.Width;
-                quad[2] = line.End + widthDirection * line.Width;
-                quad[3] = line.End + widthDirection * -line.Width;
+                var start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
+                var end = new Vector3(-line.End.x, line.End.y, line.End.z);
+
+                quad[0] = start + widthDirection * line.Width;
+                quad[1] = start + widthDirection * -line.Width;
+                quad[2] = end + widthDirection * line.Width;
+                quad[3] = end + widthDirection * -line.Width;
 
                 vertices[vertexCounter] = quad[0];
                 vertices[vertexCounter + 1] = quad[1];
@@ -207,19 +207,18 @@ namespace Assets.Modules.ParallelCoordinates
 
             var quad = new Vector3[4];
             Vector3 widthDirection = Vector3.up;
-            Vector3 normal;
 
             foreach (var line in lines)
             {
                 var vertex = line.MeshIndex * 4;
 
-                // TODO: could be cached on demand in line
-                normal = Vector3.Cross(line.Start, line.End);
+                var start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
+                var end = new Vector3(-line.End.x, line.End.y, line.End.z);
 
-                quad[0] = line.Start + widthDirection * line.Width;
-                quad[1] = line.Start + widthDirection * -line.Width;
-                quad[2] = line.End + widthDirection * line.Width;
-                quad[3] = line.End + widthDirection * -line.Width;
+                quad[0] = start + widthDirection * line.Width;
+                quad[1] = start + widthDirection * -line.Width;
+                quad[2] = end + widthDirection * line.Width;
+                quad[3] = end + widthDirection * -line.Width;
 
                 vertices[vertex] = quad[0];
                 vertices[vertex + 1] = quad[1];
