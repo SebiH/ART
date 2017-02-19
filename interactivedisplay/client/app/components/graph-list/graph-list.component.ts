@@ -125,4 +125,8 @@ export class GraphListComponent implements OnInit, OnDestroy {
     private focusGraph(graph: Graph): void {
         this.scrollOffset = this.getOffset(graph) + Graph.SelectedWidth / 2 - window.innerWidth / 2;
     }
+
+    private closeSelection(): void {
+        this.graphProvider.selectGraph(null);
+    }
 }
