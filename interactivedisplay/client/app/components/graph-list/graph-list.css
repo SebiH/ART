@@ -42,6 +42,12 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
+
+    transition: left 0.5s linear;
+}
+
+.add-button-container.hidden {
+    left: -200px;
 }
 
 .add-button {

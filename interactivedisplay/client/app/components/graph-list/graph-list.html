@@ -6,7 +6,7 @@
      (moveEnd)="handleMoveEnd($event)">
 
     <!-- Button to add new graphs -->
-    <div class="add-button-container">
+    <div class="add-button-container" [ngClass]="{ hidden: isGraphSelected }">
         <graph-create-button class="add-button"
             (graphCreation)="onGraphCreation($event)">
         </graph-create-button>
