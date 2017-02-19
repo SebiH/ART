@@ -52,7 +52,8 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         let currentPosition = this.getSectionPosition().x;
 
         if (this.graph.absolutePos == undefined || this.graph.absolutePos !== currentPosition) {
-            this.graph.absolutePos = currentPosition;
+            let width = this.graph.isSelected ? Graph.SelectedWidth : this.graph.width;
+            this.graph.absolutePos = currentPosition + width / 2;
             this.graph.updatePosition();
         }
     }

@@ -43,7 +43,7 @@ namespace Assets.Modules.SurfaceInterface
 
                 // smooth out scrolling
                 var currentPosition = graph.transform.localPosition.x;
-                var targetPosition = graph.Position + graph.Width / 2;
+                var targetPosition = graph.Position;
                 var actualPosition = Mathf.Lerp(currentPosition, targetPosition, Time.unscaledDeltaTime * FastAnimationSpeed);
 
                 // creation / deletion
