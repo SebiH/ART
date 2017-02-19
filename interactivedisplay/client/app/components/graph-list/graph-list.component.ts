@@ -14,6 +14,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
     private graphs: Graph[] = [];
     private isActive: boolean = true;
 
+    private isGraphSelected: boolean = false;
     private isScrolling: boolean = false;
     private interactionCounter: number = 0;
 
@@ -48,13 +49,13 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
         this.graphProvider.onGraphSelectionChanged()
             .takeWhile(() => this.isActive)
-            .filter(val => val) // only interested if graph was selected
             .subscribe(isSelected => {
                 for (let graph of this.graphs) {
                     if (graph.isSelected) {
                         this.focusGraph(graph);
                     }
                 }
+                this.isGraphSelected = isSelected;
             });
     }
 
@@ -76,15 +77,19 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
     private handleMoveStart(event: any): void {
         // TODO: multitouch??
-        this.isScrolling = true;
+        if (!this.isGraphSelected) {
+            this.isScrolling = true;
+        }
     }
 
     private handleMoveUpdate(event: any): void {
-        this.scrollOffset += event.deltaX;
+        if (!this.isGraphSelected) {
+            this.scrollOffset += event.deltaX;
 
-        for (let graph of this.graphs) {
-            if (graph.isPickedUp) {
-                graph.posOffset += event.deltaX;
+            for (let graph of this.graphs) {
+                if (graph.isPickedUp) {
+                    graph.posOffset += event.deltaX;
+                }
             }
         }
     }
@@ -102,8 +107,10 @@ export class GraphListComponent implements OnInit, OnDestroy {
     }
 
     private handleMoveEnd(event: any): void {
-        this.isScrolling = false;
-        this.applyScrollOffsetLimits();
+        if (!this.isGraphSelected) {
+            this.isScrolling = false;
+            this.applyScrollOffsetLimits();
+        }
     }
 
 
