@@ -48,7 +48,7 @@ namespace Assets.Modules.Calibration
             if (marker)
             {
                 _markers.Remove(marker);
-                Destroy(marker);
+                Destroy(marker.gameObject);
             }
         }
 
