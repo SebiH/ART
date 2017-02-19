@@ -16,9 +16,9 @@
         {{ graph.dimY }}
     </div>
 
-    <div *ngIf="!graph.isSelected">
+    <div>
 
-        <div class="buttons container">
+        <div class="buttons container" [ngClass]="{ hidden: isAnyGraphSelected }">
             <div class="row">
                 <div class="twelve columns">
                     <button (click)="selectGraph()"> Select </button>

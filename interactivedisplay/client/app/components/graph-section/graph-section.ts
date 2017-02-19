@@ -16,6 +16,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
 
     private markers: Marker[] = [];
     private isActive: boolean = true;
+    private isAnyGraphSelected: boolean = false;
 
     constructor (
         private markerProvider: MarkerProvider,
@@ -31,6 +32,12 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         Observable.timer(0, 50)
             .takeWhile(() => this.isActive)
             .subscribe(this.checkForChanges.bind(this));
+
+        this.graphProvider.onGraphSelectionChanged()
+            .takeWhile(() => this.isActive)
+            .subscribe(isSelected => {
+                this.isAnyGraphSelected = isSelected;
+            });
     }
 
     ngOnDestroy() {

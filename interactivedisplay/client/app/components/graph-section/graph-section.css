@@ -10,10 +10,25 @@
     left: 0;
     bottom: 0;
     max-width: 100%;
+    transition: bottom 0.5s linear;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.buttons.hidden {
+    bottom: -200px;
 }
 
 .buttons .row {
     height: 70px;
+    margin-top: 3px;
+    margin-bottom: 7px;
+    transition: margin 0.5s linear;
+}
+
+.buttons.hidden .row {
+    margin-top: -77px;
 }
 
 .buttons button, .buttons .button {
