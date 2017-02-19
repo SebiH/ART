@@ -67,7 +67,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
     private getOffset(graph: Graph) {
         let offset = 0;
         for (let g of this.graphs) {
-            if (g.listIndex < graph.listIndex) {
+            if (g.listIndex < graph.listIndex && !g.isNewlyCreated) {
                 offset += g.isSelected ? Graph.SelectedWidth : g.width;
             }
         }
@@ -116,7 +116,10 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
     private onGraphCreation(graph: Graph): void {
         // TODO: adjust scrolloffset so that graph is only slightly in view
-        this.graphProvider.setGraphOffset(graph, graph.posOffset + this.scrollOffset);
+        this.graphProvider.setGraphOffset(graph, graph.posOffset + this.scrollOffset - graph.width * 0.8);
+        // this.isScrolling = true;
+        // this.scrollOffset += graph.width;
+        // setTimeout(() => this.isScrolling = false);
     }
 
     private focusGraph(graph: Graph): void {

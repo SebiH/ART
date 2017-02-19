@@ -20,6 +20,7 @@ export class GraphCreateButtonComponent {
         let graph = this.graphProvider.addGraph();
         this.createdGraph = graph;
         this.createdGraph.isPickedUp = true;
+        this.createdGraph.isNewlyCreated = true;
         this.graphCreation.emit(this.createdGraph);
     }
 
@@ -30,6 +31,7 @@ export class GraphCreateButtonComponent {
 
     private handleCreateEnd(event: any): void {
         this.createdGraph.isPickedUp = false;
+        this.createdGraph.isNewlyCreated = false;
         this.graphProvider.setGraphOffset(this.createdGraph, 0);
         this.graphProvider.selectGraph(this.createdGraph);
         this.createdGraph = null;

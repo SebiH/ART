@@ -27,6 +27,7 @@ export class Graph {
 
     public posOffset: number = 0;
     public isPickedUp: boolean = false;
+    public isNewlyCreated: boolean = false;
 
     private dataSubscription: Subject<any> = new Subject<any>();
     public get onDataUpdate() : Observable<any> {
