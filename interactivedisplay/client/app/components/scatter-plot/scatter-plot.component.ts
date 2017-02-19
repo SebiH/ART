@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input } from '@angular/core';
 import { ChartDimension } from '../../models/index';
 import { ChartElement } from './chart-element';
 import { ChartPolygon } from './chart-polygon';
@@ -14,8 +14,13 @@ import * as _ from 'lodash';
 })
 export class ScatterPlotComponent implements OnInit, OnDestroy {
 
+    @Input()
     public width = 600;
+
+    @Input()
     public height = 600;
+
+    @Input()
     public margin = { top: 50, right: 50, bottom: 100, left: 100 };
 
     public data: number[][] = [];

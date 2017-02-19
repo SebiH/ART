@@ -1,29 +1,21 @@
-<div class="container root">
+<div class="root">
 
-    <div class="row" style="height: 800px;">
-        <div class="three columns selection">
-            <div>
-                <select [ngModel]="graph.dimY" (ngModelChange)="assignDimY($event)">
-                    <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
-                </select>
-            </div>
-        </div>
+    <graph-data-selection #selection
+        [graph]="graph"
+        [width]="1000"
+        [height]="1000"
+        [margin]="{ top: 50, right: 50, bottom: 100, left: 100 }">
+    </graph-data-selection>
 
-        <div class="nine columns">
-            <graph-data-selection #selection [graph]="graph">
-            </graph-data-selection>
-        </div>
-
+    <div class="dimension-selection y">
+        <select [ngModel]="graph.dimY" (ngModelChange)="assignDimY($event)">
+            <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
+        </select>
     </div>
 
-    <div class="row">
-        <div class="three columns"></div>
-        <div class="nine columns selection">
-            <div>
-                <select [ngModel]="graph.dimX" (ngModelChange)="assignDimX($event)">
-                    <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
-                </select>
-            </div>
-        </div>
+    <div class="dimension-selection x">
+        <select [ngModel]="graph.dimX" (ngModelChange)="assignDimX($event)">
+            <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
+        </select>
     </div>
 </div>

@@ -1,20 +1,26 @@
 .root {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: center;
     height: 100%;
-    max-width: initial;
+    max-width: 100%;
+    width: 100%;
     margin: 0;
 }
 
-.column.title {
-    text-align: center;
+.dimension-selection {
+    position: absolute;
+    font-size: 1.5em;
 }
 
-.selection {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: center;
+.dimension-selection.y {
+    left: 600px;
+    bottom: 550px;
+}
+
+.dimension-selection.x {
+    left: calc(50% - 112px);
+    bottom: 10px;
 }

@@ -32,6 +32,14 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     @Input()
     private graph: Graph;
 
+    @Input()
+    public width = 600;
+    @Input()
+    public height = 600;
+    @Input()
+    public margin = { top: 50, right: 50, bottom: 100, left: 100 };
+
+
     @ViewChild('plot')
     private scatterplot: ScatterPlotComponent;
     @ViewChild('plotContainer')
