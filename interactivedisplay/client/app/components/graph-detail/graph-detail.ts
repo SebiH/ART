@@ -13,9 +13,6 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
     @Input()
     graph: Graph;
 
-    @Output()
-    onClose = new EventEmitter();
-
     private dimensions: string[];
     private dimensionSubscription: Subscription;
 
@@ -28,10 +25,6 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.dimensionSubscription.unsubscribe();
-    }
-
-    private close(): void {
-        this.onClose.emit();
     }
 
     private assignDimX(dim: string): void {

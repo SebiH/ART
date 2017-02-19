@@ -69,10 +69,6 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         this.graphProvider.selectGraph(this.graph);
     }
 
-    private deselectGraph(): void {
-        this.graphProvider.selectGraph(null);
-    }
-
     private deleteGraph(): void {
         this.graphProvider.removeGraph(this.graph);
     }

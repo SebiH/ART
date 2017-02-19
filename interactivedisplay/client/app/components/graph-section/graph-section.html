@@ -47,9 +47,7 @@
 
 
     <div *ngIf="graph.isSelected" class="detail">
-        <graph-detail
-            [graph]="graph"
-            (onClose)="deselectGraph()">
+        <graph-detail [graph]="graph">
         </graph-detail>
     </div>
 
