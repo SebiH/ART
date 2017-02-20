@@ -63,6 +63,8 @@
     position: absolute;
     top: 0;
     background: transparent;
+    border-radius: 0;
+    border: none;
 }
 
 .selection-close-area.left {
