@@ -12,7 +12,7 @@ namespace Assets.Modules.Tracking
         public delegate void NewPoseHandler(MarkerPose pose);
         public event NewPoseHandler NewPoseDetected;
 
-        protected float _markerSize = 0.04f;
+        protected float _markerSize = 0.161f;
         public float MarkerSizeInMeter
         {
             get { return _markerSize; }
