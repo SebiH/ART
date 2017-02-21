@@ -1,17 +1,14 @@
-Shader "ParallelCoordinates/TransparentLine"
+Shader "ParallelCoordinates/ColorLine"
 {
     Properties
     {
     }
     SubShader
     {
-        // Tags { "RenderType"="Transparent" "Queue" = "Geometry+3000" "IgnoreProjector"="True"} 
-        // Tags { "RenderType"="Transparent" "Queue" = "Geometry" "IgnoreProjector"="True"} 
-        // Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+        Tags { "RenderType"="Opaque" "Queue"="Geometry" }
 
-        ZTest Always
         ZWrite On
-		// Lighting Off
+		Lighting Off
         Cull Off
 
         Pass {
@@ -20,7 +17,7 @@ Shader "ParallelCoordinates/TransparentLine"
         }
 
         CGPROGRAM
-        #pragma surface surf Unlit noforwardadd alpha
+        #pragma surface surf Unlit noforwardadd
         #pragma target 3.0
        
         struct Input
@@ -30,15 +27,13 @@ Shader "ParallelCoordinates/TransparentLine"
 
         void surf (Input IN, inout SurfaceOutput o)
         {
-            o.Albedo = IN.color.rgb; // * IN.color.a;
-            o.Alpha = IN.color.a;
+            o.Albedo = IN.color.rgb;
         }
 
         fixed4 LightingUnlit(SurfaceOutput so, fixed3 lightDir, fixed att)
         {
             fixed4 col;
             col.rgb = so.Albedo;
-            col.a = so.Alpha;
             return col;
         }
  
