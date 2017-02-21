@@ -9,6 +9,8 @@ namespace Assets.Modules.ParallelCoordinates
     {
         private LineSegment[] _lineSegments;
         private GraphicsLineRenderer _lineRenderer;
+        // avoids multiple line updates due to overlapping events
+        private bool _needsLineUpdate = false;
 
         private Graph _startGraph = null;
         public Graph StartGraph
@@ -44,6 +46,12 @@ namespace Assets.Modules.ParallelCoordinates
                 var scale = (_endGraph.transform.position) - (_startGraph.transform.position);
                 transform.localScale = new Vector3(1, 1, scale.magnitude);
             }
+
+            if (_needsLineUpdate)
+            {
+                GenerateLines();
+                _needsLineUpdate = false;
+            }
         }
 
 
@@ -65,7 +73,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             _startGraph = graph;
-            GenerateLines();
+            _needsLineUpdate = true;
         }
 
         private void SetEndGraph(Graph graph)
@@ -86,18 +94,18 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             _endGraph = graph;
-            GenerateLines();
+            _needsLineUpdate = true;
         }
 
 
         private void OnStartGraphDataChange()
         {
-            GenerateLines();
+            _needsLineUpdate = true;
         }
 
         private void OnEndGraphDataChange()
         {
-            GenerateLines();
+            _needsLineUpdate = true;
         }
 
         private void GenerateLines()
@@ -133,8 +141,12 @@ namespace Assets.Modules.ParallelCoordinates
                 _lineSegments[i] = segment;
                 DataLineManager.Instance.GetLine(i).AddSegment(segment);
 
-                segment.Start = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
-                segment.End = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
+                //segment.Start = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
+                StartCoroutine(segment.AnimateStart(new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0)));
+                //segment.End = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
+
+                //segment.End = new Vector3(segment.End.x, segment.End.y, 1);
+                StartCoroutine(segment.AnimateEnd(new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1)));
 
                 segment.SetRenderer(_lineRenderer);
             }
@@ -145,9 +157,11 @@ namespace Assets.Modules.ParallelCoordinates
             for (int i = 0; i < _lineSegments.Length; i++)
             {
                 var segment = _lineSegments[i];
-                segment.Start = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
-                segment.End = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
-                segment.UpdateVisual();
+                //segment.Start = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
+                StartCoroutine(segment.AnimateStart(new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0)));
+                //segment.End = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
+                StartCoroutine(segment.AnimateEnd(new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1)));
+                //segment.UpdateVisual();
             }
         }
 
