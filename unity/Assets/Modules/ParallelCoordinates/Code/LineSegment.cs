@@ -8,7 +8,7 @@ namespace Assets.Modules.ParallelCoordinates
         public Vector3 End;
 
         public Color32 Color;
-        public float Width;
+        public bool IsFiltered;
 
         public int MeshIndex = -1;
 

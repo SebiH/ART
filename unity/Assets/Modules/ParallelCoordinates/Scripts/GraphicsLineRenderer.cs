@@ -11,20 +11,32 @@ namespace Assets.Modules.ParallelCoordinates
         public MeshFilter NormalFilter;
         public MeshFilter TransparentFilter;
 
-        private Mesh _lineMesh;
+        private Mesh _normalMesh;
+        private Mesh _transparentMesh;
         private bool _isBusy = false;
 
         private Queue<LineSegment> _lineCreationQueue = new Queue<LineSegment>();
         private Queue<LineSegment> _lineUpdateQueue = new Queue<LineSegment>();
 
+        private const float DEFAULT_WIDTH = 0.003f;
+        private const float FILTERED_WIDTH = 0.0002f;
+        //private const float DEFAULT_WIDTH = 0.0015f;
+        //private const float FILTERED_WIDTH = 0.0005f;
+
         private void OnEnable()
         {
-            if (_lineMesh == null)
+            if (_transparentMesh == null)
             {
-                _lineMesh = new Mesh();
-                _lineMesh.MarkDynamic();
-                NormalFilter.sharedMesh = _lineMesh;
-                TransparentFilter.sharedMesh = _lineMesh;
+                _transparentMesh = new Mesh();
+                _transparentMesh.MarkDynamic();
+                TransparentFilter.mesh = _transparentMesh;
+            }
+
+            if (_normalMesh == null)
+            {
+                _normalMesh = new Mesh();
+                _normalMesh.MarkDynamic();
+                NormalFilter.mesh = _normalMesh;
             }
         }
 
@@ -121,52 +133,72 @@ namespace Assets.Modules.ParallelCoordinates
         private void CreateLines(IEnumerable<LineSegment> lines, int expectedLineCount)
         {
             var expectedVerticesNum = vertexCounter + expectedLineCount * 4;
-            var currentVerticesNum = _lineMesh.vertices.Length;
+            var currentVerticesNum = _normalMesh.vertices.Length;
 
-            var expectedTriangleNum = triangleCounter + expectedLineCount * 12;
-            var currentTriangleNum = _lineMesh.triangles.Length;
+            var expectedTriangleNum = triangleCounter + expectedLineCount * 6;
+            var currentTriangleNum = _normalMesh.triangles.Length;
 
             Color32[] colors;
-            Vector3[] vertices;
+            Vector3[] verticesNormal, verticesTransparent;
             int[] triangles;
 
             if (expectedVerticesNum > currentVerticesNum)
             {
                 colors = new Color32[expectedVerticesNum];
-                Array.Copy(_lineMesh.colors32, colors, currentVerticesNum);
-                vertices = new Vector3[expectedVerticesNum];
-                Array.Copy(_lineMesh.vertices, vertices, currentVerticesNum);
+                Array.Copy(_normalMesh.colors32, colors, currentVerticesNum);
+
+                verticesNormal = new Vector3[expectedVerticesNum];
+                Array.Copy(_normalMesh.vertices, verticesNormal, currentVerticesNum);
+                verticesTransparent = new Vector3[expectedVerticesNum];
+                Array.Copy(_transparentMesh.vertices, verticesTransparent, currentVerticesNum);
 
                 triangles = new int[expectedTriangleNum];
-                Array.Copy(_lineMesh.triangles, triangles, currentTriangleNum);
+                Array.Copy(_normalMesh.triangles, triangles, currentTriangleNum);
             }
             else
             {
-                colors = _lineMesh.colors32;
-                vertices = _lineMesh.vertices;
-                triangles = _lineMesh.triangles;
+                colors = _normalMesh.colors32;
+                verticesNormal = _normalMesh.vertices;
+                verticesTransparent = _transparentMesh.vertices;
+                triangles = _normalMesh.triangles;
             }
 
 
-            var quad = new Vector3[4];
             Vector3 widthDirection = Vector3.up;
+
+            // micro optimisation: ensure that memory for these variables won't get reinitialised after each loop
+            var quadNormal = new Vector3[4];
+            var quadTransparent = new Vector3[4];
+            Vector3 start, end;
+            float width = 0; ;
 
             foreach (var line in lines)
             {
                 line.MeshIndex = vertexCounter / 4;
 
-                var start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
-                var end = new Vector3(-line.End.x, line.End.y, line.End.z);
+                start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
+                end = new Vector3(-line.End.x, line.End.y, line.End.z);
+                width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH ;
 
-                quad[0] = start + widthDirection * line.Width;
-                quad[1] = start + widthDirection * -line.Width;
-                quad[2] = end + widthDirection * line.Width;
-                quad[3] = end + widthDirection * -line.Width;
+                quadNormal[0] = start + widthDirection * width;
+                quadNormal[1] = start + widthDirection * -width;
+                quadNormal[2] = (line.IsFiltered ? start : end) + widthDirection * width;
+                quadNormal[3] = (line.IsFiltered ? start : end) + widthDirection * -width;
 
-                vertices[vertexCounter] = quad[0];
-                vertices[vertexCounter + 1] = quad[1];
-                vertices[vertexCounter + 2] = quad[2];
-                vertices[vertexCounter + 3] = quad[3];
+                quadTransparent[0] = start + widthDirection * width;
+                quadTransparent[1] = start + widthDirection * -width;
+                quadTransparent[2] = (line.IsFiltered ? end : start) + widthDirection * width;
+                quadTransparent[3] = (line.IsFiltered ? end : start) + widthDirection * -width;
+
+                verticesNormal[vertexCounter] = quadNormal[0];
+                verticesNormal[vertexCounter + 1] = quadNormal[1];
+                verticesNormal[vertexCounter + 2] = quadNormal[2];
+                verticesNormal[vertexCounter + 3] = quadNormal[3];
+
+                verticesTransparent[vertexCounter] = quadTransparent[0];
+                verticesTransparent[vertexCounter + 1] = quadTransparent[1];
+                verticesTransparent[vertexCounter + 2] = quadTransparent[2];
+                verticesTransparent[vertexCounter + 3] = quadTransparent[3];
 
                 colors[vertexCounter] = line.Color;
                 colors[vertexCounter + 1] = line.Color;
@@ -184,49 +216,71 @@ namespace Assets.Modules.ParallelCoordinates
 
 
                 // back
-                triangles[triangleCounter + 6] = vertexCounter;
-                triangles[triangleCounter + 7] = vertexCounter + 2;
-                triangles[triangleCounter + 8] = vertexCounter + 1;
-                triangles[triangleCounter + 9] = vertexCounter + 1;
-                triangles[triangleCounter + 10] = vertexCounter + 2;
-                triangles[triangleCounter + 11] = vertexCounter + 3;
+                //triangles[triangleCounter + 6] = vertexCounter;
+                //triangles[triangleCounter + 7] = vertexCounter + 2;
+                //triangles[triangleCounter + 8] = vertexCounter + 1;
+                //triangles[triangleCounter + 9] = vertexCounter + 1;
+                //triangles[triangleCounter + 10] = vertexCounter + 2;
+                //triangles[triangleCounter + 11] = vertexCounter + 3;
 
-                triangleCounter += 12;
+                triangleCounter += 6;
                 vertexCounter += 4;
             }
 
 
-            _lineMesh.vertices = vertices;
-            _lineMesh.triangles = triangles;
-            _lineMesh.colors32 = colors;
-            _lineMesh.RecalculateBounds();
+            _normalMesh.vertices = verticesNormal;
+            _normalMesh.triangles = triangles;
+            _normalMesh.colors32 = colors;
+            _normalMesh.RecalculateBounds();
+
+            _transparentMesh.vertices = verticesTransparent;
+            _transparentMesh.triangles = triangles;
+            _transparentMesh.colors32 = colors;
+            _transparentMesh.RecalculateBounds();
         }
 
 
         private void SetLineAttributes(IEnumerable<LineSegment> lines)
         {
-            var colors = _lineMesh.colors32;
-            var vertices = _lineMesh.vertices;
+            var colors = _normalMesh.colors32;
+            var verticesNormal = _normalMesh.vertices;
+            var verticesTransparent = _transparentMesh.vertices;
 
-            var quad = new Vector3[4];
             Vector3 widthDirection = Vector3.up;
+
+            // micro optimisation: ensure that memory for these variables won't get reinitialised after each loop
+            var quadNormal = new Vector3[4];
+            var quadTransparent = new Vector3[4];
+            Vector3 start, end;
+            float width = 0; ;
 
             foreach (var line in lines)
             {
                 var vertex = line.MeshIndex * 4;
 
-                var start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
-                var end = new Vector3(-line.End.x, line.End.y, line.End.z);
+                start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
+                end = new Vector3(-line.End.x, line.End.y, line.End.z);
+                width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH ;
 
-                quad[0] = start + widthDirection * line.Width;
-                quad[1] = start + widthDirection * -line.Width;
-                quad[2] = end + widthDirection * line.Width;
-                quad[3] = end + widthDirection * -line.Width;
+                quadNormal[0] = start + widthDirection * width;
+                quadNormal[1] = start + widthDirection * -width;
+                quadNormal[2] = (line.IsFiltered ? start : end) + widthDirection * width;
+                quadNormal[3] = (line.IsFiltered ? start : end) + widthDirection * -width;
 
-                vertices[vertex] = quad[0];
-                vertices[vertex + 1] = quad[1];
-                vertices[vertex + 2] = quad[2];
-                vertices[vertex + 3] = quad[3];
+                quadTransparent[0] = start + widthDirection * width;
+                quadTransparent[1] = start + widthDirection * -width;
+                quadTransparent[2] = (line.IsFiltered ? end : start) + widthDirection * width;
+                quadTransparent[3] = (line.IsFiltered ? end : start) + widthDirection * -width;
+
+                verticesNormal[vertex] = quadNormal[0];
+                verticesNormal[vertex + 1] = quadNormal[1];
+                verticesNormal[vertex + 2] = quadNormal[2];
+                verticesNormal[vertex + 3] = quadNormal[3];
+
+                verticesTransparent[vertex] = quadTransparent[0];
+                verticesTransparent[vertex + 1] = quadTransparent[1];
+                verticesTransparent[vertex + 2] = quadTransparent[2];
+                verticesTransparent[vertex + 3] = quadTransparent[3];
 
                 colors[vertex] = line.Color;
                 colors[vertex + 1] = line.Color;
@@ -235,15 +289,20 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
 
-            _lineMesh.vertices = vertices;
-            _lineMesh.colors32 = colors;
-            _lineMesh.RecalculateBounds();
+            _normalMesh.vertices = verticesNormal;
+            _normalMesh.colors32 = colors;
+            _normalMesh.RecalculateBounds();
+
+            _transparentMesh.vertices = verticesTransparent;
+            _transparentMesh.colors32 = colors;
+            _transparentMesh.RecalculateBounds();
         }
 
 
         public void ClearLines()
         {
-            _lineMesh.Clear();
+            _normalMesh.Clear();
+            _transparentMesh.Clear();
         }
     }
 }

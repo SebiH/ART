@@ -11,55 +11,46 @@ namespace Assets.Modules.ParallelCoordinates
     {
         public int DataIndex { get; private set; }
         public int SegmentCount { get { return _lineSegments.Count; } }
-        public bool IsHighlighted { get; private set; }
 
-        private const float DEFAULT_WIDTH = 0.003f;
-        private const float FILTERED_WIDTH = 0.0002f;
+        private bool _isFiltered = false;
+        public bool IsFiltered
+        {
+            get
+            {
+                return _isFiltered;
+            }
+
+            set
+            {
+                if (value != _isFiltered)
+                {
+                    _isFiltered = value;
+                    foreach (var segment in _lineSegments)
+                    {
+                        segment.IsFiltered = value;
+                        segment.UpdateVisual();
+                    }
+                }
+            }
+        }
 
         private List<LineSegment> _lineSegments = new List<LineSegment>();
-        private Color32 _defaultColor;
 
         public DataLine(int dataIndex)
         {
             DataIndex = dataIndex;
-            _defaultColor = Theme.GetColor32(dataIndex);
-            IsHighlighted = false;
         }
 
         public void AddSegment(LineSegment segment)
         {
             _lineSegments.Add(segment);
-            SetHighlight(IsHighlighted, segment);
+            segment.IsFiltered = IsFiltered;
+            segment.UpdateVisual();
         }
 
         public void RemoveSegment(LineSegment segment)
         {
             _lineSegments.Remove(segment);
-        }
-
-        public void SetHighlight(bool isHighlighted)
-        {
-            IsHighlighted = isHighlighted;
-            foreach (var segment in _lineSegments)
-            {
-                SetHighlight(isHighlighted, segment);
-            }
-        }
-
-        private void SetHighlight(bool isHighlighted, LineSegment segment)
-        {
-            if (isHighlighted)
-            {
-                segment.Color = _defaultColor;
-                segment.Width = DEFAULT_WIDTH;
-            }
-            else
-            {
-                segment.Color = new Color32(55, 71, 79, 64);
-                segment.Width = FILTERED_WIDTH;
-            }
-
-            segment.UpdateVisual();
         }
     }
 }

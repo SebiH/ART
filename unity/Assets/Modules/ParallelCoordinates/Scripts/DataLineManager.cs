@@ -92,10 +92,10 @@ namespace Assets.Modules.ParallelCoordinates
 
         private bool SetFilter(DataLine line)
         {
-            var isHighlighted = (_filter == null) || _filter.Contains(line.DataIndex);
-            if (line.IsHighlighted != isHighlighted)
+            var isFiltered = (_filter != null) && !(_filter.Contains(line.DataIndex));
+            if (line.IsFiltered != isFiltered)
             {
-                line.SetHighlight(isHighlighted);
+                line.IsFiltered = isFiltered;
                 return true;
             }
             return false;
