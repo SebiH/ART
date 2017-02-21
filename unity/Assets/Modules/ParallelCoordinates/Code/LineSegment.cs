@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using System.Collections;
 using UnityEngine;
 
@@ -5,8 +6,51 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class LineSegment
     {
+        const float ANIMATION_SPEED = 1.5f; // in seconds
+
         public Vector3 Start;
+
+        private bool _isStartAnimationRunning = false;
+        private Vector3 _startOrigin;
+        private float _startTimeDelta = 0f;
+        private Vector3 _startDestination;
+        public Vector3 DesiredStart
+        {
+            get { return _startDestination;  }
+            set
+            {
+                _startOrigin = Start;
+                _startDestination = value;
+                _startTimeDelta = 0f;
+
+                if (!_isStartAnimationRunning)
+                {
+                    GameLoop.Instance.StartCoroutine(RunStartAnimation());
+                }
+            }
+        }
+
         public Vector3 End = new Vector3(0, 0, 1);
+
+        private bool _isEndAnimationRunning = false;
+        private Vector3 _endOrigin;
+        private float _endTimeDelta = 0f;
+        private Vector3 _endDestination;
+        public Vector3 DesiredEnd
+        {
+            get { return _endDestination; }
+            set
+            {
+                _endOrigin = End;
+                _endDestination = value;
+                _endTimeDelta = 0f;
+
+                if (!_isEndAnimationRunning)
+                {
+                    GameLoop.Instance.StartCoroutine(RunEndAnimation());
+                }
+            }
+        }
 
         public Color32 Color = new Color32(25, 118, 210, 255);
         public bool IsFiltered;
@@ -24,44 +68,32 @@ namespace Assets.Modules.ParallelCoordinates
             _renderer.AddLine(this);
         }
 
-        public IEnumerator AnimateStart(Vector3 destStart)
+        private IEnumerator RunStartAnimation()
         {
-            var origStart = Start;
-            var totalDeltaTime = 0.0f;
-            Vector3 currentStart = Start;
-
-            while (totalDeltaTime < 1.0f)
+            while (_startTimeDelta < 1.0f)
             {
-                totalDeltaTime += Time.deltaTime / 10f;
-                currentStart = Vector3.Lerp(origStart, destStart, totalDeltaTime);
-                Start = currentStart;
-
+                _startTimeDelta += Time.deltaTime / ANIMATION_SPEED;
+                Start = Vector3.Lerp(_startOrigin, _startDestination, _startTimeDelta);
                 UpdateVisual();
 
                 yield return new WaitForEndOfFrame();
             }
 
-            Start = destStart;
+            _isStartAnimationRunning = false;
         }
 
-        public IEnumerator AnimateEnd(Vector3 destEnd)
+        private IEnumerator RunEndAnimation()
         {
-            var origEnd = End;
-            var totalDeltaTime = 0.0f;
-            Vector3 currentEnd = End;
-
-            while (totalDeltaTime < 1.0f)
+            while (_endTimeDelta < 1.0f)
             {
-                totalDeltaTime += Time.deltaTime / 10f;
-                currentEnd = Vector3.Lerp(origEnd, destEnd, totalDeltaTime);
-                End = currentEnd;
-
+                _endTimeDelta += Time.deltaTime / ANIMATION_SPEED;
+                End = Vector3.Lerp(_endOrigin, _endDestination, _endTimeDelta);
                 UpdateVisual();
 
                 yield return new WaitForEndOfFrame();
             }
 
-            End = destEnd;
+            _isEndAnimationRunning = false;
         }
 
         public void UpdateVisual()
