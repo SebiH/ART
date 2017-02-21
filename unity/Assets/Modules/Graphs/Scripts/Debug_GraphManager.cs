@@ -17,7 +17,7 @@ namespace Assets.Modules.Graphs
 
             for (var i = 0; i < NumGraphs; i++)
             {
-                _graphManager.CreateGraph(i);
+                _graphManager.CreateGraph(i).SetData("x " + i, "y" + i);
             }
         }
 

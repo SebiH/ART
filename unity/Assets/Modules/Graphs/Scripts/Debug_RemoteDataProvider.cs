@@ -18,7 +18,7 @@ namespace Assets.Modules.Graphs
                     rndValues[i] = new DataPoint
                     {
                         Index = i,
-                        Value = UnityEngine.Random.Range(0, 1)
+                        Value = UnityEngine.Random.Range(-0.5f, 0.5f)
                     };
                 }
 
