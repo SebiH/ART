@@ -6,9 +6,11 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    [RequireComponent(typeof(MeshFilter))]
     public class GraphicsLineRenderer : MonoBehaviour
     {
+        public MeshFilter NormalFilter;
+        public MeshFilter TransparentFilter;
+
         private Mesh _lineMesh;
         private bool _isBusy = false;
 
@@ -21,7 +23,8 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _lineMesh = new Mesh();
                 _lineMesh.MarkDynamic();
-                GetComponent<MeshFilter>().mesh = _lineMesh;
+                NormalFilter.sharedMesh = _lineMesh;
+                TransparentFilter.sharedMesh = _lineMesh;
             }
         }
 
