@@ -14,7 +14,7 @@ namespace Assets.Modules.Core
     /// </summary>
     public class GameLoop : MonoBehaviour
     {
-        public GameLoop Instance;
+        public static GameLoop Instance;
 
         private List<DynamicUpdate> _updateRequests = new List<DynamicUpdate>();
 
