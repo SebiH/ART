@@ -18,10 +18,8 @@ namespace Assets.Modules.ParallelCoordinates
         private Queue<LineSegment> _lineCreationQueue = new Queue<LineSegment>();
         private Queue<LineSegment> _lineUpdateQueue = new Queue<LineSegment>();
 
-        private const float DEFAULT_WIDTH = 0.003f;
+        private const float DEFAULT_WIDTH = 0.001f;
         private const float FILTERED_WIDTH = 0.0002f;
-        //private const float DEFAULT_WIDTH = 0.0015f;
-        //private const float FILTERED_WIDTH = 0.0005f;
 
         private void OnEnable()
         {
