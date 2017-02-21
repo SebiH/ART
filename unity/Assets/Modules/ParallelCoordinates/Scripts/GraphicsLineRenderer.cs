@@ -59,6 +59,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void UpdateLine(LineSegment line)
         {
+            line.WaitingForUpdate = true;
             _lineUpdateQueue.Enqueue(line);
         }
 
@@ -82,6 +83,7 @@ namespace Assets.Modules.ParallelCoordinates
                         for (int i = 0; i < batchAmount; i++)
                         {
                             lineBatch[i] = _lineCreationQueue.Dequeue();
+                            lineBatch[i].WaitingForUpdate = false;
                         }
 
                         CreateLines(lineBatch, totalLineNum);
@@ -113,6 +115,7 @@ namespace Assets.Modules.ParallelCoordinates
                         for (int i = 0; i < batchAmount; i++)
                         {
                             lineBatch[i] = _lineUpdateQueue.Dequeue();
+                            lineBatch[i].WaitingForUpdate = false;
                         }
 
                         SetLineAttributes(lineBatch);

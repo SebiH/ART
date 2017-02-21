@@ -11,8 +11,9 @@ namespace Assets.Modules.ParallelCoordinates
         public Color32 Color = new Color32(25, 118, 210, 255);
         public bool IsFiltered;
 
-
         public int MeshIndex = -1;
+        // to avoid unnecessary multiple updates in LineRenderer
+        public bool WaitingForUpdate = false;
 
         private GraphicsLineRenderer _renderer;
 
@@ -35,7 +36,7 @@ namespace Assets.Modules.ParallelCoordinates
                 currentStart = Vector3.Lerp(origStart, destStart, totalDeltaTime);
                 Start = currentStart;
 
-                if (MeshIndex >= 0) { _renderer.UpdateLine(this); }
+                UpdateVisual();
 
                 yield return new WaitForEndOfFrame();
             }
@@ -55,7 +56,7 @@ namespace Assets.Modules.ParallelCoordinates
                 currentEnd = Vector3.Lerp(origEnd, destEnd, totalDeltaTime);
                 End = currentEnd;
 
-                if (MeshIndex >= 0) { _renderer.UpdateLine(this); }
+                UpdateVisual();
 
                 yield return new WaitForEndOfFrame();
             }
@@ -65,7 +66,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void UpdateVisual()
         {
-            if (MeshIndex >= 0)
+            if (MeshIndex >= 0 && !WaitingForUpdate)
             {
                 _renderer.UpdateLine(this);
             }
