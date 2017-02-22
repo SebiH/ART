@@ -12,9 +12,8 @@ namespace Assets.Modules.Core
         public int Id;
         public OperationType Type;
         public int CurrentBatchAmount;
-        public int WantedBatchAmount;
         public OperationPriority Priority;
-        public IEnumerator Routine;
+        public IEnumerator Enumerator;
     }
 
     /// <summary>
@@ -69,20 +68,20 @@ namespace Assets.Modules.Core
                 {
                     _loopCounter = _loopCounter % _operations.Count;
 
-                    var op = _operations[_loopCounter];
+                    var operation = _operations[_loopCounter];
                     bool canWork = true;
 
-                    var workDistributor = op.Routine.Current as WaitForAvailableCycles;
+                    var workDistributor = operation.Enumerator.Current as WaitForAvailableCycles;
                     if (workDistributor != null)
                     {
-                        // TODO: dynamic adjustment + names!
-                        workDistributor.Amount -= UnityEngine.Random.Range(1, 5) * 50;
+                        // TODO: dynamic adjustment (based on current workload) + names!
+                        workDistributor.Amount -= 200;
                         canWork = workDistributor.Amount <= 0;
                     }
 
                     if (canWork)
                     {
-                        var isFinished = !(op.Routine.MoveNext());
+                        var isFinished = !(operation.Enumerator.MoveNext());
                         if (isFinished) { _operations.RemoveAt(_loopCounter); }
                     }
 
@@ -97,15 +96,14 @@ namespace Assets.Modules.Core
         }
 
 
-        public int StartRoutine(IEnumerator routine, OperationType type = OperationType.Continuous, int batchAmount = 0, OperationPriority priority = OperationPriority.Normal)
+        public int StartRoutine(IEnumerator routine, OperationType type = OperationType.Continuous, OperationPriority priority = OperationPriority.Normal)
         {
             var operation = new Operation
             {
                 Id = _idCounter,
-                Routine = routine,
+                Enumerator = routine,
                 Priority = priority,
-                Type = type,
-                WantedBatchAmount = batchAmount
+                Type = type
             };
             _idCounter++;
             _operations.Add(operation);

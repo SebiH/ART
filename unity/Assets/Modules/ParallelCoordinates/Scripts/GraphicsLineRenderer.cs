@@ -13,13 +13,15 @@ namespace Assets.Modules.ParallelCoordinates
 
         private Mesh _normalMesh;
         private Mesh _transparentMesh;
-        private bool _isBusy = false;
+        private int _runningRoutine = -1;
 
         private Queue<LineSegment> _lineCreationQueue = new Queue<LineSegment>();
         private Queue<LineSegment> _lineUpdateQueue = new Queue<LineSegment>();
 
         private const float DEFAULT_WIDTH = 0.001f;
         private const float FILTERED_WIDTH = 0.0002f;
+
+        private const int MAX_WORK_PER_CYCLE = 200;
 
         private void OnEnable()
         {
@@ -40,14 +42,14 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void Update()
         {
-            if (_lineCreationQueue.Count > 0 && !_isBusy)
+            if (_lineCreationQueue.Count > 0 && _runningRoutine < 0)
             {
-                StartCoroutine(AddLineAsync());
+                _runningRoutine = GameLoop.Instance.StartRoutine(AddLineAsync(), OperationType.Batched);
             }
 
-            if (_lineUpdateQueue.Count > 0 && !_isBusy)
+            if (_lineUpdateQueue.Count > 0 && _runningRoutine < 0)
             {
-                StartCoroutine(UpdateLineAsync());
+                _runningRoutine = GameLoop.Instance.StartRoutine(UpdateLineAsync(), OperationType.Batched);
             }
         }
 
@@ -65,78 +67,42 @@ namespace Assets.Modules.ParallelCoordinates
 
         private IEnumerator AddLineAsync()
         {
-            using (var wd = new WorkDistributor())
+            while (_lineCreationQueue.Count > 0)
             {
-                _isBusy = true;
-                yield return new WaitForEndOfFrame();
+                var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineCreationQueue.Count);
+                yield return new WaitForAvailableCycles(batchAmount);
 
-                while (_lineCreationQueue.Count > 0)
-                {
-                    wd.TriggerUpdate();
-
-                    if (wd.AvailableCycles > 200)
-                    {
-                        var totalLineNum = _lineCreationQueue.Count;
-                        var batchAmount = Mathf.Min(_lineCreationQueue.Count, wd.DepleteAll());
-
-                        var lineBatch = new LineSegment[batchAmount];
-                        for (int i = 0; i < batchAmount; i++)
-                        {
-                            lineBatch[i] = _lineCreationQueue.Dequeue();
-                            lineBatch[i].WaitingForUpdate = false;
-                        }
-
-                        CreateLines(lineBatch, totalLineNum);
-                    }
-
-                    yield return new WaitForEndOfFrame();
-                }
-
-                _isBusy = false;
+                var totalLineNum = _lineCreationQueue.Count;
+                CreateLines(_lineCreationQueue, batchAmount);
             }
+
+            _runningRoutine = -1;
         }
 
         private IEnumerator UpdateLineAsync()
         {
-            using (var wd = new WorkDistributor())
+            while (_lineUpdateQueue.Count > 0)
             {
-                _isBusy = true;
-                yield return new WaitForEndOfFrame();
-
-                while (_lineUpdateQueue.Count > 0)
-                {
-                    wd.TriggerUpdate();
-
-                    if (wd.AvailableCycles > 200)
-                    {
-                        var batchAmount = Mathf.Min(_lineUpdateQueue.Count, wd.DepleteAll());
-
-                        var lineBatch = new LineSegment[batchAmount];
-                        for (int i = 0; i < batchAmount; i++)
-                        {
-                            lineBatch[i] = _lineUpdateQueue.Dequeue();
-                            lineBatch[i].WaitingForUpdate = false;
-                        }
-
-                        SetLineAttributes(lineBatch);
-                    }
-
-                    yield return new WaitForEndOfFrame();
-                }
-
-                _isBusy = false;
+                var lineC = _lineUpdateQueue.Count;
+                var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineUpdateQueue.Count);
+                //Debug.Log("Yielding");
+                yield return new WaitForAvailableCycles(batchAmount);
+                //Debug.Log("Setting attributes");
+                SetLineAttributes(_lineUpdateQueue, batchAmount);
             }
+
+            _runningRoutine = -1;
         }
 
         private int vertexCounter = 0;
         private int triangleCounter = 0;
 
-        private void CreateLines(IEnumerable<LineSegment> lines, int expectedLineCount)
+        private void CreateLines(Queue<LineSegment> lines, int workAmount)
         {
-            var expectedVerticesNum = vertexCounter + expectedLineCount * 4;
+            var expectedVerticesNum = vertexCounter + lines.Count * 4;
             var currentVerticesNum = _normalMesh.vertices.Length;
 
-            var expectedTriangleNum = triangleCounter + expectedLineCount * 6;
+            var expectedTriangleNum = triangleCounter + lines.Count * 6;
             var currentTriangleNum = _normalMesh.triangles.Length;
 
             Color32[] colors;
@@ -164,7 +130,6 @@ namespace Assets.Modules.ParallelCoordinates
                 triangles = _normalMesh.triangles;
             }
 
-
             Vector3 widthDirection = Vector3.up;
 
             // micro optimisation: ensure that memory for these variables won't get reinitialised after each loop
@@ -173,8 +138,10 @@ namespace Assets.Modules.ParallelCoordinates
             Vector3 start, end;
             float width = 0; ;
 
-            foreach (var line in lines)
+            for (int i = 0; i < workAmount; i++)
             {
+                var line = lines.Dequeue();
+                line.WaitingForUpdate = false;
                 line.MeshIndex = vertexCounter / 4;
 
                 start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
@@ -241,7 +208,7 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-        private void SetLineAttributes(IEnumerable<LineSegment> lines)
+        private void SetLineAttributes(Queue<LineSegment> lines, int workAmount)
         {
             var colors = _normalMesh.colors32;
             var verticesNormal = _normalMesh.vertices;
@@ -255,38 +222,51 @@ namespace Assets.Modules.ParallelCoordinates
             Vector3 start, end;
             float width = 0; ;
 
-            foreach (var line in lines)
+            for (int i = 0; i < workAmount; i++)
             {
-                var vertex = line.MeshIndex * 4;
+                try
+                {
+                    var line = lines.Dequeue();
+                    line.WaitingForUpdate = false;
+                    var vertex = line.MeshIndex * 4;
 
-                start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
-                end = new Vector3(-line.End.x, line.End.y, line.End.z);
-                width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH ;
+                    start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
+                    end = new Vector3(-line.End.x, line.End.y, line.End.z);
+                    width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
 
-                quadNormal[0] = start + widthDirection * width;
-                quadNormal[1] = start + widthDirection * -width;
-                quadNormal[2] = (line.IsFiltered ? start : end) + widthDirection * width;
-                quadNormal[3] = (line.IsFiltered ? start : end) + widthDirection * -width;
+                    quadNormal[0] = start + widthDirection * width;
+                    quadNormal[1] = start + widthDirection * -width;
+                    quadNormal[2] = (line.IsFiltered ? start : end) + widthDirection * width;
+                    quadNormal[3] = (line.IsFiltered ? start : end) + widthDirection * -width;
 
-                quadTransparent[0] = start + widthDirection * width;
-                quadTransparent[1] = start + widthDirection * -width;
-                quadTransparent[2] = (line.IsFiltered ? end : start) + widthDirection * width;
-                quadTransparent[3] = (line.IsFiltered ? end : start) + widthDirection * -width;
+                    quadTransparent[0] = start + widthDirection * width;
+                    quadTransparent[1] = start + widthDirection * -width;
+                    quadTransparent[2] = (line.IsFiltered ? end : start) + widthDirection * width;
+                    quadTransparent[3] = (line.IsFiltered ? end : start) + widthDirection * -width;
 
-                verticesNormal[vertex] = quadNormal[0];
-                verticesNormal[vertex + 1] = quadNormal[1];
-                verticesNormal[vertex + 2] = quadNormal[2];
-                verticesNormal[vertex + 3] = quadNormal[3];
+                    verticesNormal[vertex] = quadNormal[0];
+                    verticesNormal[vertex + 1] = quadNormal[1];
+                    verticesNormal[vertex + 2] = quadNormal[2];
+                    verticesNormal[vertex + 3] = quadNormal[3];
 
-                verticesTransparent[vertex] = quadTransparent[0];
-                verticesTransparent[vertex + 1] = quadTransparent[1];
-                verticesTransparent[vertex + 2] = quadTransparent[2];
-                verticesTransparent[vertex + 3] = quadTransparent[3];
+                    verticesTransparent[vertex] = quadTransparent[0];
+                    verticesTransparent[vertex + 1] = quadTransparent[1];
+                    verticesTransparent[vertex + 2] = quadTransparent[2];
+                    verticesTransparent[vertex + 3] = quadTransparent[3];
 
-                colors[vertex] = line.Color;
-                colors[vertex + 1] = line.Color;
-                colors[vertex + 2] = line.Color;
-                colors[vertex + 3] = line.Color;
+                    colors[vertex] = line.Color;
+                    colors[vertex + 1] = line.Color;
+                    colors[vertex + 2] = line.Color;
+                    colors[vertex + 3] = line.Color;
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(i);
+                    Debug.Log(workAmount);
+                    Debug.Log(lines.Count);
+                    Debug.Log("-----");
+                    break;
+                }
             }
 
 
@@ -304,6 +284,14 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _normalMesh.Clear();
             _transparentMesh.Clear();
+
+            if (_runningRoutine >= 0)
+            {
+                GameLoop.Instance.StopRoutine(_runningRoutine);
+            }
+
+            _lineUpdateQueue.Clear();
+            _lineCreationQueue.Clear();
         }
     }
 }
