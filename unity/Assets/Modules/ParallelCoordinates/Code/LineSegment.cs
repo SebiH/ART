@@ -52,7 +52,31 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
+
         public Color32 Color = new Color32(25, 118, 210, 255);
+
+        private bool _isColorAnimationRunning = false;
+        private Color32 _colorOrigin;
+        private float _colorTimeDelta = 0f;
+        private Color32 _colorDestination;
+        public Color32 DesiredColor
+        {
+            get { return _colorDestination; }
+            set
+            {
+                _colorOrigin = Color;
+                _colorDestination = value;
+                _colorTimeDelta = 0f;
+
+                if (!_isColorAnimationRunning)
+                {
+                    GameLoop.Instance.StartRoutine(RunColorAnimation());
+                }
+            }
+        }
+
+
+
         public bool IsFiltered;
 
         public int MeshIndex = -1;
@@ -94,6 +118,20 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             _isEndAnimationRunning = false;
+        }
+
+        private IEnumerator RunColorAnimation()
+        {
+            while (_colorTimeDelta < 1.0f)
+            {
+                _colorTimeDelta += Time.deltaTime / ANIMATION_SPEED;
+                Color = Color32.Lerp(_colorOrigin, _colorDestination, _colorTimeDelta);
+                UpdateVisual();
+
+                yield return new WaitForEndOfFrame();
+            }
+
+            _isColorAnimationRunning = false;
         }
 
         public void UpdateVisual()
