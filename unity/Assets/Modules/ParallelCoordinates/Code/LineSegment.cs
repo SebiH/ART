@@ -77,11 +77,19 @@ namespace Assets.Modules.ParallelCoordinates
 
 
 
-        public bool IsFiltered;
+        private bool _isFiltered;
+        public bool IsFiltered
+        {
+            get { return _isFiltered; }
+            set { _isFiltered = value;  UpdatePosition(); }
+        }
+
 
         public int MeshIndex = -1;
+
         // to avoid unnecessary multiple updates in LineRenderer
-        public bool WaitingForUpdate = false;
+        public bool WaitingForVertex = false;
+        public bool WaitingForColor = false;
 
         private GraphicsLineRenderer _renderer;
 
@@ -98,7 +106,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _startTimeDelta += Time.deltaTime / ANIMATION_SPEED;
                 Start = Vector3.Lerp(_startOrigin, _startDestination, _startTimeDelta);
-                UpdateVisual();
+                UpdatePosition();
 
                 yield return new WaitForEndOfFrame();
             }
@@ -112,7 +120,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _endTimeDelta += Time.deltaTime / ANIMATION_SPEED;
                 End = Vector3.Lerp(_endOrigin, _endDestination, _endTimeDelta);
-                UpdateVisual();
+                UpdatePosition();
 
                 yield return new WaitForEndOfFrame();
             }
@@ -126,7 +134,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _colorTimeDelta += Time.deltaTime / ANIMATION_SPEED;
                 Color = Color32.Lerp(_colorOrigin, _colorDestination, _colorTimeDelta);
-                UpdateVisual();
+                UpdateColor();
 
                 yield return new WaitForEndOfFrame();
             }
@@ -134,11 +142,19 @@ namespace Assets.Modules.ParallelCoordinates
             _isColorAnimationRunning = false;
         }
 
-        public void UpdateVisual()
+        public void UpdateColor()
         {
-            if (MeshIndex >= 0 && !WaitingForUpdate)
+            if (MeshIndex >= 0 && !WaitingForColor)
             {
-                _renderer.UpdateLine(this);
+                _renderer.UpdateLineColor(this);
+            }
+        }
+
+        public void UpdatePosition()
+        {
+            if (MeshIndex >= 0 && !WaitingForVertex)
+            {
+                _renderer.UpdateLineVertices(this);
             }
         }
     }

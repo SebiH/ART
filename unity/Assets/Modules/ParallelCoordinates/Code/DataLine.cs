@@ -26,8 +26,6 @@ namespace Assets.Modules.ParallelCoordinates
                     foreach (var segment in _lineSegments)
                     {
                         segment.IsFiltered = value;
-                        segment.Color.a = (byte) (IsFiltered ? 32 : 255);
-                        segment.UpdateVisual();
                     }
                 }
             }
@@ -44,8 +42,6 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _lineSegments.Add(segment);
             segment.IsFiltered = IsFiltered;
-            segment.Color.a = (byte) (IsFiltered ? 32 : 255);
-            segment.UpdateVisual();
         }
 
         public void RemoveSegment(LineSegment segment)

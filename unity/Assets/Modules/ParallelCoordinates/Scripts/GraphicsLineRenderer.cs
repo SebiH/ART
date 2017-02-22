@@ -13,10 +13,15 @@ namespace Assets.Modules.ParallelCoordinates
 
         private Mesh _normalMesh;
         private Mesh _transparentMesh;
-        private int _runningRoutine = -1;
-
+        
         private Queue<LineSegment> _lineCreationQueue = new Queue<LineSegment>();
-        private Queue<LineSegment> _lineUpdateQueue = new Queue<LineSegment>();
+        private int _creationRoutineId = -1;
+
+        private Queue<LineSegment> _lineVertexUpdateQueue = new Queue<LineSegment>();
+        private int _vertexRoutineId = -1;
+
+        private Queue<LineSegment> _lineColorUpdateQueue = new Queue<LineSegment>();
+        private int _colorRoutineId = -1;
 
         private const float DEFAULT_WIDTH = 0.001f;
         private const float FILTERED_WIDTH = 0.0002f;
@@ -42,14 +47,19 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void Update()
         {
-            if (_lineCreationQueue.Count > 0 && _runningRoutine < 0)
+            if (_lineCreationQueue.Count > 0 && _vertexRoutineId < 0 && _colorRoutineId < 0)
             {
-                _runningRoutine = GameLoop.Instance.StartRoutine(AddLineAsync(), OperationType.Batched);
+                _colorRoutineId = GameLoop.Instance.StartRoutine(AddLineAsync(), OperationType.Batched);
             }
 
-            if (_lineUpdateQueue.Count > 0 && _runningRoutine < 0)
+            if (_lineVertexUpdateQueue.Count > 0 && _creationRoutineId < 0)
             {
-                _runningRoutine = GameLoop.Instance.StartRoutine(UpdateLineAsync(), OperationType.Batched);
+                _vertexRoutineId = GameLoop.Instance.StartRoutine(UpdateLineVerticesAsync(), OperationType.Batched);
+            }
+
+            if (_lineColorUpdateQueue.Count > 0 && _creationRoutineId < 0)
+            {
+                _colorRoutineId = GameLoop.Instance.StartRoutine(UpdateLineVerticesAsync(), OperationType.Batched);
             }
         }
 
@@ -59,10 +69,16 @@ namespace Assets.Modules.ParallelCoordinates
             _lineCreationQueue.Enqueue(line);
         }
 
-        public void UpdateLine(LineSegment line)
+        public void UpdateLineVertices(LineSegment line)
         {
-            line.WaitingForUpdate = true;
-            _lineUpdateQueue.Enqueue(line);
+            line.WaitingForVertex = true;
+            _lineVertexUpdateQueue.Enqueue(line);
+        }
+
+        public void UpdateLineColor(LineSegment line)
+        {
+            line.WaitingForColor = true;
+            _lineColorUpdateQueue.Enqueue(line);
         }
 
         private IEnumerator AddLineAsync()
@@ -76,20 +92,39 @@ namespace Assets.Modules.ParallelCoordinates
                 CreateLines(_lineCreationQueue, batchAmount);
             }
 
-            _runningRoutine = -1;
+            _creationRoutineId = -1;
         }
 
-        private IEnumerator UpdateLineAsync()
+        private IEnumerator UpdateLineVerticesAsync()
         {
-            while (_lineUpdateQueue.Count > 0)
+            while (_lineVertexUpdateQueue.Count > 0)
             {
-                var lineC = _lineUpdateQueue.Count;
-                var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineUpdateQueue.Count);
+                var lineC = _lineVertexUpdateQueue.Count;
+                var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineVertexUpdateQueue.Count);
                 yield return new WaitForAvailableCycles(batchAmount);
-                SetLineAttributes(_lineUpdateQueue, batchAmount);
+
+                // TODO: setting twice due to strange bug?
+                batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineVertexUpdateQueue.Count);
+                UpdateLineVertices(_lineVertexUpdateQueue, batchAmount);
             }
 
-            _runningRoutine = -1;
+            _vertexRoutineId = -1;
+        }
+
+        private IEnumerator UpdateLineColorAsync()
+        {
+            while (_lineColorUpdateQueue.Count > 0)
+            {
+                var lineC = _lineColorUpdateQueue.Count;
+                var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineColorUpdateQueue.Count);
+                yield return new WaitForAvailableCycles(batchAmount);
+
+                // TODO: setting twice due to strange bug?
+                batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineColorUpdateQueue.Count);
+                UpdateLineColor(_lineColorUpdateQueue, batchAmount);
+            }
+
+            _colorRoutineId = -1;
         }
 
         private int vertexCounter = 0;
@@ -139,12 +174,13 @@ namespace Assets.Modules.ParallelCoordinates
             for (int i = 0; i < workAmount; i++)
             {
                 var line = lines.Dequeue();
-                line.WaitingForUpdate = false;
+                line.WaitingForColor = false;
+                line.WaitingForVertex = false;
                 line.MeshIndex = vertexCounter / 4;
 
                 start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
                 end = new Vector3(-line.End.x, line.End.y, line.End.z);
-                width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH ;
+                width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
 
                 quadNormal[0] = start + widthDirection * width;
                 quadNormal[1] = start + widthDirection * -width;
@@ -206,9 +242,8 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-        private void SetLineAttributes(Queue<LineSegment> lines, int workAmount)
+        private void UpdateLineVertices(Queue<LineSegment> lines, int workAmount)
         {
-            var colors = _normalMesh.colors32;
             var verticesNormal = _normalMesh.vertices;
             var verticesTransparent = _transparentMesh.vertices;
 
@@ -221,9 +256,9 @@ namespace Assets.Modules.ParallelCoordinates
             float width = 0; ;
 
             for (int i = 0; i < workAmount; i++)
-        {
+            {
                 var line = lines.Dequeue();
-                line.WaitingForUpdate = false;
+                line.WaitingForVertex = false;
                 var vertex = line.MeshIndex * 4;
 
                 start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
@@ -249,21 +284,35 @@ namespace Assets.Modules.ParallelCoordinates
                 verticesTransparent[vertex + 1] = quadTransparent[1];
                 verticesTransparent[vertex + 2] = quadTransparent[2];
                 verticesTransparent[vertex + 3] = quadTransparent[3];
+            }
+
+            _normalMesh.vertices = verticesNormal;
+            _normalMesh.RecalculateBounds();
+
+            _transparentMesh.vertices = verticesTransparent;
+            _transparentMesh.RecalculateBounds();
+        }
+
+
+        private void UpdateLineColor(Queue<LineSegment> lines, int workAmount)
+        {
+            var colors = _normalMesh.colors32;
+
+            for (int i = 0; i < workAmount; i++)
+            {
+                var line = lines.Dequeue();
+                line.WaitingForColor = false;
+                var vertex = line.MeshIndex * 4;
+
 
                 colors[vertex] = line.Color;
                 colors[vertex + 1] = line.Color;
                 colors[vertex + 2] = line.Color;
                 colors[vertex + 3] = line.Color;
-        }
+            }
 
-
-            _normalMesh.vertices = verticesNormal;
             _normalMesh.colors32 = colors;
-            _normalMesh.RecalculateBounds();
-
-            _transparentMesh.vertices = verticesTransparent;
             _transparentMesh.colors32 = colors;
-            _transparentMesh.RecalculateBounds();
         }
 
 
@@ -272,13 +321,14 @@ namespace Assets.Modules.ParallelCoordinates
             _normalMesh.Clear();
             _transparentMesh.Clear();
 
-            if (_runningRoutine >= 0)
-            {
-                GameLoop.Instance.StopRoutine(_runningRoutine);
-            }
-
-            _lineUpdateQueue.Clear();
+            if (_creationRoutineId >= 0) { GameLoop.Instance.StopRoutine(_creationRoutineId); _creationRoutineId = -1; }
             _lineCreationQueue.Clear();
+
+            if (_vertexRoutineId >= 0) { GameLoop.Instance.StopRoutine(_vertexRoutineId); _vertexRoutineId = -1; }
+            _lineVertexUpdateQueue.Clear();
+
+            if (_colorRoutineId >= 0) { GameLoop.Instance.StopRoutine(_colorRoutineId); _colorRoutineId = -1; }
+            _lineColorUpdateQueue.Clear();
         }
     }
 }
