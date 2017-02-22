@@ -30,9 +30,9 @@ namespace Assets.Modules.CalibratedTracking.Scripts
 
         private void StashPose()
         {
-            var pos = VRListener.Instance.CurrentPosition;
-            var rot = VRListener.Instance.CurrentRotation;
-            var time = VRListener.Instance.PoseUpdateTime;
+            var pos = VRListener.CurrentPosition;
+            var rot = VRListener.CurrentRotation;
+            var time = VRListener.PoseUpdateTime;
 
             _trackedPoses.Enqueue(new DelayedPose
             {

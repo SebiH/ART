@@ -6,26 +6,25 @@ using Valve.VR;
 
 namespace Assets.Modules.Tracking
 {
-    public class VRListener : MonoBehaviour
+    public static class VRListener
     {
-        public static VRListener Instance { get; private set; }
+        public static Vector3 CurrentPosition { get; private set; }
+        public static Quaternion CurrentRotation { get; private set; }
+        public static float PoseUpdateTime { get; private set; }
 
-        public Vector3 CurrentPosition { get; private set; }
-        public Quaternion CurrentRotation { get; private set; }
-        public float PoseUpdateTime { get; private set; }
-
-        void OnEnable()
+        static VRListener()
         {
-            Instance = this;
-
             if (VrUtility.CurrentMode == VrUtility.VrMode.OpenVR)
             {
                 // TODO: doesn't work..?
                 SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
             }
+
+            GameLoop.Instance.OnGameEnd += OnDisable;
+            GameLoop.Instance.OnUpdate += Update;
         }
 
-        void OnDisable()
+        private static void OnDisable()
         {
             if (VrUtility.CurrentMode == VrUtility.VrMode.OpenVR)
             {
@@ -34,7 +33,7 @@ namespace Assets.Modules.Tracking
             }
         }
 
-        private void OnSteamVrPose(TrackedDevicePose_t[] poses)
+        private static void OnSteamVrPose(TrackedDevicePose_t[] poses)
         {
             var i = (int)OpenVR.k_unTrackedDeviceIndex_Hmd;
 
@@ -55,7 +54,7 @@ namespace Assets.Modules.Tracking
         }
 
 
-        private void Update()
+        private static void Update()
         {
             if (VrUtility.CurrentMode == VrUtility.VrMode.Native)
             {
