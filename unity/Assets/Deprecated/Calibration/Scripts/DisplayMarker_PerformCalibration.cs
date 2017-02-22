@@ -72,14 +72,14 @@ namespace Assets.Modules.Calibration_Deprecated
             for (int i = 0; i < CalibrationOffsets.Length; i++) CalibrationOffsets[i] = new MarkerOffset { ArMarkerId = i };
 
             ArMarkerTracker.Instance.NewPoseDetected += OnArucoPose;
-            OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
+            OptitrackListener.PosesReceived += OnOptitrackPose;
             SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
         }
 
         void OnDisable()
         {
             ArMarkerTracker.Instance.NewPoseDetected -= OnArucoPose;
-            OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
+            OptitrackListener.PosesReceived -= OnOptitrackPose;
             SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
         }
 

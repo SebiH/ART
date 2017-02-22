@@ -41,12 +41,12 @@ namespace Assets.Modules.Tracking
         {
             IsCalibrating = false;
             CalibrationProgress = 0;
-            OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
+            OptitrackListener.PosesReceived += OnOptitrackPose;
         }
 
         void OnDisable()
         {
-            OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
+            OptitrackListener.PosesReceived -= OnOptitrackPose;
         }
 
 

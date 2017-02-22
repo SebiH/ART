@@ -39,7 +39,7 @@ namespace Assets.Modules.Calibration
 
         private bool ShouldCalibrate()
         {
-            var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
+            var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
             if (optitrackPose == null) { return false; }
 
             var isOptitrackPoseRecent = IsRecent(optitrackPose.DetectionTime, OptitrackCutoffTime);
@@ -84,7 +84,7 @@ namespace Assets.Modules.Calibration
             var hasMarkerChangedRecently = IsRecent(marker.LastChangeTime, MarkerChangeCutoffTime);
             if (hasMarkerChangedRecently) { return false; }
 
-            var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
+            var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
             var isTooFarAway = Mathf.Abs((optitrackPose.Position - marker.transform.position).magnitude) > MaxMarkerHmdDistance;
             if (isTooFarAway) { return false; }
 
@@ -101,7 +101,7 @@ namespace Assets.Modules.Calibration
 
         private void UpdateTracking()
         {
-            var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
+            var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
             if (optitrackPose != null)
             {
                 var hasPositionChanged = Mathf.Abs((_lastOptitrackPos - optitrackPose.Position).magnitude) > Mathf.Epsilon;
@@ -129,7 +129,7 @@ namespace Assets.Modules.Calibration
             {
                 var camPositions = validMarkers.Select(m => m.DetectedCameraPosition);
                 var avgCamPosition = MathUtility.Average(camPositions);
-                var optitrackPose = OptitrackListener.Instance.GetPose(Globals.OptitrackHmdName);
+                var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
                 Debug.Assert(optitrackPose != null, "OptitrackPose shall not be null, since we checked for that in ShouldCalibrate??");
                 CalibrationParams.PositionOffset = Quaternion.Inverse(optitrackPose.Rotation) * (avgCamPosition - optitrackPose.Position);
 

@@ -38,14 +38,14 @@ namespace Assets.Modules.Calibration_Deprecated
 
         void OnEnable()
         {
-            OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
+            OptitrackListener.PosesReceived += OnOptitrackPose;
             SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
             //InteractiveSurfaceClient.Instance.OnMessageReceived += HandleMarkerMessage;
         }
 
         void OnDisable()
         {
-            OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
+            OptitrackListener.PosesReceived -= OnOptitrackPose;
             SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
             //InteractiveSurfaceClient.Instance.OnMessageReceived -= HandleMarkerMessage;
         }

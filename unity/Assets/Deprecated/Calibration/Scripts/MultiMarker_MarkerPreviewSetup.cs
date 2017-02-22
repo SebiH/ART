@@ -18,12 +18,12 @@ namespace Assets.Modules.Calibration_Deprecated
 
         void OnEnable()
         {
-            OptitrackListener.Instance.PosesReceived += OnOptitrackPoses;
+            OptitrackListener.PosesReceived += OnOptitrackPoses;
         }
 
         void OnDisable()
         {
-            OptitrackListener.Instance.PosesReceived -= OnOptitrackPoses;
+            OptitrackListener.PosesReceived -= OnOptitrackPoses;
         }
 
         private void OnOptitrackPoses(List<OptitrackPose> poses)

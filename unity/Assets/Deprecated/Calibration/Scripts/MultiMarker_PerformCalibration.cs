@@ -65,7 +65,7 @@ namespace Assets.Modules.Calibration_Deprecated
             IsReadyForCalibration = false;
 
             ArMarkerTracker.Instance.NewPoseDetected += OnArucoPose;
-            OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
+            OptitrackListener.PosesReceived += OnOptitrackPose;
             SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
 
             _markerSetupScript = GetComponent<MultiMarker_MarkerSetup>();
@@ -74,7 +74,7 @@ namespace Assets.Modules.Calibration_Deprecated
         void OnDisable()
         {
             ArMarkerTracker.Instance.NewPoseDetected -= OnArucoPose;
-            OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
+            OptitrackListener.PosesReceived -= OnOptitrackPose;
             SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
         }
 

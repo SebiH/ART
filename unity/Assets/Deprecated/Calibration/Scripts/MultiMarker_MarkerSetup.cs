@@ -56,13 +56,13 @@ namespace Assets.Modules.Calibration_Deprecated
             var markerSize = ArMarkerTracker.Instance.MarkerSizeInMeter;
             _markerPreview.transform.localScale = new Vector3(markerSize, 0.001f, markerSize);
 
-            OptitrackListener.Instance.PosesReceived += OnOptitrackPoses;
+            OptitrackListener.PosesReceived += OnOptitrackPoses;
         }
 
         void OnDisable()
         {
             Destroy(_markerPreview);
-            OptitrackListener.Instance.PosesReceived -= OnOptitrackPoses;
+            OptitrackListener.PosesReceived -= OnOptitrackPoses;
         }
 
 

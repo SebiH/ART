@@ -21,13 +21,13 @@ namespace Assets.Modules.Tracking
 
         void OnEnable()
         {
-            OptitrackListener.Instance.PosesReceived += OnPosesReceived;
+            OptitrackListener.PosesReceived += OnPosesReceived;
             _prevDrawMarkers = DrawMarkers;
         }
 
         void OnDisable()
         {
-            OptitrackListener.Instance.PosesReceived -= OnPosesReceived;
+            OptitrackListener.PosesReceived -= OnPosesReceived;
         }
 
         void OnPosesReceived(List<OptitrackPose> poses)

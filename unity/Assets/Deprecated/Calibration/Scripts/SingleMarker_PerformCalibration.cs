@@ -63,7 +63,7 @@ namespace Assets.Modules.Calibration_Deprecated
 #else
             ArMarkerTracker.Instance.NewPoseDetected += OnArucoPose;
 #endif
-            OptitrackListener.Instance.PosesReceived += OnOptitrackPose;
+            OptitrackListener.PosesReceived += OnOptitrackPose;
             SteamVR_Events.NewPoses.Listen(OnSteamVrPose);
         }
 
@@ -74,7 +74,7 @@ namespace Assets.Modules.Calibration_Deprecated
 #else
             ArMarkerTracker.Instance.NewPoseDetected -= OnArucoPose;
 #endif
-            OptitrackListener.Instance.PosesReceived -= OnOptitrackPose;
+            OptitrackListener.PosesReceived -= OnOptitrackPose;
             SteamVR_Events.NewPoses.Remove(OnSteamVrPose);
         }
 

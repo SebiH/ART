@@ -9,27 +9,22 @@ using Assets.Modules.Core;
 namespace Assets.Modules.Tracking
 {
 
-    public class OptitrackListener : MonoBehaviour
+    public static class OptitrackListener
     {
-        public static OptitrackListener Instance { get; private set; }
-
-        public event OptitrackPosesReceived PosesReceived;
+        public static event OptitrackPosesReceived PosesReceived;
         public delegate void OptitrackPosesReceived(List<OptitrackPose> poses);
 
-
-        private IPEndPoint mRemoteIpEndPoint;
-        private Socket mListener;
-        private byte[] mReceiveBuffer;
-        private string mPacket;
-        private int mPreviousSubPacketIndex = 0;
+        private static IPEndPoint mRemoteIpEndPoint;
+        private static Socket mListener;
+        private static byte[] mReceiveBuffer;
+        private static string mPacket;
+        private static int mPreviousSubPacketIndex = 0;
         private const int kMaxSubPacketSize = 1400;
 
-        private Dictionary<string, OptitrackPose> _detectedPoses = new Dictionary<string, OptitrackPose>(3);
+        private static Dictionary<string, OptitrackPose> _detectedPoses = new Dictionary<string, OptitrackPose>(3);
 
-        void OnEnable()
+        static OptitrackListener()
         {
-            Instance = this;
-
             mReceiveBuffer = new byte[kMaxSubPacketSize];
             mPacket = string.Empty;
 
@@ -39,19 +34,22 @@ namespace Assets.Modules.Tracking
 
             mListener.Blocking = false;
             mListener.ReceiveBufferSize = 128 * 1024;
+
+            GameLoop.Instance.OnGameEnd += OnDisable;
+            GameLoop.Instance.OnUpdate += Update;
         }
 
-        void OnDisable()
+        private static void OnDisable()
         {
             mListener.Close();
         }
 
-        void Update()
+        private static void Update()
         {
             UDPRead();
         }
 
-        private void UDPRead()
+        private static void UDPRead()
         {
             try
             {
@@ -98,7 +96,7 @@ namespace Assets.Modules.Tracking
             }
         }
 
-        private void SendPacketNotification(string jsonPacket)
+        private static void SendPacketNotification(string jsonPacket)
         {
             var packet = JsonUtility.FromJson<OptitrackPacket>(jsonPacket);
             var poses = new List<OptitrackPose>();
@@ -135,12 +133,12 @@ namespace Assets.Modules.Tracking
             }
         }
 
-        public bool HasPose(string name)
+        public static bool HasPose(string name)
         {
             return _detectedPoses.ContainsKey(name);
         }
 
-        public OptitrackPose GetPose(string name)
+        public static OptitrackPose GetPose(string name)
         {
             if (HasPose(name))
             {
