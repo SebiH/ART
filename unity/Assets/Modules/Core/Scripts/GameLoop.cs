@@ -1,14 +1,9 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.Core
 {
-    public interface DynamicUpdate
-    {
-        void ManualUpdate();
-    }
-
     /// <summary>
     /// Script for delegating Unity's Update() events to non-script classes to avoid overhead of creating gameObjects
     /// </summary>
@@ -16,7 +11,8 @@ namespace Assets.Modules.Core
     {
         public static GameLoop Instance;
 
-        private List<DynamicUpdate> _updateRequests = new List<DynamicUpdate>();
+        public event Action OnUpdate;
+        public event Action OnGameEnd;
 
         private void OnEnable()
         {
@@ -26,27 +22,19 @@ namespace Assets.Modules.Core
 
         private void OnDisable()
         {
-            _updateRequests.Clear();
+            if (OnGameEnd != null)
+            {
+                OnGameEnd();
+            }
             Instance = null;
         }
 
         private void Update()
         {
-            foreach (var request in _updateRequests)
+            if (OnUpdate != null)
             {
-                request.ManualUpdate();
+                OnUpdate();
             }
-        }
-
-        public void AddUpdateRequest(DynamicUpdate request)
-        {
-            _updateRequests.Add(request);
-        }
-
-        // Should be used sparingly due to O(n) !
-        public void RemoveUpdateRequest(DynamicUpdate request)
-        {
-            _updateRequests.Remove(request);
         }
 
 
