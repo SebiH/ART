@@ -85,9 +85,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 var lineC = _lineUpdateQueue.Count;
                 var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineUpdateQueue.Count);
-                //Debug.Log("Yielding");
                 yield return new WaitForAvailableCycles(batchAmount);
-                //Debug.Log("Setting attributes");
                 SetLineAttributes(_lineUpdateQueue, batchAmount);
             }
 
@@ -223,51 +221,40 @@ namespace Assets.Modules.ParallelCoordinates
             float width = 0; ;
 
             for (int i = 0; i < workAmount; i++)
-            {
-                try
-                {
-                    var line = lines.Dequeue();
-                    line.WaitingForUpdate = false;
-                    var vertex = line.MeshIndex * 4;
+        {
+                var line = lines.Dequeue();
+                line.WaitingForUpdate = false;
+                var vertex = line.MeshIndex * 4;
 
-                    start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
-                    end = new Vector3(-line.End.x, line.End.y, line.End.z);
-                    width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
+                start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
+                end = new Vector3(-line.End.x, line.End.y, line.End.z);
+                width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
 
-                    quadNormal[0] = start + widthDirection * width;
-                    quadNormal[1] = start + widthDirection * -width;
-                    quadNormal[2] = (line.IsFiltered ? start : end) + widthDirection * width;
-                    quadNormal[3] = (line.IsFiltered ? start : end) + widthDirection * -width;
+                quadNormal[0] = start + widthDirection * width;
+                quadNormal[1] = start + widthDirection * -width;
+                quadNormal[2] = (line.IsFiltered ? start : end) + widthDirection * width;
+                quadNormal[3] = (line.IsFiltered ? start : end) + widthDirection * -width;
 
-                    quadTransparent[0] = start + widthDirection * width;
-                    quadTransparent[1] = start + widthDirection * -width;
-                    quadTransparent[2] = (line.IsFiltered ? end : start) + widthDirection * width;
-                    quadTransparent[3] = (line.IsFiltered ? end : start) + widthDirection * -width;
+                quadTransparent[0] = start + widthDirection * width;
+                quadTransparent[1] = start + widthDirection * -width;
+                quadTransparent[2] = (line.IsFiltered ? end : start) + widthDirection * width;
+                quadTransparent[3] = (line.IsFiltered ? end : start) + widthDirection * -width;
 
-                    verticesNormal[vertex] = quadNormal[0];
-                    verticesNormal[vertex + 1] = quadNormal[1];
-                    verticesNormal[vertex + 2] = quadNormal[2];
-                    verticesNormal[vertex + 3] = quadNormal[3];
+                verticesNormal[vertex] = quadNormal[0];
+                verticesNormal[vertex + 1] = quadNormal[1];
+                verticesNormal[vertex + 2] = quadNormal[2];
+                verticesNormal[vertex + 3] = quadNormal[3];
 
-                    verticesTransparent[vertex] = quadTransparent[0];
-                    verticesTransparent[vertex + 1] = quadTransparent[1];
-                    verticesTransparent[vertex + 2] = quadTransparent[2];
-                    verticesTransparent[vertex + 3] = quadTransparent[3];
+                verticesTransparent[vertex] = quadTransparent[0];
+                verticesTransparent[vertex + 1] = quadTransparent[1];
+                verticesTransparent[vertex + 2] = quadTransparent[2];
+                verticesTransparent[vertex + 3] = quadTransparent[3];
 
-                    colors[vertex] = line.Color;
-                    colors[vertex + 1] = line.Color;
-                    colors[vertex + 2] = line.Color;
-                    colors[vertex + 3] = line.Color;
-                }
-                catch (Exception e)
-                {
-                    Debug.Log(i);
-                    Debug.Log(workAmount);
-                    Debug.Log(lines.Count);
-                    Debug.Log("-----");
-                    break;
-                }
-            }
+                colors[vertex] = line.Color;
+                colors[vertex + 1] = line.Color;
+                colors[vertex + 2] = line.Color;
+                colors[vertex + 3] = line.Color;
+        }
 
 
             _normalMesh.vertices = verticesNormal;
