@@ -1,6 +1,4 @@
-using Assets.Modules.Core;
 using Assets.Modules.Graphs;
-using Assets.Modules.Surfaces;
 using UnityEngine;
 
 namespace Assets.Modules.SurfaceInterface
@@ -11,7 +9,6 @@ namespace Assets.Modules.SurfaceInterface
         public bool IsGraphSelected = false;
 
         private GraphManager _manager;
-        private Surface _surface;
 
         // for selection, etc.
         const float NormalAnimationSpeed = 1f;
@@ -21,7 +18,6 @@ namespace Assets.Modules.SurfaceInterface
 
         private void OnEnable()
         {
-            _surface = UnityUtility.FindParent<Surface>(this);
             _manager = GetComponent<GraphManager>();
             _manager.OnGraphAdded += HandleNewGraph;
         }

@@ -62,8 +62,8 @@ namespace Assets.Modules.Calibration
 
             if (CalibrationParams.HasStablePosition && CalibrationParams.HasStableRotation)
             {
-                var surface = SurfaceManager.Instance.Get(Globals.DefaultSurfaceName);
-                var trackedCamera = SceneCameraTracker.Instance;
+                //var surface = SurfaceManager.Instance.Get(Globals.DefaultSurfaceName);
+                //var trackedCamera = SceneCameraTracker.Instance;
 
                 // TODO: needs testing!
                 //var angle = MathUtility.AngleVectorPlane(trackedCamera.transform.forward, surface.Normal);
