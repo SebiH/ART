@@ -49,7 +49,7 @@ namespace Assets.Modules.Calibration
             if (!isOptitrackStable) { return false; }
 
 
-            var isHmdPoseRecent = IsRecent(VRListener.Instance.PoseUpdateTime, OvrCutoffTime);
+            var isHmdPoseRecent = IsRecent(VRListener.PoseUpdateTime, OvrCutoffTime);
             if (!isHmdPoseRecent) { return false; }
 
             var isHmdPoseStable = OvrMonitor.Stability > OvrChangeTolerance;
@@ -115,8 +115,8 @@ namespace Assets.Modules.Calibration
                 }
             }
 
-            var ovrPosition = VRListener.Instance.CurrentPosition;
-            var ovrRotation = VRListener.Instance.CurrentRotation;
+            var ovrPosition = VRListener.CurrentPosition;
+            var ovrRotation = VRListener.CurrentRotation;
             OvrMonitor.UpdateStability(ovrPosition, ovrRotation);
         }
 
@@ -135,7 +135,7 @@ namespace Assets.Modules.Calibration
 
                 var camRotations = validMarkers.Select(m => m.DetectedCameraRotation);
                 var avgCamRotation = MathUtility.Average(camRotations);
-                var ovrRotation = VRListener.Instance.CurrentRotation;
+                var ovrRotation = VRListener.CurrentRotation;
 
                 // MarkerRotation = Offset * Ovr
                 // => Offset = MarkerRotation * inv(Ovr)
