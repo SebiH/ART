@@ -22,7 +22,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 filter[i] = i;
             }
-            DataLineManager.Instance.SetFilter(filter);
+            DataLineManager.SetFilter(filter);
         }
     }
 }

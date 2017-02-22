@@ -6,22 +6,19 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    public class DataLineManager : MonoBehaviour
+    public static class DataLineManager
     {
-        public static DataLineManager Instance { get; set; }
+        private static DataLine[] _lines = new DataLine[0];
+        private static int[] _filter = null;
+        private static Coroutine _filterRoutine = null;
 
-        private DataLine[] _lines = new DataLine[0];
-        private int[] _filter = null;
-        private Coroutine _filterRoutine = null;
-
-        private void OnEnable()
+        static DataLineManager()
         {
-            Instance = this;
             SetMaxDataIndex(1000);
         }
 
         // minor optimisation to avoid extending the array
-        public void SetMaxDataIndex(int max)
+        public static void SetMaxDataIndex(int max)
         {
             if (_lines.Length < max + 1)
             {
@@ -29,7 +26,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        public DataLine GetLine(int index)
+        public static DataLine GetLine(int index)
         {
             // should not happen
             if (index >= _lines.Length)
@@ -49,19 +46,19 @@ namespace Assets.Modules.ParallelCoordinates
             return _lines[index];
         }
 
-        public void SetFilter(int[] filter)
+        public static void SetFilter(int[] filter)
         {
             _filter = filter;
 
             if (_filterRoutine != null)
             {
-                StopCoroutine(_filterRoutine);
+                GameLoop.Instance.StopRoutine(_filterRoutine);
             }
 
-            _filterRoutine = StartCoroutine(SetFilterAsync());
+            _filterRoutine = GameLoop.Instance.StartRoutine(SetFilterAsync());
         }
 
-        private IEnumerator SetFilterAsync()
+        private static IEnumerator SetFilterAsync()
         {
             using (var wd = new WorkDistributor())
             {
@@ -90,7 +87,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private bool SetFilter(DataLine line)
+        private static bool SetFilter(DataLine line)
         {
             var isFiltered = (_filter != null) && !(_filter.Contains(line.DataIndex));
             if (line.IsFiltered != isFiltered)
