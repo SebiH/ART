@@ -25,7 +25,7 @@ namespace Assets.Modules.ParallelCoordinates
 
                 if (!_isStartAnimationRunning)
                 {
-                    GameLoop.Instance.StartCoroutine(RunStartAnimation());
+                    GameLoop.Instance.StartRoutine(RunStartAnimation());
                 }
             }
         }
@@ -47,7 +47,7 @@ namespace Assets.Modules.ParallelCoordinates
 
                 if (!_isEndAnimationRunning)
                 {
-                    GameLoop.Instance.StartCoroutine(RunEndAnimation());
+                    GameLoop.Instance.StartRoutine(RunEndAnimation());
                 }
             }
         }

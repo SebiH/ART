@@ -10,7 +10,7 @@ namespace Assets.Modules.ParallelCoordinates
     {
         private static DataLine[] _lines = new DataLine[0];
         private static int[] _filter = null;
-        private static Coroutine _filterRoutine = null;
+        private static int _filterRoutine = -1;
 
         static DataLineManager()
         {
@@ -50,7 +50,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _filter = filter;
 
-            if (_filterRoutine != null)
+            if (_filterRoutine >= 0)
             {
                 GameLoop.Instance.StopRoutine(_filterRoutine);
             }
@@ -60,42 +60,28 @@ namespace Assets.Modules.ParallelCoordinates
 
         private static IEnumerator SetFilterAsync()
         {
-            using (var wd = new WorkDistributor())
+            const int BatchAmount = 50;
+
+            var batchCounter = 0;
+            foreach (var line in _lines)
             {
-                yield return new WaitForEndOfFrame();
-                wd.TriggerUpdate();
-
-                foreach (var line in _lines)
+                if (line != null)
                 {
-                    if (line != null)
+                    if (batchCounter % BatchAmount == 0)
                     {
-                        var hasChanged = SetFilter(line);
-                        if (hasChanged)
-                        {
-                            wd.Deplete(line.SegmentCount / 4);
-                        }
-
-                        if (wd.AvailableCycles <= 0)
-                        {
-                            yield return new WaitForEndOfFrame();
-                            wd.TriggerUpdate();
-                        }
+                        yield return new WaitForAvailableCycles(BatchAmount);
                     }
-                }
 
-                _filterRoutine = null;
+                    SetFilter(line);
+                    batchCounter++;
+                }
             }
         }
 
-        private static bool SetFilter(DataLine line)
+        private static void SetFilter(DataLine line)
         {
             var isFiltered = (_filter != null) && !(_filter.Contains(line.DataIndex));
-            if (line.IsFiltered != isFiltered)
-            {
-                line.IsFiltered = isFiltered;
-                return true;
-            }
-            return false;
+            line.IsFiltered = isFiltered;
         }
     }
 }
