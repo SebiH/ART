@@ -81,7 +81,12 @@ namespace Assets.Modules.ParallelCoordinates
         public bool IsFiltered
         {
             get { return _isFiltered; }
-            set { _isFiltered = value;  UpdatePosition(); }
+            set
+            {
+                _isFiltered = value;
+                Color = new Color32(Color.r, Color.g, Color.b, (byte)(value ? 30 : 255));
+                UpdateColor();
+            }
         }
 
 

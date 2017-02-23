@@ -5,44 +5,54 @@ Shader "ParallelCoordinates/TransparentLine"
     }
     SubShader
     {
-        // Tags { "RenderType"="Transparent" "Queue" = "Geometry+3000" "IgnoreProjector"="True"} 
-        // Tags { "RenderType"="Transparent" "Queue" = "Geometry" "IgnoreProjector"="True"} 
-        // Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+        Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
 
-        ZTest Always
-        ZWrite On
-		// Lighting Off
         Cull Off
+        ZWrite Off
+        Blend SrcAlpha OneMinusSrcAlpha 
+
 
         Pass {
             ZWrite On
-            ColorMask 0
-        }
 
-        CGPROGRAM
-        #pragma surface surf Unlit noforwardadd alpha
-        #pragma target 3.0
-       
-        struct Input
-        {
-            float4 color: Color;
-        };
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 2.0
 
-        void surf (Input IN, inout SurfaceOutput o)
-        {
-            o.Albedo = IN.color.rgb; // * IN.color.a;
-            o.Alpha = IN.color.a;
-        }
+            #include "UnityCG.cginc"
 
-        fixed4 LightingUnlit(SurfaceOutput so, fixed3 lightDir, fixed att)
-        {
-            fixed4 col;
-            col.rgb = so.Albedo;
-            col.a = so.Alpha;
-            return col;
+            struct Input
+            {
+                float4 vertex : POSITION;
+                float4 color: COLOR;
+            };
+
+            struct v2f
+            {
+                float4 vertex : SV_POSITION;
+                float4 color : COLOR;
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            v2f vert (Input input)
+            {
+                v2f output;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+                output.vertex = UnityObjectToClipPos(input.vertex);
+                output.color = input.color;
+                return output;
+            }
+
+            fixed4 frag (v2f input) : SV_Target
+            {
+                fixed4 color = input.color;
+                return color;
+            }
+
+            ENDCG
         }
- 
-        ENDCG
     }
  }
 
