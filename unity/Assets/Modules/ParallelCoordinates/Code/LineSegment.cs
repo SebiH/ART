@@ -12,7 +12,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         private bool _isStartAnimationRunning = false;
         private Vector3 _startOrigin;
-        private float _startTimeDelta = 0f;
+        private float _startTime;
         private Vector3 _startDestination;
         public Vector3 DesiredStart
         {
@@ -21,7 +21,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _startOrigin = Start;
                 _startDestination = value;
-                _startTimeDelta = 0f;
+                _startTime = Time.time;
 
                 if (!_isStartAnimationRunning)
                 {
@@ -34,7 +34,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         private bool _isEndAnimationRunning = false;
         private Vector3 _endOrigin;
-        private float _endTimeDelta = 0f;
+        private float _endTime;
         private Vector3 _endDestination;
         public Vector3 DesiredEnd
         {
@@ -43,7 +43,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _endOrigin = End;
                 _endDestination = value;
-                _endTimeDelta = 0f;
+                _endTime = Time.time;
 
                 if (!_isEndAnimationRunning)
                 {
@@ -57,7 +57,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         private bool _isColorAnimationRunning = false;
         private Color32 _colorOrigin;
-        private float _colorTimeDelta = 0f;
+        private float _colorTime;
         private Color32 _colorDestination;
         public Color32 DesiredColor
         {
@@ -66,7 +66,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _colorOrigin = Color;
                 _colorDestination = value;
-                _colorTimeDelta = 0f;
+                _colorTime = Time.time;
 
                 if (!_isColorAnimationRunning)
                 {
@@ -101,10 +101,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         private IEnumerator RunStartAnimation()
         {
-            while (_startTimeDelta < 1.0f)
+            var timeDelta = 0f;
+            while (timeDelta < 1.0f)
             {
-                _startTimeDelta += Time.deltaTime / ANIMATION_SPEED;
-                Start = Vector3.Lerp(_startOrigin, _startDestination, _startTimeDelta);
+                timeDelta = (Time.time - _startTime) / ANIMATION_SPEED;
+                Start = Vector3.Lerp(_startOrigin, _startDestination, timeDelta);
                 UpdatePosition();
 
                 yield return new WaitForEndOfFrame();
@@ -115,10 +116,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         private IEnumerator RunEndAnimation()
         {
-            while (_endTimeDelta < 1.0f)
+            var timeDelta = 0f;
+            while (timeDelta < 1.0f)
             {
-                _endTimeDelta += Time.deltaTime / ANIMATION_SPEED;
-                End = Vector3.Lerp(_endOrigin, _endDestination, _endTimeDelta);
+                timeDelta = (Time.time - _endTime) / ANIMATION_SPEED;
+                End = Vector3.Lerp(_endOrigin, _endDestination, timeDelta);
                 UpdatePosition();
 
                 yield return new WaitForEndOfFrame();
@@ -129,10 +131,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         private IEnumerator RunColorAnimation()
         {
-            while (_colorTimeDelta < 1.0f)
+            var timeDelta = 0f;
+            while (timeDelta < 1.0f)
             {
-                _colorTimeDelta += Time.deltaTime / ANIMATION_SPEED;
-                Color = Color32.Lerp(_colorOrigin, _colorDestination, _colorTimeDelta);
+                timeDelta = (Time.time - _colorTime) / ANIMATION_SPEED;
+                Color = Color32.Lerp(_colorOrigin, _colorDestination, timeDelta);
                 UpdateColor();
 
                 yield return new WaitForEndOfFrame();
