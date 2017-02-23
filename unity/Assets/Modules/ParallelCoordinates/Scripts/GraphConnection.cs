@@ -1,14 +1,21 @@
+//#define USE_SKINNED
+
 using Assets.Modules.Core;
 using Assets.Modules.Graphs;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    [RequireComponent(typeof(GraphicsLineRenderer))]
     public class GraphConnection : MonoBehaviour
     {
-        private LineSegment[] _lineSegments;
+#if USE_SKINNED
+        private SkinnedLineRenderer _lineRenderer;
+        private SkinnedLineSegment[] _lineSegments;
+#else
         private GraphicsLineRenderer _lineRenderer;
+        private LineSegment[] _lineSegments;
+#endif
+
         // avoids multiple line updates due to overlapping events
         private bool _hasStartChanged = false;
         private bool _hasEndChanged = false;
@@ -30,7 +37,11 @@ namespace Assets.Modules.ParallelCoordinates
         void OnEnable()
         {
             StartGraph = UnityUtility.FindParent<Graph>(this);
+#if USE_SKINNED
+            _lineRenderer = GetComponent<SkinnedLineRenderer>();
+#else
             _lineRenderer = GetComponent<GraphicsLineRenderer>();
+#endif
         }
         
         void OnDisable()
@@ -135,11 +146,19 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void InitializeLines()
         {
+#if USE_SKINNED
+            _lineSegments = new SkinnedLineSegment[_startGraph.Data.Length];
+#else
             _lineSegments = new LineSegment[_startGraph.Data.Length];
+#endif
 
             for (int i = 0; i < _lineSegments.Length; i++)
             {
+#if USE_SKINNED
+                var segment = new SkinnedLineSegment(transform);
+#else
                 var segment = new LineSegment();
+#endif
                 _lineSegments[i] = segment;
                 DataLineManager.GetLine(i).AddSegment(segment);
 
@@ -181,8 +200,6 @@ namespace Assets.Modules.ParallelCoordinates
                 _lineSegments = null;
             }
         }
-
-
 
 
         void OnDrawGizmosSelected()
