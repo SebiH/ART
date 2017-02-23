@@ -95,7 +95,6 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void SetRenderer(GraphicsLineRenderer renderer)
         {
-            Debug.Assert(_renderer == null, "Cannot reassign LineSegment to different renderer!");
             _renderer = renderer;
             _renderer.AddLine(this);
         }

@@ -127,15 +127,15 @@ namespace Assets.Modules.ParallelCoordinates
             _colorRoutineId = -1;
         }
 
-        private int vertexCounter = 0;
-        private int triangleCounter = 0;
+        private int _vertexCounter = 0;
+        private int _triangleCounter = 0;
 
         private void CreateLines(Queue<LineSegment> lines, int workAmount)
         {
-            var expectedVerticesNum = vertexCounter + lines.Count * 4;
+            var expectedVerticesNum = _vertexCounter + lines.Count * 4;
             var currentVerticesNum = _normalMesh.vertices.Length;
 
-            var expectedTriangleNum = triangleCounter + lines.Count * 6;
+            var expectedTriangleNum = _triangleCounter + lines.Count * 6;
             var currentTriangleNum = _normalMesh.triangles.Length;
 
             Color32[] colors;
@@ -176,7 +176,7 @@ namespace Assets.Modules.ParallelCoordinates
                 var line = lines.Dequeue();
                 line.WaitingForColor = false;
                 line.WaitingForVertex = false;
-                line.MeshIndex = vertexCounter / 4;
+                line.MeshIndex = _vertexCounter / 4;
 
                 start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
                 end = new Vector3(-line.End.x, line.End.y, line.End.z);
@@ -192,29 +192,29 @@ namespace Assets.Modules.ParallelCoordinates
                 quadTransparent[2] = (line.IsFiltered ? end : start) + widthDirection * width;
                 quadTransparent[3] = (line.IsFiltered ? end : start) + widthDirection * -width;
 
-                verticesNormal[vertexCounter] = quadNormal[0];
-                verticesNormal[vertexCounter + 1] = quadNormal[1];
-                verticesNormal[vertexCounter + 2] = quadNormal[2];
-                verticesNormal[vertexCounter + 3] = quadNormal[3];
+                verticesNormal[_vertexCounter] = quadNormal[0];
+                verticesNormal[_vertexCounter + 1] = quadNormal[1];
+                verticesNormal[_vertexCounter + 2] = quadNormal[2];
+                verticesNormal[_vertexCounter + 3] = quadNormal[3];
 
-                verticesTransparent[vertexCounter] = quadTransparent[0];
-                verticesTransparent[vertexCounter + 1] = quadTransparent[1];
-                verticesTransparent[vertexCounter + 2] = quadTransparent[2];
-                verticesTransparent[vertexCounter + 3] = quadTransparent[3];
+                verticesTransparent[_vertexCounter] = quadTransparent[0];
+                verticesTransparent[_vertexCounter + 1] = quadTransparent[1];
+                verticesTransparent[_vertexCounter + 2] = quadTransparent[2];
+                verticesTransparent[_vertexCounter + 3] = quadTransparent[3];
 
-                colors[vertexCounter] = line.Color;
-                colors[vertexCounter + 1] = line.Color;
-                colors[vertexCounter + 2] = line.Color;
-                colors[vertexCounter + 3] = line.Color;
+                colors[_vertexCounter] = line.Color;
+                colors[_vertexCounter + 1] = line.Color;
+                colors[_vertexCounter + 2] = line.Color;
+                colors[_vertexCounter + 3] = line.Color;
 
 
                 // front
-                triangles[triangleCounter] = vertexCounter;
-                triangles[triangleCounter + 1] = vertexCounter + 1;
-                triangles[triangleCounter + 2] = vertexCounter + 2;
-                triangles[triangleCounter + 3] = vertexCounter + 1;
-                triangles[triangleCounter + 4] = vertexCounter + 3;
-                triangles[triangleCounter + 5] = vertexCounter + 2;
+                triangles[_triangleCounter] = _vertexCounter;
+                triangles[_triangleCounter + 1] = _vertexCounter + 1;
+                triangles[_triangleCounter + 2] = _vertexCounter + 2;
+                triangles[_triangleCounter + 3] = _vertexCounter + 1;
+                triangles[_triangleCounter + 4] = _vertexCounter + 3;
+                triangles[_triangleCounter + 5] = _vertexCounter + 2;
 
 
                 // back
@@ -225,8 +225,8 @@ namespace Assets.Modules.ParallelCoordinates
                 //triangles[triangleCounter + 10] = vertexCounter + 2;
                 //triangles[triangleCounter + 11] = vertexCounter + 3;
 
-                triangleCounter += 6;
-                vertexCounter += 4;
+                _triangleCounter += 6;
+                _vertexCounter += 4;
             }
 
 
@@ -320,6 +320,8 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _normalMesh.Clear();
             _transparentMesh.Clear();
+            _vertexCounter = 0;
+            _triangleCounter = 0;
 
             if (_creationRoutineId >= 0) { GameLoop.Instance.StopRoutine(_creationRoutineId); _creationRoutineId = -1; }
             _lineCreationQueue.Clear();
