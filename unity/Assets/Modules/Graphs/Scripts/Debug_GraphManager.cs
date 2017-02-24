@@ -22,6 +22,8 @@ namespace Assets.Modules.Graphs
             for (var i = 0; i < NumGraphs; i++)
             {
                 var graph = _graphManager.CreateGraph(i);
+                graph.Id = i;
+                graph.Color = Random.ColorHSV();
                 graph.DimX = GetRandomData("X" + i);
                 graph.DimY = GetRandomData("Y" + i);
             }

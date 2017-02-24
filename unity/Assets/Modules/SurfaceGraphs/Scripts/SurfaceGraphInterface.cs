@@ -114,10 +114,13 @@ namespace Assets.Modules.SurfaceGraphs
 
         private void UpdateGraphData(Graph graph, RemoteGraph remoteGraph)
         {
-            // TODO! color code (#fff) -> unity color
-            //graph.Color = remoteGraph.color;
             graph.IsSelected = remoteGraph.isSelected;
             graph.IsNewlyCreated = remoteGraph.isNewlyCreated;
+
+            var color = new Color();
+            var colorSuccess = ColorUtility.TryParseHtmlString(remoteGraph.color, out color);
+            if (colorSuccess) { graph.Color = color; }
+            else { Debug.LogWarning("Could not parse color " + remoteGraph.color); }
 
             if (String.IsNullOrEmpty(remoteGraph.dimX))
             {
