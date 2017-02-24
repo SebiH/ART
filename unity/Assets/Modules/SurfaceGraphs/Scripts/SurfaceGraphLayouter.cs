@@ -6,9 +6,8 @@ namespace Assets.Modules.SurfaceGraphs
     [RequireComponent(typeof(GraphManager))]
     public class SurfaceGraphLayouter : MonoBehaviour
     {
-        public bool IsGraphSelected = false;
-
         private GraphManager _manager;
+        private bool _isGraphSelected = false;
 
         // for selection, etc.
         const float NormalAnimationSpeed = 1f;
@@ -29,7 +28,7 @@ namespace Assets.Modules.SurfaceGraphs
 
         private void Update()
         {
-            IsGraphSelected = false;
+            _isGraphSelected = false;
             foreach (var graph in _manager.GetAllGraphs())
             {
                 // TODO: minor performance improvement: only calculate once globally for all graphs?
@@ -49,8 +48,9 @@ namespace Assets.Modules.SurfaceGraphs
                 var actualHeight = Mathf.Lerp(currentHeight, targetHeight, Time.unscaledDeltaTime * NormalAnimationSpeed);
 
                 graph.transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
+                graph.transform.localScale = new Vector3(graph.Scale, graph.Scale, 1);
 
-                IsGraphSelected = IsGraphSelected || graph.IsSelected;
+                _isGraphSelected = _isGraphSelected || graph.IsSelected;
             }
         }
 
@@ -65,7 +65,7 @@ namespace Assets.Modules.SurfaceGraphs
 
         private float GetZOffset()
         {
-            return IsGraphSelected ? 1f : 0.5f;
+            return _isGraphSelected ? 1f : 0.5f;
         }
     }
 }

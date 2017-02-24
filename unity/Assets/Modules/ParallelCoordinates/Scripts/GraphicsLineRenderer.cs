@@ -246,6 +246,10 @@ namespace Assets.Modules.ParallelCoordinates
             LineMesh.colors32 = colors;
         }
 
+        public void SetHidden(bool hidden)
+        {
+            GetComponent<Renderer>().enabled = !hidden;
+        }
 
         public void ClearLines()
         {

@@ -24,7 +24,6 @@ namespace Assets.Modules.ParallelCoordinates
             _lineRenderer = GetComponent<GraphicsLineRenderer>();
             _originGraph = UnityUtility.FindParent<Graph>(this);
             _originGraph.OnDataChange += AdjustLines;
-            FindNextGraph();
             UpdateScale();
         }
 
@@ -216,6 +215,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 Gizmos.color = Color.red;
                 Gizmos.DrawLine(transform.position, _nextGraph.transform.position);
+                Gizmos.DrawWireCube(transform.position, Vector3.one * 0.05f);
             }
         }
     }
