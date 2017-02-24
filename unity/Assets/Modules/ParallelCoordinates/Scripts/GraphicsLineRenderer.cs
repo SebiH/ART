@@ -53,16 +53,6 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        public void SwapWith(GraphicsLineRenderer other)
-        {
-            var mesh = other.LineMesh;
-            other.LineMesh = LineMesh;
-            LineMesh = mesh;
-
-            GetComponent<MeshFilter>().mesh = LineMesh;
-            other.GetComponent<MeshFilter>().mesh = other.LineMesh;
-        }
-
         public void AddLine(LineSegment line)
         {
             // adding lines over multiple update()s to avoid extreme lag

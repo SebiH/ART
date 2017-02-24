@@ -68,6 +68,7 @@ namespace Assets.Modules.ParallelCoordinates
             return newConnectedGraph;
         }
 
+
         private void SetConnectedGraph(Graph newGraph)
         {
             if (_connectedGraph != null)
@@ -80,10 +81,8 @@ namespace Assets.Modules.ParallelCoordinates
                 newGraph.OnDataChange += HandleDataChange;
             }
 
-            // TODO: possibly swap meshes
-
             _connectedGraph = newGraph;
-            GenerateLines(true);
+            GenerateLines(false);
         }
 
         private void HandleDataChange()
