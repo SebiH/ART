@@ -6,7 +6,7 @@ namespace Assets.Modules.Graphs
     public class Graph : MonoBehaviour
     {
         public int Id { get; set; }
-        public string Color { get; set; }
+        public Color Color { get; set; }
         public bool IsSelected { get; set; }
         public bool IsNewlyCreated { get; set; }
 

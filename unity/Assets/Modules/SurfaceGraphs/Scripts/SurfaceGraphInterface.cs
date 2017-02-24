@@ -12,7 +12,6 @@ namespace Assets.Modules.SurfaceGraphs
     public class SurfaceGraphInterface : MonoBehaviour
     {
         private Surface _surface;
-        private SurfaceGraphLayouter _layout;
         private GraphManager _graphManager;
         private RemoteDataProvider _dataProvider = new RemoteDataProvider();
 
@@ -23,7 +22,6 @@ namespace Assets.Modules.SurfaceGraphs
             _surface.OnAction += HandleSurfaceAction;
 
             _graphManager = GetComponent<GraphManager>();
-            _layout = GetComponent<SurfaceGraphLayouter>();
 
             StartCoroutine(InitWebData());
         }
@@ -116,7 +114,8 @@ namespace Assets.Modules.SurfaceGraphs
 
         private void UpdateGraphData(Graph graph, RemoteGraph remoteGraph)
         {
-            graph.Color = remoteGraph.color;
+            // TODO! color code (#fff) -> unity color
+            //graph.Color = remoteGraph.color;
             graph.IsSelected = remoteGraph.isSelected;
             graph.IsNewlyCreated = remoteGraph.isNewlyCreated;
 
