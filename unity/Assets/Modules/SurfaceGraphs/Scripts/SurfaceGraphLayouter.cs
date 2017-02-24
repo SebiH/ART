@@ -29,6 +29,7 @@ namespace Assets.Modules.SurfaceGraphs
 
         private void Update()
         {
+            IsGraphSelected = false;
             foreach (var graph in _manager.GetAllGraphs())
             {
                 // TODO: minor performance improvement: only calculate once globally for all graphs?
@@ -48,6 +49,8 @@ namespace Assets.Modules.SurfaceGraphs
                 var actualHeight = Mathf.Lerp(currentHeight, targetHeight, Time.unscaledDeltaTime * NormalAnimationSpeed);
 
                 graph.transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
+
+                IsGraphSelected = IsGraphSelected || graph.IsSelected;
             }
         }
 

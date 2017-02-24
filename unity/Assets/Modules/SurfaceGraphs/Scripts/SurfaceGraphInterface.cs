@@ -4,8 +4,6 @@ using Assets.Modules.ParallelCoordinates;
 using Assets.Modules.Surfaces;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.SurfaceGraphs
@@ -16,8 +14,7 @@ namespace Assets.Modules.SurfaceGraphs
         private Surface _surface;
         private SurfaceGraphLayouter _layout;
         private GraphManager _graphManager;
-
-        private readonly List<RemoteGraph> _currentGraphs = new List<RemoteGraph>();
+        private RemoteDataProvider _dataProvider = new RemoteDataProvider();
 
         void OnEnable()
         {
@@ -34,7 +31,6 @@ namespace Assets.Modules.SurfaceGraphs
         void OnDisable()
         {
             _surface.OnAction -= HandleSurfaceAction;
-            _currentGraphs.Clear();
         }
 
         private IEnumerator InitWebData()
@@ -44,40 +40,27 @@ namespace Assets.Modules.SurfaceGraphs
 
             if (request.text != null && request.text.Length > 0)
             {
-                var graphInfo = JsonUtility.FromJson<GraphInfoWrapper>(request.text);
+                var graphInfo = JsonUtility.FromJson<RemoteGraphs>(request.text);
                 foreach (var graph in graphInfo.graphs)
                 {
                     AddGraph(graph);
                 }
 
-                foreach (var graph in graphInfo.graphs)
-                {
-                    UpdateGraphData(graph);
-                    UpdateGraphPosition(graph);
-                }
-
-                // create all graph/line objects
-                yield return new WaitForEndOfFrame();
-
                 if (graphInfo.data.hasFilter) { DataLineManager.SetFilter(null); }
                 else { DataLineManager.SetFilter(graphInfo.data.selectedDataIndices); }
-
-                UpdateGraphSelection();
             }
         }
 
         private void HandleSurfaceAction(string command, string payload)
         {
             RemoteGraph info;
-            GraphInfoWrapper wrapper;
+            RemoteGraphs wrapper;
 
             switch (command)
             {
                 case "+graph":
                     info = JsonUtility.FromJson<RemoteGraph>(payload);
                     AddGraph(info);
-                    UpdateGraphData(info);
-                    UpdateGraphPosition(info);
                     break;
 
                 /*
@@ -86,13 +69,21 @@ namespace Assets.Modules.SurfaceGraphs
                  * - graph-position with high-frequency positional data
                  */
                 case "graph-data":
-                    wrapper = JsonUtility.FromJson<GraphInfoWrapper>(payload);
-                    UpdateGraphData(wrapper);
+                    wrapper = JsonUtility.FromJson<RemoteGraphs>(payload);
+                    foreach (var remoteGraph in wrapper.graphs)
+                    {
+                        var graph = _graphManager.GetGraph(remoteGraph.id);
+                        if (graph) { UpdateGraphData(graph, remoteGraph); }
+                    }
                     break;
 
                 case "graph-position":
-                    wrapper = JsonUtility.FromJson<GraphInfoWrapper>(payload);
-                    UpdateGraphPosition(wrapper);
+                    wrapper = JsonUtility.FromJson<RemoteGraphs>(payload);
+                    foreach (var remoteGraph in wrapper.graphs)
+                    {
+                        var graph = _graphManager.GetGraph(remoteGraph.id);
+                        if (graph) { UpdateGraphPosition(graph, remoteGraph); }
+                    }
                     break;
 
                 case "-graph":
@@ -108,116 +99,67 @@ namespace Assets.Modules.SurfaceGraphs
             }
         }
 
-        private RemoteGraph GetExistingGraphInfo(int id)
+        private void AddGraph(RemoteGraph remoteGraph)
         {
-            return _currentGraphs.FirstOrDefault(g => g.id == id);
-        }
-
-        private void AddGraph(RemoteGraph graphInfo)
-        {
-            var graph = _graphManager.CreateGraph(graphInfo.id);
-
-            var existingGraphInfo = GetExistingGraphInfo(graphInfo.id);
-            if (existingGraphInfo == null)
+            var hasDuplicate = (_graphManager.GetGraph(remoteGraph.id) != null);
+            if (!hasDuplicate)
             {
-                _currentGraphs.Add(graphInfo);
+                var graph = _graphManager.CreateGraph(remoteGraph.id);
+                UpdateGraphData(graph, remoteGraph);
+                UpdateGraphPosition(graph, remoteGraph);
             }
             else
             {
-                Debug.LogWarning("Already have graphinfo for id " + graphInfo.id);
+                Debug.LogWarning("Graph " + remoteGraph.id + " already exists!");
             }
         }
 
-        private void UpdateGraphData(GraphInfoWrapper graphInfoWrapper)
+        private void UpdateGraphData(Graph graph, RemoteGraph remoteGraph)
         {
-            // update existing graph info first, before applying changes to actual graphs
-            foreach (var updatedGraph in graphInfoWrapper.graphs)
+            graph.Color = remoteGraph.color;
+            graph.IsSelected = remoteGraph.isSelected;
+            graph.IsNewlyCreated = remoteGraph.isNewlyCreated;
+
+            if (String.IsNullOrEmpty(remoteGraph.dimX))
             {
-                var existingGraph = GetExistingGraphInfo(updatedGraph.id);
-                if (existingGraph == null)
-                {
-                    AddGraph(updatedGraph);
-                }
-                else
-                {
-                    existingGraph.color = updatedGraph.color;
-                    existingGraph.dimX = updatedGraph.dimX;
-                    existingGraph.dimY = updatedGraph.dimY;
-                    existingGraph.isSelected = updatedGraph.isSelected;
-                }
+                graph.DimX = null;
             }
-
-            foreach (var updatedGraph in graphInfoWrapper.graphs)
+            else if (graph.DimX == null || graph.DimX.DisplayName != remoteGraph.dimX)
             {
-                UpdateGraphData(updatedGraph);
-            }
-
-            UpdateGraphSelection();
-        }
-
-        private void UpdateGraphSelection()
-        {
-            var hasSelectedGraph = _currentGraphs.Any(g => g.isSelected);
-            _layout.IsGraphSelected = hasSelectedGraph;
-        }
-
-        private void UpdateGraphData(RemoteGraph graphInfo)
-        {
-            var graph = _graphManager.GetGraph(graphInfo.id);
-            graph.SetData(graphInfo.dimX, graphInfo.dimY);
-
-            var graphVisualisation = graph.GetComponentInChildren<GraphVisualisation>();
-            Debug.Assert(graphVisualisation, "Graphs must have GraphVisualisation in children!");
-            graphVisualisation.SetDimensionX(graphInfo.dimX, 0, 1);
-            graphVisualisation.SetDimensionY(graphInfo.dimY, 0, 1);
-            graphVisualisation.SetFilterActive(graphInfo.hasFilter);
-        }
-
-        private void UpdateGraphPosition(GraphInfoWrapper graphInfoWrapper)
-        {
-            // update existing graph info first, before applying changes to actual graphs
-            foreach (var updatedGraph in graphInfoWrapper.graphs)
-            {
-                var existingGraph = GetExistingGraphInfo(updatedGraph.id);
-                if (existingGraph == null)
+                _dataProvider.LoadDataAsync(remoteGraph.dimX, (dim) =>
                 {
-                    AddGraph(updatedGraph);
-                }
-                else
-                {
-                    existingGraph.pos = updatedGraph.pos;
-                    existingGraph.nextId = updatedGraph.nextId;
-                }
+                    graph.DimX = dim;
+                });
             }
 
-
-            foreach (var updatedGraph in graphInfoWrapper.graphs)
+            if (String.IsNullOrEmpty(remoteGraph.dimY))
             {
-                UpdateGraphPosition(updatedGraph);
+                graph.DimY = null;
+            }
+            else if (graph.DimY == null || graph.DimY.DisplayName != remoteGraph.dimY)
+            {
+                _dataProvider.LoadDataAsync(remoteGraph.dimY, (dim) =>
+                {
+                    graph.DimY = dim;
+                });
             }
         }
 
-        private void UpdateGraphPosition(RemoteGraph graphInfo)
+
+        private void UpdateGraphPosition(Graph graph, RemoteGraph remoteGraph)
         {
-            var graph = _graphManager.GetGraph(graphInfo.id);
-            graph.Position = _surface.PixelToUnityCoord(graphInfo.pos);
-            graph.Width = _surface.PixelToUnityCoord(graphInfo.width);
+            graph.Position = _surface.PixelToUnityCoord(remoteGraph.pos);
+            graph.Width = _surface.PixelToUnityCoord(remoteGraph.width);
         }
+
 
         private void RemoveGraph(int graphId)
         {
-            var graphInfo = GetExistingGraphInfo(graphId);
-
-            if (graphInfo != null)
-            {
-                _currentGraphs.Remove(graphInfo);
-            }
-
             _graphManager.RemoveGraph(graphId);
         }
 
         [Serializable]
-        private class GraphInfoWrapper
+        private class RemoteGraphs
         {
             public RemoteGraph[] graphs = new RemoteGraph[0];
             public DataWrapper data = null;

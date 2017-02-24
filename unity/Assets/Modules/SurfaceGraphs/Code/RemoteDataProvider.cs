@@ -10,31 +10,34 @@ namespace Assets.Modules.SurfaceGraphs
     public class RemoteDataProvider
     {
         private Dictionary<string, Dimension> _loadedData = new Dictionary<string, Dimension>();
-        private Dictionary<string, List<Action<string, DataPoint[]>>> _loadOperations = new Dictionary<string, List<Action<string, DataPoint[]>>>();
+        private Dictionary<string, List<Action<Dimension>>> _loadOperations = new Dictionary<string, List<Action<Dimension>>>();
 
-        public virtual void LoadDataAsync(string dimension, Action<Dimension> onDataLoaded)
+        public virtual void LoadDataAsync(string dimensionName, Action<Dimension> onDataLoaded)
         {
-            if (_loadedData.ContainsKey(dimension))
+            if (_loadedData.ContainsKey(dimensionName))
             {
-                onDataLoaded(_loadedData[dimension]);
+                // already cached
+                onDataLoaded(_loadedData[dimensionName]);
             }
-            else if (_loadOperations.ContainsKey(dimension))
+            else if (_loadOperations.ContainsKey(dimensionName))
             {
-                _loadOperations[dimension].Add(onDataLoaded);
+                // load operation already active, queue up for response
+                _loadOperations[dimensionName].Add(onDataLoaded);
             }
             else
             {
-                _loadOperations.Add(dimension, new List<Action<Dimension>>());
-                _loadOperations[dimension].Add(onDataLoaded);
-                GameLoop.Instance.StartCoroutine(LoadData(dimension));
+                // start new request
+                _loadOperations.Add(dimensionName, new List<Action<Dimension>>());
+                _loadOperations[dimensionName].Add(onDataLoaded);
+                GameLoop.Instance.StartCoroutine(LoadData(dimensionName));
             }
         }
 
 
-        private IEnumerator LoadData(string dimension)
+        private IEnumerator LoadData(string dimensionName)
         {
             var dataRequestForm = new WWWForm();
-            dataRequestForm.AddField("dimension", dimension);
+            dataRequestForm.AddField("dimension", dimensionName);
 
             var dataWebRequest = new WWW(String.Format("{0}:{1}/api/graph/data", Globals.SurfaceServerIp, Globals.SurfaceWebPort), dataRequestForm);
             yield return dataWebRequest;
@@ -43,30 +46,48 @@ namespace Assets.Modules.SurfaceGraphs
             var dimData = response.data;
             var range = response.domain.max - response.domain.min;
 
-            var dataPoints = new DataPoint[dimData.Length];
+            var data = new float[dimData.Length];
             if (response.isMetric)
             {
                 for (int i = 0; i < dimData.Length; i++)
                 {
-                    dataPoints[i] = new DataPoint { Index = i, Value = (dimData[i] - response.domain.min) / range - 0.5f };
+                    data[i] = (dimData[i] - response.domain.min) / range - 0.5f;
                 }
             }
             else
             {
                 for (int i = 0; i < dimData.Length; i++)
                 {
-                    var adjustedValue = (dimData[i] + 1 - response.domain.min) / (range + 2) - 0.5f;
-                    dataPoints[i] = new DataPoint { Index = i, Value = adjustedValue };
+                    data[i] = (dimData[i] + 1 - response.domain.min) / (range + 2) - 0.5f;
                 }
             }
 
-            _loadedData[dimension] = dataPoints;
+            Dimension dimension;
 
-            foreach (var onDataLoaded in _loadOperations[dimension])
+            if (response.isMetric)
             {
-                onDataLoaded(dimension, dataPoints);
+                dimension = new MetricDimension();
             }
-            _loadOperations.Remove(dimension);
+            else
+            {
+                var catDimension = new CategoricalDimension();
+                foreach (var mapping in response.mappings)
+                {
+                    catDimension.Mappings.Add(new CategoricalDimension.Mapping { Name = mapping.name, Value = mapping.value });
+                }
+                dimension = catDimension;
+            }
+
+            dimension.Data = data;
+            dimension.DisplayName = dimensionName;
+            dimension.DomainMin = response.domain.min;
+            dimension.DomainMax = response.domain.max;
+
+            foreach (var onDataLoaded in _loadOperations[dimensionName])
+            {
+                onDataLoaded(dimension);
+            }
+            _loadOperations.Remove(dimensionName);
         }
 
         [Serializable]

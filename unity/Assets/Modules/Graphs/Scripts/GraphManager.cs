@@ -7,7 +7,6 @@ namespace Assets.Modules.Graphs
     public class GraphManager : MonoBehaviour
     {
         public Graph GraphTemplate;
-        public RemoteDataProvider DataProvider;
 
         private readonly List<Graph> _graphs = new List<Graph>();
 
@@ -55,7 +54,6 @@ namespace Assets.Modules.Graphs
 
             var graph = SpawnGraph();
             graph.Id = id;
-            graph.DataProvider = DataProvider;
             _graphs.Add(graph);
 
             if (OnGraphAdded != null)

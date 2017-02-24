@@ -1,36 +1,26 @@
+using Assets.Modules.Core;
 using UnityEngine;
 
 namespace Assets.Modules.Graphs
 {
     public class GraphVisualisation : MonoBehaviour
     {
+        private Graph _graph;
+
         public GraphLabel LabelX;
         public GraphLabel LabelY;
         public GraphDataField DataField;
         public GameObject FilterSymbol;
 
-        public void SetDimensionX(string name, float domainMin, float domainMax)
+        private void OnEnable()
         {
-            if (LabelX)
-            {
-                LabelX.Text = name;
-            }
+            _graph = UnityUtility.FindParent<Graph>(this);
         }
 
-        public void SetDimensionY(string name, float domainMin, float domainMax)
+        private void Update()
         {
-            if (LabelY)
-            {
-                LabelY.Text = name;
-            }
-        }
-
-        public void SetFilterActive(bool status)
-        {
-            if (FilterSymbol)
-            {
-                FilterSymbol.SetActive(status);
-            }
+            LabelX.Text = (_graph.DimX == null) ? "" : _graph.DimX.DisplayName;
+            LabelY.Text = (_graph.DimY == null) ? "" : _graph.DimY.DisplayName;
         }
     }
 }

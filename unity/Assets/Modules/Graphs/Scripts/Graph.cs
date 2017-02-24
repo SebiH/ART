@@ -7,10 +7,22 @@ namespace Assets.Modules.Graphs
     {
         public int Id { get; set; }
         public string Color { get; set; }
-        public Dimension DimX { get; private set; }
-        public Dimension DimY { get; private set; }
         public bool IsSelected { get; set; }
         public bool IsNewlyCreated { get; set; }
+
+        private Dimension _dimX;
+        public Dimension DimX
+        {
+            get { return _dimX; }
+            set { if (_dimX != value) { _dimX = value; BuildData(); } }
+        }
+
+        private Dimension _dimY;
+        public Dimension DimY
+        {
+            get { return _dimY; }
+            set { if (_dimY != value) { _dimY = value; BuildData(); } }
+        }
 
         // for layouter
         public float Position { get; set; }
@@ -28,32 +40,28 @@ namespace Assets.Modules.Graphs
 
         private DataPoint[] _data = null;
         public bool HasData { get { return _data != null; } }
+        public int DataLength { get { return _data.Length; } }
 
-        public void SetDimensions(Dimension dimX, Dimension dimY)
+        private void BuildData()
         {
-            if (dimX == null || dimY == null)
+            if (_dimX == null || _dimY == null)
             {
-                var prevData = _data;
                 _data = null;
-                if (prevData != null && OnDataChange != null)
-                {
-                    OnDataChange();
-                }
             }
-            else if (dimX != DimX || dimY != DimY)
+            else
             {
-                Debug.Assert(dimX.Data.Length == dimY.Data.Length);
-                var dataLength = dimX.Data.Length;
+                Debug.Assert(_dimX.Data.Length == _dimY.Data.Length);
+                var dataLength = _dimX.Data.Length;
                 _data = new DataPoint[dataLength];
                 for (int i = 0; i < dataLength; i++)
                 {
-                    _data[i] = new DataPoint { X = dimX.Data[i], Y = dimY.Data[i] };
+                    _data[i] = new DataPoint { X = _dimX.Data[i], Y = _dimY.Data[i] };
                 }
+            }
 
-                if (OnDataChange != null)
-                {
-                    OnDataChange();
-                }
+            if (OnDataChange != null)
+            {
+                OnDataChange();
             }
         }
 

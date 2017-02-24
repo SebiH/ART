@@ -184,7 +184,7 @@ namespace Assets.Modules.ParallelCoordinates
             else if (_originGraph.HasData && _nextGraph && _nextGraph.HasData)
             {
                 _hasCreatedLines = true;
-                for (int i = 0; i < _originGraph.Data.Length; i++)
+                for (int i = 0; i < _originGraph.DataLength; i++)
                 {
                     var segment = new LineSegment();
                     segment.SetRenderer(_lineRenderer);
