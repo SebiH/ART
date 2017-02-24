@@ -79,77 +79,17 @@ export class GraphProvider {
     public setGraphOffset(graph: Graph, offset: number) {
         graph.posOffset = offset;
 
-        let sortedGraphs = _.sortBy(this.graphs, 'listIndex');
-        let graphIndex = sortedGraphs.indexOf(graph);
-
-        if (graph.posOffset < 0 && graphIndex > 0) {
-            let prevGraph = sortedGraphs[graphIndex - 1];
-            while (-graph.posOffset > prevGraph.width / 2) {
-                this.moveLeft(graph);
-                graph.posOffset += prevGraph.width;
-            }
-        } else if (graph.posOffset > 0 && graphIndex < sortedGraphs.length - 1) {
-            let nextGraph = sortedGraphs[graphIndex + 1];
-            while (graph.posOffset > nextGraph.width / 2) {
-                this.moveRight(graph);
-                graph.posOffset -= nextGraph.width;
-            }
-        }
-
+        this.recalculateGraphIndices();
         graph.updatePosition();
-    }
-
-    public moveLeft(graph: Graph) {
-        let prevGraph = _.find(this.graphs, g => g.nextGraphId === graph.id);
-
-        if (prevGraph) {
-            let prevPrevGraph = _.find(this.graphs, g => g.nextGraphId === prevGraph.id);
-
-            prevGraph.nextGraphId = graph.nextGraphId;
-            graph.nextGraphId = prevGraph.id;
-
-            prevGraph.updatePosition();
-            graph.updatePosition();
-
-            if (prevPrevGraph) {
-                prevPrevGraph.nextGraphId = graph.id;
-                prevPrevGraph.updatePosition();
-            }
-        }
-
-        this.recalculateGraphIndices();
-    }
-
-    public moveRight(graph: Graph) {
-        let nextGraph = _.find(this.graphs, g => graph.nextGraphId === g.id);
-        let prevGraph = _.find(this.graphs, g => g.nextGraphId === graph.id);
-
-        if (nextGraph) {
-            graph.nextGraphId = nextGraph.nextGraphId;
-            nextGraph.nextGraphId = graph.id;
-            nextGraph.updatePosition();
-            graph.updatePosition();
-
-            if (prevGraph) {
-                prevGraph.nextGraphId = nextGraph.id;
-                prevGraph.updatePosition();
-            }
-        }
-
-        this.recalculateGraphIndices();
     }
 
     public addGraph(): Graph {
         let graph = new Graph();
         graph.id = this.idCounter++;
         graph.color = COLOURS[graph.id % COLOURS.length];
+        graph.isNewlyCreated = true;
 
         this.attachListeners(graph);
-
-        if (this.graphs.length > 0) {
-            graph.nextGraphId = _.find(this.graphs, g => g.listIndex === 0).id;
-        }
-
         this.socketio.sendMessage('+graph', graph.toJson());
 
         this.graphs.push(graph);
@@ -177,11 +117,6 @@ export class GraphProvider {
     public removeGraph(graph: Graph): void {
         this.socketio.sendMessage('-graph', graph.id);
         _.pull(this.graphs, graph);
-
-        let prevGraph = _.find(this.graphs, g => g.nextGraphId == graph.id);
-        if (prevGraph) {
-            prevGraph.nextGraphId = graph.nextGraphId;
-        }
         this.recalculateGraphIndices();
 
         this.graphObserver.next(this.graphs);
@@ -215,16 +150,21 @@ export class GraphProvider {
     }
 
 
-    private recalculateGraphIndices(): void {
-        let maxIndex = this.graphs.length - 1;
-        let index = maxIndex;
-        // start at the end, work backwards
-        let graph = _.find(this.graphs, g => g.nextGraphId === -1);
+    public recalculateGraphIndices(): void {
+        var sortedGraphs = _.sortBy(this.graphs, 'absolutePos');
+        var listIndexCounter = 0;
 
-        while (index >= 0 && graph) {
-            graph.listIndex = index;
-            index--;
-            graph = _.find(this.graphs, g => g.nextGraphId === graph.id);
+        for (let graph of sortedGraphs) {
+            if (!graph.isNewlyCreated) {
+                var prevListIndex = graph.listIndex;
+                graph.listIndex = listIndexCounter;
+
+                if (graph.isPickedUp) {
+                    graph.posOffset += graph.width * (prevListIndex - graph.listIndex);
+                }
+
+                listIndexCounter++;
+            }
         }
     }
 }

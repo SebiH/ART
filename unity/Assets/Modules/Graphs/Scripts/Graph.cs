@@ -14,8 +14,10 @@ namespace Assets.Modules.Graphs
         public DataPoint2D[] Data { get; private set; }
         public float Position { get; set; }
         public float Width { get; set; }
-        public bool IsAnimating = false;
-        public float Scale = 1;
+        public bool IsAnimating { get; set; }
+        public bool IsNewlyCreated { get; set; }
+        public bool IsPickedUp { get; set; }
+        public float Scale { get; set; }
 
         private string _currentDimX = null;
         private DataPoint[] _dataX = null;
@@ -35,7 +37,7 @@ namespace Assets.Modules.Graphs
 
         private void Update()
         {
-            transform.localScale = new Vector3(Scale, Scale, transform.localScale.z);
+            transform.localScale = new Vector3(Scale, Scale, Scale);
         }
 
         public void SetData(string dimX, string dimY)

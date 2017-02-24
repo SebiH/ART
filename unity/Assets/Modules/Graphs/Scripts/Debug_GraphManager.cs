@@ -19,6 +19,8 @@ namespace Assets.Modules.Graphs
             {
                 _graphManager.CreateGraph(i).SetData("x " + i, "y" + i);
             }
+
+            SetPositions();
         }
 
         private void OnDisable()
@@ -31,9 +33,16 @@ namespace Assets.Modules.Graphs
 
         private void Update()
         {
+            SetPositions();
+        }
+
+        private void SetPositions()
+        {
             foreach (var graph in _graphManager.GetAllGraphs())
             {
-                graph.transform.position = new Vector3(0, 0, graph.Id * SpaceBetweenGraphs);
+                var pos = graph.Id * SpaceBetweenGraphs;
+                graph.transform.position = new Vector3(0, 0, pos);
+                graph.Position = pos;
             }
         }
     }

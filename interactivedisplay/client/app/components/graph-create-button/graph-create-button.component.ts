@@ -20,7 +20,6 @@ export class GraphCreateButtonComponent {
         let graph = this.graphProvider.addGraph();
         this.createdGraph = graph;
         this.createdGraph.isPickedUp = true;
-        this.createdGraph.isNewlyCreated = true;
         this.graphCreation.emit(this.createdGraph);
     }
 

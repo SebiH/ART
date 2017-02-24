@@ -10,8 +10,8 @@ namespace Assets.Modules.ParallelCoordinates
     {
         private Graph _originGraph;
         private Graph _nextGraph;
-        public Graph NextGraph { get { return _nextGraph; } }
 
+        private GraphManager _graphManager;
         private GraphicsLineRenderer _lineRenderer;
         private List<LineSegment> _lineSegments = new List<LineSegment>();
 
@@ -20,9 +20,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void OnEnable()
         {
+            _graphManager = UnityUtility.FindParent<GraphManager>(this);
             _lineRenderer = GetComponent<GraphicsLineRenderer>();
             _originGraph = UnityUtility.FindParent<Graph>(this);
             _originGraph.OnDataChange += AdjustLines;
+            FindNextGraph();
         }
 
         private void OnDisable()
@@ -33,12 +35,13 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void Update()
         {
+            FindNextGraph();
             UpdateScale();
         }
 
         private void LateUpdate()
         {
-            if (_needsLineUpdate && _nextGraph)
+            if (_needsLineUpdate && _nextGraph && _nextGraph.Data != null)
             {
                 if (_hasCreatedLines)
                 {
@@ -53,7 +56,27 @@ namespace Assets.Modules.ParallelCoordinates
                 {
                     CreateLines();
                 }
+
+                _needsLineUpdate = false;
             }
+        }
+
+        private void FindNextGraph()
+        {
+            Graph nextGraph = null;
+            foreach (var graph in _graphManager.GetAllGraphs())
+            {
+                var isEligible = !graph.IsNewlyCreated;
+                var isNext = graph.Position > _originGraph.Position;
+                var isNearest = (nextGraph == null || nextGraph.Position > graph.Position);
+
+                if (isEligible && isNext && isNearest)
+                {
+                    nextGraph = graph;
+                }
+            }
+
+            SetNextGraph(nextGraph);
         }
 
         private Vector3 GetLineStart(int index)
@@ -88,7 +111,7 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-        public void SetNextGraph(Graph graph)
+        private void SetNextGraph(Graph graph)
         {
             var prevGraph = _nextGraph;
             _nextGraph = graph;
@@ -126,7 +149,7 @@ namespace Assets.Modules.ParallelCoordinates
             _needsLineUpdate = true;
         }
 
-        public void SwapWithNext()
+        private void SwapWithNext()
         {
             if (_nextGraph == null)
             {
@@ -147,7 +170,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 AdjustLines();
             }
-            else if (_originGraph.Data != null)
+            else if (_originGraph.Data != null && _nextGraph && _nextGraph.Data != null)
             {
                 _hasCreatedLines = true;
                 for (int i = 0; i < _originGraph.Data.Length; i++)
@@ -173,12 +196,6 @@ namespace Assets.Modules.ParallelCoordinates
             _lineSegments.Clear();
             _lineRenderer.ClearLines();
             _hasCreatedLines = false;
-        }
-
-
-        public static GraphConnection Get(Graph graph)
-        {
-            return graph.GetComponentInChildren<GraphConnection>();
         }
 
 

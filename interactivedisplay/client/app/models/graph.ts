@@ -22,7 +22,6 @@ export class Graph {
 
     public absolutePos: number = 0;
     public listIndex: number = 0;
-    public nextGraphId: number = -1;
     public width: number = 1250;
 
     public posOffset: number = 0;
@@ -58,8 +57,7 @@ export class Graph {
         this.positionSubscription.next({
             id: this.id,
             pos: this.absolutePos,
-            width: this.width,
-            nextId: this.nextGraphId
+            width: this.width
         });
     } 
 
@@ -75,8 +73,7 @@ export class Graph {
                 hasFilter: this.selectedDataIndices !== null && this.selectedDataIndices.length > 0,
 
             pos: this.absolutePos,
-            width: this.width,
-            nextId: this.nextGraphId
+            width: this.width
         }
     }
 
@@ -92,7 +89,6 @@ export class Graph {
         graph.isSelected = jGraph.isSelected;
 
         graph.absolutePos = jGraph.pos;
-        graph.nextGraphId = jGraph.nextId;
         graph.width = jGraph.width;
 
         return graph;

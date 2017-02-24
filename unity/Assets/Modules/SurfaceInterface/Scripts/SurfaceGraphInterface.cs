@@ -202,28 +202,6 @@ namespace Assets.Modules.SurfaceInterface
             var graph = _graphManager.GetGraph(graphInfo.id);
             graph.Position = _surface.PixelToUnityCoord(graphInfo.pos);
             graph.Width = _surface.PixelToUnityCoord(graphInfo.width);
-
-            var nextGraphInfo = _currentGraphs.FirstOrDefault(g => graphInfo.nextId == g.id);
-
-            if (nextGraphInfo != null)
-            {
-                var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
-                var nextConnection = GraphConnection.Get(nextGraph);
-                var currConnection = GraphConnection.Get(graph);
-
-                if (nextConnection.NextGraph == graph)
-                {
-                    currConnection.SwapWithNext();
-                }
-                else
-                {
-                    currConnection.SetNextGraph(nextGraph);
-                }
-            }
-            else
-            {
-                GraphConnection.Get(graph).SetNextGraph(null);
-            }
         }
 
         private void RemoveGraph(int graphId)
@@ -233,25 +211,6 @@ namespace Assets.Modules.SurfaceInterface
             if (graphInfo != null)
             {
                 _currentGraphs.Remove(graphInfo);
-
-                var graph = _graphManager.GetGraph(graphInfo.id);
-                var prevGraphInfo = _currentGraphs.FirstOrDefault(c => c.nextId == graphInfo.id);
-                var nextGraphInfo = _currentGraphs.FirstOrDefault(c => graphInfo.nextId == c.id);
-
-                if (prevGraphInfo != null)
-                {
-                    var prevGraph = _graphManager.GetGraph(prevGraphInfo.id);
-
-                    if (nextGraphInfo != null)
-                    {
-                        var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
-                        GraphConnection.Get(prevGraph).SetNextGraph(nextGraph);
-                    }
-                    else
-                    {
-                        GraphConnection.Get(prevGraph).SetNextGraph(null);
-                    }
-                }
             }
 
             _graphManager.RemoveGraph(graphId);
