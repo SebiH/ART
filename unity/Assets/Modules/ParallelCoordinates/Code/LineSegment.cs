@@ -6,7 +6,7 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class LineSegment
     {
-        const float ANIMATION_SPEED = 1.5f; // in seconds
+        const float ANIMATION_SPEED = 1f; // in seconds
 
         private Vector3 _start;
         public Vector3 Start
@@ -95,7 +95,7 @@ namespace Assets.Modules.ParallelCoordinates
         }
 
 
-        private Color32 _color = new Color32(25, 118, 210, 255);
+        private Color32 _color = new Color32(255, 255, 255, 255);
         public Color32 Color
         {
             get { return _color; }
