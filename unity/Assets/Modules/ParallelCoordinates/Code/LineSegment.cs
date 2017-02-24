@@ -167,7 +167,7 @@ namespace Assets.Modules.ParallelCoordinates
             while (timeDelta < 1.0f)
             {
                 timeDelta = (Time.time - _startTime) / ANIMATION_SPEED;
-                Start = Vector3.Lerp(_startOrigin, _startDestination, timeDelta);
+                _start = Vector3.Lerp(_startOrigin, _startDestination, timeDelta);
                 UpdatePosition();
 
                 yield return new WaitForEndOfFrame();
@@ -182,7 +182,7 @@ namespace Assets.Modules.ParallelCoordinates
             while (timeDelta < 1.0f)
             {
                 timeDelta = (Time.time - _endTime) / ANIMATION_SPEED;
-                End = Vector3.Lerp(_endOrigin, _endDestination, timeDelta);
+                _end = Vector3.Lerp(_endOrigin, _endDestination, timeDelta);
                 UpdatePosition();
 
                 yield return new WaitForEndOfFrame();
@@ -197,7 +197,7 @@ namespace Assets.Modules.ParallelCoordinates
             while (timeDelta < 1.0f)
             {
                 timeDelta = (Time.time - _colorTime) / ANIMATION_SPEED;
-                Color = Color32.Lerp(_colorOrigin, _colorDestination, timeDelta);
+                _color = Color32.Lerp(_colorOrigin, _colorDestination, timeDelta);
                 UpdateColor();
 
                 yield return new WaitForEndOfFrame();
