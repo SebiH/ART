@@ -1,6 +1,6 @@
 using System;
 
-namespace Assets.Modules.Graphs
+namespace Assets.Modules.SurfaceGraphs
 {
     [Serializable]
     public struct DataPoint

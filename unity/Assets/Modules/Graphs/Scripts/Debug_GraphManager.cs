@@ -33,7 +33,7 @@ namespace Assets.Modules.Graphs
 
         private void Update()
         {
-            SetPositions();
+            //SetPositions();
         }
 
         private void SetPositions()

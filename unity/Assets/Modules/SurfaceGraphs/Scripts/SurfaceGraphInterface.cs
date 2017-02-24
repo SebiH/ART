@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Assets.Modules.SurfaceInterface
+namespace Assets.Modules.SurfaceGraphs
 {
     [RequireComponent(typeof(GraphManager), typeof(SurfaceGraphLayouter))]
     public class SurfaceGraphInterface : MonoBehaviour
@@ -17,7 +17,7 @@ namespace Assets.Modules.SurfaceInterface
         private SurfaceGraphLayouter _layout;
         private GraphManager _graphManager;
 
-        private readonly List<GraphInfo> _currentGraphs = new List<GraphInfo>();
+        private readonly List<RemoteGraph> _currentGraphs = new List<RemoteGraph>();
 
         void OnEnable()
         {
@@ -68,13 +68,13 @@ namespace Assets.Modules.SurfaceInterface
 
         private void HandleSurfaceAction(string command, string payload)
         {
-            GraphInfo info;
+            RemoteGraph info;
             GraphInfoWrapper wrapper;
 
             switch (command)
             {
                 case "+graph":
-                    info = JsonUtility.FromJson<GraphInfo>(payload);
+                    info = JsonUtility.FromJson<RemoteGraph>(payload);
                     AddGraph(info);
                     UpdateGraphData(info);
                     UpdateGraphPosition(info);
@@ -108,12 +108,12 @@ namespace Assets.Modules.SurfaceInterface
             }
         }
 
-        private GraphInfo GetExistingGraphInfo(int id)
+        private RemoteGraph GetExistingGraphInfo(int id)
         {
             return _currentGraphs.FirstOrDefault(g => g.id == id);
         }
 
-        private void AddGraph(GraphInfo graphInfo)
+        private void AddGraph(RemoteGraph graphInfo)
         {
             var graph = _graphManager.CreateGraph(graphInfo.id);
 
@@ -161,7 +161,7 @@ namespace Assets.Modules.SurfaceInterface
             _layout.IsGraphSelected = hasSelectedGraph;
         }
 
-        private void UpdateGraphData(GraphInfo graphInfo)
+        private void UpdateGraphData(RemoteGraph graphInfo)
         {
             var graph = _graphManager.GetGraph(graphInfo.id);
             graph.SetData(graphInfo.dimX, graphInfo.dimY);
@@ -197,7 +197,7 @@ namespace Assets.Modules.SurfaceInterface
             }
         }
 
-        private void UpdateGraphPosition(GraphInfo graphInfo)
+        private void UpdateGraphPosition(RemoteGraph graphInfo)
         {
             var graph = _graphManager.GetGraph(graphInfo.id);
             graph.Position = _surface.PixelToUnityCoord(graphInfo.pos);
@@ -219,7 +219,7 @@ namespace Assets.Modules.SurfaceInterface
         [Serializable]
         private class GraphInfoWrapper
         {
-            public GraphInfo[] graphs = new GraphInfo[0];
+            public RemoteGraph[] graphs = new RemoteGraph[0];
             public DataWrapper data = null;
         }
 

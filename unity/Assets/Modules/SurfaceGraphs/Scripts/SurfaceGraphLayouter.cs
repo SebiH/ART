@@ -1,7 +1,7 @@
 using Assets.Modules.Graphs;
 using UnityEngine;
 
-namespace Assets.Modules.SurfaceInterface
+namespace Assets.Modules.SurfaceGraphs
 {
     [RequireComponent(typeof(GraphManager))]
     public class SurfaceGraphLayouter : MonoBehaviour

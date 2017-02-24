@@ -1,136 +1,77 @@
-using System.Linq;
+using System;
 using UnityEngine;
 
 namespace Assets.Modules.Graphs
 {
     public class Graph : MonoBehaviour
     {
-        public int Id;
-        public RemoteDataProvider DataProvider { get; set; }
+        public int Id { get; set; }
+        public string Color { get; set; }
+        public Dimension DimX { get; private set; }
+        public Dimension DimY { get; private set; }
+        public bool IsSelected { get; set; }
+        public bool IsNewlyCreated { get; set; }
 
-        public delegate void DataChangeHandler();
-        public event DataChangeHandler OnDataChange;
-
-        public DataPoint2D[] Data { get; private set; }
-        public bool HasData { get { return Data != null; } }
-
+        // for layouter
         public float Position { get; set; }
+        public float Scale { get; set; }
         public float Width { get; set; }
         public bool IsAnimating { get; set; }
-        public bool IsNewlyCreated { get; set; }
-        public bool IsPickedUp { get; set; }
-        public float Scale { get; set; }
 
-        private string _currentDimX = null;
-        private DataPoint[] _dataX = null;
-        private string _currentDimY = null;
-        private DataPoint[] _dataY = null;
+        public event Action OnDataChange;
 
-        void OnEnable()
+        private struct DataPoint
         {
-            Data = null;
-            Scale = 1f;
+            public float X;
+            public float Y;
         }
 
-        void OnDisable()
-        {
+        private DataPoint[] _data = null;
+        public bool HasData { get { return _data != null; } }
 
-        }
-
-        private void Update()
+        public void SetDimensions(Dimension dimX, Dimension dimY)
         {
-            transform.localScale = new Vector3(Scale, Scale, Scale);
-        }
-
-        public void SetData(string dimX, string dimY)
-        {
-            if (_currentDimX != dimX || _currentDimY != dimY)
+            if (dimX == null || dimY == null)
             {
-                Data = null;
-            }
-
-            if (_currentDimX != dimX)
-            {
-                _dataX = null;
-                _currentDimX = dimX;
-
-                if (!string.IsNullOrEmpty(dimX))
+                var prevData = _data;
+                _data = null;
+                if (prevData != null && OnDataChange != null)
                 {
-                    DataProvider.LoadDataAsync(dimX, OnDimXLoaded);
+                    OnDataChange();
                 }
             }
-
-            if (_currentDimY != dimY)
+            else if (dimX != DimX || dimY != DimY)
             {
-                _dataY = null;
-                _currentDimY = dimY;
-
-                if (!string.IsNullOrEmpty(dimY))
+                Debug.Assert(dimX.Data.Length == dimY.Data.Length);
+                var dataLength = dimX.Data.Length;
+                _data = new DataPoint[dataLength];
+                for (int i = 0; i < dataLength; i++)
                 {
-                    DataProvider.LoadDataAsync(dimY, OnDimYLoaded);
+                    _data[i] = new DataPoint { X = dimX.Data[i], Y = dimY.Data[i] };
+                }
+
+                if (OnDataChange != null)
+                {
+                    OnDataChange();
                 }
             }
         }
+
 
         public Vector3 GetLocalCoordinates(int index)
         {
-            var datum = Data[index];
-            return new Vector3(-datum.ValueX, datum.ValueY, 0);
+            if (_data != null)
+            {
+                var datum = _data[index];
+                return new Vector3(-datum.X, datum.Y, 0);
+            }
+
+            return Vector3.zero;
         }
 
         public Vector3 GetWorldCoordinates(int index)
         {
             return transform.TransformPoint(GetLocalCoordinates(index));
-        }
-
-        private void OnDimXLoaded(string dimension, DataPoint[] dataX)
-        {
-            // sanity check in case dimension changed while loading data
-            if (dimension == _currentDimX)
-            {
-                _dataX = dataX.OrderBy(d => d.Index).ToArray();
-                BuildData();
-            }
-        }
-
-        private void OnDimYLoaded(string dimension, DataPoint[] dataY)
-        {
-            // sanity check in case dimension changed while loading data
-            if (dimension == _currentDimY)
-            {
-                _dataY = dataY.OrderBy(d => d.Index).ToArray();
-                BuildData();
-            }
-        }
-
-        private void BuildData()
-        {
-            if (_dataX != null && _dataY != null)
-            {
-                Debug.Assert(_dataX.Length == _dataY.Length);
-
-                Data = new DataPoint2D[_dataX.Length];
-
-                for (int i = 0; i < _dataX.Length; i++)
-                {
-                    Debug.Assert(_dataX[i].Index == _dataY[i].Index);
-                    Data[i] = new DataPoint2D
-                    {
-                        Index = _dataX[i].Index,
-                        ValueX = _dataX[i].Value,
-                        ValueY = _dataY[i].Value
-                    };
-                }
-            }
-            else
-            {
-                Data = null;
-            }
-
-            if (OnDataChange != null)
-            {
-                OnDataChange();
-            }
         }
     }
 }

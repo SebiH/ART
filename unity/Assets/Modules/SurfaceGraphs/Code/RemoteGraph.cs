@@ -1,9 +1,9 @@
 using System;
 
-namespace Assets.Modules.SurfaceInterface
+namespace Assets.Modules.SurfaceGraphs
 {
     [Serializable]
-    public class GraphInfo
+    public class RemoteGraph
     {
         public int id = 0;
         public string dimX = null;
@@ -12,10 +12,9 @@ namespace Assets.Modules.SurfaceInterface
         public string color = "#FFFFFF";
 
         public bool isSelected = false;
-        public bool hasFilter = false;
+        public bool isNewlyCreated = false;
 
         public float pos = 0;
         public float width = 0;
-        public int nextId = 0;
     }
 }

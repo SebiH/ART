@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace Assets.Modules.Graphs
+namespace Assets.Modules.SurfaceGraphs
 {
-    public class Debug_RemoteDataProvider : RemoteDataProvider
+    public class Debug_RemoteDataProvider : MonoBehaviour
     {
         private Dictionary<string, DataPoint[]> _rndValues = new Dictionary<string, DataPoint[]>();
         public int NumData = 100;

@@ -1,21 +1,22 @@
 using Assets.Modules.Core;
+using Assets.Modules.Graphs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Modules.Graphs
+namespace Assets.Modules.SurfaceGraphs
 {
-    public class RemoteDataProvider : MonoBehaviour
+    public class RemoteDataProvider
     {
-        private Dictionary<string, DataPoint[]> _loadedData = new Dictionary<string, DataPoint[]>();
+        private Dictionary<string, Dimension> _loadedData = new Dictionary<string, Dimension>();
         private Dictionary<string, List<Action<string, DataPoint[]>>> _loadOperations = new Dictionary<string, List<Action<string, DataPoint[]>>>();
 
-        public virtual void LoadDataAsync(string dimension, Action<string, DataPoint[]> onDataLoaded)
+        public virtual void LoadDataAsync(string dimension, Action<Dimension> onDataLoaded)
         {
             if (_loadedData.ContainsKey(dimension))
             {
-                onDataLoaded(dimension, _loadedData[dimension]);
+                onDataLoaded(_loadedData[dimension]);
             }
             else if (_loadOperations.ContainsKey(dimension))
             {
@@ -23,9 +24,9 @@ namespace Assets.Modules.Graphs
             }
             else
             {
-                _loadOperations.Add(dimension, new List<Action<string, DataPoint[]>>());
+                _loadOperations.Add(dimension, new List<Action<Dimension>>());
                 _loadOperations[dimension].Add(onDataLoaded);
-                StartCoroutine(LoadData(dimension));
+                GameLoop.Instance.StartCoroutine(LoadData(dimension));
             }
         }
 
