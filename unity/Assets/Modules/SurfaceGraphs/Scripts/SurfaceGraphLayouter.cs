@@ -1,4 +1,5 @@
 using Assets.Modules.Graphs;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.SurfaceGraphs
@@ -28,7 +29,8 @@ namespace Assets.Modules.SurfaceGraphs
 
         private void Update()
         {
-            _isGraphSelected = false;
+            _isGraphSelected = _manager.GetAllGraphs().Any(g => g.IsSelected);
+
             foreach (var graph in _manager.GetAllGraphs())
             {
                 // TODO: minor performance improvement: only calculate once globally for all graphs?
@@ -49,8 +51,6 @@ namespace Assets.Modules.SurfaceGraphs
 
                 graph.transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
                 graph.transform.localScale = new Vector3(graph.Scale, graph.Scale, 1);
-
-                _isGraphSelected = _isGraphSelected || graph.IsSelected;
             }
         }
 
@@ -59,8 +59,7 @@ namespace Assets.Modules.SurfaceGraphs
         {
             graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
             graph.transform.localPosition = new Vector3(0, -0.5f, GetZOffset());
-            var scale = 0.75f;
-            graph.transform.localScale = new Vector3(scale, scale, 1);
+            graph.Scale = 0.55f;
         }
 
         private float GetZOffset()

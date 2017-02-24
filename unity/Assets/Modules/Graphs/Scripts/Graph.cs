@@ -67,7 +67,10 @@ namespace Assets.Modules.Graphs
 
         private void OnEnable()
         {
-            Scale = 1;
+            if (Scale < Mathf.Epsilon)
+            {
+                Scale = 1;
+            }
         }
 
         public Vector3 GetLocalCoordinates(int index)
