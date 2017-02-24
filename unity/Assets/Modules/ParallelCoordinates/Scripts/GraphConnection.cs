@@ -25,6 +25,7 @@ namespace Assets.Modules.ParallelCoordinates
             _originGraph = UnityUtility.FindParent<Graph>(this);
             _originGraph.OnDataChange += AdjustLines;
             FindNextGraph();
+            UpdateScale();
         }
 
         private void OnDisable()
@@ -35,26 +36,21 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void Update()
         {
-            FindNextGraph();
             UpdateScale();
+            FindNextGraph();
         }
 
         private void LateUpdate()
         {
-            if (_needsLineUpdate && _nextGraph && _nextGraph.Data != null)
+            if (_needsLineUpdate)
             {
-                if (_hasCreatedLines)
+                if (_nextGraph && _nextGraph.HasData)
                 {
-                    for (int i = 0; i < _lineSegments.Count; i++)
-                    {
-                        var segment = _lineSegments[i];
-                        segment.DesiredStart = GetLineStart(i);
-                        segment.DesiredEnd = GetLineEnd(i);
-                    }
+                    CreateLines();
                 }
                 else
                 {
-                    CreateLines();
+                    ClearLines();
                 }
 
                 _needsLineUpdate = false;
@@ -91,7 +87,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void UpdateScale()
         {
-            if (_nextGraph && _hasCreatedLines)
+            if (_nextGraph)
             {
                 if (_nextGraph.IsAnimating || _originGraph.IsAnimating)
                 {
@@ -104,8 +100,12 @@ namespace Assets.Modules.ParallelCoordinates
                 }
                 else
                 {
-                    var scale = (_nextGraph.transform.position) - (_originGraph.transform.position);
-                    transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, scale.magnitude);
+                    var scale = ((_nextGraph.transform.position) - (_originGraph.transform.position)).magnitude;
+
+                    if (Mathf.Abs(scale) > Mathf.Epsilon)
+                    {
+                        transform.localScale = new Vector3(1, 1, scale);
+                    }
                 }
             }
         }
@@ -132,15 +132,19 @@ namespace Assets.Modules.ParallelCoordinates
             }
             else if (prevGraph == null)
             {
-                UpdateScale();
                 _lineRenderer.ClearLines();
-                CreateLines();
+
+                if (graph.HasData)
+                {
+                    CreateLines();
+                }
+
                 graph.OnDataChange += AdjustLines;
             }
             else // switching out graphs
             {
                 graph.OnDataChange += AdjustLines;
-                _needsLineUpdate = true;
+                AdjustLines();
             }
         }
 
@@ -166,11 +170,18 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void CreateLines()
         {
+            UpdateScale();
+
             if (_hasCreatedLines)
             {
-                AdjustLines();
+                for (int i = 0; i < _lineSegments.Count; i++)
+                {
+                    var segment = _lineSegments[i];
+                    segment.DesiredStart = GetLineStart(i);
+                    segment.DesiredEnd = GetLineEnd(i);
+                }
             }
-            else if (_originGraph.Data != null && _nextGraph && _nextGraph.Data != null)
+            else if (_originGraph.HasData && _nextGraph && _nextGraph.HasData)
             {
                 _hasCreatedLines = true;
                 for (int i = 0; i < _originGraph.Data.Length; i++)

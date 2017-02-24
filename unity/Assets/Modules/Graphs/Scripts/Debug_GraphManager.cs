@@ -41,7 +41,7 @@ namespace Assets.Modules.Graphs
             foreach (var graph in _graphManager.GetAllGraphs())
             {
                 var pos = graph.Id * SpaceBetweenGraphs;
-                graph.transform.position = new Vector3(0, 0, pos);
+                graph.transform.localPosition = new Vector3(0, 0, pos);
                 graph.Position = pos;
             }
         }

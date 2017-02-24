@@ -160,7 +160,7 @@ namespace Assets.Modules.ParallelCoordinates
                 triangles = LineMesh.triangles;
             }
 
-            Vector3 widthDirection = Vector3.up;
+            Vector3 widthDirection = transform.up;
 
             for (int i = 0; i < workAmount; i++)
             {
@@ -204,7 +204,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             var vertices = LineMesh.vertices;
 
-            Vector3 widthDirection = Vector3.up;
+            Vector3 widthDirection = transform.up;
 
             // micro optimisation: ensure that memory for these variables won't get reinitialised after each loop
             for (int i = 0; i < workAmount; i++)

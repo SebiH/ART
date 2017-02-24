@@ -12,6 +12,8 @@ namespace Assets.Modules.Graphs
         public event DataChangeHandler OnDataChange;
 
         public DataPoint2D[] Data { get; private set; }
+        public bool HasData { get { return Data != null; } }
+
         public float Position { get; set; }
         public float Width { get; set; }
         public bool IsAnimating { get; set; }
@@ -73,13 +75,12 @@ namespace Assets.Modules.Graphs
         public Vector3 GetLocalCoordinates(int index)
         {
             var datum = Data[index];
-            return new Vector3(-datum.ValueX, datum.ValueY, 0) * Scale;
+            return new Vector3(-datum.ValueX, datum.ValueY, 0);
         }
 
         public Vector3 GetWorldCoordinates(int index)
         {
-            var datum = Data[index];
-            return transform.position + transform.localRotation * (new Vector3(-datum.ValueX, datum.ValueY, 0) * Scale);
+            return transform.TransformPoint(GetLocalCoordinates(index));
         }
 
         private void OnDimXLoaded(string dimension, DataPoint[] dataX)
