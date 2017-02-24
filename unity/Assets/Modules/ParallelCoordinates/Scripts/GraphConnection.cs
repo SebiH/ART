@@ -46,8 +46,10 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 SetConnectedGraph(newConnectedGraph);
             }
-
-            UpdateScale();
+            else if (_connectedGraph && _connectedGraph.IsAnimating || _originGraph.IsAnimating)
+            {
+                GenerateLines(false);
+            }
         }
 
 
