@@ -1,5 +1,3 @@
-//#define USE_SKINNED
-
 using System.Collections.Generic;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -33,32 +31,20 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-#if USE_SKINNED
-        private List<SkinnedLineSegment> _lineSegments = new List<SkinnedLineSegment>();
-#else
         private List<LineSegment> _lineSegments = new List<LineSegment>();
-#endif
 
         public DataLine(int dataIndex)
         {
             DataIndex = dataIndex;
         }
 
-#if USE_SKINNED
-        public void AddSegment(SkinnedLineSegment segment)
-#else
         public void AddSegment(LineSegment segment)
-#endif
         {
             _lineSegments.Add(segment);
             segment.IsFiltered = IsFiltered;
         }
 
-#if USE_SKINNED
-        public void RemoveSegment(SkinnedLineSegment segment)
-#else
         public void RemoveSegment(LineSegment segment)
-#endif
         {
             _lineSegments.Remove(segment);
         }
