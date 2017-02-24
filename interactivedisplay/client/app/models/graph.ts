@@ -70,7 +70,7 @@ export class Graph {
             dimY: this.dimY,
             color: this.color,
             isSelected: this.isSelected,
-                hasFilter: this.selectedDataIndices !== null && this.selectedDataIndices.length > 0,
+            isNewlyCreated: this.isNewlyCreated,
 
             pos: this.absolutePos,
             width: this.width
