@@ -55,7 +55,7 @@ Shader "ParallelCoordinates/TransparentLine"
 
             fixed4 frag (v2f input) : SV_Target
             {
-                fixed4 color = _OutlineColor * input.color.a;
+                fixed4 color = _OutlineColor * step(0.8, input.color.a);
                 return color;
             }
 
@@ -102,7 +102,7 @@ Shader "ParallelCoordinates/TransparentLine"
 
             fixed4 frag (v2f input) : SV_Target
             {
-                fixed4 color = _OutlineColor * input.color.a;
+                fixed4 color = _OutlineColor * step(0.8, input.color.a);
                 return color;
             }
 
