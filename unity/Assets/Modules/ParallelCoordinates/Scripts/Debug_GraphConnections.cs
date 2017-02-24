@@ -14,10 +14,10 @@ namespace Assets.Modules.ParallelCoordinates
             for (int i = 0; i < graphs.Length - 1; i++)
             {
                 var graphConnection = graphs[i].GetComponentInChildren<GraphConnection>();
-                graphConnection.EndGraph = graphs[i + 1];
+                graphConnection.SetNextGraph(graphs[i + 1]);
             }
 
-            var filter = new int[100];
+            var filter = new int[10];
             for (int i = 0; i < filter.Length; i++)
             {
                 filter[i] = i;

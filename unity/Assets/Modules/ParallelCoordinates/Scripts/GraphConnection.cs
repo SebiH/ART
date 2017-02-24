@@ -1,187 +1,164 @@
-//#define USE_SKINNED
-
 using Assets.Modules.Core;
 using Assets.Modules.Graphs;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
+    [RequireComponent(typeof(GraphicsLineRenderer))]
     public class GraphConnection : MonoBehaviour
     {
-#if USE_SKINNED
-        private SkinnedLineRenderer _lineRenderer;
-        private SkinnedLineSegment[] _lineSegments;
-#else
+        private Graph _originGraph;
+        private Graph _nextGraph;
+        public Graph NextGraph { get { return _nextGraph; } }
+
         private GraphicsLineRenderer _lineRenderer;
-        private LineSegment[] _lineSegments;
-#endif
+        private List<LineSegment> _lineSegments = new List<LineSegment>();
 
-        // avoids multiple line updates due to overlapping events
-        private bool _hasStartChanged = false;
-        private bool _hasEndChanged = false;
+        private bool _needsLineUpdate = false;
+        private bool _hasCreatedLines = false;
 
-        private Graph _startGraph = null;
-        public Graph StartGraph
+        private void OnEnable()
         {
-            get { return _startGraph; } 
-            set { if (value != _startGraph) { SetStartGraph(value); } }
-        }
-
-        private Graph _endGraph = null;
-        public Graph EndGraph
-        {
-            get { return _endGraph; } 
-            set { if (value != _endGraph) { SetEndGraph(value); } }
-        }
-
-        void OnEnable()
-        {
-            StartGraph = UnityUtility.FindParent<Graph>(this);
-#if USE_SKINNED
-            _lineRenderer = GetComponent<SkinnedLineRenderer>();
-#else
             _lineRenderer = GetComponent<GraphicsLineRenderer>();
-#endif
-        }
-        
-        void OnDisable()
-        {
-            // unsubscribe from any events
-            SetStartGraph(null);
-            SetEndGraph(null);
+            _originGraph = UnityUtility.FindParent<Graph>(this);
+            _originGraph.OnDataChange += AdjustLines;
         }
 
-        void Update()
+        private void OnDisable()
         {
-            if (_startGraph && _endGraph)
-            {
-                var scale = (_endGraph.transform.position) - (_startGraph.transform.position);
-                transform.localScale = new Vector3(1, 1, scale.magnitude);
-            }
-
-            if (_hasStartChanged || _hasEndChanged)
-            {
-                GenerateLines();
-                _hasStartChanged = false;
-                _hasEndChanged = false;
-            }
+            SetNextGraph(null);
+            ClearLines();
         }
 
-
-        private void SetStartGraph(Graph graph)
+        private void Update()
         {
-            if (graph == _startGraph)
-            {
-                return;
-            }
-
-            if (_startGraph)
-            {
-                _startGraph.OnDataChange -= OnStartGraphDataChange;
-            }
-
-            if (graph)
-            {
-                graph.OnDataChange += OnStartGraphDataChange;
-            }
-
-            _startGraph = graph;
-            _hasStartChanged = true;
+            UpdateScale();
         }
 
-        private void SetEndGraph(Graph graph)
+        private void LateUpdate()
         {
-            if (graph == _endGraph)
+            if (_needsLineUpdate && _nextGraph)
             {
-                return;
-            }
-
-            if (_endGraph)
-            {
-                _endGraph.OnDataChange -= OnEndGraphDataChange;
-            }
-
-            if (graph)
-            {
-                graph.OnDataChange += OnEndGraphDataChange;
-            }
-
-            _endGraph = graph;
-            _hasEndChanged = true;
-        }
-
-
-        private void OnStartGraphDataChange()
-        {
-            _hasStartChanged = true;
-        }
-
-        private void OnEndGraphDataChange()
-        {
-            _hasEndChanged = true;
-        }
-
-        private void GenerateLines()
-        {
-            if (_startGraph != null && _endGraph != null && _startGraph.Data != null && _endGraph.Data != null)
-            {
-                Debug.Assert(_startGraph.Data.Length == _endGraph.Data.Length);
-                var dataLength = _startGraph.Data.Length;
-
-                if (_lineSegments != null && _lineSegments.Length == dataLength)
+                if (_hasCreatedLines)
                 {
-                    AdjustLines();
+                    for (int i = 0; i < _lineSegments.Count; i++)
+                    {
+                        var segment = _lineSegments[i];
+                        segment.DesiredStart = GetLineStart(i);
+                        segment.DesiredEnd = GetLineEnd(i);
+                    }
                 }
                 else
                 {
-                    ClearLines();
-                    InitializeLines();
+                    CreateLines();
                 }
-            }
-            else
-            {
-                ClearLines();
             }
         }
 
-        private void InitializeLines()
+        private Vector3 GetLineStart(int index)
         {
-#if USE_SKINNED
-            _lineSegments = new SkinnedLineSegment[_startGraph.Data.Length];
-#else
-            _lineSegments = new LineSegment[_startGraph.Data.Length];
-#endif
+            return _originGraph.GetLocalCoordinates(index);
+        }
 
-            for (int i = 0; i < _lineSegments.Length; i++)
+        private Vector3 GetLineEnd(int index)
+        {
+            return transform.InverseTransformPoint(_nextGraph.GetWorldCoordinates(index));
+        }
+
+        private void UpdateScale()
+        {
+            if (_nextGraph && _hasCreatedLines)
             {
-#if USE_SKINNED
-                var segment = new SkinnedLineSegment(transform);
-#else
-                var segment = new LineSegment();
-#endif
-                _lineSegments[i] = segment;
-                DataLineManager.GetLine(i).AddSegment(segment);
+                if (_nextGraph.IsAnimating || _originGraph.IsAnimating)
+                {
+                    for (int i = 0; i < _lineSegments.Count; i++)
+                    {
+                        var line = _lineSegments[i];
+                        line.Start = GetLineStart(i);
+                        line.End = GetLineEnd(i);
+                    }
+                }
+                else
+                {
+                    var scale = (_nextGraph.transform.position) - (_originGraph.transform.position);
+                    transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, scale.magnitude);
+                }
+            }
+        }
 
-                segment.Start = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
-                segment.End = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
 
-                segment.SetRenderer(_lineRenderer);
+        public void SetNextGraph(Graph graph)
+        {
+            var prevGraph = _nextGraph;
+            _nextGraph = graph;
+            if (prevGraph == graph)
+            {
+                return;
+            }
+
+            if (prevGraph)
+            {
+                prevGraph.OnDataChange -= AdjustLines; 
+            }
+
+            if (graph == null)
+            {
+                _lineRenderer.ClearLines();
+                _hasCreatedLines = false;
+            }
+            else if (prevGraph == null)
+            {
+                UpdateScale();
+                _lineRenderer.ClearLines();
+                CreateLines();
+                graph.OnDataChange += AdjustLines;
+            }
+            else // switching out graphs
+            {
+                graph.OnDataChange += AdjustLines;
+                _needsLineUpdate = true;
             }
         }
 
         private void AdjustLines()
         {
-            for (int i = 0; i < _lineSegments.Length; i++)
-            {
-                var segment = _lineSegments[i];
-                if (_hasStartChanged)
-                {
-                    segment.DesiredStart = new Vector3(_startGraph.Data[i].ValueX, _startGraph.Data[i].ValueY, 0);
-                }
+            _needsLineUpdate = true;
+        }
 
-                if (_hasEndChanged)
+        public void SwapWithNext()
+        {
+            if (_nextGraph == null)
+            {
+                Debug.Assert(false, "Shouldn't swap with empty graph!");
+                return;
+            }
+
+            var nextConnection = GetComponentInChildren<GraphConnection>();
+            nextConnection._lineRenderer.SwapWith(_lineRenderer);
+
+            SetNextGraph(_nextGraph);
+            nextConnection.SetNextGraph(_originGraph);
+        }
+
+        private void CreateLines()
+        {
+            if (_hasCreatedLines)
+            {
+                AdjustLines();
+            }
+            else if (_originGraph.Data != null)
+            {
+                _hasCreatedLines = true;
+                for (int i = 0; i < _originGraph.Data.Length; i++)
                 {
-                    segment.DesiredEnd = new Vector3(_endGraph.Data[i].ValueX, _endGraph.Data[i].ValueY, 1);
+                    var segment = new LineSegment();
+                    segment.SetRenderer(_lineRenderer);
+                    _lineSegments.Add(segment);
+                    DataLineManager.GetLine(i).AddSegment(segment);
+
+                    segment.Start = GetLineStart(i);
+                    segment.End = GetLineEnd(i);
                 }
             }
         }
@@ -189,25 +166,28 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void ClearLines()
         {
-            if (_lineSegments != null)
+            for (int i = 0; i < _lineSegments.Count; i++)
             {
-                for (int i = 0; i < _lineSegments.Length; i++)
-                {
-                    DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
-                }
-
-                _lineRenderer.ClearLines();
-                _lineSegments = null;
+                DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
             }
+            _lineSegments.Clear();
+            _lineRenderer.ClearLines();
+            _hasCreatedLines = false;
+        }
+
+
+        public static GraphConnection Get(Graph graph)
+        {
+            return graph.GetComponentInChildren<GraphConnection>();
         }
 
 
         void OnDrawGizmosSelected()
         {
-            if (_endGraph)
+            if (_nextGraph)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawLine(transform.position, _endGraph.transform.position);
+                Gizmos.DrawLine(transform.position, _nextGraph.transform.position);
             }
         }
     }

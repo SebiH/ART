@@ -18,7 +18,6 @@ namespace Assets.Modules.SurfaceInterface
         private GraphManager _graphManager;
 
         private readonly List<GraphInfo> _currentGraphs = new List<GraphInfo>();
-        private readonly List<GraphConnection> _graphConnections = new List<GraphConnection>();
 
         void OnEnable()
         {
@@ -36,7 +35,6 @@ namespace Assets.Modules.SurfaceInterface
         {
             _surface.OnAction -= HandleSurfaceAction;
             _currentGraphs.Clear();
-            _graphConnections.Clear();
         }
 
         private IEnumerator InitWebData()
@@ -118,10 +116,6 @@ namespace Assets.Modules.SurfaceInterface
         private void AddGraph(GraphInfo graphInfo)
         {
             var graph = _graphManager.CreateGraph(graphInfo.id);
-            var graphConnection = graph.GetComponentInChildren<GraphConnection>();
-
-            Debug.Assert(graphConnection != null, "GraphTemplate used by GraphManager must have GraphConnection script in children");
-            _graphConnections.Add(graphConnection);
 
             var existingGraphInfo = GetExistingGraphInfo(graphInfo.id);
             if (existingGraphInfo == null)
@@ -209,20 +203,26 @@ namespace Assets.Modules.SurfaceInterface
             graph.Position = _surface.PixelToUnityCoord(graphInfo.pos);
             graph.Width = _surface.PixelToUnityCoord(graphInfo.width);
 
-            var nextGraphInfo = _currentGraphs.FirstOrDefault(g => g.id == graphInfo.nextId);
+            var nextGraphInfo = _currentGraphs.FirstOrDefault(g => graphInfo.nextId == g.id);
 
-            var graphConnection = _graphConnections.FirstOrDefault(c => c.StartGraph != null && c.StartGraph.Id == graphInfo.id);
-            if (graphConnection)
+            if (nextGraphInfo != null)
             {
-                if (nextGraphInfo != null)
+                var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
+                var nextConnection = GraphConnection.Get(nextGraph);
+                var currConnection = GraphConnection.Get(graph);
+
+                if (nextConnection.NextGraph == graph)
                 {
-                    var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
-                    graphConnection.EndGraph = nextGraph;
+                    currConnection.SwapWithNext();
                 }
                 else
                 {
-                    graphConnection.EndGraph = null;
+                    currConnection.SetNextGraph(nextGraph);
                 }
+            }
+            else
+            {
+                GraphConnection.Get(graph).SetNextGraph(null);
             }
         }
 
@@ -233,21 +233,29 @@ namespace Assets.Modules.SurfaceInterface
             if (graphInfo != null)
             {
                 _currentGraphs.Remove(graphInfo);
-                var prevGraphConnection = _graphConnections.FirstOrDefault(c => c.EndGraph != null && c.EndGraph.Id == graphInfo.id);
-                var currGraphConnection = _graphConnections.FirstOrDefault(c => c.StartGraph != null && c.StartGraph.Id == graphInfo.id);
-                if (currGraphConnection && prevGraphConnection)
+
+                var graph = _graphManager.GetGraph(graphInfo.id);
+                var prevGraphInfo = _currentGraphs.FirstOrDefault(c => c.nextId == graphInfo.id);
+                var nextGraphInfo = _currentGraphs.FirstOrDefault(c => graphInfo.nextId == c.id);
+
+                if (prevGraphInfo != null)
                 {
-                    prevGraphConnection.EndGraph = currGraphConnection.EndGraph;
-                }
-                else if (prevGraphConnection)
-                {
-                    prevGraphConnection.EndGraph = null;
+                    var prevGraph = _graphManager.GetGraph(prevGraphInfo.id);
+
+                    if (nextGraphInfo != null)
+                    {
+                        var nextGraph = _graphManager.GetGraph(nextGraphInfo.id);
+                        GraphConnection.Get(prevGraph).SetNextGraph(nextGraph);
+                    }
+                    else
+                    {
+                        GraphConnection.Get(prevGraph).SetNextGraph(null);
+                    }
                 }
             }
 
             _graphManager.RemoveGraph(graphId);
         }
-
 
         [Serializable]
         private class GraphInfoWrapper

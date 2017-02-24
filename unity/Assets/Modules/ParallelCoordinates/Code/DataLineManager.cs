@@ -1,45 +1,22 @@
 using Assets.Modules.Core;
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
     public static class DataLineManager
     {
-        private static DataLine[] _lines = new DataLine[0];
+        private static List<DataLine> _lines = new List<DataLine>();
         private static int[] _filter = null;
         private static int _filterRoutine = -1;
 
-        static DataLineManager()
-        {
-            SetMaxDataIndex(1000);
-        }
-
-        // minor optimisation to avoid extending the array
-        public static void SetMaxDataIndex(int max)
-        {
-            if (_lines.Length < max + 1)
-            {
-                _lines = new DataLine[max + 1];
-            }
-        }
-
         public static DataLine GetLine(int index)
         {
-            // should not happen
-            if (index >= _lines.Length)
+            while (index >= _lines.Count)
             {
-                var lines = new DataLine[index + 1];
-                Array.Copy(_lines, lines, _lines.Length);
-                _lines = lines;
-            }
-
-            if (_lines[index] == null)
-            {
-                var line = new DataLine(index);
-                _lines[index] = line;
+                var line = new DataLine(_lines.Count);
+                _lines.Add(line);
                 SetFilter(line);
             }
 

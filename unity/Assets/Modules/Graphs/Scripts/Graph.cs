@@ -14,7 +14,8 @@ namespace Assets.Modules.Graphs
         public DataPoint2D[] Data { get; private set; }
         public float Position { get; set; }
         public float Width { get; set; }
-        public float Length { get; set; }
+        public bool IsAnimating = false;
+        public float Scale = 1;
 
         private string _currentDimX = null;
         private DataPoint[] _dataX = null;
@@ -24,11 +25,17 @@ namespace Assets.Modules.Graphs
         void OnEnable()
         {
             Data = null;
+            Scale = 1f;
         }
 
         void OnDisable()
         {
 
+        }
+
+        private void Update()
+        {
+            transform.localScale = new Vector3(Scale, Scale, transform.localScale.z);
         }
 
         public void SetData(string dimX, string dimY)
@@ -59,6 +66,18 @@ namespace Assets.Modules.Graphs
                     DataProvider.LoadDataAsync(dimY, OnDimYLoaded);
                 }
             }
+        }
+
+        public Vector3 GetLocalCoordinates(int index)
+        {
+            var datum = Data[index];
+            return new Vector3(-datum.ValueX, datum.ValueY, 0) * Scale;
+        }
+
+        public Vector3 GetWorldCoordinates(int index)
+        {
+            var datum = Data[index];
+            return transform.position + transform.localRotation * (new Vector3(-datum.ValueX, datum.ValueY, 0) * Scale);
         }
 
         private void OnDimXLoaded(string dimension, DataPoint[] dataX)

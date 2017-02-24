@@ -47,7 +47,6 @@ namespace Assets.Modules.Core
             {
                 OnGameEnd();
             }
-            Instance = null;
         }
 
         private void Update()

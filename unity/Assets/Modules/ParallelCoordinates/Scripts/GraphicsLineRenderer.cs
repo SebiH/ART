@@ -9,7 +9,7 @@ namespace Assets.Modules.ParallelCoordinates
     [RequireComponent(typeof(MeshFilter))]
     public class GraphicsLineRenderer : MonoBehaviour
     {
-        private Mesh _mesh;
+        public Mesh LineMesh { get; set; }
         
         private Queue<LineSegment> _lineCreationQueue = new Queue<LineSegment>();
         private int _creationRoutineId = -1;
@@ -27,15 +27,15 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void OnEnable()
         {
-            if (_mesh == null)
+            if (LineMesh == null)
             {
-                _mesh = new Mesh();
-                _mesh.MarkDynamic();
-                GetComponent<MeshFilter>().mesh = _mesh;
+                LineMesh = new Mesh();
+                LineMesh.MarkDynamic();
+                GetComponent<MeshFilter>().mesh = LineMesh;
             }
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (_lineCreationQueue.Count > 0 && _vertexRoutineId < 0 && _colorRoutineId < 0)
             {
@@ -51,6 +51,16 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 _colorRoutineId = GameLoop.Instance.StartRoutine(UpdateLineVerticesAsync(), OperationType.Batched);
             }
+        }
+
+        public void SwapWith(GraphicsLineRenderer other)
+        {
+            var mesh = other.LineMesh;
+            other.LineMesh = LineMesh;
+            LineMesh = mesh;
+
+            GetComponent<MeshFilter>().mesh = LineMesh;
+            other.GetComponent<MeshFilter>().mesh = other.LineMesh;
         }
 
         public void AddLine(LineSegment line)
@@ -123,10 +133,10 @@ namespace Assets.Modules.ParallelCoordinates
         private void CreateLines(Queue<LineSegment> lines, int workAmount)
         {
             var expectedVerticesNum = _vertexCounter + lines.Count * 4;
-            var currentVerticesNum = _mesh.vertices.Length;
+            var currentVerticesNum = LineMesh.vertices.Length;
 
             var expectedTriangleNum = _triangleCounter + lines.Count * 6;
-            var currentTriangleNum = _mesh.triangles.Length;
+            var currentTriangleNum = LineMesh.triangles.Length;
 
             Color32[] colors;
             Vector3[] vertices;
@@ -135,27 +145,22 @@ namespace Assets.Modules.ParallelCoordinates
             if (expectedVerticesNum > currentVerticesNum)
             {
                 colors = new Color32[expectedVerticesNum];
-                Array.Copy(_mesh.colors32, colors, currentVerticesNum);
+                Array.Copy(LineMesh.colors32, colors, currentVerticesNum);
 
                 vertices = new Vector3[expectedVerticesNum];
-                Array.Copy(_mesh.vertices, vertices, currentVerticesNum);
+                Array.Copy(LineMesh.vertices, vertices, currentVerticesNum);
 
                 triangles = new int[expectedTriangleNum];
-                Array.Copy(_mesh.triangles, triangles, currentTriangleNum);
+                Array.Copy(LineMesh.triangles, triangles, currentTriangleNum);
             }
             else
             {
-                colors = _mesh.colors32;
-                vertices = _mesh.vertices;
-                triangles = _mesh.triangles;
+                colors = LineMesh.colors32;
+                vertices = LineMesh.vertices;
+                triangles = LineMesh.triangles;
             }
 
             Vector3 widthDirection = Vector3.up;
-
-            // micro optimisation: ensure that memory for these variables won't get reinitialised after each loop
-            var quad = new Vector3[4];
-            Vector3 start, end;
-            float width = 0; ;
 
             for (int i = 0; i < workAmount; i++)
             {
@@ -164,14 +169,12 @@ namespace Assets.Modules.ParallelCoordinates
                 line.WaitingForVertex = false;
                 line.MeshIndex = _vertexCounter / 4;
 
-                start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
-                end = new Vector3(-line.End.x, line.End.y, line.End.z);
-                width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
+                var width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
 
-                vertices[_vertexCounter] = start + widthDirection * width;
-                vertices[_vertexCounter + 1] = start + widthDirection * -width;
-                vertices[_vertexCounter + 2] = end + widthDirection * width;
-                vertices[_vertexCounter + 3] = end + widthDirection * -width;
+                vertices[_vertexCounter] = line.Start + widthDirection * width;
+                vertices[_vertexCounter + 1] = line.Start + widthDirection * -width;
+                vertices[_vertexCounter + 2] = line.End + widthDirection * width;
+                vertices[_vertexCounter + 3] = line.End + widthDirection * -width;
 
                 colors[_vertexCounter] = line.Color;
                 colors[_vertexCounter + 1] = line.Color;
@@ -190,47 +193,42 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
 
-            _mesh.vertices = vertices;
-            _mesh.triangles = triangles;
-            _mesh.colors32 = colors;
-            _mesh.RecalculateBounds();
+            LineMesh.vertices = vertices;
+            LineMesh.triangles = triangles;
+            LineMesh.colors32 = colors;
+            LineMesh.RecalculateBounds();
         }
 
 
         private void UpdateLineVertices(Queue<LineSegment> lines, int workAmount)
         {
-            var vertices = _mesh.vertices;
+            var vertices = LineMesh.vertices;
 
             Vector3 widthDirection = Vector3.up;
 
             // micro optimisation: ensure that memory for these variables won't get reinitialised after each loop
-            Vector3 start, end;
-            float width = 0; ;
-
             for (int i = 0; i < workAmount; i++)
             {
                 var line = lines.Dequeue();
                 line.WaitingForVertex = false;
                 var vertexIndex = line.MeshIndex * 4;
 
-                start = new Vector3(-line.Start.x, line.Start.y, line.Start.z);
-                end = new Vector3(-line.End.x, line.End.y, line.End.z);
-                width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
+                var width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
 
-                vertices[vertexIndex] = start + widthDirection * width;
-                vertices[vertexIndex + 1] = start + widthDirection * -width;
-                vertices[vertexIndex + 2] = end + widthDirection * width;
-                vertices[vertexIndex + 3] = end + widthDirection * -width;
+                vertices[vertexIndex] = line.Start + widthDirection * width;
+                vertices[vertexIndex + 1] = line.Start + widthDirection * -width;
+                vertices[vertexIndex + 2] = line.End + widthDirection * width;
+                vertices[vertexIndex + 3] = line.End + widthDirection * -width;
             }
 
-            _mesh.vertices = vertices;
-            _mesh.RecalculateBounds();
+            LineMesh.vertices = vertices;
+            LineMesh.RecalculateBounds();
         }
 
 
         private void UpdateLineColor(Queue<LineSegment> lines, int workAmount)
         {
-            var colors = _mesh.colors32;
+            var colors = LineMesh.colors32;
 
             for (int i = 0; i < workAmount; i++)
             {
@@ -245,13 +243,13 @@ namespace Assets.Modules.ParallelCoordinates
                 colors[vertex + 3] = line.Color;
             }
 
-            _mesh.colors32 = colors;
+            LineMesh.colors32 = colors;
         }
 
 
         public void ClearLines()
         {
-            _mesh.Clear();
+            LineMesh.Clear();
             _vertexCounter = 0;
             _triangleCounter = 0;
 
