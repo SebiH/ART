@@ -42,12 +42,12 @@ namespace Assets.Modules.ParallelCoordinates
                 _colorRoutineId = GameLoop.Instance.StartRoutine(AddLineAsync(), OperationType.Batched);
             }
 
-            if (_lineVertexUpdateQueue.Count > 0 && _creationRoutineId < 0)
+            if (_lineVertexUpdateQueue.Count > 0 && _creationRoutineId < 0 && _vertexRoutineId < 0)
             {
                 _vertexRoutineId = GameLoop.Instance.StartRoutine(UpdateLineVerticesAsync(), OperationType.Batched);
             }
 
-            if (_lineColorUpdateQueue.Count > 0 && _creationRoutineId < 0)
+            if (_lineColorUpdateQueue.Count > 0 && _creationRoutineId < 0 && _colorRoutineId < 0)
             {
                 _colorRoutineId = GameLoop.Instance.StartRoutine(UpdateLineVerticesAsync(), OperationType.Batched);
             }
@@ -92,9 +92,6 @@ namespace Assets.Modules.ParallelCoordinates
                 var lineC = _lineVertexUpdateQueue.Count;
                 var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineVertexUpdateQueue.Count);
                 yield return new WaitForAvailableCycles(batchAmount);
-
-                // TODO: setting twice due to strange bug?
-                batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineVertexUpdateQueue.Count);
                 UpdateLineVertices(_lineVertexUpdateQueue, batchAmount);
             }
 
@@ -108,9 +105,6 @@ namespace Assets.Modules.ParallelCoordinates
                 var lineC = _lineColorUpdateQueue.Count;
                 var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineColorUpdateQueue.Count);
                 yield return new WaitForAvailableCycles(batchAmount);
-
-                // TODO: setting twice due to strange bug?
-                batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineColorUpdateQueue.Count);
                 UpdateLineColor(_lineColorUpdateQueue, batchAmount);
             }
 
