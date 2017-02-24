@@ -248,7 +248,12 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void SetHidden(bool hidden)
         {
-            GetComponent<Renderer>().enabled = !hidden;
+            GetComponent<MeshRenderer>().enabled = !hidden;
+        }
+
+        public bool IsHidden()
+        {
+            return !(GetComponent<MeshRenderer>().enabled);
         }
 
         public void ClearLines()

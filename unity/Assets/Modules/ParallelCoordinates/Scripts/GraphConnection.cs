@@ -1,6 +1,5 @@
 using Assets.Modules.Core;
 using Assets.Modules.Graphs;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -9,69 +8,151 @@ namespace Assets.Modules.ParallelCoordinates
     public class GraphConnection : MonoBehaviour
     {
         private Graph _originGraph;
-        private Graph _nextGraph;
+        private Graph _connectedGraph;
 
         private GraphManager _graphManager;
-        private GraphicsLineRenderer _lineRenderer;
-        private List<LineSegment> _lineSegments = new List<LineSegment>();
 
-        private bool _needsLineUpdate = false;
-        private bool _hasCreatedLines = false;
+        private LineSegment[] _lines = null;
+        private GraphicsLineRenderer _lineRenderer;
 
         private void OnEnable()
         {
             _graphManager = UnityUtility.FindParent<GraphManager>(this);
-            _lineRenderer = GetComponent<GraphicsLineRenderer>();
             _originGraph = UnityUtility.FindParent<Graph>(this);
-            _originGraph.OnDataChange += AdjustLines;
-            UpdateScale();
+            _originGraph.OnDataChange += HandleDataChange;
+            _lineRenderer = GetComponent<GraphicsLineRenderer>();
+            _lineRenderer.SetHidden(true);
         }
 
         private void OnDisable()
         {
-            SetNextGraph(null);
-            ClearLines();
+            _originGraph.OnDataChange -= HandleDataChange;
+            SetConnectedGraph(null);
+
+            if (_lines != null)
+            {
+                for (int i = 0; i < _lines.Length; i++)
+                {
+                    DataLineManager.GetLine(i).RemoveSegment(_lines[i]);
+                }
+                _lines = null;
+            }
         }
 
         private void Update()
         {
-            UpdateScale();
-            FindNextGraph();
-        }
-
-        private void LateUpdate()
-        {
-            if (_needsLineUpdate)
+            var newConnectedGraph = FindConnectedGraph();
+            if (newConnectedGraph != _connectedGraph)
             {
-                if (_nextGraph && _nextGraph.HasData)
-                {
-                    CreateLines();
-                }
-                else
-                {
-                    ClearLines();
-                }
-
-                _needsLineUpdate = false;
+                SetConnectedGraph(newConnectedGraph);
             }
+
+            UpdateScale();
         }
 
-        private void FindNextGraph()
+
+        private Graph FindConnectedGraph()
         {
-            Graph nextGraph = null;
+            Graph newConnectedGraph = null;
             foreach (var graph in _graphManager.GetAllGraphs())
             {
                 var isEligible = !graph.IsNewlyCreated;
                 var isNext = graph.Position > _originGraph.Position;
-                var isNearest = (nextGraph == null || nextGraph.Position > graph.Position);
+                var isNearest = (newConnectedGraph == null || newConnectedGraph.Position > graph.Position);
 
                 if (isEligible && isNext && isNearest)
                 {
-                    nextGraph = graph;
+                    newConnectedGraph = graph;
                 }
             }
+            return newConnectedGraph;
+        }
 
-            SetNextGraph(nextGraph);
+        private void SetConnectedGraph(Graph newGraph)
+        {
+            if (_connectedGraph != null)
+            {
+                _connectedGraph.OnDataChange -= HandleDataChange;
+            }
+
+            if (newGraph != null)
+            {
+                newGraph.OnDataChange += HandleDataChange;
+            }
+
+            // TODO: possibly swap meshes
+
+            _connectedGraph = newGraph;
+            GenerateLines(true);
+        }
+
+        private void HandleDataChange()
+        {
+            GenerateLines(true);
+        }
+
+        private void GenerateLines(bool animate)
+        {
+            UpdateScale();
+
+            var hasData = (_connectedGraph != null && _originGraph.HasData && _connectedGraph.HasData);
+            if (!hasData)
+            {
+                _lineRenderer.SetHidden(true);
+            }
+            else
+            {
+                if (_lineRenderer.IsHidden())
+                {
+                    _lineRenderer.SetHidden(false);
+                    animate = false;
+                }
+
+                // micro optimisations to use pipelining as much as possible - incoming code duplication!
+                if (_lines == null)
+                {
+                    Debug.Assert(_originGraph.DataLength == _connectedGraph.DataLength);
+                    _lines = new LineSegment[_originGraph.DataLength];
+
+                    for (int i = 0; i < _lines.Length; i++)
+                    {
+                        var line = new LineSegment();
+                        line.SetRenderer(_lineRenderer);
+                        _lines[i] = line;
+                        DataLineManager.GetLine(i).AddSegment(line);
+
+                        line.Start = GetLineStart(i);
+                        line.End = GetLineEnd(i);
+                    }
+                }
+                else
+                {
+                    if (animate)
+                    {
+                        for (int i = 0; i < _lines.Length; i++)
+                        {
+                            _lines[i].DesiredStart = GetLineStart(i);
+                            _lines[i].DesiredEnd = GetLineEnd(i);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < _lines.Length; i++)
+                        {
+                            _lines[i].Start = GetLineStart(i);
+                            _lines[i].End = GetLineEnd(i);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void UpdateScale()
+        {
+            if (_connectedGraph != null && !_connectedGraph.IsAnimating && !_originGraph.IsAnimating)
+            {
+                transform.localScale = new Vector3(1, 1, _originGraph.Position - _connectedGraph.Position);
+            }
         }
 
         private Vector3 GetLineStart(int index)
@@ -81,140 +162,15 @@ namespace Assets.Modules.ParallelCoordinates
 
         private Vector3 GetLineEnd(int index)
         {
-            return transform.InverseTransformPoint(_nextGraph.GetWorldCoordinates(index));
+            return transform.InverseTransformPoint(_connectedGraph.GetWorldCoordinates(index));
         }
-
-        private void UpdateScale()
-        {
-            if (_nextGraph)
-            {
-                if (_nextGraph.IsAnimating || _originGraph.IsAnimating)
-                {
-                    for (int i = 0; i < _lineSegments.Count; i++)
-                    {
-                        var line = _lineSegments[i];
-                        line.Start = GetLineStart(i);
-                        line.End = GetLineEnd(i);
-                    }
-                }
-                else
-                {
-                    var scale = ((_nextGraph.transform.position) - (_originGraph.transform.position)).magnitude;
-
-                    if (Mathf.Abs(scale) > Mathf.Epsilon)
-                    {
-                        transform.localScale = new Vector3(1, 1, scale);
-                    }
-                }
-            }
-        }
-
-
-        private void SetNextGraph(Graph graph)
-        {
-            var prevGraph = _nextGraph;
-            _nextGraph = graph;
-            if (prevGraph == graph)
-            {
-                return;
-            }
-
-            if (prevGraph)
-            {
-                prevGraph.OnDataChange -= AdjustLines; 
-            }
-
-            if (graph == null)
-            {
-                _lineRenderer.ClearLines();
-                _hasCreatedLines = false;
-            }
-            else if (prevGraph == null)
-            {
-                _lineRenderer.ClearLines();
-
-                if (graph.HasData)
-                {
-                    CreateLines();
-                }
-
-                graph.OnDataChange += AdjustLines;
-            }
-            else // switching out graphs
-            {
-                graph.OnDataChange += AdjustLines;
-                AdjustLines();
-            }
-        }
-
-        private void AdjustLines()
-        {
-            _needsLineUpdate = true;
-        }
-
-        private void SwapWithNext()
-        {
-            if (_nextGraph == null)
-            {
-                Debug.Assert(false, "Shouldn't swap with empty graph!");
-                return;
-            }
-
-            var nextConnection = GetComponentInChildren<GraphConnection>();
-            nextConnection._lineRenderer.SwapWith(_lineRenderer);
-
-            SetNextGraph(_nextGraph);
-            nextConnection.SetNextGraph(_originGraph);
-        }
-
-        private void CreateLines()
-        {
-            UpdateScale();
-
-            if (_hasCreatedLines)
-            {
-                for (int i = 0; i < _lineSegments.Count; i++)
-                {
-                    var segment = _lineSegments[i];
-                    segment.DesiredStart = GetLineStart(i);
-                    segment.DesiredEnd = GetLineEnd(i);
-                }
-            }
-            else if (_originGraph.HasData && _nextGraph && _nextGraph.HasData)
-            {
-                _hasCreatedLines = true;
-                for (int i = 0; i < _originGraph.DataLength; i++)
-                {
-                    var segment = new LineSegment();
-                    segment.SetRenderer(_lineRenderer);
-                    _lineSegments.Add(segment);
-                    DataLineManager.GetLine(i).AddSegment(segment);
-
-                    segment.Start = GetLineStart(i);
-                    segment.End = GetLineEnd(i);
-                }
-            }
-        }
-
-
-        private void ClearLines()
-        {
-            for (int i = 0; i < _lineSegments.Count; i++)
-            {
-                DataLineManager.GetLine(i).RemoveSegment(_lineSegments[i]);
-            }
-            _lineSegments.Clear();
-            _lineRenderer.ClearLines();
-            _hasCreatedLines = false;
-        }
-
 
         void OnDrawGizmosSelected()
         {
-            if (_nextGraph)
+            if (_connectedGraph)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawLine(transform.position, _nextGraph.transform.position);
+                Gizmos.DrawLine(transform.position, _connectedGraph.transform.position);
                 Gizmos.DrawWireCube(transform.position, Vector3.one * 0.05f);
             }
         }
