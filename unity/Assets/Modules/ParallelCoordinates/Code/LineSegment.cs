@@ -36,9 +36,14 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 if (_startDestination == value) { return; }
 
-                _startOrigin = Start;
+                // don't animate z-values due to conflict with z-scaling in GraphConnection
+                _startOrigin = new Vector3(_start.x, Start.y, value.z);
+                _start = _startOrigin;
                 _startDestination = value;
                 _startTime = Time.time;
+
+                // set z immediately to avoid scaling issues..
+                _start = new Vector3(_start.x, _start.y, value.z);
 
                 if (!_isStartAnimationRunning)
                 {
@@ -75,9 +80,12 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 if (_endDestination == value) { return; }
 
-                _endOrigin = End;
+                // don't animate z-values due to conflict with z-scaling in GraphConnection
+                _endOrigin = new Vector3(_end.x, _end.y, value.z);
+                _end = _endOrigin;
                 _endDestination = value;
                 _endTime = Time.time;
+
 
                 if (!_isEndAnimationRunning)
                 {

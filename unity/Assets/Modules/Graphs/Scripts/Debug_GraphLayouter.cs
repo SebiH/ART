@@ -48,7 +48,7 @@ namespace Assets.Modules.Graphs
             _graph.DimX =   string.IsNullOrEmpty(DimX) ? null : _graphManager.GetRandomData(DimX);
             _graph.DimY =   string.IsNullOrEmpty(DimY) ? null : _graphManager.GetRandomData(DimY);
 
-            _graph.Position = _graph.transform.localPosition.z;
+            _graph.Position = _graph.transform.localPosition.x;
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             var newConnectedGraph = FindConnectedGraph();
             if (newConnectedGraph != _connectedGraph)
@@ -151,7 +151,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (_connectedGraph != null && !_connectedGraph.IsAnimating && !_originGraph.IsAnimating)
             {
-                transform.localScale = new Vector3(1, 1, _originGraph.Position - _connectedGraph.Position);
+                transform.localScale = new Vector3(1, 1, -(_originGraph.transform.localPosition.x - _connectedGraph.transform.localPosition.x));
             }
         }
 

@@ -73,7 +73,8 @@ namespace Assets.Modules.Graphs
             foreach (var graph in _graphManager.GetAllGraphs())
             {
                 var pos = graph.Id * SpaceBetweenGraphs;
-                graph.transform.localPosition = new Vector3(0, 0, pos);
+                graph.transform.localPosition = new Vector3(pos, 0, 0);
+                graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
                 graph.Position = pos;
             }
         }
