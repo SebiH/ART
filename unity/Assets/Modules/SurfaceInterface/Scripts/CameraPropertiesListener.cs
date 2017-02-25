@@ -19,7 +19,7 @@ namespace Assets.Modules.SurfaceInterface
 
         private void OnEnable()
         {
-            RemoteSurfaceConnection.Instance.OnCommandReceived += OnAction;
+            RemoteSurfaceConnection.OnCommandReceived += OnAction;
             _camera = GetComponent<OvrvisionCameraSource>();
 
             if (LeftEye) { _originalLeftEyePosition = LeftEye.localPosition; }
@@ -28,7 +28,7 @@ namespace Assets.Modules.SurfaceInterface
 
         private void OnDisable()
         {
-            RemoteSurfaceConnection.Instance.OnCommandReceived -= OnAction;
+            RemoteSurfaceConnection.OnCommandReceived -= OnAction;
         }
 
 

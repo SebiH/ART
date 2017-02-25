@@ -26,6 +26,9 @@ export class UnityServer {
 
     public broadcast(msg: string): void {
         for (let client of this.clients) {
+            // message format:
+            // \0\0\0 (Packet header as string) \0 (Actual packet json string)
+            client.write('\0\0\0' + msg.length.toString() + '\0');
             client.write(msg);
         }
     }

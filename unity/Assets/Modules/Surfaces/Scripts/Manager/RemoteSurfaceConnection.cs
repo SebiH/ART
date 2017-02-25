@@ -1,36 +1,40 @@
 using Assets.Modules.Core;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine;
 
 namespace Assets.Modules.Surfaces
 {
-    public class RemoteSurfaceConnection : MonoBehaviour
+    public static class RemoteSurfaceConnection
     {
-        public static RemoteSurfaceConnection Instance;
+        const int BUFFER_SIZE = 10 * 1024 * 1024;
 
-        // see: https://forum.unity3d.com/threads/c-tcp-ip-socket-how-to-receive-from-server.227259/
-        private Socket _socket;
-        private byte[] _receiveBuffer = new byte[1024 * 1024];
-        private Queue _queuedCommands;
+        private static Socket _socket;
+        private static AsyncCallback _receiveCallback = new AsyncCallback(ReceiveData);
+        private static byte[] _receiveBuffer = new byte[BUFFER_SIZE];
+        private static int _receiveBufferOffset = 0;
+        private static int _expectedPacketSize = -1;
+
+        private static UTF8Encoding _encoding = new UTF8Encoding();
+        private static Queue _queuedCommands;
 
         public delegate void CommandReceivedHandler(string cmd, string payload);
-        public event CommandReceivedHandler OnCommandReceived;
+        public static event CommandReceivedHandler OnCommandReceived;
 
-        void OnEnable()
+        static RemoteSurfaceConnection()
         {
-            Instance = this;
-
             _queuedCommands = Queue.Synchronized(new Queue());
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            GameLoop.Instance.OnUpdate += Update;
+            GameLoop.Instance.OnGameEnd += OnDisable;
 
             try
             {
                 _socket.Connect(Globals.SurfaceServerIp, Globals.SurfaceServerPort);
-                _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
+                _socket.BeginReceive(_receiveBuffer, _receiveBufferOffset, _receiveBuffer.Length - _receiveBufferOffset, SocketFlags.None, _receiveCallback, null);
                 Debug.Log("Connection to web server established");
             }
             catch (SocketException ex)
@@ -39,7 +43,7 @@ namespace Assets.Modules.Surfaces
             }
         }
 
-        void OnDisable()
+        private static void OnDisable()
         {
             try
             {
@@ -54,14 +58,14 @@ namespace Assets.Modules.Surfaces
             }
         }
 
-        void FixedUpdate()
+        private static void Update()
         {
             var surfaceManager = SurfaceManager.Instance;
 
             while (_queuedCommands.Count > 0)
             {
                 var cmd = _queuedCommands.Dequeue() as InPacket;
-                if (surfaceManager.Has(cmd.origin))
+                if (surfaceManager && surfaceManager.Has(cmd.origin))
                 {
                     var surface = surfaceManager.Get(cmd.origin);
                     surface.TriggerAction(cmd.command, cmd.payload);
@@ -74,104 +78,128 @@ namespace Assets.Modules.Surfaces
             }
         }
 
+        /*
+         *  Message format:
+         *  \0\0\0 (Packet header as string) \0 (Actual packet json string)
+         */
 
-        private void ReceiveData(IAsyncResult asyncResult)
+        private static bool HasPacketHeader(int offset)
         {
-            // Check how much bytes are received and call Endreceive to finalize handshake
-            int received = _socket.EndReceive(asyncResult);
-
-            if (received <= 0)
+            if (offset + 2 >= _receiveBuffer.Length)
             {
-                return;
+                return false;
             }
 
-            // Copy the received data into new buffer , to avoid null bytes
-            byte[] receivedData = new byte[received];
-            Buffer.BlockCopy(_receiveBuffer, 0, receivedData, 0, received);
-
-            // Process data
-            UTF8Encoding encoding = new UTF8Encoding();
-            var receivedText = encoding.GetString(receivedData);
-
-            // Split up json classes, in case multiple classes got sent in one batch
-            var receivedJsonMsgs = SplitJson(receivedText);
-
-            foreach (var msg in receivedJsonMsgs)
+            if (_receiveBuffer[offset] == '\0' &&
+                _receiveBuffer[offset + 1] == '\0' &&
+                _receiveBuffer[offset + 2] == '\0')
             {
-                var incomingCmd = JsonUtility.FromJson<InPacket>(msg);
-                // messages have to be handled in main update() thread, to avoid possible threading issues in handlers
-                _queuedCommands.Enqueue(incomingCmd);
+                return true;
             }
 
-            // Start receiving again
-            _socket.BeginReceive(_receiveBuffer, 0, _receiveBuffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), null);
+            return false;
         }
 
-        // TODO: breaks easily, but sufficient for current purpose
-        private IEnumerable<string> SplitJson(string text)
+        private static PacketHeader GetPacketHeader(int offset)
         {
-            var jsonPackets = new List<string>();
-
-            int leftBracketIndex = -1;
-            int rightBracketIndex = -1;
-
-            int bracketCounter = 0;
-            var chars = text.ToCharArray();
-
-            for (int i = 0; i < chars.Length; i++)
+            var start = offset + 3;
+            var end = start;
+            while (end < _receiveBuffer.Length && _receiveBuffer[end] != '\0')
             {
-                char ch = chars[i];
-
-                if (ch == '{')
-                {
-                    if (bracketCounter == 0)
-                    {
-                        leftBracketIndex = i;
-                    }
-
-                    bracketCounter++;
-                }
-                else if (ch == '}')
-                {
-                    bracketCounter--;
-
-                    if (bracketCounter == 0)
-                    {
-                        rightBracketIndex = i;
-                        bracketCounter = 0;
-
-                        jsonPackets.Add(text.Substring(leftBracketIndex, rightBracketIndex - leftBracketIndex + 1));
-
-                        leftBracketIndex = -1;
-                        rightBracketIndex = -1;
-                    }
-                    else if (bracketCounter < 0)
-                    {
-                        // invalid packet!
-                        // TODO handling???
-                        Debug.Log("Received incomplete packet!");
-                        return new string[0];
-                    }
-                }
-                else if (ch == '\\')
-                {
-                    // skip next char
-                    i++;
-                }
-
+                // searching ...
+                end++;
             }
 
-            return jsonPackets;
+            if (end >= _receiveBuffer.Length)
+            {
+                throw new OverflowException("Receive buffer overflow");
+            }
+
+            // don't want to deal with integer formatting, so it's transmitted as text instead
+            byte[] packetSizeRaw = new byte[end - start + 1];
+            Buffer.BlockCopy(_receiveBuffer, start, packetSizeRaw, 0, packetSizeRaw.Length);
+            var packetSizeText = _encoding.GetString(packetSizeRaw);
+
+            return new PacketHeader {
+                PacketSize = int.Parse(packetSizeText),
+                PacketStartOffset = end + 1
+            };
         }
 
-        private void SendData(byte[] data)
+        private static void ReceiveData(IAsyncResult asyncResult)
+        {
+            int numReceived = _socket.EndReceive(asyncResult);
+            Debug.Assert(numReceived >= 0, "Received negative amount of bytes from surface connection");
+
+            var processingOffset = 0;
+            var bufferEnd = _receiveBufferOffset + numReceived;
+
+            while (processingOffset < bufferEnd)
+            {
+                if (_expectedPacketSize <= 0)
+                {
+                    if (HasPacketHeader(processingOffset))
+                    {
+                        var header = GetPacketHeader(processingOffset);
+                        processingOffset = header.PacketStartOffset;
+                        _expectedPacketSize = header.PacketSize;
+                    }
+                    else
+                    {
+                        Debug.Assert(false, "Invalid packet received?");
+                        break;
+                    }
+                }
+                else if (processingOffset + _expectedPacketSize <= bufferEnd)
+                {
+                    byte[] rawPacket = new byte[_expectedPacketSize];
+                    Buffer.BlockCopy(_receiveBuffer, processingOffset, rawPacket, 0, rawPacket.Length);
+                    var packet = _encoding.GetString(rawPacket);
+
+                    // messages have to be handled in main update() thread, to avoid possible threading issues in handlers
+                    var incomingCmd = JsonUtility.FromJson<InPacket>(packet);
+                    _queuedCommands.Enqueue(incomingCmd);
+
+                    processingOffset += _expectedPacketSize;
+                    _expectedPacketSize = -1;
+                }
+                else
+                {
+                    // neither header nor complete package
+                    // -> currently incomplete packet in buffer, wait for rest
+                    break;
+                }
+            }
+
+            if (processingOffset == bufferEnd)
+            {
+                // cleared buffer entirely, no need to rearrange memory due to incomplete packet
+                _receiveBufferOffset = 0;
+            }
+            else
+            {
+                // incomplete packet in buffer, move to front
+                _receiveBufferOffset = bufferEnd - processingOffset;
+                Buffer.BlockCopy(_receiveBuffer, processingOffset, _receiveBuffer, 0, _receiveBufferOffset);
+            }
+
+            
+            if (_receiveBuffer.Length - _receiveBufferOffset < 100)
+            {
+                throw new OverflowException("Receive buffer getting too small, aborting receive");
+            }
+
+            _socket.BeginReceive(_receiveBuffer, _receiveBufferOffset, _receiveBuffer.Length - _receiveBufferOffset, SocketFlags.None, _receiveCallback, null);
+        }
+
+        private static void SendData(byte[] data)
         {
             SocketAsyncEventArgs socketAsyncData = new SocketAsyncEventArgs();
             socketAsyncData.SetBuffer(data, 0, data.Length);
             _socket.SendAsync(socketAsyncData);
         }
 
-        public void SendCommand(string target, string command, string payload)
+        public static void SendCommand(string target, string command, string payload)
         {
             var packet = new OutPacket
             {
@@ -185,7 +213,13 @@ namespace Assets.Modules.Surfaces
             SendData(rawData);
         }
 
-        #region Serializing
+        #region Helper classes
+
+        private struct PacketHeader
+        {
+            public int PacketSize;
+            public int PacketStartOffset;
+        }
 
         [Serializable]
         private class InPacket

@@ -21,7 +21,7 @@ namespace Assets.Modules.SurfaceInterface
             // TODO: dynamic calibration debug info?
 
             _monitor.UpdateStability(CalibrationParams.PositionOffset, CalibrationParams.RotationOffset);
-            RemoteSurfaceConnection.Instance.SendCommand(Globals.DefaultSurfaceName, "debug-calibration", JsonUtility.ToJson(new Packet
+            RemoteSurfaceConnection.SendCommand(Globals.DefaultSurfaceName, "debug-calibration", JsonUtility.ToJson(new Packet
             {
                 posOffsetX = CalibrationParams.PositionOffset.x,
                 posOffsetY = CalibrationParams.PositionOffset.y,

@@ -17,11 +17,8 @@ namespace Assets.Modules.SurfaceInterface
 
         private void Update()
         {
-            if (RemoteSurfaceConnection.Instance)
-            {
-                RemoteSurfaceConnection.Instance.SendCommand("Surface", "debug-cm-val-" + MonitorName,
-                    string.Format("{{\"stability\": {0}, \"position\": {1}, \"rotation\": {2} }}", _monitor.Stability, _monitor.PositionStability, _monitor.RotationStability));
-            }
+            RemoteSurfaceConnection.SendCommand("Surface", "debug-cm-val-" + MonitorName,
+                string.Format("{{\"stability\": {0}, \"position\": {1}, \"rotation\": {2} }}", _monitor.Stability, _monitor.PositionStability, _monitor.RotationStability));
         }
     }
 }
