@@ -42,6 +42,7 @@ export class Graph {
                 dimX: this.dimX,
                 dimY: this.dimY,
                 isSelected: this.isSelected,
+                isNewlyCreated: this.isNewlyCreated,
                 hasFilter: this.selectedDataIndices !== null && this.selectedDataIndices.length > 0
             }
         });

@@ -31,6 +31,7 @@ export class GraphCreateButtonComponent {
     private handleCreateEnd(event: any): void {
         this.createdGraph.isPickedUp = false;
         this.createdGraph.isNewlyCreated = false;
+        this.createdGraph.updateData(['isNewlyCreated']);
         this.graphProvider.setGraphOffset(this.createdGraph, 0);
         this.graphProvider.selectGraph(this.createdGraph);
         this.createdGraph = null;

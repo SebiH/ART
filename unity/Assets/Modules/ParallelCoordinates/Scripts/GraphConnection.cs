@@ -50,6 +50,8 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 GenerateLines(false);
             }
+
+            UpdateScale();
         }
 
 
