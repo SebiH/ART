@@ -24,15 +24,13 @@ export class GraphCreateButtonComponent {
     }
 
     private handleCreateUpdate(event: any): void {
-        let newOffset = this.createdGraph.posOffset -= event.deltaX;
-        this.graphProvider.setGraphOffset(this.createdGraph, newOffset);
+        this.createdGraph.posOffset -= event.deltaX;
     }
 
     private handleCreateEnd(event: any): void {
         this.createdGraph.isPickedUp = false;
         this.createdGraph.isNewlyCreated = false;
-        this.createdGraph.updateData(['isNewlyCreated']);
-        this.graphProvider.setGraphOffset(this.createdGraph, 0);
+        this.createdGraph.posOffset = 0;
         this.graphProvider.selectGraph(this.createdGraph);
         this.createdGraph = null;
     }

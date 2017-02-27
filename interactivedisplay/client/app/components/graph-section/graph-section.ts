@@ -35,8 +35,8 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
 
         this.graphProvider.onGraphSelectionChanged()
             .takeWhile(() => this.isActive)
-            .subscribe(isSelected => {
-                this.isAnyGraphSelected = isSelected;
+            .subscribe(selectedGraph => {
+                this.isAnyGraphSelected = (selectedGraph != null);
             });
     }
 
@@ -49,12 +49,10 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     }
 
     private checkForChanges(): void {
-        let width = this.graph.isSelected ? Graph.SelectedWidth : this.graph.width;
-        let currentPosition = this.getSectionPosition().x + width / 2;
+        let currentPosition = this.getSectionPosition().x + this.graph.width / 2;
 
         if (this.graph.absolutePos == undefined || this.graph.absolutePos !== currentPosition) {
             this.graph.absolutePos = currentPosition;
-            this.graph.updatePosition();
         }
     }
 
@@ -79,12 +77,12 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     }
 
     private handleMoveUpdate(event: any) {
-        this.graphProvider.setGraphOffset(this.graph, this.graph.posOffset - event.deltaX);
+        this.graph.posOffset -= event.deltaX;
     }
 
     private handleMoveEnd(event: any) {
         this.graph.isPickedUp = false;
-        this.graphProvider.setGraphOffset(this.graph, 0);
+        this.graph.posOffset = 0;
     }
 
 }

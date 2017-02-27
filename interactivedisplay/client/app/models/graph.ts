@@ -2,6 +2,8 @@ import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { Point } from './point';
 
+const DEFAULT_GRAPH_WIDTH = 1250;
+
 export class Graph {
     /*
      *    Id
@@ -75,7 +77,7 @@ export class Graph {
         return this._absolutePos;
     }
     public set absolutePos(v : number) {
-        if (this._absolutePos != v) {
+        if (this._absolutePos != v && !isNaN(v)) {
             this._absolutePos = v;
             this.propagateUpdates(['absolutePos']);
         }
@@ -98,7 +100,7 @@ export class Graph {
     /*
      *    width
      */
-    private _width : number;
+    private _width : number = DEFAULT_GRAPH_WIDTH;
     public get width() : number {
         return this.isSelected ? window.innerWidth * 0.9 : this._width;
     }
@@ -162,6 +164,7 @@ export class Graph {
     }
 
     private propagateUpdates(changes: string[]) {
+        console.log(changes);
         this.updateSubscription.next(changes);
     }
 
@@ -187,8 +190,7 @@ export class Graph {
 
     // inverse of .toJson()
     public static fromJson(jGraph: any): Graph {
-        let graph = new Graph();
-        graph._id = jGraph.id;
+        let graph = new Graph(jGraph.id);
 
         graph._dimX = jGraph.dimX;
         graph._dimY = jGraph.dimY;
@@ -196,7 +198,9 @@ export class Graph {
         graph._isSelected = jGraph.isSelected;
 
         graph._absolutePos = jGraph.pos;
-        graph._width = jGraph.width;
+        // graph._width = jGraph.width;
+        // overwrite width since scaling isn't implemented
+        graph._width = DEFAULT_GRAPH_WIDTH;
 
         return graph;
     }

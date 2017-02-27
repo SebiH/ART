@@ -49,13 +49,11 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
         this.graphProvider.onGraphSelectionChanged()
             .takeWhile(() => this.isActive)
-            .subscribe(isSelected => {
-                for (let graph of this.graphs) {
-                    if (graph.isSelected) {
-                        this.focusGraph(graph);
-                    }
+            .subscribe(selectedGraph => {
+                if (selectedGraph) {
+                    this.focusGraph(selectedGraph);
                 }
-                this.isGraphSelected = isSelected;
+                this.isGraphSelected = (selectedGraph != null);
             });
     }
 
@@ -68,7 +66,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
         let offset = 0;
         for (let g of this.graphs) {
             if (g.listIndex < graph.listIndex && !g.isNewlyCreated) {
-                offset += g.isSelected ? Graph.SelectedWidth : g.width;
+                offset += g.width;
             }
         }
         
@@ -115,15 +113,11 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
 
     private onGraphCreation(graph: Graph): void {
-        // TODO: adjust scrolloffset so that graph is only slightly in view
-        this.graphProvider.setGraphOffset(graph, graph.posOffset + this.scrollOffset - graph.width * 0.8);
-        // this.isScrolling = true;
-        // this.scrollOffset += graph.width;
-        // setTimeout(() => this.isScrolling = false);
+        graph.posOffset = graph.posOffset + this.scrollOffset - graph.width * 0.8;
     }
 
     private focusGraph(graph: Graph): void {
-        this.scrollOffset = this.getOffset(graph) + Graph.SelectedWidth / 2 - window.innerWidth / 2;
+        this.scrollOffset = this.getOffset(graph) + graph.width / 2 - window.innerWidth / 2;
     }
 
     private closeSelection(): void {

@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { Graph, PathElement, Point } from '../../models/index';
+import { Graph, Point } from '../../models/index';
 import { ScatterPlotComponent, ChartPolygon } from '../scatter-plot/scatter-plot';
 import {
     GraphProvider,
@@ -16,7 +16,9 @@ import {
 import * as _ from 'lodash';
 
 class Selection {
-    path: PathElement[] = [];
+    // TODO1
+    // path: PathElement[] = [];
+    path: any = [];
     polygon: ChartPolygon;
     selectedData: number[] = [];
 }
@@ -71,10 +73,11 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         this.isActive = true;
         this.reloadSelection();
         this.loadData(this.graph.dimX, this.graph.dimY);
-        this.graph.onDataUpdate
+        this.graph.onUpdate
             .takeWhile(() => this.isActive)
-            .filter(g => g.changes.indexOf('dimX') > -1 || g.changes.indexOf('dimY') > -1)
-            .subscribe(g => this.loadData(g.data.dimX, g.data.dimY));
+            .filter(changes => changes.indexOf('dimX') > -1 || changes.indexOf('dimY') > -1)
+            .subscribe(changes => this.loadData(this.graph.dimX, this.graph.dimY));
+
         this.dataFilter.getFilter()
             .takeWhile(() => this.isActive)
             .subscribe(this.highlightData.bind(this));
@@ -152,7 +155,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private handleTouchDown(ev: InteractionEvent): void {
         this.currentSelection = new Selection();
-        this.graph.selectionPolygons.push(this.currentSelection.path);
+        // TODO1
+        // this.graph.selectionPolygons.push(this.currentSelection.path);
 
         this.currentSelection.polygon = this.scatterplot.createPolygon();
         this.selections.push(this.currentSelection);
@@ -228,14 +232,15 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             sel.polygon.remove();
         }
 
-        for (let path of this.graph.selectionPolygons) {
-            let selection = new Selection();
-            selection.path = path;
-            selection.polygon = this.scatterplot.createPolygon();
-            selection.polygon.paint(selection.path);
+        // TODO1
+        // for (let path of this.graph.selectionPolygons) {
+        //     let selection = new Selection();
+        //     selection.path = path;
+        //     selection.polygon = this.scatterplot.createPolygon();
+        //     selection.polygon.paint(selection.path);
 
-            this.selections.push(selection);
-        }
+        //     this.selections.push(selection);
+        // }
     }
 
     private calculateSelectedData(selection: Selection): void {
@@ -259,13 +264,15 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             selectionArrays.push(selection.selectedData);
         }
         let selectedData = _.union.apply(_, selectionArrays);
-        this.graph.selectedDataIndices = selectedData;
-        this.graph.updateData(['selectedDataIndices']);
+        // TODO1
+        // this.graph.selectedDataIndices = selectedData;
+        // this.graph.updateData(['selectedDataIndices']);
     }
 
     private highlightData(globalFilter: number[]): void {
         let values = this.scatterplot.getValues();
-        values.highlight(this.graph.selectedDataIndices, globalFilter);
+        // TODO1
+        // values.highlight(this.graph.selectedDataIndices, globalFilter);
     }
 
 
@@ -286,7 +293,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private removeSelection(selection: Selection) {
         selection.polygon.remove();
         _.pull(this.selections, selection);
-        _.pull(this.graph.selectionPolygons, selection.path);
+        // TODO1
+        // _.pull(this.graph.selectionPolygons, selection.path);
         this.updateSelectedGraphData();
     }
 

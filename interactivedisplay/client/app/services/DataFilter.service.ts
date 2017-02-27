@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { GraphProvider } from './GraphProvider.service';
 import { SocketIO } from './SocketIO.service';
-import { Graph } from '../models/index';
+import { Graph, Filter } from '../models/index';
 
 import * as _ from 'lodash';
 
@@ -41,21 +41,21 @@ export class DataFilter {
             sub.unsubscribe();
         }
 
-        for (let graph of this.graphs) {
-            graph.onDataUpdate
-                .filter(g => g.changes.indexOf('selectedDataIndices') > -1)
-                .subscribe(g => this.rebuildFilter());
-        }
+        // for (let graph of this.graphs) {
+        //     graph.onDataUpdate
+        //         .filter(g => g.changes.indexOf('selectedDataIndices') > -1)
+        //         .subscribe(g => this.rebuildFilter());
+        // }
     }
 
     private rebuildFilter(): void {
         let graphFilters: number[][] = [];
 
-        for (let graph of this.graphs) {
-            if (graph.selectedDataIndices.length > 0) {
-                graphFilters.push(graph.selectedDataIndices);
-            }
-        }
+        // for (let graph of this.graphs) {
+        //     if (graph.selectedDataIndices.length > 0) {
+        //         graphFilters.push(graph.selectedDataIndices);
+        //     }
+        // }
 
         let useFilter = graphFilters.length > 0;
 
