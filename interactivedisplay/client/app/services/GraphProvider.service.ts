@@ -22,11 +22,10 @@ const COLOURS = [
 export class GraphProvider {
     private graphs: Graph[] = [];
     private graphObserver: ReplaySubject<Graph[]> = new ReplaySubject<Graph[]>(1);
-    private graphSelectionChanged: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
+    private graphSelectionChanged: ReplaySubject<Graph> = new ReplaySubject<Graph>(1);
     private idCounter: number = 0;
 
-    private delayedGraphDataUpdate: Function;
-    private delayedGraphPositionUpdate: Function;
+    private delayedGraphUpdate: Function;
 
     constructor(private socketio: SocketIO, private http: Http) {
         this.http.get('/api/graph/list')
@@ -37,25 +36,27 @@ export class GraphProvider {
                     this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
                 }
 
-                let hasSelectedGraph = false;
+                let selectedGraph = null;
                 for (let graph of this.graphs) {
                     this.attachListeners(graph);
-                    hasSelectedGraph = graph.isSelected || hasSelectedGraph;
+
+                    if (graph.isSelected) {
+                        selectedGraph = graph;
+                    }
                 }
 
                 this.recalculateGraphIndices();
                 this.graphObserver.next(this.graphs);
-                this.graphSelectionChanged.next(hasSelectedGraph);
+                this.graphSelectionChanged.next(selectedGraph);
 
                 // for live editing via console
                 window['graphs'] = this.graphs;
             });
 
-        this.delayedGraphDataUpdate = _.debounce(this.updateGraphData, 0);
-        this.delayedGraphPositionUpdate = _.debounce(this.updateGraphPosition, 0);
+        this.delayedGraphUpdate = _.debounce(this.updateGraph, 0);
     }
 
-    public onGraphSelectionChanged(): Observable<boolean> {
+    public onGraphSelectionChanged(): Observable<Graph> {
         return this.graphSelectionChanged.asObservable();
     }
 
@@ -63,29 +64,18 @@ export class GraphProvider {
         for (let g of this.graphs) {
             if (g.isSelected && g !== graph) {
                 g.isSelected = false;
-                g.updateData(['isSelected']);
             }
         }
 
         if (graph) {
             graph.isSelected = true;
-            graph.updateData(['isSelected']);
-            this.graphSelectionChanged.next(true);
-        } else {
-            this.graphSelectionChanged.next(false);
         }
+        this.graphSelectionChanged.next(graph);
     }
 
-    public setGraphOffset(graph: Graph, offset: number) {
-        graph.posOffset = offset;
-
-        this.recalculateGraphIndices();
-        graph.updatePosition();
-    }
 
     public addGraph(): Graph {
-        let graph = new Graph();
-        graph.id = this.idCounter++;
+        let graph = new Graph(this.idCounter++);
         graph.color = COLOURS[graph.id % COLOURS.length];
         graph.isNewlyCreated = true;
 
@@ -93,21 +83,18 @@ export class GraphProvider {
         this.socketio.sendMessage('+graph', graph.toJson());
 
         this.graphs.push(graph);
-        this.recalculateGraphIndices();
         this.graphObserver.next(this.graphs);
 
         return graph;
     }
 
     private attachListeners(graph: Graph): void {
-        graph.onDataUpdate.subscribe(g => {
-            this.graphDataUpdateQueue[g.id] = g.data;
-            this.delayedGraphDataUpdate();
-        });
-        graph.onPositionUpdate.subscribe(g => {
-            this.graphPositionUpdateQueue[g.id] = g;
-            this.delayedGraphPositionUpdate();
-        });
+        graph.onUpdate
+            .subscribe(changes => this.graphUpdateQueue[graph.id] = graph.toJson());
+
+        graph.onUpdate
+            .filter(changes => changes.indexOf('absolutePos') >= 0)
+            .subscribe(changes => this.recalculateGraphIndices());
     }
 
     public getGraphs(): Observable<Graph[]> {
@@ -118,37 +105,23 @@ export class GraphProvider {
         this.socketio.sendMessage('-graph', graph.id);
         _.pull(this.graphs, graph);
         this.recalculateGraphIndices();
-
+        graph.destroy();
         this.graphObserver.next(this.graphs);
     }
 
 
+    private graphUpdateQueue: { [id: number]: any } = {};
 
-    private graphDataUpdateQueue: { [id: number]: any } = {};
-    private graphPositionUpdateQueue: { [id: number]: any } = {};
-
-    private updateGraphData(): void {
-        let graphs = _.values(this.graphDataUpdateQueue);
+    private updateGraph(): void {
+        let graphs = _.values(this.graphUpdateQueue);
 
         if (graphs.length > 0) {
-            this.socketio.sendMessage('graph-data', {
+            this.socketio.sendMessage('graph', {
                 graphs: graphs
             });
-            this.graphDataUpdateQueue = {};
+            this.graphUpdateQueue = {};
         }
     }
-
-    private updateGraphPosition(): void {
-        let graphs = _.values(this.graphPositionUpdateQueue);
-
-        if (graphs.length > 0) {
-            this.socketio.sendMessage('graph-position', {
-                graphs: graphs
-            });
-            this.graphPositionUpdateQueue = {};
-        }
-    }
-
 
     public recalculateGraphIndices(): void {
         var sortedGraphs = _.sortBy(this.graphs, 'absolutePos');
