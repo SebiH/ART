@@ -4,19 +4,37 @@
     transition: width 0.4s linear;
 }
 
-.markers-container {
-    position: absolute;
-    left: 0;
-    top: 50px;
-    width: 100%;
+.graph-section {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
 }
 
-.markers {
-    margin: 25px;
+/*.column {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.column.bottom {
+    justify-content: flex-end;
+}
+*/
+.markers {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 50px;
     background: white;
     box-shadow: inset -6px 0px 28px 0px black;
 }
@@ -31,46 +49,23 @@
 
 .markers > ar-marker {
     padding: 30px;
-    transition: box-shadow 0.2s linear;
 }
 
-.overview-selection {
-    position: absolute;
-    right: 0;
-    top: 438px;
-
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-}
-
-.detail-container {
-    width: 300px;
-    height: 1240px;
-    background: white;
-    box-shadow: inset -6px 0px 28px 0px black;
-}
-
-.buttons {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-
-    display: flex;
-    flex-direction: row;
-    padding: 30px 0px;
-    width: 100%;
-    justify-content: space-around;
-}
 
 .button, button {
     border: none;
     border-radius: 0;
 
     background: rgba(0, 0, 0, 0.8);
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     color: white;
-    margin-bottom: 0;
-    margin-top: 50px;
+    margin: 20px;
+}
+
+.detail-container {
+    background: white;
+    width: 300px;
+    height: 1100px;
+    box-shadow: inset -6px 0px 28px 0px black;
 }

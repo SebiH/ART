@@ -3,6 +3,8 @@ import { Observable } from 'rxjs/Rx';
 import { Marker, Graph, Point } from '../../models/index';
 import { MarkerProvider, GraphProvider } from '../../services/index';
 
+const NUM_MARKERS = 6;
+
 @Component({
     selector: 'graph-section',
     templateUrl: './app/components/graph-section/graph-section.html',
@@ -25,7 +27,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         ) {}
 
     ngOnInit() {
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < NUM_MARKERS; i++) {
             this.markers.push(this.markerProvider.createMarker());
         }
 

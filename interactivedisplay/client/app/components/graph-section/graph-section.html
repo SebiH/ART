@@ -1,7 +1,52 @@
 <div class="section-root"
     [style.background]="graph.color">
 
-    <div class="markers-container">
+    <div class="graph-section">
+        
+        <div class="row">
+            <div class="markers horizontal">
+                <ar-marker [marker]="markers[0]"></ar-marker>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="markers vertical">
+                <ar-marker [marker]="markers[1]"></ar-marker>
+                <ar-marker [marker]="markers[2]"></ar-marker>
+            </div>
+
+            <div class="detail-container">
+            </div>
+
+            <div class="markers vertical">
+                <ar-marker [marker]="markers[3]"></ar-marker>
+                <ar-marker [marker]="markers[4]"></ar-marker>
+            </div>
+        </div>
+
+
+        <div class="row">
+
+            <button> Flip </button>
+            <button> Move </button>
+
+            <div class="markers horizontal">
+                <ar-marker [marker]="markers[5]"></ar-marker>
+            </div>
+
+            <button> Select </button>
+            <button> Delete </button>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+<!--     <div class="markers-container">
         <div class="markers horizontal">
             <ar-marker [marker]="markers[0]"></ar-marker>
             <ar-marker [marker]="markers[1]"></ar-marker>
@@ -37,7 +82,7 @@
             ↔
         </div>
     </div>
-
+ -->
 
 
 
