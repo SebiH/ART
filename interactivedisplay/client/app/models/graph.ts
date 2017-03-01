@@ -69,6 +69,17 @@ export class Graph {
         }
     }
 
+    private _isFlipped : boolean;
+    public get isFlipped() : boolean {
+        return this._isFlipped;
+    }
+    public set isFlipped(v : boolean) {
+        if (this._isFlipped != v) {
+            this._isFlipped = v;
+            this.propagateUpdates(['isFlipped']);
+        }
+    }
+
     /*
      *    absolutePos
      */
@@ -180,6 +191,7 @@ export class Graph {
             color: this.color,
             isSelected: this.isSelected,
             isNewlyCreated: this.isNewlyCreated,
+            isFlipped: this.isFlipped,
 
             pos: this.absolutePos,
             width: this.width
@@ -195,6 +207,9 @@ export class Graph {
         graph._dimY = jGraph.dimY;
         graph._color = jGraph.color;
         graph._isSelected = jGraph.isSelected;
+        graph._isFlipped = jGraph.isFlipped;
+        // force newly created to false because touch events won't persist
+        graph._isNewlyCreated = false;
 
         graph._absolutePos = jGraph.pos;
         // graph._width = jGraph.width;
