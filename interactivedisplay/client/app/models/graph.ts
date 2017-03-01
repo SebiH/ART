@@ -102,7 +102,7 @@ export class Graph {
      */
     private _width : number = DEFAULT_GRAPH_WIDTH;
     public get width() : number {
-        return this.isSelected ? window.innerWidth * 0.9 : this._width;
+        return this.isSelected ? window.innerWidth * 0.7 : this._width;
     }
     public set width(v : number) {
         if (this._width != v) {

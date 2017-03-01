@@ -25,7 +25,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         ) {}
 
     ngOnInit() {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 7; i++) {
             this.markers.push(this.markerProvider.createMarker());
         }
 
