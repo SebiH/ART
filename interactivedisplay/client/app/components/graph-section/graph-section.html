@@ -1,37 +1,41 @@
 <div class="section-root"
     [style.background]="graph.color">
 
-    <div class="markers horizontal">
-        <ar-marker [marker]="markers[0]"></ar-marker>
-        <ar-marker [marker]="markers[1]"></ar-marker>
-        <ar-marker [marker]="markers[2]"></ar-marker>
-    </div>
-    <div class="markers vertical">
-        <ar-marker [marker]="markers[3]"></ar-marker>
-        <ar-marker [marker]="markers[4]"></ar-marker>
-        <ar-marker [marker]="markers[5]"></ar-marker>
-        <ar-marker [marker]="markers[6]"></ar-marker>
+    <div class="markers-container">
+        <div class="markers horizontal">
+            <ar-marker [marker]="markers[0]"></ar-marker>
+            <ar-marker [marker]="markers[1]"></ar-marker>
+            <ar-marker [marker]="markers[2]"></ar-marker>
+        </div>
+
+        <div class="markers vertical">
+            <ar-marker [marker]="markers[3]"></ar-marker>
+            <ar-marker [marker]="markers[4]"></ar-marker>
+            <ar-marker [marker]="markers[5]"></ar-marker>
+            <ar-marker [marker]="markers[6]"></ar-marker>
+        </div>
     </div>
 
     <div class="overview-selection">
-        <div class="buttons" [ngClass]="{ hidden: isAnyGraphSelected }">
-            <button > Colour </button>
-            <button > Flip </button>
-            <button (click)="selectGraph()"> Select </button>
-            <button (click)="deleteGraph()"> Remove </button>
-            <div class="button"
-                 moveable
-                 (moveStart)="handleMoveStart($event)"
-                 (moveUpdate)="handleMoveUpdate($event)"
-                 (moveEnd)="handleMoveEnd($event)">
-                ↔
-            </div>
-        </div>
 
         <div class="detail-container">
 
         </div>
 
+    </div>
+
+    <div class="buttons" [ngClass]="{ hidden: isAnyGraphSelected }">
+        <button > Colour </button>
+        <button > Flip </button>
+        <button (click)="selectGraph()"> Select </button>
+        <button (click)="deleteGraph()"> Remove </button>
+        <div class="button"
+             moveable
+             (moveStart)="handleMoveStart($event)"
+             (moveUpdate)="handleMoveUpdate($event)"
+             (moveEnd)="handleMoveEnd($event)">
+            ↔
+        </div>
     </div>
 
 
