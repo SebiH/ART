@@ -104,9 +104,21 @@ export class ScatterPlotComponent implements OnInit, OnDestroy {
         let d3element = d3.select(this.graphElement.nativeElement);
         d3element.html('');
 
+        let actualWidth = this.width + this.margin.left + this.margin.right;
+        let actualHeight = this.height + this.margin.top + this.margin.bottom;
+        // let chartSvg = d3element.append('div')
+        //     .classed('svg-container', true)
+        //     .append('svg')
+        //         .attr("preserveAspectRatio", "xMinYMin meet")
+        //         .attr("viewBox", '0 0 ' + this.width + ' ' + this.height)
+        //         .classed('svg-content-responsive', true);
+
+
         let chartSvg = d3element.append('svg')
-            .attr('width', this.width + this.margin.left + this.margin.right)
-            .attr('height', this.height + this.margin.top + this.margin.bottom);
+            .attr('width', actualWidth)
+            .attr('height', actualHeight);
+
+        window['chart'] = chartSvg;
 
         this.chartRoot = chartSvg.append('g')
             .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');;

@@ -63,8 +63,7 @@ sioServer.onMessageReceived({
                 graphStorage.set(JSON.parse(msg.payload));
                 break;
 
-            case 'graph-data':
-            case 'graph-position':
+            case 'graph':
                 let graphs = JSON.parse(msg.payload).graphs;
                 for (let graph of graphs) {
                     graphStorage.set(graph);

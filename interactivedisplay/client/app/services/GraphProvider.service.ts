@@ -90,7 +90,10 @@ export class GraphProvider {
 
     private attachListeners(graph: Graph): void {
         graph.onUpdate
-            .subscribe(changes => this.graphUpdateQueue[graph.id] = graph.toJson());
+            .subscribe(changes => {
+                this.graphUpdateQueue[graph.id] = graph.toJson();
+                this.delayedGraphUpdate();
+            });
 
         graph.onUpdate
             .filter(changes => changes.indexOf('absolutePos') >= 0)

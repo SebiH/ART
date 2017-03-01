@@ -3,6 +3,8 @@ export * from './admin-camera/admin-camera.component';
 export * from './admin-change-monitor/admin-change-monitor.component';
 export * from './admin-panel/admin-panel.component';
 export * from './app/app';
+export * from './chart-1d/chart-1d.component';
+export * from './chart-2d/chart-2d.component';
 export * from './graph-create-button/graph-create-button.component';
 export * from './graph-data-selection/graph-data-selection';
 export * from './graph-detail/graph-detail';

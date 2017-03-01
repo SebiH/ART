@@ -164,7 +164,6 @@ export class Graph {
     }
 
     private propagateUpdates(changes: string[]) {
-        console.log(changes);
         this.updateSubscription.next(changes);
     }
 
