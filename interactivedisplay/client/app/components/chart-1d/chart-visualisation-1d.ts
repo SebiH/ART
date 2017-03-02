@@ -5,13 +5,13 @@ import * as d3 from 'd3';
 import * as _ from 'lodash';
 
 const FILL_COLOURS = [
-    '#E53935',
-    '#1E88E5',
-    '#7CB342',
-    '#FDD835',
-    '#8E24AA',
-    '#F4511E',
-    '#00897B'
+    '#E53935', // red
+    '#1E88E5', // blue
+    '#43A047', // green
+    '#FDD835', // yellow
+    '#8E24AA', // purple
+    '#F4511E', // orange
+    '#00897B', // teal
 ];
 
 export class ChartVisualisation1d extends ChartElement {
