@@ -41,6 +41,11 @@
 }
 
 
+.button-container {
+    display: flex;
+    align-items: center;
+}
+
 .button, button {
     background: rgba(0, 0, 0, 0.8);
     width: 150px;
@@ -51,6 +56,10 @@
     border: 1px solid black;
     background: white;
     color: black;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .chart-container {
@@ -58,6 +67,11 @@
     width: 300px;
     height: 1100px;
     border: 1px solid black;
+    transition: width 0.4s linear;
+}
+
+.chart-container.selected {
+    width: 1500px;
 }
 
 .chart-button {
@@ -66,4 +80,10 @@
     margin: 0;
     border: none;
     border-top: 1px solid black;
+}
+
+.chart-button.active,
+.button.active,
+button.active {
+    background: #8BC34A;
 }

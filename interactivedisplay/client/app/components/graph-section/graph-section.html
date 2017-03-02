@@ -15,7 +15,7 @@
                 <ar-marker [marker]="markers[2]"></ar-marker>
             </div>
 
-            <div class="chart-container">
+            <div class="chart-container" [ngClass]="{ selected: graph.isSelected }">
 
                 <div *ngIf="!graph.isSelected">
                     <!-- Width & height from css -->
@@ -25,7 +25,9 @@
                         [dimension]="graph.isFlipped ? dimY : dimX">
                     </chart-1d>
 
-                    <button class="chart-button">
+                    <button class="chart-button"
+                        (click)="toggleColor()"
+                        [ngClass]="{ active: this.graph.isColored }">
                         Colour
                     </button>
                 </div>
@@ -44,18 +46,29 @@
 
 
         <div class="row">
-            <div *ngIf="!graph.isSelected">
-                <button> Flip </button>
-                <button> Move </button>
+            <div *ngIf="!graph.isSelected" class="button-container">
+                <button
+                    (click)="toggleFlip()"
+                    [ngClass]="{ active: graph.isFlipped }">
+                    Flip
+                </button>
+                <div class="button"
+                    [ngClass]="{ active: graph.isPickedUp }"
+                    moveable
+                    (moveStart)="handleMoveStart($event)"
+                    (moveUpdate)="handleMoveUpdate($event)"
+                    (moveEnd)="handleMoveEnd($event)">
+                    Move
+                </div>
             </div>
 
             <div class="markers horizontal">
                 <ar-marker [marker]="markers[5]"></ar-marker>
             </div>
 
-            <div *ngIf="!graph.isSelected">
-                <button> Select </button>
-                <button> Delete </button>
+            <div *ngIf="!graph.isSelected" class="button-container">
+                <button (click)="selectGraph()"> Select </button>
+                <button (click)="deleteGraph()"> Delete </button>
             </div>
         </div>
     </div>

@@ -76,6 +76,14 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         return new Point(pos.left, pos.top);
     }
 
+    private toggleColor() {
+        // TODO1 should be done in graphProvider, probably
+        this.graph.isColored = !this.graph.isColored;
+    }
+
+    private toggleFlip() {
+        this.graph.isFlipped = !this.graph.isFlipped;
+    }
 
     private selectGraph(): void {
         this.graphProvider.selectGraph(this.graph);
