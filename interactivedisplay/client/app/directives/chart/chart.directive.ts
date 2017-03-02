@@ -36,7 +36,8 @@ export class ChartDirective implements OnInit, OnChanges {
     }
 
     public removeElement(element: ChartElement): void {
-
+        _.pull(this.chartElements, element);
+        element.unregister();
     }
 
 
