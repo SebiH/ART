@@ -69,6 +69,9 @@ export class Graph {
         }
     }
 
+    /*
+     *     isFlipped
+     */
     private _isFlipped : boolean;
     public get isFlipped() : boolean {
         return this._isFlipped;
@@ -77,6 +80,20 @@ export class Graph {
         if (this._isFlipped != v) {
             this._isFlipped = v;
             this.propagateUpdates(['isFlipped']);
+        }
+    }
+
+    /*
+     *    isColored
+     */
+    private _isColored : boolean;
+    public get isColored() : boolean {
+        return this._isColored;
+    }
+    public set isColored(v : boolean) {
+        if (this._isColored != v) {
+            this._isColored = v;
+            this.propagateUpdates(['isColored']);
         }
     }
 
@@ -192,6 +209,7 @@ export class Graph {
             isSelected: this.isSelected,
             isNewlyCreated: this.isNewlyCreated,
             isFlipped: this.isFlipped,
+            isColored: this.isColored,
 
             pos: this.absolutePos,
             width: this.width
@@ -206,6 +224,7 @@ export class Graph {
         graph._dimX = jGraph.dimX;
         graph._dimY = jGraph.dimY;
         graph._color = jGraph.color;
+        graph._isColored = jGraph.isColored;
         graph._isSelected = jGraph.isSelected;
         graph._isFlipped = jGraph.isFlipped;
         // force newly created to false because touch events won't persist
