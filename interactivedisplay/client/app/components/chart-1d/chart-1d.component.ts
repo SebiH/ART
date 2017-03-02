@@ -3,6 +3,7 @@ import { ChartDimension } from '../../models/index';
 import { ChartDirective } from '../../directives/index';
 
 import { ChartVisualisation1d } from './chart-visualisation-1d';
+import { BarVisualisation1d } from './bar-visualisation-1d';
 
 @Component({
     selector: 'chart-1d',
@@ -54,7 +55,7 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
     private drawBarChart() {
         if (this.dataVisualisation === null || this.dataVisualisation.dimension !== this.dimension) {
             this.clear();
-            this.dataVisualisation = new ChartVisualisation1d(this.dimension);
+            this.dataVisualisation = new BarVisualisation1d(this.dimension);
             this.chart.addElement(this.dataVisualisation);
         }
     }
