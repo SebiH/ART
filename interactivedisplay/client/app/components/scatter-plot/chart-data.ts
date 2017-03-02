@@ -25,7 +25,7 @@ export class ChartData {
     }
 
     private initValues(data: number[][]): void {
-        this.chartRoot.selectAll('dot')
+        this.chartRoot.selectAll('.point')
             .data(data)
             .enter().append('circle')
                 .attr('cx', d => d[0])

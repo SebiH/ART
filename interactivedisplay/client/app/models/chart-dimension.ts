@@ -1,4 +1,4 @@
-export class ChartDimension {
+export interface ChartDimension {
     data: number[];
     domain: { min: number, max: number };
 
