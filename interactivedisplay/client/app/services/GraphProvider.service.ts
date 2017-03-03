@@ -60,6 +60,18 @@ export class GraphProvider {
         return this.graphSelectionChanged.asObservable();
     }
 
+    public setColor(graph: Graph) {
+        for (let g of this.graphs) {
+            if (g.isColored && g != graph) {
+                g.isColored = false;
+            }
+        }
+
+        if (graph) {
+            graph.isColored = true;
+        }
+    }
+
     public selectGraph(graph: Graph) {
         for (let g of this.graphs) {
             if (g.isSelected && g !== graph) {
