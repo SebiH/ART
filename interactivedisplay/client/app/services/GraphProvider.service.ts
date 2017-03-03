@@ -82,6 +82,8 @@ export class GraphProvider {
         if (graph) {
             graph.isSelected = true;
         }
+
+        this.recalculateGraphIndices();
         this.graphSelectionChanged.next(graph);
     }
 

@@ -62,18 +62,17 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     }
 
     private checkForChanges(): void {
-        let currentPosition = this.getSectionPosition().x + this.graph.width / 2;
+        let pos = this.getSectionPosition();
+        let currentPosition = pos.left + pos.width / 2;
 
         if (this.graph.absolutePos == undefined || this.graph.absolutePos !== currentPosition) {
             this.graph.absolutePos = currentPosition;
         }
     }
 
-    private getSectionPosition(): Point {
+    private getSectionPosition() {
         let element = <HTMLElement>this.elementRef.nativeElement;
-        let pos = element.getBoundingClientRect();
-
-        return new Point(pos.left, pos.top);
+        return element.getBoundingClientRect();
     }
 
     private toggleColor() {
