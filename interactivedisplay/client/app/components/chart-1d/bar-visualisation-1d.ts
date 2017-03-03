@@ -5,16 +5,6 @@ import { ChartVisualisation1d } from './chart-visualisation-1d';
 import * as d3 from 'd3';
 import * as _ from 'lodash';
 
-const FILL_COLOURS = [
-    '#E53935', // red
-    '#1E88E5', // blue
-    '#43A047', // green
-    '#FDD835', // yellow
-    '#8E24AA', // purple
-    '#F4511E', // orange
-    '#00897B', // teal
-];
-
 export class BarVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
@@ -57,7 +47,7 @@ export class BarVisualisation1d extends ChartVisualisation1d {
             .data(this.data)
             .enter().append('rect')
                 .attr('class', 'bar')
-                .attr('fill', (d, i) => FILL_COLOURS[i])
+                .attr('fill', (d, i) => this.getColor(d.category))
                 .attr('x', d => x(d.amount))
                 .attr('y', d => y(d.category))
                 .attr('height', y.bandwidth())
@@ -74,4 +64,14 @@ export class BarVisualisation1d extends ChartVisualisation1d {
         // TODO.
     }
 
+
+    private getColor(category: string): string {
+        for (let mapping of this.dimension.mappings) {
+            if (mapping.name == category) {
+                return mapping.color;
+            }
+        }
+
+        return '#00ff00';
+    }
 }

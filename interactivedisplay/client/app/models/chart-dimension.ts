@@ -6,5 +6,5 @@ export interface ChartDimension {
 
     isMetric: boolean;
     // only if isNumeric is false
-    mappings?: { value: number, name: string }[];
+    mappings?: { value: number, name: string, color: string }[];
 }

@@ -76,7 +76,7 @@ export class GraphDataProvider {
                 isMetric = false;
                 mappings = [];
                 for (let m of mapping.values) {
-                    mappings.push({ value: +m.dbValue, name: m.name });
+                    mappings.push({ value: +m.dbValue, name: m.name, color: m.color });
                 }
                 break;
 
