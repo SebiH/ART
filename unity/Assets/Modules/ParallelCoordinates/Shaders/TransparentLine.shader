@@ -4,6 +4,7 @@ Shader "ParallelCoordinates/TransparentLine"
     {
         _OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
         _OutlineWidth ("Outline Width", Range(0.0001, 0.001)) = 0.0007
+        _AlphaThreshold ("Alpha Threshold", Range(0.01, 1.0)) = 0.8
     }
 
 
@@ -16,15 +17,16 @@ Shader "ParallelCoordinates/TransparentLine"
         Blend SrcAlpha OneMinusSrcAlpha 
 
         Pass {
-            ZWrite Off
+            ZWrite On
 
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 4.0
 
-            uniform float _OutlineWidth;
             uniform float4 _OutlineColor;
+            uniform float _OutlineWidth;
+            uniform float _AlphaThreshold;
 
             #include "UnityCG.cginc"
 
@@ -55,23 +57,25 @@ Shader "ParallelCoordinates/TransparentLine"
 
             fixed4 frag (v2f input) : SV_Target
             {
-                fixed4 color = _OutlineColor * step(0.8, input.color.a);
-                return color;
+                clip(input.color.a - _AlphaThreshold);
+                return _OutlineColor;
             }
 
             ENDCG
         }
         
         Pass {
-            ZWrite Off
+            ZWrite On
 
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
             #pragma target 4.0
 
-            uniform float _OutlineWidth;
             uniform float4 _OutlineColor;
+            uniform float _OutlineWidth;
+            uniform float _AlphaThreshold;
+
 
             #include "UnityCG.cginc"
 
@@ -102,8 +106,8 @@ Shader "ParallelCoordinates/TransparentLine"
 
             fixed4 frag (v2f input) : SV_Target
             {
-                fixed4 color = _OutlineColor * step(0.8, input.color.a);
-                return color;
+                clip(input.color.a - _AlphaThreshold);
+                return _OutlineColor;
             }
 
             ENDCG
@@ -137,7 +141,7 @@ Shader "ParallelCoordinates/TransparentLine"
                 v2f output;
                 UNITY_SETUP_INSTANCE_ID(input);
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
-                output.vertex = UnityObjectToClipPos(input.vertex);
+                output.vertex = UnityObjectToClipPos(input.vertex) + float4(0, 0, 0.00001, 0);
                 output.color = input.color;
                 return output;
             }
