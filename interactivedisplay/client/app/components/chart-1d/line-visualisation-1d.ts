@@ -40,8 +40,9 @@ export class LineVisualisation1d extends ChartVisualisation1d {
 
         let baseUrl = Utils.getBaseUrl();
         let background = this.dataContainer.append('rect')
-            .attr('width', width)
+            .attr('width', width - 2) // - 2 due to borders..
             .attr('height', height)
+            .attr('transform', 'translate(-2,0)') // -2 due to borders
             .style('fill', 'url(' + baseUrl + '#gradient)');
     }
 
