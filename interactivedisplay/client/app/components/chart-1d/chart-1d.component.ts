@@ -4,6 +4,7 @@ import { ChartDirective } from '../../directives/index';
 
 import { ChartVisualisation1d } from './chart-visualisation-1d';
 import { BarVisualisation1d } from './bar-visualisation-1d';
+import { LineVisualisation1d } from './line-visualisation-1d';
 
 @Component({
     selector: 'chart-1d',
@@ -23,13 +24,17 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
 
     private margin = { top: 0, right: 0, bottom: 0, left: 0 };
     private dataVisualisation: ChartVisualisation1d = null;
+    private isInitialised = false;
 
     ngAfterViewInit() {
         this.initialize();
+        this.isInitialised = true;
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        this.initialize();
+        if (this.isInitialised) {
+            this.initialize();
+        }
     }
 
     private initialize(): void {
@@ -61,7 +66,10 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
     }
 
     private drawLineChart() {
-        // TODO?
-        // this.drawBarChart();
+        if (this.dataVisualisation === null || this.dataVisualisation.dimension !== this.dimension) {
+            this.clear();
+            this.dataVisualisation = new LineVisualisation1d(this.dimension);
+            this.chart.addElement(this.dataVisualisation);
+        }
     }
 }
