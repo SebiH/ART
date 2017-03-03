@@ -1,6 +1,7 @@
 import { HtmlChartElement } from '../../directives/index';
 import { ChartDimension } from '../../models/index';
 import { ChartVisualisation1d } from './chart-visualisation-1d';
+import { Utils } from '../../Utils';
 
 import * as d3 from 'd3';
 import * as _ from 'lodash';
@@ -37,10 +38,11 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .attr('stop-color', GRADIENT_COLOURS[1])
             .attr('stop-opacity', 0.8);
 
+        let baseUrl = Utils.getBaseUrl();
         let background = this.dataContainer.append('rect')
             .attr('width', width)
             .attr('height', height)
-            .style('fill', 'url(#gradient)');
+            .style('fill', 'url(' + baseUrl + '#gradient)');
     }
 
 

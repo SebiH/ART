@@ -5,4 +5,8 @@ export class Utils {
         }
         return str;
     }
+
+    public static getBaseUrl() {
+        return window.location.href.replace('#!', ''); 
+    }
 }

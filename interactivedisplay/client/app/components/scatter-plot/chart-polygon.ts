@@ -1,5 +1,6 @@
 import { ChartElement } from './chart-element';
 import { Point } from '../../models/index';
+import { Utils } from '../../Utils';
 import * as d3 from 'd3';
 
 // documentation: https://riccardoscalco.github.io/textures/
@@ -34,8 +35,8 @@ export class ChartPolygon {
     // Texture.js returns relative url as 'url(#xyz)', 
     // but Edge/Firefox need absolute url: 'url(localhost#324)'
     private getAbsoluteTextureUrl(url: string) {
-        let baseUrl = window.location.href;
-        return url.replace('url(', 'url(' + baseUrl).replace('#!', '');
+        let baseUrl = Utils.getBaseUrl();
+        return url.replace('url(', 'url(' + baseUrl);
     }
 
     public paint(path: number[][]) {
