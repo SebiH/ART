@@ -11,16 +11,34 @@ const GRADIENT_COLOURS = [
     '#0D47A1', // end: blue 900
 ];
 
+const NUM_BINS = 10;
+
 export class LineVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
+    private bins: number[] = [];
 
     public constructor(public dimension: ChartDimension) {
         super();
+
+        for (let i = 0; i < NUM_BINS; i++) {
+            this.bins[i] = 0;
+        }
+
+        for (let data of dimension.data) {
+            let val = (data / dimension.domain.max) * NUM_BINS;
+            let binIndex = Math.floor(val);
+            this.bins[binIndex] += 1;
+        }
     }
 
     public register(root: HtmlChartElement, width: number, height: number): void {
+
         this.dataContainer = root.append('g');
+
+        /*
+        **    Gradient
+        **/
         let gradient = this.dataContainer.append('defs').append('linearGradient')
             .attr('id', 'gradient')
             .attr('x1', '100%')
@@ -44,6 +62,48 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .attr('height', height)
             .attr('transform', 'translate(-2,0)') // -2 due to borders
             .style('fill', 'url(' + baseUrl + '#gradient)');
+
+
+        /*
+        **    Line
+        **/
+
+        let domain = [0, _.max(this.bins) * 1.2];
+        let x = d3.scaleLinear()
+            .domain(domain)
+            .range([width, 0]);
+
+        let y = d3.scaleLinear()
+            .domain([0, NUM_BINS + 1])
+            .range([0, height]);
+
+        let line = d3.area<number>()
+            .x0(() => width)
+            .x1((d, i) => x(d))
+            .y((d, i) => y(i));
+
+        let paddedBins = [];
+        paddedBins[0] = this.bins[0];
+        for (let i = 1; i < NUM_BINS + 1; i++) {
+            paddedBins[i] = this.bins[i - 1];
+        }
+        paddedBins[NUM_BINS + 1] = this.bins[NUM_BINS - 1];
+
+        let linePath = this.dataContainer.append('path')
+            .datum(paddedBins)
+            .attr('fill', 'white')
+            .attr('stroke', 'black')
+            .attr('stroke-width', '2px')
+            .attr('d', line);
+
+        // highlight actual data points
+        let dots = this.dataContainer.selectAll('.line-point')
+            .data(this.bins)
+            .enter().append('circle')
+                .attr('cx', (d) => x(d))
+                .attr('cy', (d, i) => y(i + 1))
+                .attr('r', 10)
+                .attr('class', 'line-point');
     }
 
 

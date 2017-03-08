@@ -27,9 +27,16 @@
     fill: #FF5722;
 }
 
+/* Overview line chart */
+
+.line-point {
+    fill: white;
+    stroke: black;
+    stroke-width: 1px;
+}
 
 
-/* Line Graphs */
+/* Admin Line Graphs */
 
 .line {
     stroke: #03A9F4;
