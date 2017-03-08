@@ -31,7 +31,8 @@ import { routing } from './routes';
     Components.ScatterPlotComponent,
     Components.SurfaceComponent,
     Directives.ChartDirective,
-    Directives.MoveableDirective
+    Directives.MoveableDirective,
+    Directives.TouchButtonDirective
   ],
   bootstrap:    [ Components.AppComponent ],
   providers:    [
