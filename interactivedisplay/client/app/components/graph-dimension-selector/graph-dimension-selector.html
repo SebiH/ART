@@ -1,0 +1,18 @@
+<div class="scroller" [ngClass]="{ horizontal: axis === 'x', vertical: axis === 'y' }">
+    <div class="list"
+        [ngStyle]="listStyle"
+        moveable
+        (moveStart)="onDragBegin($event)"
+        (moveUpdate)="onDragUpdate($event)"
+        (moveEnd)="onDragEnd($event)">
+        <div *ngFor="let dim of dimensions">
+            <div class="item"
+                [ngClass]="{ selected: (axis === 'x' ? graph.dimX : graph.dimY) === dim }"
+                touch-button
+                (touchclick)="setDimension(dim)">
+
+                {{ dim }}
+            </div>
+        </div>
+    </div>
+</div>

@@ -22,6 +22,7 @@ import { routing } from './routes';
     Components.GraphCreateButtonComponent,
     Components.GraphDataSelectionComponent,
     Components.GraphDetailComponent,
+    Components.GraphDimensionSelectorComponent,
     Components.GraphListComponent,
     Components.GraphListItemComponent,
     Components.GraphSectionComponent,

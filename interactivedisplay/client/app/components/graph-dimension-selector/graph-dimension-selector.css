@@ -1,0 +1,33 @@
+.scroller {
+    overflow: hidden;
+    position: relative;
+}
+
+.scroller.horizontal {
+    max-width: 500px;
+}
+
+.scroller.vertical {
+    max-height: 500px;
+}
+
+.list {
+    display: flex;
+    padding: 20px;
+}
+
+.horizontal .list {
+    flex-direction: row;
+}
+
+.vertical .list {
+    flex-direction: column;
+}
+
+.item {
+
+}
+
+.item.selected {
+    background: blue;
+}

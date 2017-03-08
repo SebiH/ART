@@ -7,15 +7,6 @@
         [margin]="{ top: 50, right: 50, bottom: 100, left: 100 }">
     </graph-data-selection>
 
-    <div class="dimension-selection y">
-        <select [ngModel]="graph.dimY" (ngModelChange)="assignDimY($event)">
-            <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
-        </select>
-    </div>
-
-    <div class="dimension-selection x">
-        <select [ngModel]="graph.dimX" (ngModelChange)="assignDimX($event)">
-            <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
-        </select>
-    </div>
+    <graph-dimension-selector [axis]="'y'" [graph]="graph" style="position: absolute; left: 100px; top: 100px;"></graph-dimension-selector>
+    <graph-dimension-selector [axis]="'x'" [graph]="graph"></graph-dimension-selector>
 </div>
