@@ -24,6 +24,8 @@ namespace Assets.Modules.ParallelCoordinates
             _originGraph.OnDataChange += HandleDataChange;
             _lineRenderer = GetComponent<GraphicsLineRenderer>();
             _lineRenderer.SetHidden(true);
+
+            UpdateScale();
         }
 
         private void OnDisable()
@@ -43,8 +45,6 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void LateUpdate()
         {
-            UpdateScale();
-
             var newConnectedGraph = FindConnectedGraph();
             if (newConnectedGraph != _connectedGraph)
             {
@@ -54,6 +54,8 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 GenerateLines(false);
             }
+
+            UpdateScale();
         }
 
 
@@ -98,6 +100,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void GenerateLines(bool animate)
         {
+            UpdateScale(true);
             var hasData = (_connectedGraph != null && _originGraph.HasData && _connectedGraph.HasData);
             if (!hasData)
             {
@@ -130,27 +133,27 @@ namespace Assets.Modules.ParallelCoordinates
                 }
                 else
                 {
-                    if (animate)
-                    {
-                        for (int i = 0; i < _lines.Length; i++)
-                        {
-                            _lines[i].DesiredStart = GetLineStart(i);
-                            _lines[i].DesiredEnd = GetLineEnd(i);
-                        }
-                    }
-                    else
-                    {
+                    //if (animate)
+                    //{
+                    //    for (int i = 0; i < _lines.Length; i++)
+                    //    {
+                    //        _lines[i].DesiredStart = GetLineStart(i);
+                    //        _lines[i].DesiredEnd = GetLineEnd(i);
+                    //    }
+                    //}
+                    //else
+                    //{
                         for (int i = 0; i < _lines.Length; i++)
                         {
                             _lines[i].Start = GetLineStart(i);
                             _lines[i].End = GetLineEnd(i);
                         }
-                    }
+                    //}
                 }
             }
         }
 
-        private void UpdateScale()
+        private void UpdateScale(bool suppressLineGeneration = false)
         {
             var prevFastMode = _useFastMode;
             transform.localScale = Vector3.one;
@@ -169,7 +172,7 @@ namespace Assets.Modules.ParallelCoordinates
                 }
             }
 
-            if (prevFastMode != _useFastMode)
+            if (prevFastMode != _useFastMode && !suppressLineGeneration)
             {
                 GenerateLines(false);
             }
