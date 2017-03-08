@@ -15,6 +15,8 @@ namespace Assets.Modules.ParallelCoordinates
         private LineSegment[] _lines = null;
         private GraphicsLineRenderer _lineRenderer;
 
+        private bool _useFastMode = false;
+
         private void OnEnable()
         {
             _graphManager = UnityUtility.FindParent<GraphManager>(this);
@@ -41,17 +43,17 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void LateUpdate()
         {
+            UpdateScale();
+
             var newConnectedGraph = FindConnectedGraph();
             if (newConnectedGraph != _connectedGraph)
             {
                 SetConnectedGraph(newConnectedGraph);
             }
-            else if (_connectedGraph && _connectedGraph.IsAnimating || _originGraph.IsAnimating)
+            else if (_connectedGraph && !_useFastMode)
             {
                 GenerateLines(false);
             }
-
-            UpdateScale();
         }
 
 
@@ -96,8 +98,6 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void GenerateLines(bool animate)
         {
-            UpdateScale();
-
             var hasData = (_connectedGraph != null && _originGraph.HasData && _connectedGraph.HasData);
             if (!hasData)
             {
@@ -152,9 +152,26 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void UpdateScale()
         {
-            if (_connectedGraph != null && !_connectedGraph.IsAnimating && !_originGraph.IsAnimating)
+            var prevFastMode = _useFastMode;
+            transform.localScale = Vector3.one;
+            _useFastMode = false;
+
+            if (_connectedGraph != null)
             {
-                transform.localScale = new Vector3(1, 1, -(_originGraph.transform.localPosition.x - _connectedGraph.transform.localPosition.x));
+                var hasSameRotation = Mathf.Abs(Quaternion.Angle(_connectedGraph.transform.localRotation, _originGraph.transform.localRotation)) <= Mathf.Epsilon;
+                var deltaPosition = _originGraph.transform.localPosition - _connectedGraph.transform.localPosition;
+                var isAligned = (Mathf.Abs(deltaPosition.y) < Mathf.Epsilon && Mathf.Abs(deltaPosition.z) < Mathf.Epsilon);
+                
+                if (hasSameRotation && isAligned)
+                {
+                    transform.localScale = new Vector3(1, 1, -deltaPosition.x);
+                    _useFastMode = true;
+                }
+            }
+
+            if (prevFastMode != _useFastMode)
+            {
+                GenerateLines(false);
             }
         }
 

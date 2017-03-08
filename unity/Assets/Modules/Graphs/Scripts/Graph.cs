@@ -28,7 +28,6 @@ namespace Assets.Modules.Graphs
         public float Position { get; set; }
         public float Scale { get; set; }
         public float Width { get; set; }
-        public bool IsAnimating { get; set; }
 
         public event Action OnDataChange;
 

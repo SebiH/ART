@@ -62,9 +62,6 @@ namespace Assets.Modules.SurfaceGraphs
                 graph.transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
                 graph.transform.localScale = new Vector3(graph.Scale, graph.Scale, 1);
                 graph.transform.localRotation = actualRotation;
-
-
-                graph.IsAnimating = (Mathf.Abs(targetHeight - actualHeight) > Mathf.Epsilon || Mathf.Abs(Quaternion.Angle(currentRotation, actualRotation)) > Mathf.Epsilon);
             }
         }
 

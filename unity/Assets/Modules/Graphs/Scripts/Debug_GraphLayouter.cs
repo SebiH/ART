@@ -15,7 +15,6 @@ namespace Assets.Modules.Graphs
         public float Scale;
         public string DimX = "";
         public string DimY = "";
-        public bool IsAnimating;
         public float Width;
         public float Position;
 
@@ -51,7 +50,6 @@ namespace Assets.Modules.Graphs
             Scale = _graph.Scale;
             DimX = _graph.DimX == null ? "" : _graph.DimX.DisplayName;
             DimY = _graph.DimY == null ? "" : _graph.DimY.DisplayName;
-            IsAnimating = _graph.IsAnimating;
             Width = _graph.Width;
             Position = _graph.Position;
         }
@@ -63,7 +61,6 @@ namespace Assets.Modules.Graphs
             _graph.IsSelected = IsSelected;
             _graph.IsNewlyCreated = IsNewlyCreated;
             _graph.Scale = Scale;
-            _graph.IsAnimating = IsAnimating;
             _graph.Width = Width;
 
             if (_graphManager)
