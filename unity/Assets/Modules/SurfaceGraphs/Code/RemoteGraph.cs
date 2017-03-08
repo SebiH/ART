@@ -12,6 +12,8 @@ namespace Assets.Modules.SurfaceGraphs
         public string color = "#FFFFFF";
 
         public bool isSelected = false;
+        public bool isFlipped = false;
+        public bool isColored = false;
         public bool isNewlyCreated = false;
 
         public float pos = 0;

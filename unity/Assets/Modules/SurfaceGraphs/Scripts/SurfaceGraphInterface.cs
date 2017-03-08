@@ -88,7 +88,9 @@ namespace Assets.Modules.SurfaceGraphs
 
         private void UpdateGraph(Graph graph, RemoteGraph remoteGraph)
         {
+            graph.IsColored = remoteGraph.isColored;
             graph.IsSelected = remoteGraph.isSelected;
+            graph.IsFlipped = remoteGraph.isFlipped;
             graph.IsNewlyCreated = remoteGraph.isNewlyCreated;
 
             var color = new Color();

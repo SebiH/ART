@@ -55,7 +55,9 @@ namespace Assets.Modules.SurfaceGraphs
                 actualHeight = Roughly(actualHeight, targetHeight);
 
                 var currentRotation = graph.transform.localRotation;
-                var targetRotation = graph.IsSelected ? Quaternion.Euler(0, 0, 0) : Quaternion.Euler(0, 90, 0);
+                var rotY = graph.IsSelected ? 0 : 90;
+                var rotZ = graph.IsFlipped ? 90 : 0;
+                var targetRotation = graph.IsSelected ? Quaternion.Euler(0, rotY, rotZ) : Quaternion.Euler(0, rotY, rotZ);
                 var actualRotation = Quaternion.Lerp(currentRotation, targetRotation, Time.unscaledDeltaTime / NormalAnimationSpeed);
                 actualRotation = Roughly(actualRotation, targetRotation);
 
