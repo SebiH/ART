@@ -1,6 +1,5 @@
 using Assets.Modules.Core;
 using Assets.Modules.Graphs;
-using Assets.Modules.ParallelCoordinates;
 using Assets.Modules.Surfaces;
 using System;
 using System.Collections;
@@ -43,9 +42,6 @@ namespace Assets.Modules.SurfaceGraphs
                 {
                     AddGraph(graph);
                 }
-
-                if (graphInfo.data.hasFilter) { DataLineManager.SetFilter(null); }
-                else { DataLineManager.SetFilter(graphInfo.data.selectedDataIndices); }
             }
         }
 
@@ -60,39 +56,18 @@ namespace Assets.Modules.SurfaceGraphs
                     info = JsonUtility.FromJson<RemoteGraph>(payload);
                     AddGraph(info);
                     break;
-
-                /*
-                 * Graph updates are split into two channels:
-                 * - graph-data for infrequent updates with big payload (due to array of selectionpolygon & selected ids)
-                 * - graph-position with high-frequency positional data
-                 */
-                case "graph-data":
+                case "graph":
                     wrapper = JsonUtility.FromJson<RemoteGraphs>(payload);
                     foreach (var remoteGraph in wrapper.graphs)
                     {
                         var graph = _graphManager.GetGraph(remoteGraph.id);
-                        if (graph) { UpdateGraphData(graph, remoteGraph); }
-                    }
-                    break;
-
-                case "graph-position":
-                    wrapper = JsonUtility.FromJson<RemoteGraphs>(payload);
-                    foreach (var remoteGraph in wrapper.graphs)
-                    {
-                        var graph = _graphManager.GetGraph(remoteGraph.id);
-                        if (graph) { UpdateGraphPosition(graph, remoteGraph); }
+                        if (graph) { UpdateGraph(graph, remoteGraph); }
                     }
                     break;
 
                 case "-graph":
                     var graphId = int.Parse(payload);
                     RemoveGraph(graphId);
-                    break;
-
-                case "selectedDataIndices":
-                    var dataWrapper = JsonUtility.FromJson<DataWrapper>(payload);
-                    if (dataWrapper.hasFilter) { DataLineManager.SetFilter(null); }
-                    else { DataLineManager.SetFilter(dataWrapper.selectedDataIndices); }
                     break;
             }
         }
@@ -103,8 +78,7 @@ namespace Assets.Modules.SurfaceGraphs
             if (!hasDuplicate)
             {
                 var graph = _graphManager.CreateGraph(remoteGraph.id);
-                UpdateGraphData(graph, remoteGraph);
-                UpdateGraphPosition(graph, remoteGraph);
+                UpdateGraph(graph, remoteGraph);
             }
             else
             {
@@ -112,7 +86,7 @@ namespace Assets.Modules.SurfaceGraphs
             }
         }
 
-        private void UpdateGraphData(Graph graph, RemoteGraph remoteGraph)
+        private void UpdateGraph(Graph graph, RemoteGraph remoteGraph)
         {
             graph.IsSelected = remoteGraph.isSelected;
             graph.IsNewlyCreated = remoteGraph.isNewlyCreated;
@@ -145,11 +119,7 @@ namespace Assets.Modules.SurfaceGraphs
                     graph.DimY = dim;
                 });
             }
-        }
 
-
-        private void UpdateGraphPosition(Graph graph, RemoteGraph remoteGraph)
-        {
             graph.Position = _surface.PixelToUnityCoord(remoteGraph.pos);
             graph.Width = _surface.PixelToUnityCoord(remoteGraph.width);
         }
@@ -164,14 +134,6 @@ namespace Assets.Modules.SurfaceGraphs
         private class RemoteGraphs
         {
             public RemoteGraph[] graphs = new RemoteGraph[0];
-            public DataWrapper data = null;
-        }
-
-        [Serializable]
-        private class DataWrapper
-        {
-            public int[] selectedDataIndices = new int[0];
-            public bool hasFilter = false;
         }
     }
 }
