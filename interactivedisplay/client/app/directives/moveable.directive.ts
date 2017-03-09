@@ -12,6 +12,7 @@ import {
     InteractionListener,
     InteractionEventType
 } from '../services/index';
+import { Point } from '../models/index';
 
 @Directive({
     selector: '[moveable]'
@@ -60,19 +61,40 @@ export class MoveableDirective implements OnInit, OnDestroy {
         this.interactions.off(this.touchUpListener);
     }
 
-
     private handleTouchDown(ev: InteractionEvent) {
-        this.moveStart.emit();
+        let elementOrigin = this.getElementPos();
+        let relativePos = Point.sub(ev.position, elementOrigin);
+        this.moveStart.emit({
+            pos: ev.position,
+            relativePos: relativePos
+        });
     }
 
     private handleTouchMove(ev: InteractionEvent) {
+        let elementOrigin = this.getElementPos();
+        let relativePos = Point.sub(ev.position, elementOrigin);
+
         this.moveUpdate.emit({
+            pos: ev.position,
+            relativePos: relativePos,
             deltaX: ev.delta.x,
             deltaY: ev.delta.y,
         });
     }
 
     private handleTouchUp(ev: InteractionEvent) {
-        this.moveEnd.emit();
+        let elementOrigin = this.getElementPos();
+        let relativePos = Point.sub(ev.position, elementOrigin);
+
+        this.moveEnd.emit({
+            pos: ev.position,
+            relativePos: relativePos
+        });
+    }
+
+
+    private getElementPos(): Point {
+        let pos = this.elementRef.nativeElement.getBoundingClientRect();
+        return new Point(pos.left, pos.top);
     }
 }
