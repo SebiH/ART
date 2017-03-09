@@ -17,10 +17,8 @@
     position: relative;
 }
 
-.scroller .horizontal {
-}
-
-.scroller .vertical {
+.horizontal .scroller {
+    display: flex;
 }
 
 .list {
@@ -40,10 +38,15 @@
 .item {
     font-size: 30px;
     width: 200px;
+    height: 140px;
     padding: 20px;
     text-align: center;
     transition: all 0.2s linear;
     border: 1px solid transparent;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .vertical .item {

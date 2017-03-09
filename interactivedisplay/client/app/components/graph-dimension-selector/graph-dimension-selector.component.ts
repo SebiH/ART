@@ -3,6 +3,8 @@ import { GraphDataProvider } from '../../services/index';
 import { Graph, ChartDimension } from '../../models/index'; 
 
 const BORDER_SIZE = 30;
+const ITEM_WIDTH = 200;
+const ITEM_HEIGHT = 140;
 
 @Component({
     selector: 'graph-dimension-selector',
@@ -16,19 +18,29 @@ export class GraphDimensionSelectorComponent implements OnInit {
 
     private dimensions: string[];
     private offset: number = 0;
+    private maxOffset: number = 0;
+
+    private scrollerStyle: any = {};
     private listStyle = {
         '-webkit-transform': '',
         transform: ''
     };
-
-    private scrollerStyle: any = {};
 
     constructor(private graphDataProvider: GraphDataProvider) {}
 
     ngOnInit() {
         this.graphDataProvider.getDimensions()
             .first()
-            .subscribe((dims) => this.dimensions = dims);
+            .subscribe((dims) => {
+                this.dimensions = dims;
+
+                if (this.axis === 'x') {
+                    this.maxOffset = dims.length * ITEM_WIDTH - this.size + BORDER_SIZE * 2;
+                } else {
+                    this.maxOffset = dims.length * ITEM_HEIGHT - this.size + BORDER_SIZE * 2;
+                }
+
+            });
 
         if (this.axis === 'x') {
             this.scrollerStyle = {
@@ -52,6 +64,8 @@ export class GraphDimensionSelectorComponent implements OnInit {
     }
 
     private updateOffset(): void {
+        this.offset = -Math.max(0, Math.min(-this.offset, this.maxOffset));
+
         // calculate max offset
         let transform = '';
         if (this.axis === 'x') {
