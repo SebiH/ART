@@ -13,6 +13,7 @@
             <div class="markers vertical">
                 <ar-marker [marker]="markers[1]"></ar-marker>
                 <ar-marker [marker]="markers[2]"></ar-marker>
+                <ar-marker [marker]="markers[3]"></ar-marker>
             </div>
 
             <div class="chart-container" [ngClass]="{ selected: graph.isSelected }">
@@ -21,7 +22,7 @@
                     <!-- Width & height from css -->
                     <chart-1d
                         [width]="300"
-                        [height]="1000"
+                        [height]="1250"
                         [dimension]="graph.isFlipped ? dimY : dimX">
                     </chart-1d>
 
@@ -38,9 +39,10 @@
                 </div>
             </div>
 
-            <div class="markers vertical">
-                <ar-marker [marker]="markers[3]"></ar-marker>
+            <div class="markers vertical" style="position: relative;">
                 <ar-marker [marker]="markers[4]"></ar-marker>
+                <ar-marker [marker]="markers[5]"></ar-marker>
+                <ar-marker [marker]="markers[6]"></ar-marker>
             </div>
         </div>
 
@@ -63,7 +65,7 @@
             </div>
 
             <div class="markers horizontal">
-                <ar-marker [marker]="markers[5]"></ar-marker>
+                <ar-marker [marker]="markers[7]"></ar-marker>
             </div>
 
             <div *ngIf="!graph.isSelected" class="button-container">

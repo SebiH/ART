@@ -3,7 +3,7 @@ import { Observable } from 'rxjs/Rx';
 import { Marker, Graph, Point, ChartDimension } from '../../models/index';
 import { MarkerProvider, GraphProvider, GraphDataProvider } from '../../services/index';
 
-const NUM_MARKERS = 6;
+const NUM_MARKERS = 8;
 
 @Component({
     selector: 'graph-section',

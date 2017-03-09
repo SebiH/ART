@@ -7,7 +7,7 @@
 .graph-section {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
 .row {
@@ -65,7 +65,7 @@
 .chart-container {
     background: white;
     width: 300px;
-    height: 1100px;
+    height: 1350px;
     border: 1px solid black;
     transition: width 0.4s linear;
 }
