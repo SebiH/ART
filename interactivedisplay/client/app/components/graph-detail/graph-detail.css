@@ -10,17 +10,20 @@
     margin: 0;
 }
 
-.dimension-selection {
-    position: absolute;
-    font-size: 1.5em;
+.row {
+    display: flex;
+    flex-direction: row;
 }
 
-.dimension-selection.y {
-    left: 600px;
-    bottom: 550px;
+.selection {
+
 }
 
-.dimension-selection.x {
-    left: calc(50% - 112px);
-    bottom: 10px;
+.chart {
+    width: 1150px;
+    height: 1150px;
+}
+
+.unused {
+    width: 200px;
 }
