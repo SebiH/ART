@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Graph, ChartDimension } from '../../models/index';
 import { GraphDataProvider } from '../../services/index';
+import { Chart1dComponent } from '../chart-1d/chart-1d.component';
 
 @Component({
     selector: 'graph-overview-chart',
@@ -21,6 +22,8 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
     @Input() graph: Graph;
     @Input() width: number;
     @Input() height: number;
+
+    @ViewChild(Chart1dComponent) chart: Chart1dComponent;
 
     private isActive: boolean = true;
     private dimX: ChartDimension = null;
@@ -75,7 +78,7 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
 
 
     private onClick(event: any) {
-        console.log('touchclick');
+        console.log(this.chart.invert(event.relativePos.y));
     }
 
 
@@ -88,7 +91,7 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
     }
 
     private onMoveEnd($event: any) {
-        
+
     }
 
 }

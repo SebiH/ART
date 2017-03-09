@@ -72,4 +72,12 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
             this.chart.addElement(this.dataVisualisation);
         }
     }
+
+    public invert(val: number): number {
+        if (this.dataVisualisation !== null) {
+            return this.dataVisualisation.invert(val);
+        }
+
+        return -1;
+    }
 }

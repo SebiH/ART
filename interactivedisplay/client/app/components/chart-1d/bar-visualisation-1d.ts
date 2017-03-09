@@ -11,6 +11,7 @@ export class BarVisualisation1d extends ChartVisualisation1d {
     private data: { category: string, amount: number }[] = [];
     private domain: [number, number] = [0, 0];
     private categories: string[] = [];
+    private yScale: d3.ScaleBand<string> = null;
 
     public constructor(public dimension: ChartDimension) {
         super();
@@ -37,11 +38,13 @@ export class BarVisualisation1d extends ChartVisualisation1d {
         }
     }
 
+
     public register(root: HtmlChartElement, width: number, height: number): void {
         this.dataContainer = root.append('g');
 
         let x = d3.scaleLinear().rangeRound([width, 0]).domain(this.domain);
         let y = d3.scaleBand().rangeRound([0, height + 2 /* -> layout offset.. */]).domain(this.categories);
+        this.yScale = y;
 
         this.dataContainer.selectAll('.bar')
             .data(this.data)
@@ -74,4 +77,10 @@ export class BarVisualisation1d extends ChartVisualisation1d {
 
         return '#00ff00';
     }
+
+    public invert(val: number): number {
+        let barWidth = this.yScale.step();
+        return Math.floor(val / barWidth);
+    }
+
 }

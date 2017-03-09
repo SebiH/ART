@@ -17,6 +17,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
     private bins: number[] = [];
+    private yScale: d3.ScaleLinear<number, number> = null;
 
     public constructor(public dimension: ChartDimension) {
         super();
@@ -76,6 +77,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         let y = d3.scaleLinear()
             .domain([0, NUM_BINS + 1])
             .range([0, height]);
+        this.yScale = y;
 
         let line = d3.area<number>()
             .x0(() => width)
@@ -116,4 +118,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         // TODO.
     }
 
+    public invert(val: number): number {
+        return this.yScale.invert(val);
+    }
 }
