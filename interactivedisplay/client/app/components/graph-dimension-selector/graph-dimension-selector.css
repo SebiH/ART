@@ -1,19 +1,32 @@
+.root {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.root.vertical {
+    flex-direction: column;
+}
+
+.root.horizontal {
+    flex-direction: row;
+}
+
 .scroller {
     overflow: hidden;
     position: relative;
 }
 
-.scroller.horizontal {
-    max-width: 500px;
+.scroller .horizontal {
 }
 
-.scroller.vertical {
-    max-height: 500px;
+.scroller .vertical {
 }
 
 .list {
     display: flex;
-    padding: 20px;
+    justify-content: center;
+    align-items: center;
 }
 
 .horizontal .list {
@@ -25,9 +38,56 @@
 }
 
 .item {
+    font-size: 30px;
+    width: 200px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.2s linear;
+    border: 1px solid transparent;
+}
+
+.vertical .item {
 
 }
 
 .item.selected {
-    background: blue;
+    background: #CDDC39;
+    border: 1px solid black;
 }
+
+
+
+.triangle {
+    width: 0;
+    height: 0;
+    border: 0 solid transparent;
+}
+
+/* Pointing up */
+.vertical .triangle.before {
+    border-right-width: 25px;
+    border-left-width: 25px;
+    border-bottom: 25px solid black;
+}
+
+/* Pointing left */
+.horizontal .triangle.before {
+    border-top-width: 25px;
+    border-bottom-width: 25px;
+    border-right: 25px solid black;
+}
+
+/* Pointing down */
+.vertical .triangle.after {
+    border-left-width: 25px;
+    border-right-width: 25px;
+    border-top: 25px solid black;
+}
+
+/* Pointing right */
+.horizontal .triangle.after {
+    border-bottom-width: 25px;
+    border-top-width: 25px;
+    border-left: 25px solid black;
+}
+
