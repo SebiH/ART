@@ -59,17 +59,22 @@ export class InteractionManager {
     private raiseEvent(interaction: InteractionData, event: InteractionEvent): boolean {
 
         let hasListeners = false;
+        let element = interaction.element;
 
-        for (let listener of this.listeners) {
-            let matchesType = event.type === listener.type;
-            let matchesElement = interaction.element === listener.element;
-            let isPanZoom = interaction.type === InteractionType.PanZoom;
+        while (!hasListeners && element != null) {
 
-            if (matchesType && (matchesElement || isPanZoom)) {
-                listener.handler(event);
-                hasListeners = true;
+            for (let listener of this.listeners) {
+                let matchesType = event.type === listener.type;
+                let matchesElement = element === listener.element;
+                let isPanZoom = interaction.type === InteractionType.PanZoom;
+
+                if (matchesType && (matchesElement || isPanZoom)) {
+                    listener.handler(event);
+                    hasListeners = true;
+                }
             }
 
+            element = element.parentElement;
         }
 
         return hasListeners;
@@ -184,8 +189,8 @@ export class InteractionManager {
                 this.mouseData.prevPos = oldPos;
                 let delta = Point.sub(oldPos, newPos);
                 let type = (this.mouseData.type === InteractionType.PanZoom) ?
-                InteractionEventType.PanZoomUpdate :
-                InteractionEventType.TouchMove;
+                    InteractionEventType.PanZoomUpdate :
+                    InteractionEventType.TouchMove;
 
                 this.raiseEvent(this.mouseData, {
                     type: type,
