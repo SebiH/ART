@@ -20,11 +20,11 @@
 
                 <div *ngIf="!graph.isSelected">
                     <!-- Width & height from css -->
-                    <chart-1d
+                    <graph-overview-chart
                         [width]="300"
                         [height]="1250"
-                        [dimension]="graph.isFlipped ? dimY : dimX">
-                    </chart-1d>
+                        [graph]="graph">
+                    </graph-overview-chart>
 
                     <button class="chart-button"
                         (click)="toggleColor()"

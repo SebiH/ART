@@ -11,6 +11,7 @@ export * from './graph-detail/graph-detail';
 export * from './graph-dimension-selector/graph-dimension-selector.component';
 export * from './graph-list-item/graph-list-item.component';
 export * from './graph-list/graph-list.component';
+export * from './graph-overview-chart/graph-overview-chart.component';
 export * from './graph-section/graph-section';
 export * from './marker/marker.component';
 export * from './measurement/measurement';
