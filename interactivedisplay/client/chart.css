@@ -43,11 +43,20 @@
 }
 
 .tick-label {
-    font-size: 50px;
     font-family: 'geosanslight';
     font-weight: bold;
 }
 
+.line-tick-label {
+    font-size: 50px;
+}
+
+.bar-tick-label {
+    /* See bar visualisation for text alignment! */
+    font-size: 34px;
+    dominant-baseline: central;
+    text-anchor: center;
+}
 
 /* Admin Line Graphs */
 

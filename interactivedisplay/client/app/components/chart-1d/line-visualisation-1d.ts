@@ -123,7 +123,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             // label
             this.dataContainer.append('text')
                 .text(this.dimension.bins[i].displayName)
-                .attr('class', 'tick-label')
+                .attr('class', 'tick-label line-tick-label')
                 .attr('x', TEXT_X_OFFSET)
                 .attr('y', lineHeight + TEXT_Y_OFFSET);
         }

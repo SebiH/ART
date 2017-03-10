@@ -5,6 +5,8 @@ import { ChartVisualisation1d } from './chart-visualisation-1d';
 import * as d3 from 'd3';
 import * as _ from 'lodash';
 
+const TEXT_Y_OFFSET = 34/2; // css font height/2
+
 export class BarVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
@@ -55,6 +57,17 @@ export class BarVisualisation1d extends ChartVisualisation1d {
                 .attr('y', d => y(d.category))
                 .attr('height', y.bandwidth())
                 .attr('width', d => width - x(d.amount));
+
+        for (let category of this.categories) {
+            let barWidth = y.step();
+            let barHeight = y(category);
+            this.dataContainer.append('text')
+                .text(category)
+                .attr('class', 'tick-label bar-tick-label')
+                .attr('text-anchor', 'middle')
+                .attr('x', width / 2)
+                .attr('y', barHeight + barWidth / 2);
+            }
     }
 
 
