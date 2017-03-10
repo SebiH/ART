@@ -92,12 +92,6 @@ export class GraphDataProvider {
                 break;
         }
 
-        // force-clamp values to their given domain (assuming data is number[])
-        // TODO: falsifies data, but that's preferable to interface bugs atm!
-        for (let i = 0; i < data.length; i++) {
-            data[i].value = Math.max(minValue, Math.min(data[i].value, maxValue));
-        }
-
         // calculate dynamic range
         if (mapping.type === DataRepresentation.Metric) {
             // start with opposite value, so that we can search for the actual min/max value
