@@ -35,6 +35,19 @@
     stroke-width: 1px;
 }
 
+.tick-line {
+    fill: white;
+    stroke: black;
+    stroke-width: 2px;
+    stroke-dasharray: 10 10;
+}
+
+.tick-label {
+    font-size: 50px;
+    font-family: 'geosanslight';
+    font-weight: bold;
+}
+
 
 /* Admin Line Graphs */
 

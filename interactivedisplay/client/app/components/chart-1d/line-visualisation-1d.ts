@@ -6,6 +6,9 @@ import { Utils } from '../../Utils';
 import * as d3 from 'd3';
 import * as _ from 'lodash';
 
+const TEXT_X_OFFSET = 5;
+const TEXT_Y_OFFSET = -10;
+
 export class LineVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
@@ -101,6 +104,32 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .attr('stroke-width', '2px')
             .attr('d', line);
 
+
+        /*
+        **    Labels
+        **/
+
+        for (let i = 0; i < this.dimension.bins.length; i++) {
+
+            let lineHeight = y(i + 1);
+
+            // line
+            let tickLine = d3.line();
+            let tickLinePath = this.dataContainer.append('path')
+                .datum([[0, lineHeight], [width, lineHeight]])
+                .attr('class', 'tick-line')
+                .attr('d', tickLine);
+
+            // label
+            this.dataContainer.append('text')
+                .text(this.dimension.bins[i].displayName)
+                .attr('class', 'tick-label')
+                .attr('x', TEXT_X_OFFSET)
+                .attr('y', lineHeight + TEXT_Y_OFFSET);
+        }
+
+
+
         // highlight actual data points
         let dots = this.dataContainer.selectAll('.line-point')
             .data(this.bins)
@@ -109,6 +138,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
                 .attr('cy', (d, i) => y(i + 1))
                 .attr('r', 10)
                 .attr('class', 'line-point');
+
     }
 
 
