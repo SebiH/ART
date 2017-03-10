@@ -7,4 +7,9 @@ export interface ChartDimension {
     isMetric: boolean;
     // only if isNumeric is false
     mappings?: { value: number, name: string, color: string }[];
+
+    // only if isNumeric is true
+    bins?: { displayName: string, value?: number, range?: [number, number] }[];
+    gradient?: { stop: number, color: string }[];
 }
+

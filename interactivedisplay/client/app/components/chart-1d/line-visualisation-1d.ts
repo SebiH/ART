@@ -6,13 +6,6 @@ import { Utils } from '../../Utils';
 import * as d3 from 'd3';
 import * as _ from 'lodash';
 
-const GRADIENT_COLOURS = [
-    '#E3F2FD', // start: blue 50
-    '#0D47A1', // end: blue 900
-];
-
-const NUM_BINS = 10;
-
 export class LineVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
@@ -22,14 +15,26 @@ export class LineVisualisation1d extends ChartVisualisation1d {
     public constructor(public dimension: ChartDimension) {
         super();
 
-        for (let i = 0; i < NUM_BINS; i++) {
+        for (let i = 0; i < dimension.bins.length; i++) {
             this.bins[i] = 0;
         }
 
         for (let data of dimension.data) {
-            let val = (data / dimension.domain.max) * NUM_BINS;
-            let binIndex = Math.floor(val);
-            this.bins[binIndex] += 1;
+            let binIndex = 0;
+            for (let bin of dimension.bins) {
+                if (bin.value !== undefined) {
+                    if (bin.value === Math.floor(data)) {
+                        this.bins[binIndex] += 1;
+                        break;
+                    }
+                } else {
+                    if (bin.range[0] <= data && bin.range[1] >= data) {
+                        this.bins[binIndex] += 1;
+                        break;
+                    }
+                }
+                binIndex++;
+            }
         }
     }
 
@@ -47,15 +52,13 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .attr('y1', '0%')
             .attr('y2', '100%');
 
-        gradient.append('stop')
-            .attr('offset', '0%')
-            .attr('stop-color', GRADIENT_COLOURS[0])
-            .attr('stop-opacity', 0.8);
-
-        gradient.append('stop')
-            .attr('offset', '100%')
-            .attr('stop-color', GRADIENT_COLOURS[1])
-            .attr('stop-opacity', 0.8);
+        for (let gradientStop of this.dimension.gradient) {
+            let percent = Math.floor((gradientStop.stop / this.dimension.domain.max) * 100);
+            gradient.append('stop')
+                .attr('offset', percent + '%')
+                .attr('stop-color', gradientStop.color)
+                .attr('stop-opacity', 0.8);
+        }
 
         let baseUrl = Utils.getBaseUrl();
         let background = this.dataContainer.append('rect')
@@ -75,7 +78,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .range([width, 0]);
 
         let y = d3.scaleLinear()
-            .domain([0, NUM_BINS + 1])
+            .domain([0, this.bins.length + 1])
             .range([0, height]);
         this.yScale = y;
 
@@ -86,10 +89,10 @@ export class LineVisualisation1d extends ChartVisualisation1d {
 
         let paddedBins = [];
         paddedBins[0] = this.bins[0];
-        for (let i = 1; i < NUM_BINS + 1; i++) {
+        for (let i = 1; i < this.bins.length + 1; i++) {
             paddedBins[i] = this.bins[i - 1];
         }
-        paddedBins[NUM_BINS + 1] = this.bins[NUM_BINS - 1];
+        paddedBins[this.bins.length + 1] = this.bins[this.bins.length - 1];
 
         let linePath = this.dataContainer.append('path')
             .datum(paddedBins)
