@@ -68,6 +68,8 @@ export class GraphDataProvider {
         let maxValue = 1;
         let isMetric = false;
         let mappings: any[] | null = [];
+        let bins: any[] | null = null;
+        let gradient: any[] | null = null;
 
         switch (mapping.type) {
             case DataRepresentation.Categorical:
@@ -85,6 +87,8 @@ export class GraphDataProvider {
                 maxValue = mapping.maxValue;
                 isMetric = true;
                 mappings = null;
+                bins = mapping.bins;
+                gradient = mapping.gradient;
                 break;
 
             default:
@@ -123,7 +127,9 @@ export class GraphDataProvider {
             },
             name: dimension,
             isMetric: isMetric,
-            mappings: mappings
+            mappings: mappings,
+            bins: bins,
+            gradient: gradient
         }
     }
 
