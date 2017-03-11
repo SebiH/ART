@@ -2,13 +2,29 @@ import { Graph } from './graph';
 
 export type FilterPoint = [number, number];
 
+export enum FilterType {
+    Categorical = 0,
+    Line = 1,
+    Detail = 2
+}
+
 export class Filter {
     public readonly id: number;
     public indices: number[] = [];
-    public path: FilterPoint[] = [];
     public origin: Graph = null;
-    public isColored: boolean = false;
     public color: string = "#FFFFFF";
+    public isColored: boolean = false;
+    public isOverview: boolean = false;
+
+
+    // type determines which of the following three optional properties is set
+    public type: FilterType = FilterType.Detail;
+    // for 2d detail filters
+    public path?: FilterPoint[];
+    // for 1d categorical filters
+    public category?: string;
+    // for 1d line chart filters
+    public range?: [number, number];
 
     constructor(id: number) {
         this.id = id;
@@ -18,19 +34,37 @@ export class Filter {
         return {
             id: this.id,
             indices: this.indices,
-            path: this.path,
             origin: this.origin.id,
+            color: this.color,
             isColored: this.isColored,
-            color: this.color
+            isOverview: this.isOverview,
+
+            type: this.type,
+            path: this.path,
+            category: this.category,
+            range: this.range
         };
     }
 
     public static fromJson(jFilter: any, origin: Graph): Filter {
         var filter = new Filter(jFilter.id);
         filter.indices = jFilter.indices;
-        filter.path = jFilter.indices;
-        filter.isColored = jFilter.isColored;
         filter.color = jFilter.color;
+        filter.isColored = jFilter.isColored;
+        filter.isOverview = jFilter.isOverview;
+
+        filter.type = <FilterType>jFilter.type;
+        switch (filter.type) {
+            case FilterType.Categorical:
+                filter.category = jFilter.category;
+                break;
+            case FilterType.Line:
+                filter.range = jFilter.range;
+                break;
+            case FilterType.Detail:
+                filter.path = jFilter.path;
+                break;
+        }
 
         filter.origin = origin;
 

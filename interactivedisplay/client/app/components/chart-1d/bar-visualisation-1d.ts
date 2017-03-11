@@ -6,11 +6,12 @@ import * as d3 from 'd3';
 import * as _ from 'lodash';
 
 const TEXT_Y_OFFSET = 34/2; // css font height/2
+const COL_INACTIVE = "#BDBDBD"; // gray 400
 
 export class BarVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
-    private data: { category: string, amount: number }[] = [];
+    private data: { category: string, amount: number, isActive: boolean }[] = [];
     private domain: [number, number] = [0, 0];
     private categories: string[] = [];
     private yScale: d3.ScaleBand<string> = null;
@@ -34,7 +35,8 @@ export class BarVisualisation1d extends ChartVisualisation1d {
         for (let mapping of dimension.mappings) {
             this.data.push({
                 category: mapping.name,
-                amount: tempData[mapping.value] || 0
+                amount: tempData[mapping.value] || 0,
+                isActive: true
             });
             this.categories.push(mapping.name);
         }
@@ -96,4 +98,10 @@ export class BarVisualisation1d extends ChartVisualisation1d {
         return Math.floor(val / barWidth);
     }
 
+    public setCategoryActive(isActive: boolean, index: number): void {
+        this.data[index].isActive = !this.data[index].isActive;
+
+        this.dataContainer.selectAll('.bar')
+            .attr('fill', (d: any) => d.isActive ? this.getColor(d.category) : COL_INACTIVE);
+    }
 }
