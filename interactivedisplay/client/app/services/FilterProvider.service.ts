@@ -60,6 +60,12 @@ export class FilterProvider {
     private filterUpdateQueue: { [id: number]: any } = {};
 
     private syncFilters(): void {
+        for (let id of _.keys(this.filterUpdateQueue)) {
+            if (_.find(this.filters, f => f.id == +id) == null) {
+                delete this.filterUpdateQueue[+id];
+            }
+        }
+
         let filters = _.values(this.filterUpdateQueue);
 
         if (filters.length > 0) {
