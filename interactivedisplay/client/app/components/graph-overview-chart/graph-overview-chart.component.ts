@@ -188,6 +188,10 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
     private categoryClick(event: any): void {
         let clickedCategory = this.chart.invert(event.relativePos.y);
         this.flipCategory(clickedCategory);
+        
+        if (this.filters.length === 0) {
+            this.categoryUpdateFilters();
+        }
     }
 
     private categoryMoveStart(event: any): void {
@@ -208,7 +212,9 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
     }
 
     private categoryMoveEnd(event: any): void {
-
+        if (this.filters.length === 0) {
+            this.categoryUpdateFilters();
+        }
     }
 
     private categoryUpdateFilters(): void {
