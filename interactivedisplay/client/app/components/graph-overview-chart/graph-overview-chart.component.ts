@@ -233,7 +233,7 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
             if (this.filters.length == 0) {
                 // no categorical filters => all categories are active
                 for (let mapping of dim.mappings) {
-                    this.addCategoryFilter(mapping.value);
+                    this.addCategoryFilter(mapping.value, mapping.color);
                 }
             }
 
@@ -247,8 +247,9 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
 
     private flipCategory(category: number): void {
         let dim = this.getOverviewDimension();
+        let mapping = _.find(dim ? dim.mappings : [], m => m.value == category);
 
-        if (dim && _.find(dim.mappings, m => m.value == category)) {
+        if (mapping) {
             let filter = _.find(this.filters, f => f.category == category);
 
             if (filter) {
@@ -257,13 +258,13 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
                 this.filterProvider.removeFilter(filter);
 
             } else {
-                this.addCategoryFilter(category);
+                this.addCategoryFilter(category, mapping.color);
                 this.chart.setCategoryActive(category, true);
             }
         }
     }
 
-    private addCategoryFilter(category: number): void {
+    private addCategoryFilter(category: number, color: string): void {
         let filter = this.filterProvider.createFilter(this.graph);
         filter.isOverview = true;
         filter.type = FilterType.Categorical;
