@@ -45,8 +45,8 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
 
         this.graph.onUpdate
             .takeWhile(() => this.isActive)
-            .filter(changes => changes.indexOf('isColored') >= 0)
-            .subscribe(changes => this.updateFilter());
+            .filter(changes => changes.indexOf('isFlipped') >= 0)
+            .subscribe(changes => this.switchFilter());
 
         this.filterProvider.getFilters()
             .first()
@@ -123,6 +123,15 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
         }
     }
 
+    private switchFilter(): void {
+        while (this.filters.length > 0) {
+            let filter = this.filters.pop();
+            this.filterProvider.removeFilter(filter);
+        }
+
+        this.updateFilter();
+    }
+
 
     private getOverviewDimension(): ChartDimension {
         return this.graph.isFlipped ? this.dimY : this.dimX;
@@ -188,7 +197,7 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
     private categoryClick(event: any): void {
         let clickedCategory = this.chart.invert(event.relativePos.y);
         this.flipCategory(clickedCategory);
-        
+
         if (this.filters.length === 0) {
             this.categoryUpdateFilters();
         }
