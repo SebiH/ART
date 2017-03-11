@@ -81,9 +81,9 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
         return -1;
     }
 
-    public setCategoryActive(isActive: boolean, index: number): void {
+    public setCategoryActive(index: number, isActive: boolean): void {
         if (this.dataVisualisation instanceof BarVisualisation1d) {
-            this.dataVisualisation.setCategoryActive(isActive, index);
+            this.dataVisualisation.setCategoryActive(index, isActive);
         }
     }
 }

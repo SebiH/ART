@@ -11,7 +11,7 @@ const COL_INACTIVE = "#BDBDBD"; // gray 400
 export class BarVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
-    private data: { category: string, amount: number, isActive: boolean }[] = [];
+    private data: { category: string, amount: number, isActive: boolean, categoryValue: number }[] = [];
     private domain: [number, number] = [0, 0];
     private categories: string[] = [];
     private yScale: d3.ScaleBand<string> = null;
@@ -35,6 +35,7 @@ export class BarVisualisation1d extends ChartVisualisation1d {
         for (let mapping of dimension.mappings) {
             this.data.push({
                 category: mapping.name,
+                categoryValue: mapping.value,
                 amount: tempData[mapping.value] || 0,
                 isActive: true
             });
@@ -95,13 +96,25 @@ export class BarVisualisation1d extends ChartVisualisation1d {
 
     public invert(val: number): number {
         let barWidth = this.yScale.step();
-        return Math.floor(val / barWidth);
+        let index = Math.floor(val / barWidth);
+
+        if (this.data[index]) {
+            return this.data[index].categoryValue;
+        }
+
+        return -1;
     }
 
-    public setCategoryActive(isActive: boolean, index: number): void {
-        this.data[index].isActive = !this.data[index].isActive;
+    public setCategoryActive(category: number, isActive: boolean): void {
+        let entry = _.find(this.data, d => d.categoryValue == category);
 
-        this.dataContainer.selectAll('.bar')
-            .attr('fill', (d: any) => d.isActive ? this.getColor(d.category) : COL_INACTIVE);
+        if (entry) {
+            entry.isActive = isActive;
+
+            this.dataContainer.selectAll('.bar')
+                .transition()
+                .duration(100)
+                .attr('fill', (d: any) => d.isActive ? this.getColor(d.category) : COL_INACTIVE);
+        }
     }
 }

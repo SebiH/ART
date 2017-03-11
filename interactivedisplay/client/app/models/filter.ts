@@ -13,7 +13,6 @@ export class Filter {
     public indices: number[] = [];
     public origin: Graph = null;
     public color: string = "#FFFFFF";
-    public isColored: boolean = false;
     public isOverview: boolean = false;
 
 
@@ -22,7 +21,7 @@ export class Filter {
     // for 2d detail filters
     public path?: FilterPoint[];
     // for 1d categorical filters
-    public category?: string;
+    public category?: number;
     // for 1d line chart filters
     public range?: [number, number];
 
@@ -36,7 +35,6 @@ export class Filter {
             indices: this.indices,
             origin: this.origin.id,
             color: this.color,
-            isColored: this.isColored,
             isOverview: this.isOverview,
 
             type: this.type,
@@ -50,7 +48,6 @@ export class Filter {
         var filter = new Filter(jFilter.id);
         filter.indices = jFilter.indices;
         filter.color = jFilter.color;
-        filter.isColored = jFilter.isColored;
         filter.isOverview = jFilter.isOverview;
 
         filter.type = <FilterType>jFilter.type;

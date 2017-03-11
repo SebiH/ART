@@ -1,7 +1,9 @@
 import { Component, Input, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Graph, ChartDimension, Filter } from '../../models/index';
+import { Graph, ChartDimension, Filter, FilterType } from '../../models/index';
 import { GraphDataProvider, FilterProvider } from '../../services/index';
 import { Chart1dComponent } from '../chart-1d/chart-1d.component';
+
+import * as _ from 'lodash';
 
 @Component({
     selector: 'graph-overview-chart',
@@ -48,13 +50,7 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
 
         this.filterProvider.getFilters()
             .first()
-            .subscribe(allFilters => {
-                for (let filter of allFilters) {
-                    if (filter.origin.id == this.graph.id && filter.isOverview) {
-                        this.filters.push(filter);
-                    }
-                }
-            });
+            .subscribe(filters => this.initFilters(filters));
 
         this.updateDimensions(this.graph.dimX, this.graph.dimY);
     }
@@ -72,6 +68,7 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
                         // just in case it has changed in the meantime
                         if (newDimX === this.graph.dimX) {
                             this.dimX = data;
+                            this.updateFilter();
                         }
                     });
             }
@@ -87,6 +84,7 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
                         // just in case it has changed in the meantime
                         if (newDimY === this.graph.dimY) {
                             this.dimY = data;
+                            this.updateFilter();
                         }
                     });
             }
@@ -97,6 +95,22 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
         this.updateFilter();
     }
 
+    private initFilters(allFilters: Filter[]): void {
+        for (let filter of allFilters) {
+            if (filter.origin.id == this.graph.id && filter.isOverview) {
+                this.filters.push(filter);
+            }
+        }
+
+        let dim = this.getOverviewDimension();
+        if (dim) {
+            if (dim.isMetric) {
+                this.lineUpdateFilters();
+            } else {
+                this.categoryUpdateFilters();
+            }
+        }
+    }
 
     private updateFilter(): void {
         let dim = this.getOverviewDimension();
@@ -169,18 +183,28 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
      *    Category handling
      */
 
+    private flippedCategories: number[] = [];
+
     private categoryClick(event: any): void {
         let clickedCategory = this.chart.invert(event.relativePos.y);
-        this.chart.setCategoryActive(true, clickedCategory);
+        this.flipCategory(clickedCategory);
     }
 
     private categoryMoveStart(event: any): void {
+        this.flippedCategories = [];
 
+        let clickedCategory = this.chart.invert(event.relativePos.y);
+        this.flipCategory(clickedCategory);
+        this.flippedCategories.push(clickedCategory);
     }
 
 
     private categoryMoveUpdate(event: any): void {
-
+        let clickedCategory = this.chart.invert(event.relativePos.y);
+        if (this.flippedCategories.indexOf(clickedCategory) < 0) {
+            this.flipCategory(clickedCategory);
+            this.flippedCategories.push(clickedCategory);
+        }
     }
 
     private categoryMoveEnd(event: any): void {
@@ -188,9 +212,50 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
     }
 
     private categoryUpdateFilters(): void {
+        let dim = this.getOverviewDimension();
 
+        if (dim) {
+            if (this.filters.length == 0) {
+                // no categorical filters => all categories are active
+                for (let mapping of dim.mappings) {
+                    this.addCategoryFilter(mapping.value);
+                }
+            }
+
+            for (let mapping of dim.mappings) {
+                let filter = _.find(this.filters, f => f.category == mapping.value);
+                this.chart.setCategoryActive(mapping.value, filter != null);
+            }
+        }
     }
 
+
+    private flipCategory(category: number): void {
+        let dim = this.getOverviewDimension();
+
+        if (dim && _.find(dim.mappings, m => m.value == category)) {
+            let filter = _.find(this.filters, f => f.category == category);
+
+            if (filter) {
+                this.chart.setCategoryActive(category, false);
+                _.pull(this.filters, filter);
+                this.filterProvider.removeFilter(filter);
+
+            } else {
+                this.addCategoryFilter(category);
+                this.chart.setCategoryActive(category, true);
+            }
+        }
+    }
+
+    private addCategoryFilter(category: number): void {
+        let filter = this.filterProvider.createFilter(this.graph);
+        filter.isOverview = true;
+        filter.type = FilterType.Categorical;
+        filter.category = category;
+        this.filterProvider.updateFilter(filter);
+        this.filters.push(filter);
+    }
 
 
 
@@ -217,5 +282,9 @@ export class GraphOverviewChartComponent implements OnInit, OnDestroy {
 
     private lineUpdateFilters(): void {
         
+    }
+
+    private initMetricFilters(): void {
+
     }
 }

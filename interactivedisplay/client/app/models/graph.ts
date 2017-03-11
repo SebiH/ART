@@ -72,7 +72,7 @@ export class Graph {
     /*
      *     isFlipped
      */
-    private _isFlipped : boolean;
+    private _isFlipped : boolean = false;
     public get isFlipped() : boolean {
         return this._isFlipped;
     }
@@ -86,7 +86,7 @@ export class Graph {
     /*
      *    isColored
      */
-    private _isColored : boolean;
+    private _isColored : boolean = false;
     public get isColored() : boolean {
         return this._isColored;
     }
