@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { SocketIO } from './SocketIO.service';
 import { Graph } from '../models/index';
@@ -23,6 +24,7 @@ export class GraphProvider {
     private graphs: Graph[] = [];
     private graphObserver: ReplaySubject<Graph[]> = new ReplaySubject<Graph[]>(1);
     private graphSelectionChanged: ReplaySubject<Graph> = new ReplaySubject<Graph>(1);
+    private graphDeletionObserver: Subject<Graph> = new Subject<Graph>();
     private idCounter: number = 0;
 
     private delayedGraphUpdate: Function;
@@ -58,6 +60,10 @@ export class GraphProvider {
 
     public onGraphSelectionChanged(): Observable<Graph> {
         return this.graphSelectionChanged.asObservable();
+    }
+
+    public onGraphDeletion(): Observable<Graph> {
+        return this.graphDeletionObserver.asObservable();
     }
 
     public setColor(graph: Graph) {
@@ -124,6 +130,7 @@ export class GraphProvider {
         this.recalculateGraphIndices();
         graph.destroy();
         this.graphObserver.next(this.graphs);
+        this.graphDeletionObserver.next(graph);
     }
 
 

@@ -24,6 +24,9 @@ export class FilterProvider {
             .first()
             .subscribe(graphs => this.initFilters(graphs));
 
+        this.graphProvider.onGraphDeletion()
+            .subscribe(graph => this.clearFilters(graph));
+
         this.delayedFilterSync = _.debounce(this.syncFilters, 0);
     }
 
@@ -56,7 +59,7 @@ export class FilterProvider {
 
     private filterUpdateQueue: { [id: number]: any } = {};
 
-    private syncFilters() {
+    private syncFilters(): void {
         let filters = _.values(this.filterUpdateQueue);
 
         if (filters.length > 0) {
@@ -64,6 +67,14 @@ export class FilterProvider {
                 filters: filters
             });
             this.filterUpdateQueue = {};
+        }
+    }
+
+    private clearFilters(graph: Graph): void {
+        let removeQueue = _.filter(this.filters, (f) => f.origin.id == graph.id);
+
+        for (let filter of removeQueue) {
+            this.removeFilter(filter);
         }
     }
 
