@@ -36,7 +36,7 @@ export class FilterProvider {
                 for (let rFilter of remoteFilters) {
                     this.idCounter = Math.max(this.idCounter, rFilter.id + 1);
 
-                    let originGraph = _.find(graphs, g => g.id === rFilter.id);
+                    let originGraph = _.find(graphs, g => g.id === rFilter.origin);
                     if (originGraph) {
                         let filter = Filter.fromJson(rFilter, originGraph);
                         localFilters.push(filter);
@@ -76,6 +76,7 @@ export class FilterProvider {
 
     public createFilter(origin: Graph): Filter {
         let filter = new Filter(this.idCounter++);
+        filter.origin = origin;
 
         this.filters.push(filter);
         this.filterObserver.next(this.filters);
