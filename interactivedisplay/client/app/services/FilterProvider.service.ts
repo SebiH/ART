@@ -28,7 +28,7 @@ export class FilterProvider {
     }
 
     private initFilters(graphs: Graph[]) {
-        this.http.get('/api/filters/list')
+        this.http.get('/api/filter/list')
             .subscribe(response => {
                 let remoteFilters = response.json().filters;
                 let localFilters: Filter[] = [];

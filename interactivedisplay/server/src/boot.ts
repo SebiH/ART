@@ -128,5 +128,33 @@ sioServer.onMessageReceived({
 });
 
 
+
+let filterStorage = new ObjectStorage();
+
+webServer.addPath('/api/filter/list', (req, res, next) => {
+    res.json({ filters: filterStorage.getAll() });
+});
+
+sioServer.onMessageReceived({
+    handler: (msg) => {
+        switch (msg.command) {
+            case '+filter':
+                filterStorage.set(JSON.parse(msg.payload));
+                break;
+
+            case 'filter':
+                let filters = JSON.parse(msg.payload).filters;
+                for (let filter of filters) {
+                    filterStorage.set(filter);
+                }
+                break;
+
+            case '-filter':
+                filterStorage.remove(<number>msg.payload);
+        }
+    }
+})
+
+
 webServer.start();
 sioServer.start(webServer);
