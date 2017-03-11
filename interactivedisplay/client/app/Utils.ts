@@ -7,6 +7,6 @@ export class Utils {
     }
 
     public static getBaseUrl() {
-        return window.location.href.replace('#!', ''); 
+        return window.location.href.replace(/\!+/, '').replace(/\#+/, '');
     }
 }
