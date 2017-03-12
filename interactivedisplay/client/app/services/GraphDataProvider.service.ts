@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 @Injectable()
 export class GraphDataProvider {
 
+    private dataCount: ReplaySubject<number> = new ReplaySubject<number>(1);
     private dimensions: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
     private data: { [id: string]: ReplaySubject<ChartDimension> } = {}
 
@@ -28,10 +29,16 @@ export class GraphDataProvider {
             this.data[dim] = rs;
             this.http.post('/api/graph/data', { dimension: dim })
                 .subscribe(res => {
-                    rs.next(<ChartDimension>res.json())
+                    let chartDim = <ChartDimension>res.json();
+                    rs.next(chartDim);
+                    this.dataCount.next(chartDim.data.length);
                 });
         }
 
         return this.data[dim];
+    }
+
+    public onDataCount(): Observable<number> {
+        return this.dataCount.asObservable();
     }
 }

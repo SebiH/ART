@@ -1,11 +1,19 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Graph, Filter } from '../models/index';
+import { Graph, Filter, FilterType } from '../models/index';
 import { SocketIO } from './SocketIO.service';
 import { GraphProvider } from './GraphProvider.service';
+import { GraphDataProvider } from './GraphDataProvider.service';
 
 import * as _ from 'lodash';
+
+interface DataHighlight {
+    id: number;
+    color: string;
+    filtered: boolean;
+    filterCount: number;
+}
 
 @Injectable()
 export class FilterProvider {
@@ -13,10 +21,14 @@ export class FilterProvider {
     private idCounter: number = 0;
     private filterObserver: ReplaySubject<Filter[]> = new ReplaySubject<Filter[]>(1);
 
+    private globalFilter: DataHighlight[] = [];
+
     private delayedFilterSync: Function;
+    private delayedGlobalFilterUpdate: Function;
 
     constructor(
         private graphProvider: GraphProvider,
+        private graphDataProvider: GraphDataProvider,
         private socketio: SocketIO,
         private http: Http) {
 
@@ -27,7 +39,12 @@ export class FilterProvider {
         this.graphProvider.onGraphDeletion()
             .subscribe(graph => this.clearFilters(graph));
 
+        this.graphDataProvider.onDataCount()
+            .filter(max => this.globalFilter.length != max)
+            .subscribe(max => this.initGlobalFilter(max));
+
         this.delayedFilterSync = _.debounce(this.syncFilters, 0);
+        this.delayedGlobalFilterUpdate = _.debounce(this.updateGlobalFilter, 100);
     }
 
     private initFilters(graphs: Graph[]) {
@@ -82,13 +99,36 @@ export class FilterProvider {
         for (let filter of removeQueue) {
             this.removeFilter(filter);
         }
+
+        this.updateGlobalFilter();
     }
 
+    public getDataAttributes(index: number) {
+        return this.globalFilter[index];
+    }
 
     public updateFilter(filter: Filter): void {
-        // TODO: recalculate filter selected indices!
+        let overviewDimension = filter.origin.isFlipped ? filter.origin.dimX : filter.origin.dimY;
+
+        if (overviewDimension) {
+            switch (filter.type) {
+                case FilterType.Detail:
+                    // TODO: compare paths <-> points
+                    break;
+
+                case FilterType.Categorical:
+                    // TODO: compare categories <-> points
+                    break;
+
+                case FilterType.Line:
+                    // TODO: compare range <-> points
+                    break;
+            }
+        }
+
         this.filterUpdateQueue[filter.id] = filter.toJson();
         this.delayedFilterSync();
+        this.delayedGlobalFilterUpdate();
     }
 
     public createFilter(origin: Graph): Filter {
@@ -110,5 +150,56 @@ export class FilterProvider {
         this.socketio.sendMessage('-filter', filter.id);
         _.pull(this.filters, filter);
         this.filterObserver.next(this.filters);
+    }
+
+
+
+    private initGlobalFilter(max: number): void {
+        this.globalFilter = [];
+        for (let i = 0; i < max; i++) {
+            this.globalFilter[i] = {
+                id: i,
+                filtered: false,
+                filterCount: 0,
+                color: '#FFFFFF'
+            }
+        }
+
+        this.delayedGlobalFilterUpdate();
+
+        window['globalFilter'] = this.globalFilter;
+    }
+
+    private updateGlobalFilter(): void {
+        let hasActiveFilter = false;
+
+        for (let data of this.globalFilter) {
+            data.filtered = true;
+        }
+
+        for (let filter of this.filters) {
+
+
+
+            if (filter.isOverview && filter.origin.isColored) {
+                if (filter.type == FilterType.Line) {
+                    for (let index of filter.indices) {
+                        // TODO: determine gradient position
+                    }
+                } else if (filter.type == FilterType.Categorical) {
+                    for (let index of filter.indices) {
+                        this.globalFilter[index].color = filter.color;
+                    }
+                }
+
+            }
+
+        }
+
+        for (let data of this.globalFilter) {
+            data.filtered = data.filterCount >= this.filters.length;
+        }
+
+        this.socketio.sendMessage('globalfilter', this.globalFilter);
     }
 }
