@@ -186,7 +186,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             if (bin.value != undefined) {
                 let nextBin = this.dimension.bins[binIndex + 1];
                 if (nextBin) {
-                    let dist = (nextBin.value || nextBin.range[0]) - bin.value;
+                    let dist = this.minVal(nextBin) - bin.value;
                     return bin.value + dist * remainder;
                 } else {
                     return bin.value;
@@ -214,7 +214,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
                 if (bin.value == val) {
                     return i + 1;
                 } else if (nextBin && this.isBetween(val, bin, nextBin)) {
-                    let dist = (nextBin.value || nextBin.range[0]) - bin.value;
+                    let dist = this.minVal(nextBin) - bin.value;
                     let remainder = val % 1;
 
                     // ... magic!
@@ -236,11 +236,15 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         return -1;
     }
 
+    private minVal(bin: any): number {
+        return bin.value === undefined ? bin.range[0] : bin.value;
+    }
+
     private isBetween(val: number, bin1: any, bin2: any): boolean {
-        if (bin1.value < (bin2.value || bin2.range[0])) {
-            return bin1.value <= val && val <= (bin2.value || bin2.range[0]);
+        if (bin1.value < this.minVal(bin2)) {
+            return bin1.value <= val && val <= this.minVal(bin2);
         } else {
-            return (bin2.value || bin2.range[0]) <= val && val <= bin1.value;
+            return this.minVal(bin2) <= val && val <= bin1.value;
         }
     }
 
