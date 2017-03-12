@@ -363,23 +363,31 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
 
     private lineMoveUpdate(event: any): void {
         let selectedData = this.chart.convertData(event.relativePos.y);
-
-        if (selectedData < this.currentFilter.range[0]) {
-            this.currentFilter.range[0] = selectedData;
-        } else {
-            this.currentFilter.range[1] = selectedData;
-        }
+        this.currentFilter.range[1] = selectedData;
+        this.filterProvider.updateFilter(this.currentFilter);
 
         this.lineUpdateFilters();
     }
 
     private lineMoveEnd(event: any): void {
-        if (Math.abs(this.currentFilter.range[0] - this.currentFilter.range[1]) < 0.1) {
+        if (this.currentFilter.range[1] < this.currentFilter.range[0]) {
+            let temp = this.currentFilter.range[0];
+            this.currentFilter.range[0] = this.currentFilter.range[1];
+            this.currentFilter.range[1] = temp;
+        }
+
+        let start = this.chart.invertData(this.currentFilter.range[0]);
+        let end = this.chart.invertData(this.currentFilter.range[1]);
+
+        if (Math.abs(start - end) < 0.3) {
             this.filterProvider.removeFilter(this.currentFilter);
             _.pull(this.filters, this.currentFilter);
+        } else {
+            this.filterProvider.updateFilter(this.currentFilter);
         }
 
         this.currentFilter = null;
+        this.lineUpdateFilters();
     }
 
     private lineUpdateFilters(): void {

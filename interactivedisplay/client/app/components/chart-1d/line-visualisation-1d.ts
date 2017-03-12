@@ -186,7 +186,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             if (bin.value != undefined) {
                 let nextBin = this.dimension.bins[binIndex + 1];
                 if (nextBin) {
-                    let dist = nextBin.value - bin.value;
+                    let dist = (nextBin.value || nextBin.range[0]) - bin.value;
                     return bin.value + dist * remainder;
                 } else {
                     return bin.value;
@@ -203,6 +203,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
     // actual data value -> graph position
     public invertData(val: number): number {
         let bins = this.dimension.bins;
+
         for (let i = 0; i < bins.length; i++) {
             let bin = bins[i];
 
@@ -211,9 +212,9 @@ export class LineVisualisation1d extends ChartVisualisation1d {
                 let nextBin = bins[i + 1];
 
                 if (bin.value == val) {
-                    return i;
+                    return i + 1;
                 } else if (nextBin && this.isBetween(val, bin, nextBin)) {
-                    let dist = nextBin.value - bin.value;
+                    let dist = (nextBin.value || nextBin.range[0]) - bin.value;
                     let remainder = val % 1;
 
                     // ... magic!
@@ -236,10 +237,10 @@ export class LineVisualisation1d extends ChartVisualisation1d {
     }
 
     private isBetween(val: number, bin1: any, bin2: any): boolean {
-        if (bin1.value < bin2.value) {
-            return bin1.value <= val && val <= bin2.value;
+        if (bin1.value < (bin2.value || bin2.range[0])) {
+            return bin1.value <= val && val <= (bin2.value || bin2.range[0]);
         } else {
-            return bin2.value <= val && val <= bin1.value;
+            return (bin2.value || bin2.range[0]) <= val && val <= bin1.value;
         }
     }
 
