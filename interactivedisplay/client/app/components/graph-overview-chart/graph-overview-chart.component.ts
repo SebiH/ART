@@ -324,38 +324,61 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
      *    line handling
      */
 
-    private lineSelectionStart: number;
-    private lineSelectionEnd: number;
+    private currentFilter: Filter = null;
 
-    private lineClick(eveny: any): void {
+    private lineClick(event: any): void {
         // TODO: Check if click was inside filter, offer delete dialog?
+        // let clickedData = this.chart.convertData(event.relativePos.y);
     }
 
     private lineMoveStart(event: any): void {
-        this.lineSelectionStart = this.chart.invert(event.relativePos.y);
+        this.currentFilter = this.filterProvider.createFilter(this.graph);
+        this.currentFilter.isOverview = true;
+        this.currentFilter.type = FilterType.Line;
+        let selectedData = this.chart.convertData(event.relativePos.y);
+        this.currentFilter.range = [ selectedData, selectedData ];
+
+        this.filters.push(this.currentFilter);
+        this.filterProvider.updateFilter(this.currentFilter);
     }
 
 
     private lineMoveUpdate(event: any): void {
-        this.lineSelectionEnd = this.chart.invert(event.relativePos.y);
+        let selectedData = this.chart.convertData(event.relativePos.y);
 
+        if (selectedData < this.currentFilter.range[0]) {
+            this.currentFilter.range[0] = selectedData;
+        } else {
+            this.currentFilter.range[1] = selectedData;
+        }
 
-        let start = Math.min(this.lineSelectionStart, this.lineSelectionEnd);
-        let end = Math.max(this.lineSelectionStart, this.lineSelectionEnd);
-
-        this.chart.setHighlightedRanges([[start, end]]);
+        this.lineUpdateFilters();
     }
 
     private lineMoveEnd(event: any): void {
+        if (Math.abs(this.currentFilter.range[0] - this.currentFilter.range[1]) < 0.1) {
+            this.filterProvider.removeFilter(this.currentFilter);
+            _.pull(this.filters, this.currentFilter);
+        }
 
+        this.currentFilter = null;
     }
 
     private lineUpdateFilters(): void {
-        
-    }
+        let ranges: [number, number][] = [];
 
-    private initMetricFilters(): void {
+        for (let filter of this.filters) {
+            let start = this.chart.invertData(filter.range[0]);
+            let end = this.chart.invertData(filter.range[1]);
 
+            if (start < end) {
+                ranges.push([start, end]);
+            } else {
+                ranges.push([end, start]);
+            }
+        }
+
+        this.chart.setHighlightedRanges(ranges);
     }
 
     private lineColorUpdate(): void {

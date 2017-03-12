@@ -93,4 +93,18 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
             this.dataVisualisation.setRanges(ranges);
         }
     }
+
+    public convertData(val: number): number {
+        if (this.dataVisualisation instanceof LineVisualisation1d) {
+            return this.dataVisualisation.convertData(val);
+        }
+        return -1;
+    }
+
+    public invertData(val: number): number {
+        if (this.dataVisualisation instanceof LineVisualisation1d) {
+            return this.dataVisualisation.invertData(val);
+        }
+        return -1;
+    }
 }

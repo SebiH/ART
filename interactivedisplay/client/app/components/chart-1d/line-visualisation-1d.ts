@@ -161,41 +161,87 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         // TODO.
     }
 
-    // TODO: this is a whole lot more complicated than it should be
     public invert(val: number): number {
-        let scaleOffset = this.yScale.invert(val)
-        return scaleOffset;
-        // let binIndex = Math.floor(scaleOffset - 1);
-        // let remainder = scaleOffset % 1;
-
-        // if (binIndex < 0) {
-        //     remainder = 0;
-        //     binIndex = 0;
-        // } else if (binIndex >= this.bins.length) {
-        //     binIndex = this.bins.length - 1;
-        //     remainder = 1;
-        // }
-
-        // if (this.dimension.bins[binIndex] != null) {
-        //     let bin = this.dimension.bins[binIndex];
-
-        //     if (bin.value != undefined) {
-        //         let nextBin = this.dimension.bins[binIndex + 1];
-        //         if (nextBin) {
-        //             let dist = nextBin.value - bin.value;
-        //             return bin.value + dist * remainder;
-        //         } else {
-        //             return bin.value;
-        //         }
-        //     } else {
-        //         let range = bin.range[1] - bin.range[0];
-        //         return bin.range[0] + remainder * range;
-        //     }
-        // }
-
-        // return -1;
+        return this.yScale.invert(val)
     }
 
+    // graph pos -> actual data val
+    // TODO: this is a whole lot more complicated than it should be
+    public convertData(val: number): number {
+        let scaleOffset = this.yScale.invert(val)
+        let binIndex = Math.floor(scaleOffset - 1);
+        let remainder = scaleOffset % 1;
+
+        if (binIndex < 0) {
+            remainder = 0;
+            binIndex = 0;
+        } else if (binIndex >= this.bins.length) {
+            binIndex = this.bins.length - 1;
+            remainder = 1;
+        }
+
+        if (this.dimension.bins[binIndex] != null) {
+            let bin = this.dimension.bins[binIndex];
+
+            if (bin.value != undefined) {
+                let nextBin = this.dimension.bins[binIndex + 1];
+                if (nextBin) {
+                    let dist = nextBin.value - bin.value;
+                    return bin.value + dist * remainder;
+                } else {
+                    return bin.value;
+                }
+            } else {
+                let range = bin.range[1] - bin.range[0];
+                return bin.range[0] + remainder * range;
+            }
+        }
+
+        return -1;
+    }
+
+    // actual data value -> graph position
+    public invertData(val: number): number {
+        let bins = this.dimension.bins;
+        for (let i = 0; i < bins.length; i++) {
+            let bin = bins[i];
+
+            if (bin.value != undefined) {
+
+                let nextBin = bins[i + 1];
+
+                if (bin.value == val) {
+                    return i;
+                } else if (nextBin && this.isBetween(val, bin, nextBin)) {
+                    let dist = nextBin.value - bin.value;
+                    let remainder = val % 1;
+
+                    // ... magic!
+                    if (dist < 0) {
+                        return i + 2 + remainder * dist;
+                    } else {
+                        return i + 1 + remainder * dist;
+                    }
+                }
+
+            } else {
+                if (bin.range[0] <= val && bin.range[1] >= val) {
+                    let percent = (val - bin.range[0]) / (bin.range[1] - bin.range[0]);
+                    return i + 1 + percent;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    private isBetween(val: number, bin1: any, bin2: any): boolean {
+        if (bin1.value < bin2.value) {
+            return bin1.value <= val && val <= bin2.value;
+        } else {
+            return bin2.value <= val && val <= bin1.value;
+        }
+    }
 
     public setRanges(ranges: [number, number][]) {
         this.rangeContainer.html('');
@@ -204,8 +250,6 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         for (let range of ranges) {
             let start = this.yScale(range[0]);
             let end = this.yScale(range[1]);
-
-            console.log(end - start);
 
             this.rangeContainer.append('rect')
                 .attr('width', this.width)
