@@ -75,8 +75,12 @@ let portionBins: Bin[] = [
     },
     {
         displayName: '5+',
-        range: [5, 1000]
+        range: [5, 19]
     },
+    {
+        displayName: 'max',
+        value: 20
+    }
 ];
 
 let portionGradient: Gradient[] = [
@@ -116,11 +120,11 @@ let ratingBins: Bin[] = [
 let ratingGradient: Gradient[] = [
     {
         stop: 0,
-        color: COL_RED
+        color: COL_GREEN
     },
     {
         stop: 4,
-        color: COL_GREEN
+        color: COL_RED
     }
 ];
 
@@ -216,21 +220,25 @@ export const SmartactMapping: SqlColumnMapping[] = [
         maxValue: 2400000000, // 24:00:00.0000
         bins: [
             {
-                displayName: 'Morning',
+                displayName: 'Nacht',
                 range: [0, 600000000]
             },
             {
-                displayName: 'Noon',
+                displayName: 'Morgen',
                 range: [600000001, 1200000000]
             },
             {
-                displayName: 'Evening',
+                displayName: 'Mittag',
                 range: [1200000001, 1800000000]
             },
             {
-                displayName: 'Night',
-                range: [1800000001, 2400000000]
+                displayName: 'Abend',
+                range: [1800000001, 2400000000 - 1]
             },
+            {
+                displayName: 'Mitternacht',
+                value: 2400000000
+            }
         ],
         gradient: [
             {
@@ -238,15 +246,15 @@ export const SmartactMapping: SqlColumnMapping[] = [
                 color: COL_BLACK
             },
             {
-                stop: 600000000, // 06:00:00.0000
+                stop: 1000000000, // 06:00:00.0000
                 color: COL_ORANGE
             },
             {
-                stop: 1200000000, // 12:00:00.0000
+                stop: 1500000000, // 12:00:00.0000
                 color: COL_BLUE
             },
             {
-                stop: 1800000000, // 18:00:00.0000
+                stop: 2100000000, // 18:00:00.0000
                 color: COL_PURPLE
             },
             {
@@ -265,20 +273,24 @@ export const SmartactMapping: SqlColumnMapping[] = [
         maxValue: 86072,
         bins: [
             {
-                displayName: "< 1 Minutes",
+                displayName: '< 1 Minutes',
                 range: [0, 60]
             },
             {
-                displayName: "< 5 Minutes",
+                displayName: '< 5 Minutes',
                 range: [61, 60 * 5]
             },
             {
-                displayName: "< 10 Minutes",
+                displayName: '< 10 Minutes',
                 range: [60 * 5 + 1, 60 * 10]
             },
             {
-                displayName: "> 10 Minutes",
-                range: [60 * 10 + 1, 60 * 60 * 24]
+                displayName: '> 10 Minutes',
+                range: [60 * 10 + 1, 86071]
+            },
+            {
+                displayName: 'max',
+                value: 86072
             }
         ],
         gradient: [

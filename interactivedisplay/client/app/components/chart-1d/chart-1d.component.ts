@@ -86,4 +86,11 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
             this.dataVisualisation.setCategoryActive(index, isActive);
         }
     }
+
+
+    public setHighlightedRanges(ranges: [number, number][]) {
+        if (this.dataVisualisation instanceof LineVisualisation1d) {
+            this.dataVisualisation.setRanges(ranges);
+        }
+    }
 }

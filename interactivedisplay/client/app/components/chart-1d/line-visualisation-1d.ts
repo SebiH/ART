@@ -12,8 +12,12 @@ const TEXT_Y_OFFSET = -10;
 export class LineVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
+    private rangeContainer: HtmlChartElement;
     private bins: number[] = [];
     private yScale: d3.ScaleLinear<number, number> = null;
+
+    private width: number;
+    private height: number;
 
     public constructor(public dimension: ChartDimension) {
         super();
@@ -43,11 +47,15 @@ export class LineVisualisation1d extends ChartVisualisation1d {
 
     public register(root: HtmlChartElement, width: number, height: number): void {
 
+        this.width = width;
+        this.height = height;
+
         this.dataContainer = root.append('g');
 
         /*
         **    Gradient
         **/
+
         let gradient = this.dataContainer.append('defs').append('linearGradient')
             .attr('id', 'gradient')
             .attr('x1', '100%')
@@ -63,6 +71,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
                 .attr('stop-opacity', 0.8);
         }
 
+
         let baseUrl = Utils.getBaseUrl();
         let background = this.dataContainer.append('rect')
             .attr('width', width - 2) // - 2 due to borders..
@@ -75,13 +84,13 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         **    Line
         **/
 
-        let domain = [0, _.max(this.bins) * 1.2];
+        let domain = [0, _.max(this.bins) * 1.3];
         let x = d3.scaleLinear()
             .domain(domain)
             .range([width, 0]);
 
         let y = d3.scaleLinear()
-            .domain([0, this.bins.length + 1])
+            .domain([0.5, this.bins.length + 0.5])
             .range([0, height]);
         this.yScale = y;
 
@@ -104,6 +113,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .attr('stroke-width', '2px')
             .attr('d', line);
 
+        this.rangeContainer = this.dataContainer.append('g');
 
         /*
         **    Labels
@@ -151,7 +161,60 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         // TODO.
     }
 
+    // TODO: this is a whole lot more complicated than it should be
     public invert(val: number): number {
-        return this.yScale.invert(val);
+        let scaleOffset = this.yScale.invert(val)
+        return scaleOffset;
+        // let binIndex = Math.floor(scaleOffset - 1);
+        // let remainder = scaleOffset % 1;
+
+        // if (binIndex < 0) {
+        //     remainder = 0;
+        //     binIndex = 0;
+        // } else if (binIndex >= this.bins.length) {
+        //     binIndex = this.bins.length - 1;
+        //     remainder = 1;
+        // }
+
+        // if (this.dimension.bins[binIndex] != null) {
+        //     let bin = this.dimension.bins[binIndex];
+
+        //     if (bin.value != undefined) {
+        //         let nextBin = this.dimension.bins[binIndex + 1];
+        //         if (nextBin) {
+        //             let dist = nextBin.value - bin.value;
+        //             return bin.value + dist * remainder;
+        //         } else {
+        //             return bin.value;
+        //         }
+        //     } else {
+        //         let range = bin.range[1] - bin.range[0];
+        //         return bin.range[0] + remainder * range;
+        //     }
+        // }
+
+        // return -1;
+    }
+
+
+    public setRanges(ranges: [number, number][]) {
+        this.rangeContainer.html('');
+        let baseUrl = Utils.getBaseUrl();
+
+        for (let range of ranges) {
+            let start = this.yScale(range[0]);
+            let end = this.yScale(range[1]);
+
+            console.log(end - start);
+
+            this.rangeContainer.append('rect')
+                .attr('width', this.width)
+                .attr('height', end - start)
+                .attr('y', start)
+                .attr('transform', 'translate(-2,0)') // -2 due to borders
+                .style('fill', '#f44336')
+                .attr('opacity', '0.5');
+        }
+
     }
 }

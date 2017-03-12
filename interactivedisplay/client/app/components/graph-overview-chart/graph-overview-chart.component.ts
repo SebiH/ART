@@ -317,21 +317,33 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
 
 
 
+
+
+
     /**
      *    line handling
      */
+
+    private lineSelectionStart: number;
+    private lineSelectionEnd: number;
 
     private lineClick(eveny: any): void {
         // TODO: Check if click was inside filter, offer delete dialog?
     }
 
     private lineMoveStart(event: any): void {
-
+        this.lineSelectionStart = this.chart.invert(event.relativePos.y);
     }
 
 
     private lineMoveUpdate(event: any): void {
+        this.lineSelectionEnd = this.chart.invert(event.relativePos.y);
 
+
+        let start = Math.min(this.lineSelectionStart, this.lineSelectionEnd);
+        let end = Math.max(this.lineSelectionStart, this.lineSelectionEnd);
+
+        this.chart.setHighlightedRanges([[start, end]]);
     }
 
     private lineMoveEnd(event: any): void {
