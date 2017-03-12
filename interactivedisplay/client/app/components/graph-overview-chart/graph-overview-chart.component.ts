@@ -7,18 +7,45 @@ import * as _ from 'lodash';
 
 @Component({
     selector: 'graph-overview-chart',
-    template: `<chart-1d [height]="height"
-                         [width]="width"
-                         [dimension]="graph.isFlipped ? dimY : dimX"
+    template: `
+<div class="root">
+    <chart-1d [height]="height"
+             [width]="width"
+             [dimension]="graph.isFlipped ? dimY : dimX"
 
-                         touch-button
-                         (touchclick)="onClick($event)"
+             touch-button
+             (touchclick)="onClick($event)"
 
-                         moveable
-                         (moveStart)="onMoveStart($event)"
-                         (moveUpdate)="onMoveUpdate($event)"
-                         (moveEnd)="onMoveEnd($event)">
-               </chart-1d>`
+             moveable
+             (moveStart)="onMoveStart($event)"
+             (moveUpdate)="onMoveUpdate($event)"
+             (moveEnd)="onMoveEnd($event)">
+   </chart-1d>
+   <div class="delete-button"
+           [ngStyle]="deleteButtonStyle"
+           *ngIf="deleteButtonFilter"
+
+           touch-button
+           (touchclick)="deleteButtonClick($event)">
+       Delete
+   </div>
+</div>`,
+    styles: [ 
+        '.root { position: relative; }',
+        `.delete-button {
+            background: #F44336;
+            color: white;
+            border-radius: 0;
+            border: none;
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }`
+    ]
 })
 export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     @Input() graph: Graph;
@@ -324,12 +351,40 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
      *    line handling
      */
 
-    private currentFilter: Filter = null;
+    private deleteButtonFilter: Filter = null;
+    private deleteButtonStyle = { 'top': 0 };
 
     private lineClick(event: any): void {
-        // TODO: Check if click was inside filter, offer delete dialog?
-        // let clickedData = this.chart.convertData(event.relativePos.y);
+        if (this.deleteButtonFilter == null) {
+            let buttonHeight = 50;
+            this.deleteButtonStyle.top = event.relativePos.y - buttonHeight / 2;
+
+            let clickedData = this.chart.convertData(event.relativePos.y);
+            for (let filter of this.filters) {
+                if (filter.range[0] <= clickedData && clickedData <= filter.range[1]) {
+                    this.deleteButtonFilter = filter;
+                    break;
+                }
+            }
+
+        } else {
+            this.deleteButtonFilter = null;
+        }
+
     }
+
+    private deleteButtonClick(event: any): void {
+        if (this.deleteButtonFilter != null) {
+            _.pull(this.filters, this.deleteButtonFilter);
+            this.filterProvider.removeFilter(this.deleteButtonFilter);
+            this.deleteButtonFilter = null;
+            this.lineUpdateFilters();
+        }
+    }
+
+
+
+    private currentFilter: Filter = null;
 
     private lineMoveStart(event: any): void {
         this.currentFilter = this.filterProvider.createFilter(this.graph);
@@ -377,6 +432,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
                 ranges.push([end, start]);
             }
         }
+
+        this.deleteButtonFilter = null;
 
         this.chart.setHighlightedRanges(ranges);
     }
