@@ -7,45 +7,8 @@ import * as _ from 'lodash';
 
 @Component({
     selector: 'graph-overview-chart',
-    template: `
-<div class="root">
-    <chart-1d [height]="height"
-             [width]="width"
-             [dimension]="graph.isFlipped ? dimY : dimX"
-
-             touch-button
-             (touchclick)="onClick($event)"
-
-             moveable
-             (moveStart)="onMoveStart($event)"
-             (moveUpdate)="onMoveUpdate($event)"
-             (moveEnd)="onMoveEnd($event)">
-   </chart-1d>
-   <div class="delete-button"
-           [ngStyle]="deleteButtonStyle"
-           *ngIf="deleteButtonFilter"
-
-           touch-button
-           (touchclick)="deleteButtonClick($event)">
-       Delete
-   </div>
-</div>`,
-    styles: [ 
-        '.root { position: relative; }',
-        `.delete-button {
-            background: #F44336;
-            color: white;
-            border-radius: 0;
-            border: none;
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }`
-    ]
+    templateUrl: './app/components/graph-overview-chart/graph-overview-chart.html',
+    styleUrls: [ './app/components/graph-overview-chart/graph-overview-chart.css' ]
 })
 export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     @Input() graph: Graph;

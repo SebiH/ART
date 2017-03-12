@@ -1,0 +1,17 @@
+.root {
+    position: relative;
+}
+
+.delete-button {
+    background: #F44336;
+    color: white;
+    border-radius: 0;
+    border: none;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

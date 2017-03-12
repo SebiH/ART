@@ -1,0 +1,22 @@
+<div class="root">
+    <chart-1d [height]="height"
+             [width]="width"
+             [dimension]="graph.isFlipped ? dimY : dimX"
+
+             touch-button
+             (touchclick)="onClick($event)"
+
+             moveable
+             (moveStart)="onMoveStart($event)"
+             (moveUpdate)="onMoveUpdate($event)"
+             (moveEnd)="onMoveEnd($event)">
+   </chart-1d>
+   <div class="delete-button"
+           [ngStyle]="deleteButtonStyle"
+           *ngIf="deleteButtonFilter"
+
+           touch-button
+           (touchclick)="deleteButtonClick($event)">
+       Delete
+   </div>
+</div>
