@@ -30,6 +30,14 @@ export class Filter {
     }
 
     public toJson(): any {
+        let sortedRange: [number,number];
+        if (this.type == FilterType.Line) {
+            sortedRange = [
+                Math.min(this.range[0]),
+                Math.max(this.range[1])
+            ];
+        }
+
         return {
             id: this.id,
             indices: this.indices,
@@ -40,7 +48,7 @@ export class Filter {
             type: this.type,
             path: this.path,
             category: this.category,
-            range: this.range
+            range: sortedRange
         };
     }
 
