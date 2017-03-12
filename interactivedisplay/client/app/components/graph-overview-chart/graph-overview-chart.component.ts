@@ -350,14 +350,9 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     private currentFilter: Filter = null;
 
     private lineMoveStart(event: any): void {
-        this.currentFilter = this.filterProvider.createFilter(this.graph);
-        this.currentFilter.isOverview = true;
-        this.currentFilter.type = FilterType.Line;
         let selectedData = this.chart.convertData(event.relativePos.y);
-        this.currentFilter.range = [ selectedData, selectedData ];
-
+        this.currentFilter = this.createLineFilter([selectedData, selectedData]);
         this.filters.push(this.currentFilter);
-        this.filterProvider.updateFilter(this.currentFilter);
     }
 
 
@@ -407,9 +402,43 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
         this.deleteButtonFilter = null;
 
         this.chart.setHighlightedRanges(ranges);
+        this.lineColorUpdate();
     }
 
-    private lineColorUpdate(): void {
+    private invisibleColorFilter: Filter = null;
 
+    private lineColorUpdate(): void {
+        let dim = this.getOverviewDimension();
+
+        if (dim) {
+            if (this.graph.isColored) {
+                if (this.filters.length == 0 && this.invisibleColorFilter === null) {
+                    this.invisibleColorFilter = this.createLineFilter([dim.domain.min, dim.domain.max]);
+                }
+            } else {
+                if (this.invisibleColorFilter != null) {
+                    this.filterProvider.removeFilter(this.invisibleColorFilter);
+                    this.invisibleColorFilter = null;
+                }
+            }
+        }
+    }
+
+
+    private createLineFilter(range: [number, number]): Filter {
+        if (this.invisibleColorFilter !== null) {
+            this.filterProvider.removeFilter(this.invisibleColorFilter);
+            this.invisibleColorFilter = null;
+        }
+
+        let filter = this.filterProvider.createFilter(this.graph);
+
+        filter.isOverview = true;
+        filter.type = FilterType.Line;
+        filter.range = range;
+
+        this.filterProvider.updateFilter(filter);
+
+        return filter;
     }
 }
