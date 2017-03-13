@@ -279,15 +279,21 @@ export class FilterProvider {
         let rgb1 = this.hexToRgb(col1);
         let rgb2 = this.hexToRgb(col2);
 
-        let hsv1 = this.rgb2hsv(rgb1.r, rgb1.g, rgb1.b);
-        let hsv2 = this.rgb2hsv(rgb2.r, rgb2.g, rgb2.b);
+        // let hsv1 = this.rgb2hsv(rgb1.r, rgb1.g, rgb1.b);
+        // let hsv2 = this.rgb2hsv(rgb2.r, rgb2.g, rgb2.b);
 
-        let resultHsv = {
-            h: this.lerp(hsv1.h, hsv2.h, weight),
-            s: this.lerp(hsv1.s, hsv2.s, weight),
-            v: this.lerp(hsv1.v, hsv2.v, weight),
-        };
-        let resultRgb = this.hsv2rgb(resultHsv.h, resultHsv.s, resultHsv.v);
+        // let resultHsv = {
+        //     h: this.lerp(hsv1.h, hsv2.h, weight),
+        //     s: this.lerp(hsv1.s, hsv2.s, weight),
+        //     v: this.lerp(hsv1.v, hsv2.v, weight),
+        // };
+        // let resultRgb = this.hsv2rgb(resultHsv.h, resultHsv.s, resultHsv.v);
+        let resultRgb = {
+            r: Math.floor(this.lerp(rgb1.r, rgb2.r, weight)),
+            g: Math.floor(this.lerp(rgb1.g, rgb2.g, weight)),
+            b: Math.floor(this.lerp(rgb1.b, rgb2.b, weight))
+        }
+
         return this.rgbToHex(resultRgb.r, resultRgb.g, resultRgb.b);
     }
 
