@@ -14,6 +14,8 @@ export class GraphDataProvider {
     private dimensions: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
     private data: { [id: string]: ReplaySubject<ChartDimension> } = {}
 
+    private instantDimensions: { [id: string]: ChartDimension } = {};
+
     constructor(private http: Http) {
         this.http.get('/api/graph/dimensions')
             .subscribe(res => this.dimensions.next(<string[]>res.json().dimensions));
@@ -32,6 +34,7 @@ export class GraphDataProvider {
                     let chartDim = <ChartDimension>res.json();
                     rs.next(chartDim);
                     this.dataCount.next(chartDim.data.length);
+                    this.instantDimensions[dim] = chartDim;
                 });
         }
 
@@ -40,5 +43,10 @@ export class GraphDataProvider {
 
     public onDataCount(): Observable<number> {
         return this.dataCount.asObservable();
+    }
+
+    // TODO: hack for filtering data in FilterProvider...
+    public tryGetDimension(dim: string): ChartDimension {
+        return this.instantDimensions[dim];
     }
 }

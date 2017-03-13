@@ -301,6 +301,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
         filter.isOverview = true;
         filter.type = FilterType.Categorical;
         filter.category = category;
+        filter.color = color;
         this.filterProvider.updateFilter(filter);
         this.filters.push(filter);
     }

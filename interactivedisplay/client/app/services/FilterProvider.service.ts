@@ -11,8 +11,7 @@ import * as _ from 'lodash';
 interface DataHighlight {
     id: number;
     color: string;
-    filtered: boolean;
-    filterCount: number;
+    selectedBy: number[];
 }
 
 @Injectable()
@@ -21,6 +20,7 @@ export class FilterProvider {
     private idCounter: number = 0;
     private filterObserver: ReplaySubject<Filter[]> = new ReplaySubject<Filter[]>(1);
 
+    private graphs: Graph[] = [];
     private globalFilter: DataHighlight[] = [];
 
     private delayedFilterSync: Function;
@@ -34,7 +34,10 @@ export class FilterProvider {
 
         this.graphProvider.getGraphs()
             .first()
-            .subscribe(graphs => this.initFilters(graphs));
+            .subscribe(graphs => { 
+                this.graphs = graphs;
+                this.initFilters(graphs);
+            });
 
         this.graphProvider.onGraphDeletion()
             .subscribe(graph => this.clearFilters(graph));
@@ -100,7 +103,7 @@ export class FilterProvider {
             this.removeFilter(filter);
         }
 
-        this.updateGlobalFilter();
+        this.delayedGlobalFilterUpdate();
     }
 
     public getDataAttributes(index: number) {
@@ -108,20 +111,34 @@ export class FilterProvider {
     }
 
     public updateFilter(filter: Filter): void {
-        let overviewDimension = filter.origin.isFlipped ? filter.origin.dimX : filter.origin.dimY;
+        let overviewDim = this.graphDataProvider.tryGetDimension(filter.origin.isFlipped ? filter.origin.dimY : filter.origin.dimX);
 
-        if (overviewDimension) {
+        if (overviewDim) {
+            filter.indices = [];
+
             switch (filter.type) {
                 case FilterType.Detail:
                     // TODO: compare paths <-> points
                     break;
 
                 case FilterType.Categorical:
-                    // TODO: compare categories <-> points
+                    for (let i = 0; i < overviewDim.data.length; i++) {
+                        if (overviewDim.data[i] === filter.category) {
+                            filter.indices.push(i);
+                        }
+                    }
                     break;
 
                 case FilterType.Metric:
-                    // TODO: compare range <-> points
+                    for (let i = 0; i < overviewDim.data.length; i++) {
+                        let data = overviewDim.data[i];
+                        let minRange = Math.min(filter.range[0], filter.range[1]);
+                        let maxRange = Math.max(filter.range[0], filter.range[1]);
+
+                        if (minRange <= data && data <= maxRange) {
+                            filter.indices.push(i);
+                        }
+                    }
                     break;
             }
         }
@@ -150,6 +167,7 @@ export class FilterProvider {
         this.socketio.sendMessage('-filter', filter.id);
         _.pull(this.filters, filter);
         this.filterObserver.next(this.filters);
+        this.delayedGlobalFilterUpdate();
     }
 
 
@@ -159,8 +177,7 @@ export class FilterProvider {
         for (let i = 0; i < max; i++) {
             this.globalFilter[i] = {
                 id: i,
-                filtered: false,
-                filterCount: 0,
+                selectedBy: [],
                 color: '#FFFFFF'
             }
         }
@@ -174,32 +191,69 @@ export class FilterProvider {
         let hasActiveFilter = false;
 
         for (let data of this.globalFilter) {
-            data.filtered = true;
+            data.color = '#FFFFFF';
+            data.selectedBy = [];
         }
 
-        for (let filter of this.filters) {
 
+        for (let graph of this.graphs) {
 
+            let filters = _.filter(this.filters, (f) => f.origin.id === graph.id);
 
-            if (filter.isOverview && filter.origin.isColored) {
-                if (filter.type == FilterType.Metric) {
-                    for (let index of filter.indices) {
-                        // TODO: determine gradient position
-                    }
-                } else if (filter.type == FilterType.Categorical) {
-                    for (let index of filter.indices) {
-                        this.globalFilter[index].color = filter.color;
+            if (filters.length === 0) {
+                for (let data of this.globalFilter) {
+                    data.selectedBy.push(graph.id);
+                }
+            }
+
+            for (let filter of filters) {
+
+                hasActiveFilter = hasActiveFilter || filter.indices.length > 0;
+
+                for (let index of filter.indices) {
+                    let gfData = this.globalFilter[index];
+                    if (gfData.selectedBy.indexOf(graph.id) < 0) {
+                        gfData.selectedBy.push(graph.id);
                     }
                 }
 
+                if (filter.isOverview && filter.origin.isColored) {
+                    if (filter.type === FilterType.Metric) {
+                        for (let index of filter.indices) {
+                            // TODO: determine gradient position
+                        }
+                    } else if (filter.type === FilterType.Categorical) {
+                        for (let index of filter.indices) {
+                            this.globalFilter[index].color = filter.color;
+                        }
+                    }
+
+                }
+
             }
-
         }
 
-        for (let data of this.globalFilter) {
-            data.filtered = data.filterCount >= this.filters.length;
+        let syncFilter = [];
+
+        if (hasActiveFilter) {
+            for (let data of this.globalFilter) {
+                syncFilter.push({
+                    id: data.id,
+                    f: data.selectedBy.length >= this.graphs.length,
+                    c: data.color
+                });
+
+            }
+        } else {
+            for (let data of this.globalFilter) {
+                syncFilter.push({
+                    id: data.id,
+                    f: false,
+                    c: '#FFFFFF'
+                });
+            }
         }
 
-        this.socketio.sendMessage('globalfilter', this.globalFilter);
+        this.socketio.sendMessage('globalfilter', syncFilter);
     }
 }
