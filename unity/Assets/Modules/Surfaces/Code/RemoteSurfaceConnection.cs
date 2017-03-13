@@ -186,7 +186,9 @@ namespace Assets.Modules.Surfaces
             
             if (_receiveBuffer.Length - _receiveBufferOffset < 100)
             {
-                throw new OverflowException("Receive buffer getting too small, aborting receive");
+                var error = "Receive buffer getting too small, aborting receive";
+                Debug.LogError(error);
+                throw new OverflowException(error);
             }
 
             _socket.BeginReceive(_receiveBuffer, _receiveBufferOffset, _receiveBuffer.Length - _receiveBufferOffset, SocketFlags.None, _receiveCallback, null);
