@@ -159,13 +159,13 @@ sioServer.onMessageReceived({
 let globalFilter = {};
 
 webServer.addPath('/api/filter/global', (req, res, next) => {
-    res.json({ globalFilter: globalFilter });
+    res.json({ globalfilter: globalFilter });
 });
 
 sioServer.onMessageReceived({
     handler: (msg) => {
         if (msg.command == 'globalfilter') {
-            globalFilter = JSON.parse(msg.payload);
+            globalFilter = JSON.parse(msg.payload).globalfilter;
         }
     }
 })

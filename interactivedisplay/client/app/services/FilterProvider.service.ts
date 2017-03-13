@@ -271,7 +271,7 @@ export class FilterProvider {
             }
         }
 
-        this.socketio.sendMessage('globalfilter', syncFilter);
+        this.socketio.sendMessage('globalfilter', { globalfilter: syncFilter });
     }
 
 
