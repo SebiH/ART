@@ -62,9 +62,10 @@ namespace Assets.Modules.SurfaceGraphFilters
         }
 
 
+        [Serializable]
         private class RemoteValueMetadataWrapper
         {
-            public RemoteValueMetadata[] globalfilter;
+            public RemoteValueMetadata[] globalfilter = null;
         }
     }
 }

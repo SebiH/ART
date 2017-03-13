@@ -55,9 +55,10 @@ namespace Assets.Modules.SurfaceGraphFilters
 
 
 
+        [Serializable]
         private class RemoteFilterWrapper
         {
-            public RemoteFilter[] filters;
+            public RemoteFilter[] filters = null;
         }
     }
 
