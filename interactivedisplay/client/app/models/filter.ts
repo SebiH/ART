@@ -4,7 +4,7 @@ export type FilterPoint = [number, number];
 
 export enum FilterType {
     Categorical = 0,
-    Line = 1,
+    Metric = 1,
     Detail = 2
 }
 
@@ -22,7 +22,7 @@ export class Filter {
     public path?: FilterPoint[];
     // for 1d categorical filters
     public category?: number;
-    // for 1d line chart filters
+    // for 1d metric chart filters
     public range?: [number, number];
 
     constructor(id: number) {
@@ -31,7 +31,7 @@ export class Filter {
 
     public toJson(): any {
         let sortedRange: [number,number];
-        if (this.type == FilterType.Line) {
+        if (this.type == FilterType.Metric) {
             sortedRange = [
                 Math.min(this.range[0]),
                 Math.max(this.range[1])
@@ -63,7 +63,7 @@ export class Filter {
             case FilterType.Categorical:
                 filter.category = jFilter.category;
                 break;
-            case FilterType.Line:
+            case FilterType.Metric:
                 filter.range = jFilter.range;
                 break;
             case FilterType.Detail:

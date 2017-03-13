@@ -434,7 +434,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
         let filter = this.filterProvider.createFilter(this.graph);
 
         filter.isOverview = true;
-        filter.type = FilterType.Line;
+        filter.type = FilterType.Metric;
         filter.range = range;
 
         this.filterProvider.updateFilter(filter);

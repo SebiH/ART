@@ -120,7 +120,7 @@ export class FilterProvider {
                     // TODO: compare categories <-> points
                     break;
 
-                case FilterType.Line:
+                case FilterType.Metric:
                     // TODO: compare range <-> points
                     break;
             }
@@ -182,7 +182,7 @@ export class FilterProvider {
 
 
             if (filter.isOverview && filter.origin.isColored) {
-                if (filter.type == FilterType.Line) {
+                if (filter.type == FilterType.Metric) {
                     for (let index of filter.indices) {
                         // TODO: determine gradient position
                     }
