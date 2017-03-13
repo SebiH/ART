@@ -6,7 +6,7 @@
      (moveEnd)="handleMoveEnd($event)">
 
     <!-- Button to add new graphs -->
-    <div class="add-button-container" [ngClass]="{ hidden: isGraphSelected }">
+    <div class="add-button-container" [ngClass]="{ hidden: selectedGraph != null }">
         <graph-create-button class="add-button"
             (graphCreation)="onGraphCreation($event)">
         </graph-create-button>
@@ -26,8 +26,8 @@
         </div>
     </div>
 
-    <button class="selection-close-area left" *ngIf="isGraphSelected" (click)="closeSelection()">
+    <button class="selection-close-area left" *ngIf="selectedGraph != null" (click)="closeSelection()">
     </button>
-    <button class="selection-close-area right" *ngIf="isGraphSelected" (click)="closeSelection()">
+    <button class="selection-close-area right" *ngIf="selectedGraph != null" (click)="selectNext()">
     </button>
 </div>

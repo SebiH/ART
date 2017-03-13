@@ -14,7 +14,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
     private graphs: Graph[] = [];
     private isActive: boolean = true;
 
-    private isGraphSelected: boolean = false;
+    private selectedGraph: Graph = null;
     private isScrolling: boolean = false;
     private interactionCounter: number = 0;
 
@@ -53,7 +53,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
                 if (selectedGraph) {
                     this.focusGraph(selectedGraph);
                 }
-                this.isGraphSelected = (selectedGraph != null);
+                this.selectedGraph = selectedGraph;
             });
     }
 
@@ -75,13 +75,13 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
     private handleMoveStart(event: any): void {
         // TODO: multitouch??
-        if (!this.isGraphSelected) {
+        if (this.selectedGraph === null) {
             this.isScrolling = true;
         }
     }
 
     private handleMoveUpdate(event: any): void {
-        if (!this.isGraphSelected) {
+        if (this.selectedGraph === null) {
             this.scrollOffset += event.deltaX;
 
             for (let graph of this.graphs) {
@@ -105,7 +105,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
     }
 
     private handleMoveEnd(event: any): void {
-        if (!this.isGraphSelected) {
+        if (this.selectedGraph === null) {
             this.isScrolling = false;
             this.applyScrollOffsetLimits();
         }
@@ -122,5 +122,20 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
     private closeSelection(): void {
         this.graphProvider.selectGraph(null);
+    }
+
+    private selectNext(): void {
+        let nextGraph: Graph = null;
+
+        for (let graph of this.graphs) {
+            let isNext = graph.listIndex > this.selectedGraph.listIndex;
+            let isImmediateNext = (nextGraph == null || graph.listIndex < nextGraph.listIndex);
+
+            if (isNext && isImmediateNext) {
+                nextGraph = graph;
+            }
+        }
+
+        this.graphProvider.selectGraph(nextGraph);
     }
 }
