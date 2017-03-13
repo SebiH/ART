@@ -39,7 +39,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (_lineCreationQueue.Count > 0 && _vertexRoutineId < 0 && _colorRoutineId < 0)
             {
-                _colorRoutineId = GameLoop.Instance.StartRoutine(AddLineAsync(), OperationType.Batched);
+                _creationRoutineId = GameLoop.Instance.StartRoutine(AddLineAsync(), OperationType.Batched);
             }
 
             if (_lineVertexUpdateQueue.Count > 0 && _creationRoutineId < 0 && _vertexRoutineId < 0)
@@ -49,7 +49,7 @@ namespace Assets.Modules.ParallelCoordinates
 
             if (_lineColorUpdateQueue.Count > 0 && _creationRoutineId < 0 && _colorRoutineId < 0)
             {
-                _colorRoutineId = GameLoop.Instance.StartRoutine(UpdateLineVerticesAsync(), OperationType.Batched);
+                _colorRoutineId = GameLoop.Instance.StartRoutine(UpdateLineColorAsync(), OperationType.Batched);
             }
         }
 
