@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
@@ -31,6 +32,23 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
+        private Color32 _color = new Color32(255, 255, 255, 255);
+        public Color32 Color
+        {
+            get { return _color; }
+            set
+            {
+                if (value.r != _color.r || value.g != _color.g || value.b != Color.b || value.a != Color.a)
+                {
+                    _color = value;
+                    foreach (var segment in _lineSegments)
+                    {
+                        segment.DesiredColor = value;
+                    }
+                }
+            }
+        }
+
         private List<LineSegment> _lineSegments = new List<LineSegment>();
 
         public DataLine(int dataIndex)
@@ -42,6 +60,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _lineSegments.Add(segment);
             segment.IsFiltered = IsFiltered;
+            segment.Color = _color;
         }
 
         public void RemoveSegment(LineSegment segment)

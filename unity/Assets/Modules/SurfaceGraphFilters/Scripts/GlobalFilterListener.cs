@@ -1,4 +1,5 @@
 using Assets.Modules.Core;
+using Assets.Modules.ParallelCoordinates;
 using Assets.Modules.Surfaces;
 using System;
 using System.Collections;
@@ -31,10 +32,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             if (request.text != null && request.text.Length > 0)
             {
                 var wrapper = JsonUtility.FromJson<RemoteValueMetadataWrapper>(request.text);
-                foreach (var metadata in wrapper.globalFilter)
-                {
-                    // TODO
-                }
+                ApplyMetadata(wrapper.globalfilter);
             }
         }
 
@@ -42,15 +40,31 @@ namespace Assets.Modules.SurfaceGraphFilters
         {
             if (cmd == "globalfilter")
             {
+                var wrapper = JsonUtility.FromJson<RemoteValueMetadataWrapper>(payload);
+                ApplyMetadata(wrapper.globalfilter);
+            }
+        }
 
+        private void ApplyMetadata(RemoteValueMetadata[] metadata)
+        {
+            foreach (var md in metadata)
+            {
+                var line = DataLineManager.GetLine(md.id);
+                line.IsFiltered = md.f;
+
+                var color = new Color();
+                var parseSuccess = ColorUtility.TryParseHtmlString(md.c, out color);
+                if (parseSuccess)
+                {
+                    line.Color = color;
+                }
             }
         }
 
 
-
         private class RemoteValueMetadataWrapper
         {
-            public RemoteValueMetadata[] globalFilter;
+            public RemoteValueMetadata[] globalfilter;
         }
     }
 }
