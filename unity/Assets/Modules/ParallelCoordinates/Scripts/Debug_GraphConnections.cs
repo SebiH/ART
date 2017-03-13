@@ -6,12 +6,12 @@ namespace Assets.Modules.ParallelCoordinates
     {
         private void Start()
         {
-            var filter = new int[10];
-            for (int i = 0; i < filter.Length; i++)
+            for (var i = 0; i < DataLineManager.MaxIndex(); i++)
             {
-                filter[i] = i;
+                var line = DataLineManager.GetLine(i);
+                line.IsFiltered = Random.value < 0.75;
+                line.Color = Random.ColorHSV();
             }
-            DataLineManager.SetFilter(filter);
         }
     }
 }
