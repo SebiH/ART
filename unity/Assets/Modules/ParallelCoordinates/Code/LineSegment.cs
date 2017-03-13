@@ -106,11 +106,13 @@ namespace Assets.Modules.ParallelCoordinates
                     return;
                 }
 
-                _color = value;
+                var rgb = new Color32(value.r, value.g, value.b, (byte)(_isFiltered ? 30 : 255));
+
+                _color = rgb;
                 UpdateColor();
 
-                _colorOrigin = value;
-                _colorDestination = value;
+                _colorOrigin = rgb;
+                _colorDestination = rgb;
                 _colorTime = 0.0f; // stops animation the next time it's running
             }
         }
@@ -130,7 +132,7 @@ namespace Assets.Modules.ParallelCoordinates
                 }
 
                 _colorOrigin = Color;
-                _colorDestination = value;
+                _colorDestination = new Color32(value.r, value.g, value.b, (byte)(_isFiltered ? 30 : 255));
                 _colorTime = Time.time;
 
                 if (!_isColorAnimationRunning)
