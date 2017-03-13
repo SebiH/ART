@@ -124,6 +124,11 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
             this.filterProvider.removeFilter(filter);
         }
 
+        if (this.invisibleColorFilter !== null) {
+            this.filterProvider.removeFilter(this.invisibleColorFilter);
+            this.invisibleColorFilter = null;
+        }
+
         this.updateFilter();
     }
 
