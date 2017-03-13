@@ -38,7 +38,6 @@ import { routing } from './routes';
   ],
   bootstrap:    [ Components.AppComponent ],
   providers:    [
-    Services.DataFilter,
     Services.FilterProvider,
     Services.GraphDataProvider,
     Services.GraphProvider,

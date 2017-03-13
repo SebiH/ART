@@ -9,8 +9,7 @@ import {
     InteractionManager,
     InteractionEvent,
     InteractionListener,
-    InteractionEventType,
-    DataFilter
+    InteractionEventType
 } from '../../services/index';
 
 import * as _ from 'lodash';
@@ -66,8 +65,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     constructor(
         private graphProvider: GraphProvider,
         private graphDataProvider: GraphDataProvider,
-        private interactionManager: InteractionManager,
-        private dataFilter: DataFilter) {}
+        private interactionManager: InteractionManager) {}
 
     ngAfterViewInit() {
         this.isActive = true;
@@ -78,9 +76,9 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             .filter(changes => changes.indexOf('dimX') > -1 || changes.indexOf('dimY') > -1)
             .subscribe(changes => this.loadData(this.graph.dimX, this.graph.dimY));
 
-        this.dataFilter.getFilter()
-            .takeWhile(() => this.isActive)
-            .subscribe(this.highlightData.bind(this));
+        // this.dataFilter.getFilter()
+        //     .takeWhile(() => this.isActive)
+        //     .subscribe(this.highlightData.bind(this));
 
         this.registerInteractionListeners();
     }
@@ -107,7 +105,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                     for (let selection of this.selections) {
                         this.calculateSelectedData(selection);
                     }
-                    this.highlightData(this.dataFilter.getCurrentFilter());
+                    // this.highlightData(this.dataFilter.getCurrentFilter());
                 });
         } else {
             this.scatterplot.loadData(null, null);

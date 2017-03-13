@@ -1,4 +1,3 @@
-export * from './DataFilter.service';
 export * from './FilterProvider.service';
 export * from './GraphDataProvider.service';
 export * from './GraphProvider.service';
