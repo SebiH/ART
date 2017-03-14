@@ -186,7 +186,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             let point = this.currentSelection.path[length - 2];
 
             if (Point.isOnLine(point, lineStart, lineEnd)) {
-                this.currentSelection.path.splice(length - 1, 1);
+                this.currentSelection.path.splice(length - 2, 1);
             }
         }
 
