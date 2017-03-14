@@ -1,6 +1,6 @@
-import { Component, Input, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, Input, AfterViewInit, OnDestroy, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { Graph, ChartDimension, Filter, FilterType } from '../../models/index';
-import { GraphDataProvider, FilterProvider } from '../../services/index';
+import { FilterProvider } from '../../services/index';
 import { Chart1dComponent } from '../chart-1d/chart-1d.component';
 
 import * as _ from 'lodash';
@@ -10,29 +10,21 @@ import * as _ from 'lodash';
     templateUrl: './app/components/graph-overview-chart/graph-overview-chart.html',
     styleUrls: [ './app/components/graph-overview-chart/graph-overview-chart.css' ]
 })
-export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
+export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     @Input() graph: Graph;
     @Input() width: number;
     @Input() height: number;
+    @Input() dim: ChartDimension = null;
 
     @ViewChild(Chart1dComponent) chart: Chart1dComponent;
 
     private isActive: boolean = true;
-    private dimX: ChartDimension = null;
-    private dimY: ChartDimension = null;
 
     private readonly filters: Filter[] = [];
 
-    constructor(
-        private dataProvider: GraphDataProvider,
-        private filterProvider: FilterProvider) {}
+    constructor(private filterProvider: FilterProvider) {}
 
     ngAfterViewInit() {
-        this.graph.onUpdate
-            .takeWhile(() => this.isActive)
-            .filter(changes => changes.indexOf('dimX') >= 0 || changes.indexOf('dimY') >= 0)
-            .subscribe(changes => this.updateDimensions(this.graph.dimX, this.graph.dimY));
-
         this.graph.onUpdate
             .takeWhile(() => this.isActive)
             .filter(changes => changes.indexOf('isFlipped') >= 0)
@@ -46,48 +38,16 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
         this.filterProvider.getFilters()
             .first()
             .subscribe(filters => this.initFilters(filters));
-
-        this.updateDimensions(this.graph.dimX, this.graph.dimY);
     }
 
     ngOnDestroy() {
         this.isActive = false;
     }
 
-    private updateDimensions(newDimX: string, newDimY: string): void {
-        if (newDimX) {
-            if (this.dimX === null || this.dimX.name !== newDimX) {
-                this.dataProvider.getData(newDimX)
-                    .first()
-                    .subscribe(data => {
-                        // just in case it has changed in the meantime
-                        if (newDimX === this.graph.dimX) {
-                            this.dimX = data;
-                            setTimeout(() => this.updateFilter());
-                        }
-                    });
-            }
-        } else {
-            this.dimX = null;
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes['dim']) {
+            setTimeout(() => this.updateFilter());
         }
-
-        if (newDimY) {
-            if (this.dimY === null || this.dimY.name !== newDimY) {
-                this.dataProvider.getData(newDimY)
-                    .first()
-                    .subscribe(data => {
-                        // just in case it has changed in the meantime
-                        if (newDimY === this.graph.dimY) {
-                            this.dimY = data;
-                            setTimeout(() => this.updateFilter());
-                        }
-                    });
-            }
-        } else {
-            this.dimY = null;
-        }
-
-        setTimeout(() => this.updateFilter());
     }
 
     private initFilters(allFilters: Filter[]): void {
@@ -97,9 +57,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
             }
         }
 
-        let dim = this.getOverviewDimension();
-        if (dim) {
-            if (dim.isMetric) {
+        if (this.dim) {
+            if (this.dim.isMetric) {
                 this.lineUpdateFilters();
             } else {
                 this.categoryUpdateFilters();
@@ -108,9 +67,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     }
 
     private updateFilter(): void {
-        let dim = this.getOverviewDimension();
-        if (dim) {
-            if (dim.isMetric) {
+        if (this.dim) {
+            if (this.dim.isMetric) {
                 this.lineUpdateFilters();
             } else {
                 this.categoryUpdateFilters();
@@ -133,9 +91,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     }
 
     private colorUpdate(): void {
-        let dim = this.getOverviewDimension();
-        if (dim) {
-            if (dim.isMetric) {
+        if (this.dim) {
+            if (this.dim.isMetric) {
                 this.lineColorUpdate();
             } else {
                 this.categoryColorUpdate();
@@ -143,16 +100,9 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-
-    private getOverviewDimension(): ChartDimension {
-        return this.graph.isFlipped ? this.dimY : this.dimX;
-    }
-
-
     private onClick(event: any): void {
-        let dim = this.getOverviewDimension();
-        if (dim) {
-            if (dim.isMetric) {
+        if (this.dim) {
+            if (this.dim.isMetric) {
                 this.lineClick(event);
             } else {
                 this.categoryClick(event);
@@ -162,9 +112,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
 
 
     private onMoveStart(event: any): void {
-        let dim = this.getOverviewDimension();
-        if (dim) {
-            if (dim.isMetric) {
+        if (this.dim) {
+            if (this.dim.isMetric) {
                 this.lineMoveStart(event);
             } else {
                 this.categoryMoveStart(event);
@@ -173,9 +122,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     }
 
     private onMoveUpdate(event: any): void {
-        let dim = this.getOverviewDimension();
-        if (dim) {
-            if (dim.isMetric) {
+        if (this.dim) {
+            if (this.dim.isMetric) {
                 this.lineMoveUpdate(event);
             } else {
                 this.categoryMoveUpdate(event);
@@ -184,9 +132,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     }
 
     private onMoveEnd(event: any): void {
-        let dim = this.getOverviewDimension();
-        if (dim) {
-            if (dim.isMetric) {
+        if (this.dim) {
+            if (this.dim.isMetric) {
                 this.lineMoveEnd(event);
             } else {
                 this.categoryMoveEnd(event);
@@ -232,10 +179,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     }
 
     private categoryUpdateFilters(): void {
-        let dim = this.getOverviewDimension();
-
-        if (dim && this.filters.length > 0) {
-            for (let mapping of dim.mappings) {
+        if (this.dim && this.filters.length > 0) {
+            for (let mapping of this.dim.mappings) {
                 let filter = _.find(this.filters, f => f.category == mapping.value);
                 this.chart.setCategoryActive(mapping.value, filter != null);
             }
@@ -243,10 +188,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     }
 
     private categoryColorUpdate(): void {
-        let dim = this.getOverviewDimension();
-
-        if (dim) {
-            if (this.filters.length == dim.mappings.length && !this.graph.isColored) {
+        if (this.dim) {
+            if (this.filters.length == this.dim.mappings.length && !this.graph.isColored) {
                 // all categories are active -> remove all filters
                 while (this.filters.length > 0) {
                     this.filterProvider.removeFilter(this.filters.pop());
@@ -254,7 +197,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
             }
 
             if (this.filters.length == 0 && this.graph.isColored) {
-                for (let mapping of dim.mappings) {
+                for (let mapping of this.dim.mappings) {
                     this.addCategoryFilter(mapping.value, mapping.color);
                     this.chart.setCategoryActive(mapping.value, true);
                 }
@@ -266,14 +209,13 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
 
 
     private flipCategory(category: number): void {
-        let dim = this.getOverviewDimension();
-        let mapping = _.find(dim ? dim.mappings : [], m => m.value == category);
+        let mapping = _.find(this.dim ? this.dim.mappings : [], m => m.value == category);
 
         if (mapping) {
 
             if (this.filters.length == 0 && !this.hasNoFilters) {
                 // no categorical filters => all categories are active
-                for (let mapping of dim.mappings) {
+                for (let mapping of this.dim.mappings) {
                     this.addCategoryFilter(mapping.value, mapping.color);
                 }
             }
@@ -292,7 +234,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
                 this.hasNoFilters = false;
             }
 
-            if (this.filters.length == dim.mappings.length && !this.graph.isColored) {
+            if (this.filters.length == this.dim.mappings.length && !this.graph.isColored) {
                 // all categories are active -> remove all filters
                 while (this.filters.length > 0) {
                     this.filterProvider.removeFilter(this.filters.pop());
@@ -414,12 +356,10 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy {
     private invisibleColorFilter: Filter = null;
 
     private lineColorUpdate(): void {
-        let dim = this.getOverviewDimension();
-
-        if (dim) {
+        if (this.dim) {
             if (this.graph.isColored) {
                 if (this.filters.length == 0 && this.invisibleColorFilter === null) {
-                    this.invisibleColorFilter = this.createLineFilter([dim.domain.min, dim.domain.max]);
+                    this.invisibleColorFilter = this.createLineFilter([this.dim.domain.min, this.dim.domain.max]);
                 }
             } else {
                 if (this.invisibleColorFilter != null) {

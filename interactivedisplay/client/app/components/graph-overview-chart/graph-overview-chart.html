@@ -1,7 +1,7 @@
 <div class="root">
     <chart-1d [height]="height"
              [width]="width"
-             [dimension]="graph.isFlipped ? dimY : dimX"
+             [dimension]="dim"
 
              touch-button
              (touchclick)="onClick($event)"

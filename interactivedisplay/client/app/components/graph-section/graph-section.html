@@ -23,7 +23,8 @@
                     <graph-overview-chart
                         [width]="300"
                         [height]="1250"
-                        [graph]="graph">
+                        [graph]="graph"
+                        [dim]="graph.isFlipped ? dimY : dimX">
                     </graph-overview-chart>
 
                     <button class="chart-button"
@@ -36,7 +37,7 @@
                 </div>
 
                 <div *ngIf="graph.isSelected">
-                    <graph-detail [graph]="graph">
+                    <graph-detail [graph]="graph" [dimX]="dimX" [dimY]="dimY">
                     </graph-detail>
                 </div>
             </div>

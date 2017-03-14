@@ -1,9 +1,23 @@
 <div class="root">
-    <div #plotContainer>
-        <scatter-plot #plot [height]="height" [width]="width" [margin]="margin"></scatter-plot>
-    </div>
+    <chart-2d [height]="height" [width]="width"
+              [margin]="margin"
+              [dimensionX]="dimX"
+              [dimensionY]="dimY"
 
-    <button class="popup" [ngStyle]="popupStyle" (click)="popupClick()">
+              touch-button
+              (touchclick)="handleClick($event)"
+
+              moveable
+              (moveStart)="handleTouchDown($event)"
+              (moveUpdate)="handleTouchMove($event)"
+              (moveEnd)="handleTouchUp($event)">
+    </chart-2d>
+
+    <div class="popup"
+         [ngStyle]="popupStyle"
+
+         touch-button
+         (touchclick)="popupClick($event)">
         Remove
-    </button>
+    </div>
 </div>
