@@ -30,7 +30,6 @@ import { routing } from './routes';
     Components.MarkerComponent,
     Components.MeasurementComponent,
     Components.MenuComponent,
-    Components.ScatterPlotComponent,
     Components.SurfaceComponent,
     Directives.ChartDirective,
     Directives.MoveableDirective,

@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { SocketIO } from '../../services/index';
-import { ScatterPlotComponent } from '../scatter-plot/scatter-plot';
 
 import * as d3 from 'd3';
 
