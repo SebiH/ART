@@ -27,6 +27,7 @@
     "@types/three": "^0.83.1",
     "core-js": "^2.4.1",
     "d3": "^4.4.0",
+    "font-awesome": "^4.7.0",
     "lodash": "^4.16.6",
     "reflect-metadata": "^0.1.8",
     "rxjs": "^5.0.1",

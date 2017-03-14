@@ -58,9 +58,23 @@
     color: black;
 
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
+
+.button .text,
+button .text {
+    font-size: 30px;
+    font-weight: 100;
+}
+
+.button .icon,
+button .icon {
+    font-size: 40px;
+    margin: 17px 0;
+}
+
 
 .chart-container {
     background: white;
@@ -86,4 +100,5 @@
 .button.active,
 button.active {
     background: #8BC34A;
+    font-weight: 500;
 }

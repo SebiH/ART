@@ -29,7 +29,9 @@
                     <button class="chart-button"
                         (click)="toggleColor()"
                         [ngClass]="{ active: this.graph.isColored }">
-                        Colour
+                        <div class="text">
+                            Colour
+                        </div>
                     </button>
                 </div>
 
@@ -49,19 +51,28 @@
 
         <div class="row">
             <div *ngIf="!graph.isSelected" class="button-container">
-                <button
-                    (click)="toggleFlip()"
-                    [ngClass]="{ active: graph.isFlipped }">
-                    Flip
-                </button>
                 <div class="button"
                     [ngClass]="{ active: graph.isPickedUp }"
                     moveable
                     (moveStart)="handleMoveStart($event)"
                     (moveUpdate)="handleMoveUpdate($event)"
                     (moveEnd)="handleMoveEnd($event)">
-                    Move
+                    <div class="icon">
+                        <span class="fa fa-arrows-h" aria-hidden="true"></span>
+                    </div>
+                    <div class="text">
+                        Move
+                    </div>
                 </div>
+                <button (click)="selectGraph()">
+                    <div class="icon">
+                        <span class="fa fa-sliders" aria-hidden="true"></span>
+                    </div>
+
+                    <div class="text">
+                        Select
+                    </div>
+                </button>
             </div>
 
             <div class="markers horizontal">
@@ -69,8 +80,26 @@
             </div>
 
             <div *ngIf="!graph.isSelected" class="button-container">
-                <button (click)="selectGraph()"> Select </button>
-                <button (click)="deleteGraph()"> Delete </button>
+                <button
+                    (click)="toggleFlip()"
+                    [ngClass]="{ active: graph.isFlipped }">
+                    <div class="icon">
+                        <span class="fa fa-level-up" [ngClass]="{ 'fa-rotate-90': !graph.isFlipped }" aria-hidden="true"></span>
+                    </div>
+
+                    <div class="text">
+                        Flip
+                    </div>
+                </button>
+                <button (click)="deleteGraph()">
+                    <div class="icon">
+                        <span class="fa fa-trash-o" aria-hidden="true"></span>
+                    </div>
+
+                    <div class="text">
+                        Delete
+                    </div>
+                </button>
             </div>
         </div>
     </div>
