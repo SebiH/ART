@@ -136,6 +136,22 @@ export class FilterProvider {
                         if (overviewDim.data[i] === filter.category) {
                             filter.indices.push(i);
                         }
+
+                        if (filter.origin.isFlipped) {
+                            filter.path = [
+                                [dimX.domain.min, filter.category - 0.5],
+                                [dimX.domain.max, filter.category - 0.5],
+                                [dimX.domain.max, filter.category + 0.5],
+                                [dimX.domain.min, filter.category + 0.5],
+                            ];
+                        } else {
+                            filter.path = [
+                                [filter.category - 0.5, dimY.domain.min],
+                                [filter.category - 0.5, dimY.domain.max],
+                                [filter.category + 0.5, dimY.domain.max],
+                                [filter.category + 0.5, dimY.domain.min],
+                            ];
+                        }
                     }
                     break;
 
@@ -147,6 +163,22 @@ export class FilterProvider {
 
                         if (minRange <= data && data <= maxRange) {
                             filter.indices.push(i);
+                        }
+
+                        if (filter.origin.isFlipped) {
+                            filter.path = [
+                                [dimX.domain.min, minRange],
+                                [dimX.domain.max, minRange],
+                                [dimX.domain.max, maxRange],
+                                [dimX.domain.min, maxRange],
+                            ];
+                        } else {
+                            filter.path = [
+                                [minRange, dimY.domain.min],
+                                [minRange, dimY.domain.max],
+                                [maxRange, dimY.domain.max],
+                                [maxRange, dimY.domain.min],
+                            ];
                         }
                     }
                     break;

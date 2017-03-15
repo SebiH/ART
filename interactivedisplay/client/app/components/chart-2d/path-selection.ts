@@ -27,7 +27,7 @@ export class PathSelection extends ChartElement {
             // .attr('fill', this.textureFill);
 
         this.line = d3.line()
-            .curve(d3.curveBasisClosed)
+            .curve(d3.curveLinearClosed)
             .x(d => this.parent.xScale(d[0]))
             .y(d => this.parent.yScale(d[1]));
     }
