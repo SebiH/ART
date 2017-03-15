@@ -61,8 +61,8 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .attr('id', 'gradient' + id)
             .attr('x1', '100%')
             .attr('x2', '100%')
-            .attr('y1', '0%')
-            .attr('y2', '100%');
+            .attr('y1', '100%')
+            .attr('y2', '0%');
 
         for (let gradientStop of this.dimension.gradient) {
             let percent = Math.floor((gradientStop.stop / this.dimension.domain.max) * 100);
@@ -91,7 +91,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .range([width, 0]);
 
         let y = d3.scaleLinear()
-            .domain([0.5, this.bins.length + 0.5])
+            .domain([this.bins.length + 0.5, 0.5])
             .range([0, height]);
         this.yScale = y;
 
@@ -254,8 +254,8 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         let baseUrl = Utils.getBaseUrl();
 
         for (let range of ranges) {
-            let start = this.yScale(range[0]);
-            let end = this.yScale(range[1]);
+            let start = this.yScale(range[1]);
+            let end = this.yScale(range[0]);
 
             this.rangeContainer.append('rect')
                 .attr('width', this.width)
