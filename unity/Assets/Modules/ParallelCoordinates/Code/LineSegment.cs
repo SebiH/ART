@@ -1,5 +1,4 @@
-using Assets.Modules.Core;
-using System.Collections;
+using Assets.Modules.Core.Animations;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -8,6 +7,9 @@ namespace Assets.Modules.ParallelCoordinates
     {
         const float ANIMATION_SPEED = 1f; // in seconds
 
+        private VectorAnimation _startAnimation = new VectorAnimation(ANIMATION_SPEED);
+        private VectorAnimation _endAnimation = new VectorAnimation(ANIMATION_SPEED);
+
         private Vector3 _start;
         public Vector3 Start
         {
@@ -15,40 +17,19 @@ namespace Assets.Modules.ParallelCoordinates
             set
             {
                 if (_start == value) { return; }
-
                 _start = value;
-                _startOrigin = value;
-                _startDestination = value;
-                _startTime = 0f; // stops animation the next time it's running
-
+                _startAnimation.Stop();
                 UpdatePosition();
             }
         }
 
-        private bool _isStartAnimationRunning = false;
-        private Vector3 _startOrigin;
-        private float _startTime;
-        private Vector3 _startDestination;
-        public Vector3 DesiredStart
+        public Vector3 AnimatedStart
         {
-            get { return _startDestination;  }
             set
             {
-                if (_startDestination == value) { return; }
-
-                // don't animate z-values due to conflict with z-scaling in GraphConnection
-                _startOrigin = new Vector3(_start.x, Start.y, value.z);
-                _start = _startOrigin;
-                _startDestination = value;
-                _startTime = Time.time;
-
-                // set z immediately to avoid scaling issues..
-                _start = new Vector3(_start.x, _start.y, value.z);
-
-                if (!_isStartAnimationRunning)
-                {
-                    GameLoop.Instance.StartRoutine(RunStartAnimation());
-                }
+                if (_start == value) { return; }
+                _startAnimation.Restart(_start, value);
+                _start = value;
             }
         }
 
@@ -59,38 +40,19 @@ namespace Assets.Modules.ParallelCoordinates
             set
             {
                 if (_end == value) { return; }
-
                 _end = value;
-                _endOrigin = value;
-                _endDestination = value;
-                _endTime = 0f; // stops animation the next time it's running
-
+                _endAnimation.Stop();
                 UpdatePosition();
             }
         }
 
-        private bool _isEndAnimationRunning = false;
-        private Vector3 _endOrigin;
-        private float _endTime;
-        private Vector3 _endDestination;
-        public Vector3 DesiredEnd
+        public Vector3 AnimatedEnd
         {
-            get { return _endDestination; }
             set
             {
-                if (_endDestination == value) { return; }
-
-                // don't animate z-values due to conflict with z-scaling in GraphConnection
-                _endOrigin = new Vector3(_end.x, _end.y, value.z);
-                _end = _endOrigin;
-                _endDestination = value;
-                _endTime = Time.time;
-
-
-                if (!_isEndAnimationRunning)
-                {
-                    GameLoop.Instance.StartRoutine(RunEndAnimation());
-                }
+                if (_end == value) { return; }
+                _endAnimation.Restart(_end, value);
+                _end = value;
             }
         }
 
@@ -133,40 +95,18 @@ namespace Assets.Modules.ParallelCoordinates
 
         private GraphicsLineRenderer _renderer;
 
+
+        public LineSegment()
+        {
+            _startAnimation.Update += (val) => UpdatePosition();
+            _endAnimation.Update += (val) => UpdatePosition();
+        }
+
+
         public void SetRenderer(GraphicsLineRenderer renderer)
         {
             _renderer = renderer;
             _renderer.AddLine(this);
-        }
-
-        private IEnumerator RunStartAnimation()
-        {
-            var timeDelta = 0f;
-            while (timeDelta < 1.0f)
-            {
-                timeDelta = (Time.time - _startTime) / ANIMATION_SPEED;
-                _start = Vector3.Lerp(_startOrigin, _startDestination, timeDelta);
-                UpdatePosition();
-
-                yield return new WaitForEndOfFrame();
-            }
-
-            _isStartAnimationRunning = false;
-        }
-
-        private IEnumerator RunEndAnimation()
-        {
-            var timeDelta = 0f;
-            while (timeDelta < 1.0f)
-            {
-                timeDelta = (Time.time - _endTime) / ANIMATION_SPEED;
-                _end = Vector3.Lerp(_endOrigin, _endDestination, timeDelta);
-                UpdatePosition();
-
-                yield return new WaitForEndOfFrame();
-            }
-
-            _isEndAnimationRunning = false;
         }
 
         private void UpdateColor()

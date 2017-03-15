@@ -1,5 +1,4 @@
-using Assets.Modules.Core;
-using System.Collections;
+using Assets.Modules.Core.Animations;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,29 +34,18 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private bool _isColorAnimationRunning = false;
-        private Color32 _colorOrigin = new Color32(255, 255, 255, 255);
-        private float _colorTime;
-        private Color32 _colorDestination = new Color32(255, 255, 255, 255);
-        private Color32 _actualColor = new Color32(255, 255, 255, 255);
-
+        private Color32 _color;
+        private ColorAnimation _colorAnimation = new ColorAnimation(ANIMATION_SPEED);
+        private Color32 _actualColor; // set during animation
         public Color32 Color
         {
-            get { return _colorDestination; }
+            get { return _color; }
             set
             {
-                if (_colorDestination.r == value.r && _colorDestination.g == value.g && _colorDestination.b == value.b)
+                if (_color.r != value.r && _color.g != value.g && _color.b != value.b)
                 {
-                    return;
-                }
-
-                _colorOrigin = _actualColor;
-                _colorDestination = value;
-                _colorTime = Time.time;
-
-                if (!_isColorAnimationRunning)
-                {
-                    GameLoop.Instance.StartRoutine(RunColorAnimation());
+                    _colorAnimation.Restart(_color, value);
+                    _color = value;
                 }
             }
         }
@@ -67,6 +55,14 @@ namespace Assets.Modules.ParallelCoordinates
         public DataLine(int dataIndex)
         {
             DataIndex = dataIndex;
+            _colorAnimation.Update += (val) =>
+            {
+                _actualColor = val;
+                foreach (var segment in _lineSegments)
+                {
+                    segment.Color = val;
+                }
+            };
         }
 
         public void AddSegment(LineSegment segment)
@@ -79,26 +75,6 @@ namespace Assets.Modules.ParallelCoordinates
         public void RemoveSegment(LineSegment segment)
         {
             _lineSegments.Remove(segment);
-        }
-
-
-        private IEnumerator RunColorAnimation()
-        {
-            var timeDelta = 0f;
-            while (timeDelta < 1.0f)
-            {
-                timeDelta = (Time.time - _colorTime) / ANIMATION_SPEED;
-                _actualColor = Color32.Lerp(_colorOrigin, _colorDestination, timeDelta);
-
-                foreach (var segment in _lineSegments)
-                {
-                    segment.Color = _actualColor;
-                }
-
-                yield return new WaitForEndOfFrame();
-            }
-
-            _isColorAnimationRunning = false;
         }
     }
 }
