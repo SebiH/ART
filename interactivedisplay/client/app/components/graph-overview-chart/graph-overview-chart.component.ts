@@ -27,11 +27,6 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     ngAfterViewInit() {
         this.graph.onUpdate
             .takeWhile(() => this.isActive)
-            .filter(changes => changes.indexOf('isFlipped') >= 0)
-            .subscribe(changes => this.switchFilter());
-
-        this.graph.onUpdate
-            .takeWhile(() => this.isActive)
             .filter(changes => changes.indexOf('isColored') >= 0)
             .subscribe(changes => this.colorUpdate());
 
@@ -46,7 +41,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes['dim']) {
-            setTimeout(() => this.updateFilter());
+            setTimeout(() => this.switchFilter());
         }
     }
 
@@ -179,10 +174,14 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     }
 
     private categoryUpdateFilters(): void {
-        if (this.dim && this.filters.length > 0) {
-            for (let mapping of this.dim.mappings) {
-                let filter = _.find(this.filters, f => f.category == mapping.value);
-                this.chart.setCategoryActive(mapping.value, filter != null);
+        if (this.dim) {
+            this.categoryColorUpdate();
+
+            if (this.filters.length > 0) {
+                for (let mapping of this.dim.mappings) {
+                    let filter = _.find(this.filters, f => f.category == mapping.value);
+                    this.chart.setCategoryActive(mapping.value, filter != null);
+                }
             }
         }
     }
@@ -337,13 +336,19 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
         let ranges: [number, number][] = [];
 
         for (let filter of this.filters) {
-            let start = this.chart.invertData(filter.range[0]);
-            let end = this.chart.invertData(filter.range[1]);
+            if (filter.range && filter.range.length >= 2) {
+                let start = this.chart.invertData(filter.range[0]);
+                let end = this.chart.invertData(filter.range[1]);
 
-            if (start < end) {
-                ranges.push([start, end]);
+                if (start < end) {
+                    ranges.push([start, end]);
+                } else {
+                    ranges.push([end, start]);
+                }
             } else {
-                ranges.push([end, start]);
+                // TODO: delete filter?
+                console.warn('invalid filter!');
+                console.warn(filter);
             }
         }
 

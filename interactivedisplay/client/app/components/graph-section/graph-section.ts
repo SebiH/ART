@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, Output, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { Marker, Graph, Point, ChartDimension } from '../../models/index';
-import { MarkerProvider, GraphProvider, GraphDataProvider } from '../../services/index';
+import { MarkerProvider, GraphProvider, GraphDataProvider, FilterProvider } from '../../services/index';
 
 const NUM_MARKERS = 8;
 
@@ -27,6 +27,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         private markerProvider: MarkerProvider,
         private graphProvider: GraphProvider,
         private dataProvider: GraphDataProvider,
+        private filterProvider: FilterProvider,
         private elementRef: ElementRef
         ) {}
 
@@ -114,6 +115,8 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         } else {
             this.graphProvider.setColor(this.graph);
         }
+
+        this.filterProvider.triggerGlobalFilterUpdate();
     }
 
     private toggleFlip() {

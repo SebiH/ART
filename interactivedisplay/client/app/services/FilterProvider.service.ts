@@ -225,6 +225,9 @@ export class FilterProvider {
         }
     }
 
+    public triggerGlobalFilterUpdate(): void {
+        this.delayedGlobalFilterUpdate();
+    }
 
     public globalFilterUpdate() {
         return this.globalFilterObserver.asObservable();
