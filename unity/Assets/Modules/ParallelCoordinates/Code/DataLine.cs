@@ -34,9 +34,8 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private Color32 _color;
+        private Color32 _color = new Color32(255, 255, 255, 255);
         private ColorAnimation _colorAnimation = new ColorAnimation(ANIMATION_SPEED);
-        private Color32 _actualColor; // set during animation
         public Color32 Color
         {
             get { return _color; }
@@ -55,9 +54,10 @@ namespace Assets.Modules.ParallelCoordinates
         public DataLine(int dataIndex)
         {
             DataIndex = dataIndex;
+            _colorAnimation.Init(_color);
+
             _colorAnimation.Update += (val) =>
             {
-                _actualColor = val;
                 foreach (var segment in _lineSegments)
                 {
                     segment.Color = val;
@@ -68,7 +68,7 @@ namespace Assets.Modules.ParallelCoordinates
         public void AddSegment(LineSegment segment)
         {
             _lineSegments.Add(segment);
-            segment.Color = _actualColor;
+            segment.Color = _colorAnimation.CurrentValue;
             segment.Transparency = _isFiltered ? TRANSPARENCY_FILTERED : TRANSPARENCY_NORMAL;
         }
 
