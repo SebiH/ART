@@ -9,8 +9,8 @@ namespace Assets.Modules.Core.Animations
         public event UpdateHandler Update;
 
         public T CurrentValue { get; private set; }
+        public float AnimationSpeed { get; set; }
 
-        private float _animationSpeed;
         private float _startTime = 0f;
         private bool _isRunning = false;
         private T _end;
@@ -18,7 +18,12 @@ namespace Assets.Modules.Core.Animations
 
         public ProceduralAnimation(float animationSpeed)
         {
-            _animationSpeed = animationSpeed;
+            AnimationSpeed = animationSpeed;
+        }
+
+        public void Init(T startValue)
+        {
+            CurrentValue = startValue;
         }
 
         public void Start(T start, T end)
@@ -69,7 +74,7 @@ namespace Assets.Modules.Core.Animations
             {
                 yield return new WaitForEndOfFrame();
 
-                timeDelta = (Time.time - _startTime) / _animationSpeed;
+                timeDelta = (Time.time - _startTime) / AnimationSpeed;
 
                 if (_isRunning)
                 {

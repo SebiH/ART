@@ -79,6 +79,7 @@ namespace Assets.Modules.SurfaceGraphs
             {
                 var graph = _graphManager.CreateGraph(remoteGraph.id);
                 UpdateGraph(graph, remoteGraph);
+                graph.gameObject.SetActive(true);
             }
             else
             {

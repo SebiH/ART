@@ -60,7 +60,7 @@ namespace Assets.Modules.Graphs
             {
                 OnGraphAdded(graph);
             }
-            
+
             return graph;
         }
 
@@ -88,8 +88,6 @@ namespace Assets.Modules.Graphs
             graph.transform.localPosition = Vector3.zero;
             graph.transform.localRotation = Quaternion.identity;
             graph.transform.localScale = Vector3.one;
-
-            graph.gameObject.SetActive(true);
 
             return graph;
         }
