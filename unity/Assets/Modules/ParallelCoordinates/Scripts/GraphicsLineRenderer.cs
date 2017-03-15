@@ -153,7 +153,8 @@ namespace Assets.Modules.ParallelCoordinates
                 line.WaitingForVertex = false;
                 line.MeshIndex = _vertexCounter / 4;
 
-                var width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
+                //var width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
+                var width = DEFAULT_WIDTH;
 
                 vertices[_vertexCounter] = line.Start + widthDirection * width;
                 vertices[_vertexCounter + 1] = line.Start + widthDirection * -width;
@@ -197,7 +198,8 @@ namespace Assets.Modules.ParallelCoordinates
                 line.WaitingForVertex = false;
                 var vertexIndex = line.MeshIndex * 4;
 
-                var width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
+                //var width = line.IsFiltered ? FILTERED_WIDTH : DEFAULT_WIDTH;
+                var width = DEFAULT_WIDTH;
 
                 vertices[vertexIndex] = line.Start + widthDirection * width;
                 vertices[vertexIndex + 1] = line.Start + widthDirection * -width;

@@ -101,58 +101,26 @@ namespace Assets.Modules.ParallelCoordinates
             get { return _color; }
             set
             {
-                if (_color.r == value.r && _color.g == value.g && _color.b == value.b && _color.a == value.a)
+                if (_color.r != value.r || _color.g != value.g || _color.b != value.b)
                 {
-                    return;
-                }
-
-                var rgb = new Color32(value.r, value.g, value.b, (byte)(_isFiltered ? 30 : 255));
-
-                _color = rgb;
-                UpdateColor();
-
-                _colorOrigin = rgb;
-                _colorDestination = rgb;
-                _colorTime = 0.0f; // stops animation the next time it's running
-            }
-        }
-
-        private bool _isColorAnimationRunning = false;
-        private Color32 _colorOrigin;
-        private float _colorTime;
-        private Color32 _colorDestination;
-        public Color32 DesiredColor
-        {
-            get { return _colorDestination; }
-            set
-            {
-                if (_colorDestination.r == value.r && _colorDestination.g == value.g && _colorDestination.b == value.b && _colorDestination.a == value.a)
-                {
-                    return;
-                }
-
-                _colorOrigin = Color;
-                _colorDestination = new Color32(value.r, value.g, value.b, (byte)(_isFiltered ? 30 : 255));
-                _colorTime = Time.time;
-
-                if (!_isColorAnimationRunning)
-                {
-                    GameLoop.Instance.StartRoutine(RunColorAnimation());
+                    _color.r = value.r;
+                    _color.g = value.g;
+                    _color.b = value.b;
+                    UpdateColor();
                 }
             }
         }
 
-
-
-        private bool _isFiltered;
-        public bool IsFiltered
+        public byte Transparency
         {
-            get { return _isFiltered; }
+            get { return _color.a; }
             set
             {
-                _isFiltered = value;
-                Color = new Color32(Color.r, Color.g, Color.b, (byte)(value ? 30 : 255));
-                UpdateColor();
+                if (_color.a != value)
+                {
+                    _color.a = value;
+                    UpdateColor();
+                }
             }
         }
 
@@ -199,21 +167,6 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             _isEndAnimationRunning = false;
-        }
-
-        private IEnumerator RunColorAnimation()
-        {
-            var timeDelta = 0f;
-            while (timeDelta < 1.0f)
-            {
-                timeDelta = (Time.time - _colorTime) / ANIMATION_SPEED;
-                _color = Color32.Lerp(_colorOrigin, _colorDestination, timeDelta);
-                UpdateColor();
-
-                yield return new WaitForEndOfFrame();
-            }
-
-            _isColorAnimationRunning = false;
         }
 
         private void UpdateColor()

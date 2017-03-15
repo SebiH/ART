@@ -1,3 +1,5 @@
+using Assets.Modules.Core;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,43 +10,54 @@ namespace Assets.Modules.ParallelCoordinates
     /// </summary>
     public class DataLine
     {
+        const byte TRANSPARENCY_FILTERED = 30;
+        const byte TRANSPARENCY_NORMAL = 255;
+        const float ANIMATION_SPEED = 1f; // in seconds
+
         public int DataIndex { get; private set; }
         public int SegmentCount { get { return _lineSegments.Count; } }
 
         private bool _isFiltered = false;
         public bool IsFiltered
         {
-            get
-            {
-                return _isFiltered;
-            }
-
+            get { return _isFiltered; }
             set
             {
-                if (value != _isFiltered)
+                if (_isFiltered != value)
                 {
                     _isFiltered = value;
+
                     foreach (var segment in _lineSegments)
                     {
-                        segment.IsFiltered = value;
+                        segment.Transparency = _isFiltered ? TRANSPARENCY_FILTERED : TRANSPARENCY_NORMAL;
                     }
                 }
             }
         }
 
-        private Color32 _color = new Color32(255, 255, 255, 255);
+        private bool _isColorAnimationRunning = false;
+        private Color32 _colorOrigin = new Color32(255, 255, 255, 255);
+        private float _colorTime;
+        private Color32 _colorDestination = new Color32(255, 255, 255, 255);
+        private Color32 _actualColor = new Color32(255, 255, 255, 255);
+
         public Color32 Color
         {
-            get { return _color; }
+            get { return _colorDestination; }
             set
             {
-                if (value.r != _color.r || value.g != _color.g || value.b != Color.b || value.a != Color.a)
+                if (_colorDestination.r == value.r && _colorDestination.g == value.g && _colorDestination.b == value.b)
                 {
-                    _color = value;
-                    foreach (var segment in _lineSegments)
-                    {
-                        segment.DesiredColor = value;
-                    }
+                    return;
+                }
+
+                _colorOrigin = _actualColor;
+                _colorDestination = value;
+                _colorTime = Time.time;
+
+                if (!_isColorAnimationRunning)
+                {
+                    GameLoop.Instance.StartRoutine(RunColorAnimation());
                 }
             }
         }
@@ -59,13 +72,33 @@ namespace Assets.Modules.ParallelCoordinates
         public void AddSegment(LineSegment segment)
         {
             _lineSegments.Add(segment);
-            segment.IsFiltered = IsFiltered;
-            segment.Color = _color;
+            segment.Color = _actualColor;
+            segment.Transparency = _isFiltered ? TRANSPARENCY_FILTERED : TRANSPARENCY_NORMAL;
         }
 
         public void RemoveSegment(LineSegment segment)
         {
             _lineSegments.Remove(segment);
+        }
+
+
+        private IEnumerator RunColorAnimation()
+        {
+            var timeDelta = 0f;
+            while (timeDelta < 1.0f)
+            {
+                timeDelta = (Time.time - _colorTime) / ANIMATION_SPEED;
+                _actualColor = Color32.Lerp(_colorOrigin, _colorDestination, timeDelta);
+
+                foreach (var segment in _lineSegments)
+                {
+                    segment.Color = _actualColor;
+                }
+
+                yield return new WaitForEndOfFrame();
+            }
+
+            _isColorAnimationRunning = false;
         }
     }
 }
