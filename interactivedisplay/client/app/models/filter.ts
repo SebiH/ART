@@ -15,7 +15,6 @@ export class Filter {
     public color: string = "#03A9F4";
     public isOverview: boolean = false;
 
-
     // type determines which of the following three optional properties is set
     public type: FilterType = FilterType.Detail;
     // for 2d detail filters
@@ -40,7 +39,6 @@ export class Filter {
 
         return {
             id: this.id,
-            indices: this.indices,
             origin: this.origin.id,
             color: this.color,
             isOverview: this.isOverview,
@@ -54,7 +52,6 @@ export class Filter {
 
     public static fromJson(jFilter: any, origin: Graph): Filter {
         var filter = new Filter(jFilter.id);
-        filter.indices = jFilter.indices;
         filter.color = jFilter.color;
         filter.isOverview = jFilter.isOverview;
 
