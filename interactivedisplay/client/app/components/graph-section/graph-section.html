@@ -1,5 +1,8 @@
 <div class="section-root"
-    [style.background]="graph.color">
+    [style.background]="graph.color"
+
+    touch-button
+    (touchclick)="closeSelection()">
 
     <div class="graph-section">
         
@@ -16,7 +19,9 @@
                 <ar-marker [marker]="markers[3]"></ar-marker>
             </div>
 
-            <div class="chart-container" [ngClass]="{ selected: graph.isSelected }">
+            <!-- touch-button prevents clicks from bubbling up -->
+            <div class="chart-container" [ngClass]="{ selected: graph.isSelected }"
+                 touch-button>
 
                 <div *ngIf="!graph.isSelected">
                     <!-- Width & height from css -->

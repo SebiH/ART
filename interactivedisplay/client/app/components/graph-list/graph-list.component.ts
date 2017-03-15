@@ -120,10 +120,6 @@ export class GraphListComponent implements OnInit, OnDestroy {
         this.scrollOffset = this.getOffset(graph) + graph.width / 2 - window.innerWidth / 2;
     }
 
-    private closeSelection(): void {
-        this.graphProvider.selectGraph(null);
-    }
-
     private selectNext(): void {
         let nextGraph: Graph = null;
 
@@ -137,5 +133,20 @@ export class GraphListComponent implements OnInit, OnDestroy {
         }
 
         this.graphProvider.selectGraph(nextGraph);
+    }
+
+    private selectPrev(): void {
+        let prevGraph: Graph = null;
+
+        for (let graph of this.graphs) {
+            let isPrev = graph.listIndex < this.selectedGraph.listIndex;
+            let isImmediatePrev = (prevGraph == null || graph.listIndex > prevGraph.listIndex);
+
+            if (isPrev && isImmediatePrev) {
+                prevGraph = graph;
+            }
+        }
+
+        this.graphProvider.selectGraph(prevGraph);
     }
 }

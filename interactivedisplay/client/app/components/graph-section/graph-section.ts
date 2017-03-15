@@ -141,5 +141,8 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         this.graph.posOffset = 0;
     }
 
+    private closeSelection(): void {
+        this.graphProvider.selectGraph(null);
+    }
 
 }

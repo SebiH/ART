@@ -11,7 +11,7 @@ namespace Assets.Modules.SurfaceGraphs
         private bool _isGraphSelected = false;
 
         // for selection, etc.
-        const float NormalAnimationSpeed = 0.7f;
+        const float NormalAnimationSpeed = 0.4f;
         // for scrolling, smoothing out values from webapp
         const float FastAnimationSpeed = 0.05f;
 
