@@ -29,4 +29,10 @@ export class Utils {
 
         return [topLeft, bottomRight];
     }
+
+
+    private static idCounter: number = 0;
+    public static getId(): number {
+        return this.idCounter++;
+    }
 }

@@ -55,9 +55,10 @@ export class LineVisualisation1d extends ChartVisualisation1d {
         /*
         **    Gradient
         **/
+        let id = Utils.getId();
 
         let gradient = this.dataContainer.append('defs').append('linearGradient')
-            .attr('id', 'gradient')
+            .attr('id', 'gradient' + id)
             .attr('x1', '100%')
             .attr('x2', '100%')
             .attr('y1', '0%')
@@ -77,7 +78,7 @@ export class LineVisualisation1d extends ChartVisualisation1d {
             .attr('width', width - 2) // - 2 due to borders..
             .attr('height', height)
             .attr('transform', 'translate(-2,0)') // -2 due to borders
-            .style('fill', 'url(' + baseUrl + '#gradient)');
+            .style('fill', 'url(' + baseUrl + '#gradient' + id + ')');
 
 
         /*
