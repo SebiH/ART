@@ -19,6 +19,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     @ViewChild(Chart1dComponent) chart: Chart1dComponent;
 
     private isActive: boolean = true;
+    private clearOnSwitch: boolean = false;
 
     private readonly filters: Filter[] = [];
 
@@ -29,6 +30,11 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
             .takeWhile(() => this.isActive)
             .filter(changes => changes.indexOf('isColored') >= 0)
             .subscribe(changes => this.colorUpdate());
+
+        this.graph.onUpdate
+            .takeWhile(() => this.isActive)
+            .filter(changes => changes.indexOf('isFlipped') >= 0)
+            .subscribe(changes => this.clearOnSwitch = true);
 
         this.filterProvider.getFilters()
             .first()
@@ -72,9 +78,12 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     }
 
     private switchFilter(): void {
-        while (this.filters.length > 0) {
-            let filter = this.filters.pop();
-            this.filterProvider.removeFilter(filter);
+        if (this.clearOnSwitch) {
+            this.clearOnSwitch = true;
+            while (this.filters.length > 0) {
+                let filter = this.filters.pop();
+                this.filterProvider.removeFilter(filter);
+            }
         }
 
         if (this.invisibleColorFilter !== null) {
