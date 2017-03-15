@@ -61,15 +61,13 @@
 /* Admin Line Graphs */
 
 .line {
-    stroke: #03A9F4;
     stroke-width: 2;
-    fill: #03A9F4;
     fill-opacity: 0.4;
 }
 
 .line.selected {
-    stroke: #F44336;
-    fill: #F44336;
+    stroke: #9E9E9E;
+    fill: #9E9E9E;
 }
 
 .tick line {

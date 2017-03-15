@@ -102,7 +102,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
     private handleTouchDown(event): void {
         let filter = this.filterProvider.createFilter(this.graph);
         filter.category = FilterType.Detail;
-        filter.color = "#FFFFFF";
 
         let path = new PathSelection(this.chart, filter.color);
         this.pathContainer.addPath(path);

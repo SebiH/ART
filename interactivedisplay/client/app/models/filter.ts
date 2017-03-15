@@ -12,7 +12,7 @@ export class Filter {
     public readonly id: number;
     public indices: number[] = [];
     public origin: Graph = null;
-    public color: string = "#FFFFFF";
+    public color: string = "#03A9F4";
     public isOverview: boolean = false;
 
 

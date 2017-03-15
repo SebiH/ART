@@ -24,6 +24,7 @@ export class PathSelection extends ChartElement {
         this.pathElement = root.append('path')
             .attr('class', 'line')
             .attr('stroke', this.color)
+            .attr('fill', this.color)
             // .attr('fill', this.textureFill);
 
         this.line = d3.line()
@@ -46,7 +47,10 @@ export class PathSelection extends ChartElement {
     }
 
     public setSelected(isSelected: boolean): void {
-        this.pathElement.attr('class', isSelected ? 'line selected' : 'line');
+        let col = isSelected ? '#9E9E9E' : this.color;
+        this.pathElement
+            .attr('stroke', col)
+            .attr('fill', col);
     }
 
     // Texture.js returns relative url as 'url(#xyz)', 
