@@ -32,8 +32,8 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
     private xAxis: ChartAxis;
     private yAxis: ChartAxis;
 
-    private xScale: any;
-    private yScale: any;
+    public xScale: any;
+    public yScale: any;
 
     ngAfterViewInit() {
         this.isLoaded = true;
@@ -83,36 +83,51 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
 
         if (dim == null) {
             return d3.scaleLinear().range(range).domain([0, 1]);
-        } else if (dim.isMetric) {
+        } else { //if (dim.isMetric) {
             return d3.scaleLinear().range(range).domain([dim.domain.min, dim.domain.max]);
-        } else {
-            let domain = <string[]>_.map(dim.mappings, 'name');
-
-            // flip domain
-            if (type === 'y') {
-                let flipped: string[] = [];
-                for (let i = 0; i < domain.length; i++) {
-                    flipped[domain.length - 1 - i] = domain[i];
-                }
-                domain = flipped;
-            }
-
-            // pad domain
-            domain.unshift('');
-            domain.push(' ');
-
-            return d3.scalePoint().domain(domain).range([0, type === 'x' ? this.width : this.height]);
         }
+        // else {
+        //     let domain = <string[]>_.map(dim.mappings, 'name');
+
+        //     // flip domain
+        //     if (type === 'y') {
+        //         let flipped: string[] = [];
+        //         for (let i = 0; i < domain.length; i++) {
+        //             flipped[domain.length - 1 - i] = domain[i];
+        //         }
+        //         domain = flipped;
+        //     }
+
+        //     // pad domain
+        //     domain.unshift('');
+        //     domain.push(' ');
+        //     console.log(dim);
+
+        //     return d3.scalePoint().domain(domain).range([0, type === 'x' ? this.width : this.height]);
+        // }
     }
 
-    public invert(data: [number, number]): [number, number] {
+    public invert(pos: [number, number]): [number, number] {
         if (this.xScale && this.yScale) {
-            return [
-                this.xScale.invert(data[0]),
-                this.yScale.invert(data[1])
-            ];
+            let x = 0;
+            if (this.xScale.invert) {
+                x = this.xScale.invert(pos[0]);
+            } else {
+                // scalepoint has no inverse
+                // TODO..
+            }
+
+            let y = 0;
+            if (this.yScale.invert) {
+                y = this.yScale.invert(pos[1]);
+            } else {
+                // scalepoint has no inverse
+                // TODO..
+            }
+
+            return [ x, y ];
         }
 
-        return data;
+        return [0, 0];
     }
 }

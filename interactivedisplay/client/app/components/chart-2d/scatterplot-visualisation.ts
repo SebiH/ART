@@ -48,13 +48,13 @@ export class ScatterplotVisualisation extends ChartElement {
     }
 
     private processData(dim: ChartDimension): any[] {
-        if (dim.isMetric) {
+        // if (dim.isMetric) {
             return dim.data;
-        } else {
-            let domain = <string[]>_.map(dim.mappings, 'name');
-            let converter = d => domain[d - dim.domain.min];
-            return _.map(dim.data, converter);
-        }
+        // } else {
+        //     let domain = <string[]>_.map(dim.mappings, 'name');
+        //     let converter = d => domain[d - dim.domain.min];
+        //     return _.map(dim.data, converter);
+        // }
     }
 
     private initValues(data: number[][]): void {

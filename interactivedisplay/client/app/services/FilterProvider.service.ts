@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Graph, Filter, FilterType } from '../models/index';
+import { Graph, Filter, FilterType, Point } from '../models/index';
 import { SocketIO } from './SocketIO.service';
 import { GraphProvider } from './GraphProvider.service';
 import { GraphDataProvider } from './GraphDataProvider.service';
+import { Utils } from '../Utils';
 
 import * as _ from 'lodash';
 
@@ -19,6 +20,7 @@ export class FilterProvider {
     private filters: Filter[] = [];
     private idCounter: number = 0;
     private filterObserver: ReplaySubject<Filter[]> = new ReplaySubject<Filter[]>(1);
+    private globalFilterObserver: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
 
     private graphs: Graph[] = [];
     private globalFilter: DataHighlight[] = [];
@@ -111,14 +113,22 @@ export class FilterProvider {
     }
 
     public updateFilter(filter: Filter): void {
-        let overviewDim = this.graphDataProvider.tryGetDimension(filter.origin.isFlipped ? filter.origin.dimY : filter.origin.dimX);
+        let dimX = this.graphDataProvider.tryGetDimension(filter.origin.dimX);
+        let dimY = this.graphDataProvider.tryGetDimension(filter.origin.dimY);
+        let overviewDim = filter.origin.isFlipped ? dimY : dimX;
 
-        if (overviewDim) {
+        if (dimX && dimY) {
             filter.indices = [];
 
             switch (filter.type) {
                 case FilterType.Detail:
-                    // TODO: compare paths <-> points
+                    let boundingRect = Utils.buildBoundingRect(filter.path);
+                    for (let i = 0; i < dimX.data.length; i++) {
+                        let p = new Point(dimX.data[i], dimY.data[i]);
+                        if (p.isInPolygonOf(filter.path, boundingRect)) {
+                            filter.indices.push(i);
+                        }
+                    }
                     break;
 
                 case FilterType.Categorical:
@@ -170,7 +180,23 @@ export class FilterProvider {
         this.delayedGlobalFilterUpdate();
     }
 
+    public removeFilters(graph: Graph): void {
+        let filtersToRemove: Filter[] = [];
+        for (let filter of this.filters) {
+            if (filter.origin.id == graph.id) {
+                filtersToRemove.push(filter);
+            }
+        }
 
+        for (let filter of filtersToRemove) {
+            this.removeFilter(filter);
+        }
+    }
+
+
+    public globalFilterUpdate() {
+        return this.globalFilterObserver.asObservable();
+    }
 
     private initGlobalFilter(max: number): void {
         this.globalFilter = [];
@@ -272,6 +298,7 @@ export class FilterProvider {
         }
 
         this.socketio.sendMessage('globalfilter', { globalfilter: syncFilter });
+        this.globalFilterObserver.next(syncFilter);
     }
 
 

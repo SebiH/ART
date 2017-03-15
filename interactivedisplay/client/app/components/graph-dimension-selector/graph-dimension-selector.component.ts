@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { GraphDataProvider, FilterProvider } from '../../services/index';
-import { Graph, ChartDimension } from '../../models/index'; 
+import { Graph, ChartDimension, Filter } from '../../models/index'; 
 
 const BORDER_SIZE = 30;
 const ITEM_WIDTH = 200;
@@ -65,16 +65,8 @@ export class GraphDimensionSelectorComponent implements OnInit {
             this.graph.dimY = dim;
         }
 
-        if (this.graph.dimY !== prevDim) {
-            this.filterProvider.getFilters()
-                .first()
-                .subscribe(filters => {
-                    for (let filter of filters) {
-                        if (filter.origin.id == this.graph.id) {
-                            this.filterProvider.removeFilter(filter);
-                        }
-                    }
-                });
+        if (this.graph.dimY !== prevDim || this.graph.dimX !== prevDim) {
+            this.filterProvider.removeFilters(this.graph);
         }
     }
 

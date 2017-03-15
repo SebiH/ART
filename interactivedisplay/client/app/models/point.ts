@@ -103,7 +103,7 @@ export class Point {
         let distance = (Math.abs((y2 - y1) * x0 - (x2 - x1) * y0 + x2 * y1 - y2 * x1))
             / Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
 
-        return Math.abs(distance) < 0.1;
+        return Math.abs(distance) < 0.001;
     }
 
     /**

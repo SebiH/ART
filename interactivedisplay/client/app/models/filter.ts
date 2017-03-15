@@ -19,7 +19,7 @@ export class Filter {
     // type determines which of the following three optional properties is set
     public type: FilterType = FilterType.Detail;
     // for 2d detail filters
-    public path?: FilterPoint[];
+    public path: FilterPoint[] = [];
     // for 1d categorical filters
     public category?: number;
     // for 1d metric chart filters
