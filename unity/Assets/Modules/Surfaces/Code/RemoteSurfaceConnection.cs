@@ -49,7 +49,8 @@ namespace Assets.Modules.Surfaces
             {
                 if (_socket.Connected)
                 {
-                    _socket.Disconnect(false);
+                    _socket.Close();
+                    //_socket.Disconnect(false);
                 }
             }
             catch (SocketException ex)
@@ -156,9 +157,16 @@ namespace Assets.Modules.Surfaces
                     Buffer.BlockCopy(_receiveBuffer, processingOffset, rawPacket, 0, rawPacket.Length);
                     var packet = _encoding.GetString(rawPacket);
 
-                    // messages have to be handled in main update() thread, to avoid possible threading issues in handlers
-                    var incomingCmd = JsonUtility.FromJson<InPacket>(packet);
-                    _queuedCommands.Enqueue(incomingCmd);
+                    try
+                    {
+                        // messages have to be handled in main update() thread, to avoid possible threading issues in handlers
+                        var incomingCmd = JsonUtility.FromJson<InPacket>(packet);
+                        _queuedCommands.Enqueue(incomingCmd);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                    }
 
                     processingOffset += _expectedPacketSize;
                     _expectedPacketSize = -1;
