@@ -50,7 +50,6 @@ namespace Assets.Modules.Surfaces
                 if (_socket.Connected)
                 {
                     _socket.Close();
-                    //_socket.Disconnect(false);
                 }
             }
             catch (SocketException ex)
@@ -147,8 +146,12 @@ namespace Assets.Modules.Surfaces
                     }
                     else
                     {
-                        Debug.Assert(false, "Invalid packet received?");
-                        break;
+                        Debug.LogWarning("Invalid packet received, skipping ahead!");
+                        while (processingOffset < bufferEnd && !HasPacketHeader(processingOffset))
+                        {
+                            processingOffset++;
+                        }
+
                     }
                 }
                 else if (processingOffset + _expectedPacketSize <= bufferEnd)
