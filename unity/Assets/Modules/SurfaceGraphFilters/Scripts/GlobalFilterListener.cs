@@ -31,8 +31,15 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             if (request.text != null && request.text.Length > 0)
             {
-                var wrapper = JsonUtility.FromJson<RemoteValueMetadataWrapper>(request.text);
-                ApplyMetadata(wrapper.globalfilter);
+                try
+                {
+                    var wrapper = JsonUtility.FromJson<RemoteValueMetadataWrapper>(request.text);
+                    ApplyMetadata(wrapper.globalfilter);
+                }
+                catch (Exception)
+                {
+                    // filter not initialised yet
+                }
             }
         }
 
