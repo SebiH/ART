@@ -26,6 +26,7 @@ namespace Assets.Modules.Graphs
                 graph.Color = Random.ColorHSV();
                 graph.DimX = GetRandomData("X" + i);
                 graph.DimY = GetRandomData("Y" + i);
+                graph.gameObject.SetActive(true);
             }
 
             SetPositions();
