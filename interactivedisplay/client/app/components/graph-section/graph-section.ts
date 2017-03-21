@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef, animate, trigger, state, transition, style } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { Marker, Graph, Point, ChartDimension } from '../../models/index';
 import { MarkerProvider, GraphProvider, GraphDataProvider, FilterProvider } from '../../services/index';
@@ -9,12 +9,23 @@ const NUM_MARKERS = 8;
     selector: 'graph-section',
     templateUrl: './app/components/graph-section/graph-section.html',
     styleUrls: ['./app/components/graph-section/graph-section.css'],
+    animations: [
+        trigger('visibility', [
+            state('visible', style({
+                opacity: 1,
+                visibility: 'visible'
+            })),
+            state('hidden', style({
+                opacity: 0,
+                visibility: 'collapse'
+            })),
+            transition('* => *', [ animate('0.5s 500ms linear') ])
+    ])
+    ]
 })
 export class GraphSectionComponent implements OnInit, OnDestroy {
 
     @Input() private graph: Graph;
-
-    @Output() onMove = new EventEmitter(); 
 
     private markers: Marker[] = [];
     private isActive: boolean = true;

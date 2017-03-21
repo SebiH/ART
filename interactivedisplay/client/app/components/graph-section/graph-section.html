@@ -23,26 +23,32 @@
             <div class="chart-container" [ngClass]="{ selected: graph.isSelected }"
                  touch-button>
 
-                <div *ngIf="!graph.isSelected">
-                    <!-- Width & height from css -->
-                    <graph-overview-chart
-                        [width]="300"
-                        [height]="1250"
-                        [graph]="graph"
-                        [dim]="graph.isFlipped ? dimY : dimX">
-                    </graph-overview-chart>
+                <div [@visibility]="graph.isSelected ? 'hidden' : 'visible'">
+                    <div *ngIf="!graph.isSelected">
+                        <!-- Width & height from css -->
+                        <graph-overview-chart
+                            [width]="300"
+                            [height]="1250"
+                            [graph]="graph"
+                            [dim]="graph.isFlipped ? dimY : dimX">
+                        </graph-overview-chart>
 
-                    <button class="chart-button"
-                        (click)="toggleColor()"
-                        [ngClass]="{ active: this.graph.isColored }">
-                        <div class="text">
-                            Colour
-                        </div>
-                    </button>
+                        <button class="chart-button"
+                            (click)="toggleColor()"
+                            [ngClass]="{ active: this.graph.isColored }">
+                            <div class="text">
+                                Colour
+                            </div>
+                        </button>
+                    </div>
                 </div>
 
-                <div *ngIf="graph.isSelected">
-                    <graph-detail [graph]="graph" [dimX]="dimX" [dimY]="dimY">
+                <div [@visibility]="graph.isSelected ? 'visible' : 'hidden'">
+                    <graph-detail
+                        *ngIf="graph.isSelected"
+                        [graph]="graph"
+                        [dimX]="dimX"
+                        [dimY]="dimY">
                     </graph-detail>
                 </div>
             </div>
