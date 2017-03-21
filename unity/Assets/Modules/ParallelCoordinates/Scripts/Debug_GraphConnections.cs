@@ -4,7 +4,7 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class Debug_GraphConnections : MonoBehaviour
     {
-        private void Start()
+        private void LateUpdate()
         {
             for (var i = 0; i < DataLineManager.MaxIndex(); i++)
             {
@@ -12,6 +12,8 @@ namespace Assets.Modules.ParallelCoordinates
                 line.IsFiltered = Random.value < 0.75;
                 line.Color = Random.ColorHSV();
             }
+
+            enabled = false;
         }
     }
 }
