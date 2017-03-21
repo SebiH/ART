@@ -55,7 +55,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void AddLine(LineSegment line)
         {
-            // adding lines over multiple update()s to avoid extreme lag
+            // add lines over multiple update()s to avoid putting too much work into one frame
             _lineCreationQueue.Enqueue(line);
         }
 
@@ -75,9 +75,8 @@ namespace Assets.Modules.ParallelCoordinates
         {
             while (_lineCreationQueue.Count > 0)
             {
+                yield return new WaitForAvailableTicks(MAX_WORK_PER_UPDATE);
                 var batchAmount = Mathf.Min(MAX_WORK_PER_UPDATE, _lineCreationQueue.Count);
-                yield return new WaitForAvailableTicks(batchAmount);
-
                 CreateLines(_lineCreationQueue, batchAmount);
             }
 
@@ -88,9 +87,8 @@ namespace Assets.Modules.ParallelCoordinates
         {
             while (_lineVertexUpdateQueue.Count > 0)
             {
-                var lineC = _lineVertexUpdateQueue.Count;
+                yield return new WaitForAvailableTicks(MAX_WORK_PER_UPDATE);
                 var batchAmount = Mathf.Min(MAX_WORK_PER_UPDATE, _lineVertexUpdateQueue.Count);
-                yield return new WaitForAvailableTicks(batchAmount);
                 UpdateLineVertices(_lineVertexUpdateQueue, batchAmount);
             }
 
@@ -101,9 +99,8 @@ namespace Assets.Modules.ParallelCoordinates
         {
             while (_lineColorUpdateQueue.Count > 0)
             {
-                var lineC = _lineColorUpdateQueue.Count;
+                yield return new WaitForAvailableTicks(MAX_WORK_PER_UPDATE);
                 var batchAmount = Mathf.Min(MAX_WORK_PER_UPDATE, _lineColorUpdateQueue.Count);
-                yield return new WaitForAvailableTicks(batchAmount);
                 UpdateLineColor(_lineColorUpdateQueue, batchAmount);
             }
 
