@@ -1,5 +1,6 @@
 const COL_RED = '#E53935';
 const COL_GREEN = '#43A047';
+const COL_LIME = '#CDDC39';
 const COL_BLUE = '#1E88E5';
 const COL_YELLOW = '#FDD835';
 const COL_PURPLE = '#8E24AA';
@@ -94,39 +95,34 @@ let portionGradient: Gradient[] = [
     }
 ];
 
-let ratingBins: Bin[] = [
+let ratingMappings: ValueMapping[] = [
     {
-        displayName: 'Very good',
-        value: 4
-    },
-    {
-        displayName: 'Good',
-        value: 3
-    },
-    {
-        displayName: 'Neutral',
-        value: 2
-    },
-    {
-        displayName: 'Bad',
-        value: 1
-    },
-    {
-        displayName: 'Very bad',
-        value: 0
-    }
-];
-
-let ratingGradient: Gradient[] = [
-    {
-        stop: 0,
+        name: 'Very good',
+        dbValue: '4',
         color: COL_GREEN
     },
     {
-        stop: 4,
+        name: 'Good',
+        dbValue: '3',
+        color: COL_LIME
+    },
+    {
+        name: 'Neutral',
+        dbValue: '2',
+        color: COL_YELLOW
+    },
+    {
+        name: 'Bad',
+        dbValue: '1',
+        color: COL_ORANGE
+    },
+    {
+        name: 'Very bad',
+        dbValue: '0',
         color: COL_RED
     }
 ];
+
 
 
 
@@ -431,151 +427,91 @@ export const SmartactMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'TEMS_App',
         name: 'Bewertung App?',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Gewo',
         name: 'Bewertung Gewohnheit',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Hu',
         name: 'Bewertung Hunger',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Gesu',
         name: 'Bewertung Gesund',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Aufw',
         name: 'Bewertung Aufwand',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Freud',
         name: 'Bewertung Freud?',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Trad',
         name: 'Bewertung Trad',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Eth',
         name: 'Bewertung Eth',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Gesell',
         name: 'Bewertung Gesellschaft',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Preis',
         name: 'Bewertung Preis',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Angespr',
         name: 'Bewertung Angespr?',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Gk',
         name: 'Bewertung Gk?',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Emot',
         name: 'Bewertung Emot?',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Erw',
         name: 'Bewertung Erw?',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     },
     {
         dbColumn: 'TEMS_Andg',
         name: 'Bewertung Andg?',
-        type: DataRepresentation.Metric,
-        minValue: 0,
-        maxValue: 4,
-
-        bins: ratingBins,
-        gradient: ratingGradient
+        type: DataRepresentation.Categorical,
+        values: ratingMappings
     }
 ];
