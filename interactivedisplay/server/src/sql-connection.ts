@@ -1,5 +1,5 @@
 import { ReplaySubject } from 'rxjs';
-import { SqlColumnMapping, SmartactMapping } from './sql-mapping';
+import { SqlColumnMapping } from './sql-mapping';
 
 import * as sql from 'tedious';
 import * as _ from 'lodash';
@@ -50,6 +50,8 @@ export class SqlConnection {
     private sqlConnection: sql.Connection;
     private status: Status = new Status();
 
+    public constructor(private mapping: SqlColumnMapping[]) {}
+
     public connect(config: any) {
 
         if (this.status.isConnected()) {
@@ -80,7 +82,7 @@ export class SqlConnection {
 
 
     public getDimensions(): string[] {
-        return <string[]> _.map(SmartactMapping, 'name');
+        return <string[]> _.map(this.mapping, 'name');
     }
 
     public getData(dimension: string, onSuccess: (data: any[]) => void): void {
@@ -94,7 +96,7 @@ export class SqlConnection {
     // assumes connection is established
     private getDataConnectionEstablished(dimension: string, onSuccess: (data: any[]) => void): void {
 
-        let mapping = _.find(SmartactMapping, map => map.name === dimension);
+        let mapping = _.find(this.mapping, map => map.name === dimension);
 
         if (!mapping) {
             console.error('Could not find database mapping of ' + dimension);

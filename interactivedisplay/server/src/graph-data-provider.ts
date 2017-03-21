@@ -1,10 +1,11 @@
 import { SqlConnection } from './sql-connection';
-import { SmartactMapping, DataRepresentation } from './sql-mapping';
+import { DataRepresentation } from './sql-mapping';
+import { SmartactMapping } from './smartact-mappings';
 import * as _ from 'lodash';
 
 export class GraphDataProvider {
 
-    private sqlConnection = new SqlConnection();
+    private sqlConnection = new SqlConnection(SmartactMapping);
     private dataCache: { [id: string]: any } = {};
 
     public constructor(useRandom?: boolean) {
