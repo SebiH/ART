@@ -1,8 +1,8 @@
 <div class="root">
     <chart-2d [height]="height" [width]="width"
               [margin]="margin"
-              [dimensionX]="dimX"
-              [dimensionY]="dimY"
+              [dimensionX]="graph.isFlipped ? dimY : dimX"
+              [dimensionY]="graph.isFlipped ? dimX : dimY"
 
               touch-button
               (touchclick)="handleClick($event)"
