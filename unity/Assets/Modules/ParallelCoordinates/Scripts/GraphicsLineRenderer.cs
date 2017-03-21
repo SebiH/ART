@@ -23,7 +23,7 @@ namespace Assets.Modules.ParallelCoordinates
         private const float DEFAULT_WIDTH = 0.001f;
         private const float FILTERED_WIDTH = 0.0002f;
 
-        private const int MAX_WORK_PER_CYCLE = 200;
+        private const int MAX_WORK_PER_UPDATE = 200;
 
         private void OnEnable()
         {
@@ -75,10 +75,9 @@ namespace Assets.Modules.ParallelCoordinates
         {
             while (_lineCreationQueue.Count > 0)
             {
-                var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineCreationQueue.Count);
-                yield return new WaitForAvailableCycles(batchAmount);
+                var batchAmount = Mathf.Min(MAX_WORK_PER_UPDATE, _lineCreationQueue.Count);
+                yield return new WaitForAvailableTicks(batchAmount);
 
-                var totalLineNum = _lineCreationQueue.Count;
                 CreateLines(_lineCreationQueue, batchAmount);
             }
 
@@ -90,8 +89,8 @@ namespace Assets.Modules.ParallelCoordinates
             while (_lineVertexUpdateQueue.Count > 0)
             {
                 var lineC = _lineVertexUpdateQueue.Count;
-                var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineVertexUpdateQueue.Count);
-                yield return new WaitForAvailableCycles(batchAmount);
+                var batchAmount = Mathf.Min(MAX_WORK_PER_UPDATE, _lineVertexUpdateQueue.Count);
+                yield return new WaitForAvailableTicks(batchAmount);
                 UpdateLineVertices(_lineVertexUpdateQueue, batchAmount);
             }
 
@@ -103,8 +102,8 @@ namespace Assets.Modules.ParallelCoordinates
             while (_lineColorUpdateQueue.Count > 0)
             {
                 var lineC = _lineColorUpdateQueue.Count;
-                var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineColorUpdateQueue.Count);
-                yield return new WaitForAvailableCycles(batchAmount);
+                var batchAmount = Mathf.Min(MAX_WORK_PER_UPDATE, _lineColorUpdateQueue.Count);
+                yield return new WaitForAvailableTicks(batchAmount);
                 UpdateLineColor(_lineColorUpdateQueue, batchAmount);
             }
 

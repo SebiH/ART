@@ -70,7 +70,7 @@ namespace Assets.Modules.Core
                     var operation = _operations[_loopCounter];
                     bool canWork = true;
 
-                    var workDistributor = operation.Enumerator.Current as WaitForAvailableCycles;
+                    var workDistributor = operation.Enumerator.Current as WaitForAvailableTicks;
                     if (workDistributor != null)
                     {
                         // TODO: dynamic adjustment (based on current workload) + names!

@@ -183,7 +183,7 @@ namespace Assets.Modules.ParallelCoordinates
             while (_lineCreationQueue.Count > 0)
             {
                 var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineCreationQueue.Count);
-                yield return new WaitForAvailableCycles(batchAmount);
+                yield return new WaitForAvailableTicks(batchAmount);
 
                 var totalLineNum = _lineCreationQueue.Count;
                 CreateLines(_lineCreationQueue, batchAmount);
@@ -198,7 +198,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 var lineC = _lineColorUpdateQueue.Count;
                 var batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineColorUpdateQueue.Count);
-                yield return new WaitForAvailableCycles(batchAmount);
+                yield return new WaitForAvailableTicks(batchAmount);
 
                 // TODO: setting twice due to strange bug?
                 batchAmount = Mathf.Min(MAX_WORK_PER_CYCLE, _lineColorUpdateQueue.Count);

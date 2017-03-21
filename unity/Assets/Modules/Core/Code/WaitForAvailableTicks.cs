@@ -4,16 +4,16 @@ using UnityEngine;
 
 namespace Assets.Modules.Core
 {
-    public class WaitForAvailableCycles : YieldInstruction
+    public class WaitForAvailableTicks : YieldInstruction
     {
         public int Amount;
 
-        public WaitForAvailableCycles()
+        public WaitForAvailableTicks()
         {
 
         }
 
-        public WaitForAvailableCycles(int amount)
+        public WaitForAvailableTicks(int amount)
         {
             Amount = amount;
         }
