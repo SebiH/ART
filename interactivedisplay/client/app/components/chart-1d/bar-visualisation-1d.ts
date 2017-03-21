@@ -26,7 +26,7 @@ export class BarVisualisation1d extends ChartVisualisation1d {
                 tempData[category] += 1;
                 maxDomain = Math.max(maxDomain, tempData[category]);
             } else {
-                tempData[category] = 0;
+                tempData[category] = 1;
             }
         }
 
@@ -47,8 +47,8 @@ export class BarVisualisation1d extends ChartVisualisation1d {
     public register(root: HtmlChartElement, width: number, height: number): void {
         this.dataContainer = root.append('g');
 
-        let x = d3.scaleLinear().rangeRound([width, 0]).domain(this.domain);
-        let y = d3.scaleBand().rangeRound([0, height + 2 /* -> layout offset.. */]).domain(this.categories);
+        let x = d3.scaleLinear().rangeRound([0, width]).domain(this.domain);
+        let y = d3.scaleBand().rangeRound([0, height]).domain(this.categories);
         this.yScale = y;
 
         this.dataContainer.selectAll('.bar')
@@ -56,10 +56,10 @@ export class BarVisualisation1d extends ChartVisualisation1d {
             .enter().append('rect')
                 .attr('class', 'bar')
                 .attr('fill', (d, i) => this.getColor(d.category))
-                .attr('x', d => x(d.amount))
+                .attr('x', 0)
                 .attr('y', d => y(d.category))
                 .attr('height', y.bandwidth())
-                .attr('width', d => width - x(d.amount));
+                .attr('width', d => x(d.amount));
 
         for (let category of this.categories) {
             let barWidth = y.step();
