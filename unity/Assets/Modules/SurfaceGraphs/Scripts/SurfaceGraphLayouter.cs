@@ -24,7 +24,7 @@ namespace Assets.Modules.SurfaceGraphs
 
                 // TODO: minor performance improvement: only calculate once globally for all graphs?
                 // selection animation
-                var targetOffset = isGraphSelected ? 1f : 0.5f;
+                var targetOffset = isGraphSelected ? 1f : 0.7f;
                 if (graph.IsSelected) { targetOffset = 0.5f; }
                 animator.Offset = targetOffset;
                 animator.Position = graph.Position;
