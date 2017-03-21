@@ -9,7 +9,7 @@ namespace Assets.Modules.ParallelCoordinates
     /// </summary>
     public class DataLine
     {
-        const byte TRANSPARENCY_FILTERED = 30;
+        const byte TRANSPARENCY_FILTERED = 10;
         const byte TRANSPARENCY_NORMAL = 255;
         const float ANIMATION_SPEED = 1f; // in seconds
 
