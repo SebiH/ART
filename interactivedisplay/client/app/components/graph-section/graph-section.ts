@@ -133,6 +133,10 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
 
     private handleMoveStart(event: any) {
         this.graph.isPickedUp = true;
+
+        if (this.isAnyGraphSelected) {
+            this.graphProvider.selectGraph(null);
+        }
     }
 
     private handleMoveUpdate(event: any) {

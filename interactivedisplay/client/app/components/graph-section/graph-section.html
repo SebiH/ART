@@ -56,7 +56,7 @@
 
 
         <div class="row">
-            <div *ngIf="!graph.isSelected" class="button-container">
+            <div class="button-container">
                 <div class="button"
                     [ngClass]="{ active: graph.isPickedUp }"
                     moveable
@@ -70,7 +70,7 @@
                         Move
                     </div>
                 </div>
-                <button (click)="selectGraph()">
+                <button (click)="selectGraph()" *ngIf="!graph.isSelected">
                     <div class="icon">
                         <span class="fa fa-sliders" aria-hidden="true"></span>
                     </div>
@@ -79,13 +79,22 @@
                         Select
                     </div>
                 </button>
+                <button (click)="closeSelection()" *ngIf="graph.isSelected">
+                    <div class="icon">
+                        <span class="fa fa-times" aria-hidden="true"></span>
+                    </div>
+
+                    <div class="text">
+                        Close
+                    </div>
+                </button>
             </div>
 
             <div class="markers horizontal">
                 <ar-marker [marker]="markers[7]"></ar-marker>
             </div>
 
-            <div *ngIf="!graph.isSelected" class="button-container">
+            <div class="button-container">
                 <button
                     (click)="toggleFlip()"
                     [ngClass]="{ active: graph.isFlipped }">

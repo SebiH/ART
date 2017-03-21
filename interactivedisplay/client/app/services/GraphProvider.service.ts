@@ -131,6 +131,10 @@ export class GraphProvider {
         graph.destroy();
         this.graphObserver.next(this.graphs);
         this.graphDeletionObserver.next(graph);
+
+        if (graph.isSelected) {
+            this.selectGraph(null);
+        }
     }
 
 
