@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 const TEXT_X_OFFSET = 5;
 const TEXT_Y_OFFSET = -10;
 
-export class LineVisualisation1d extends ChartVisualisation1d {
+export class MetricVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
     private rangeContainer: HtmlChartElement;

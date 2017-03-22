@@ -4,7 +4,7 @@ import { ChartDirective } from '../../directives/index';
 
 import { ChartVisualisation1d } from './chart-visualisation-1d';
 import { BarVisualisation1d } from './bar-visualisation-1d';
-import { LineVisualisation1d } from './line-visualisation-1d';
+import { MetricVisualisation1d } from './metric-visualisation-1d';
 
 @Component({
     selector: 'chart-1d',
@@ -68,7 +68,7 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
     private drawLineChart() {
         if (this.dataVisualisation === null || this.dataVisualisation.dimension !== this.dimension) {
             this.clear();
-            this.dataVisualisation = new LineVisualisation1d(this.dimension);
+            this.dataVisualisation = new MetricVisualisation1d(this.dimension);
             this.chart.addElement(this.dataVisualisation);
         }
     }
@@ -89,20 +89,20 @@ export class Chart1dComponent implements AfterViewInit, OnChanges {
 
 
     public setHighlightedRanges(ranges: [number, number][]) {
-        if (this.dataVisualisation instanceof LineVisualisation1d) {
+        if (this.dataVisualisation instanceof MetricVisualisation1d) {
             this.dataVisualisation.setRanges(ranges);
         }
     }
 
     public convertData(val: number): number {
-        if (this.dataVisualisation instanceof LineVisualisation1d) {
+        if (this.dataVisualisation instanceof MetricVisualisation1d) {
             return this.dataVisualisation.convertData(val);
         }
         return -1;
     }
 
     public invertData(val: number): number {
-        if (this.dataVisualisation instanceof LineVisualisation1d) {
+        if (this.dataVisualisation instanceof MetricVisualisation1d) {
             return this.dataVisualisation.invertData(val);
         }
         return -1;
