@@ -50,6 +50,9 @@ export class SqlConnection {
     private sqlConnection: sql.Connection;
     private status: Status = new Status();
 
+    private idCounter: number = 0;
+    private idTable: { [sess_id: string]: number } = {};
+
     public constructor(private mapping: SqlColumnMapping[]) {}
 
     public connect(config: any) {
@@ -105,7 +108,7 @@ export class SqlConnection {
 
         let requestedData: any[] = [];
         let requestSql = '\
-            SELECT TOP 1000 User_Id, ' + mapping.dbColumn + '\
+            SELECT TOP 1000 Sess_Id, ' + mapping.dbColumn + '\
             FROM Flat_Dataset_1';
 
         let request = new sql.Request(requestSql, (error: Error, rowCount: number, rows: any[]) => {
@@ -132,7 +135,11 @@ export class SqlConnection {
     }
 
 
-    private idToNumber(userId: string): number {
-        return +userId.replace(/\./, '');
+    private idToNumber(sessId: string): number {
+        if (this.idTable[sessId] === undefined) {
+            this.idTable[sessId] = this.idCounter++;
+        }
+
+        return this.idTable[sessId];
     }
 }
