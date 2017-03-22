@@ -14,7 +14,7 @@ export interface Bin {
 }
 
 export interface ValueMapping {
-    dbValue: string;
+    dbValue: number;
     name: string;
     color: string;
 }
