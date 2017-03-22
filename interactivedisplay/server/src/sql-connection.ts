@@ -121,7 +121,7 @@ export class SqlConnection {
             if (columns.length == 2) {
                 requestedData.push({
                     id: this.idToNumber(columns[0].value),
-                    value: +columns[1].value
+                    value: mapping.converter(columns[1].value)
                 });
             } else {
                 console.error('Unexpected number of columns: Expected 2, got ' + columns.length);

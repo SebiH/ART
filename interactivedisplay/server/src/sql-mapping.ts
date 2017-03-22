@@ -23,6 +23,7 @@ export interface CategoricalSqlMapping {
     type: DataRepresentation.Categorical;
     dbColumn: string;
     name: string;
+    converter: (d: any) => number;
 
     values: ValueMapping[];
 }
@@ -32,6 +33,7 @@ export interface MetricSqlMapping {
     type: DataRepresentation.Metric;
     dbColumn: string;
     name: string;
+    converter: (d: any) => number;
 
     minValue: number;
     maxValue: number;
