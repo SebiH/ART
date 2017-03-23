@@ -15,7 +15,7 @@
             (moveEnd)="onDragEnd($event)">
             <div *ngFor="let dim of dimensions">
                 <div class="item"
-                    [ngClass]="{ selected: (axis === 'x' ? graph.dimX : graph.dimY) === dim }"
+                    [ngClass]="{ selected: getActiveDim() === dim }"
                     touch-button
                     (touchclick)="setDimension(dim)">
 

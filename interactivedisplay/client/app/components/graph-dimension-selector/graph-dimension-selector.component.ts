@@ -12,7 +12,7 @@ const ITEM_HEIGHT = 140;
     templateUrl: './app/components/graph-dimension-selector/graph-dimension-selector.html',
     styleUrls: [ './app/components/graph-dimension-selector/graph-dimension-selector.css' ]
 })
-export class GraphDimensionSelectorComponent implements AfterViewInit {
+export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy {
     @Input() axis: 'x' | 'y';
     @Input() graph: Graph;
     @Input() size: number = 1000;
@@ -21,6 +21,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit {
     private offset: number = 0;
     private maxOffset: number = 0;
     private hasTouchDown: boolean = false;
+    private isActive: boolean = true;
 
     private scrollerStyle: any = {};
     private listStyle = {
@@ -50,13 +51,13 @@ export class GraphDimensionSelectorComponent implements AfterViewInit {
                     this.maxOffset = dims.length * ITEM_HEIGHT - this.size / 2 + BORDER_SIZE * 2;
                 }
 
-                let graphDim = (this.axis == 'x') ? this.graph.dimX : this.graph.dimY;
-                let itemSize = (this.axis == 'x') ? ITEM_WIDTH : ITEM_HEIGHT;
-                if (graphDim) {
-                    this.offset = dims.indexOf(graphDim) * itemSize - this.size / 2 + BORDER_SIZE * 2;
-                    this.updateOffset();
-                }
+                this.scrollToCurrent();
             });
+
+        this.graph.onUpdate
+            .takeWhile(() => this.isActive)
+            .filter(changes => changes.indexOf('isFlipped') >= 0)
+            .subscribe(() => this.scrollToCurrent());
 
         if (this.axis === 'x') {
             this.scrollerStyle = {
@@ -71,18 +72,46 @@ export class GraphDimensionSelectorComponent implements AfterViewInit {
         }
     }
 
+    ngOnDestroy() {
+        this.isActive = false;
+    }
+
+    private scrollToCurrent(): void {
+        let graphDim = this.getActiveDim();
+        let itemSize = this.getItemSize();
+        if (graphDim && this.dimensions) {
+            this.offset = this.dimensions.indexOf(graphDim) * itemSize - this.size / 2 + BORDER_SIZE * 2;
+            this.updateOffset();
+        }
+    }
+
     private setDimension(dim: string): void {
-        let prevDim = "";
-        if (this.axis === 'x') {
-            prevDim = this.graph.dimX;
-            this.graph.dimX = dim;
+        let prevDim = this.getActiveDim();
+
+        if (this.graph.isFlipped) {
+            if (this.axis === 'x') {
+                this.graph.dimY = dim;
+            } else {
+                this.graph.dimX = dim;
+            }
         } else {
-            prevDim = this.graph.dimY;
-            this.graph.dimY = dim;
+            if (this.axis === 'x') {
+                this.graph.dimX = dim;
+            } else {
+                this.graph.dimY = dim;
+            }
         }
 
-        if (this.graph.dimY !== prevDim || this.graph.dimX !== prevDim) {
+        if (prevDim != dim) {
             this.filterProvider.removeFilters(this.graph);
+        }
+    }
+
+    private getActiveDim(): string {
+        if (this.graph.isFlipped) {
+            return this.axis === 'x' ? this.graph.dimY : this.graph.dimX;
+        } else {
+            return this.axis === 'x' ? this.graph.dimX : this.graph.dimY;
         }
     }
 
@@ -169,7 +198,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit {
         let itemSize = this.getItemSize();
         this.hasBeforeTouchDown = true;
         Observable.timer(0, 100)
-            .takeWhile(() => this.hasBeforeTouchDown && this.offset >= 0)
+            .takeWhile(() => this.hasBeforeTouchDown && this.offset >= 0 && this.isActive)
             .subscribe(() => {
                 this.offset -= itemSize / 3;
                 this.updateOffset();
@@ -190,7 +219,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit {
         let itemSize = this.getItemSize();
         this.hasAfterTouchDown = true;
         Observable.timer(0, 100)
-            .takeWhile(() => this.hasAfterTouchDown && this.offset < this.maxOffset)
+            .takeWhile(() => this.hasAfterTouchDown && this.offset < this.maxOffset && this.isActive)
             .subscribe(() => {
                 this.offset += itemSize / 3;
                 this.updateOffset();
