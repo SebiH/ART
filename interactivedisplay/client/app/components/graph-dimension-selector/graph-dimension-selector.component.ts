@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { GraphDataProvider, FilterProvider } from '../../services/index';
 import { Graph, ChartDimension, Filter } from '../../models/index'; 
 
@@ -11,7 +11,7 @@ const ITEM_HEIGHT = 140;
     templateUrl: './app/components/graph-dimension-selector/graph-dimension-selector.html',
     styleUrls: [ './app/components/graph-dimension-selector/graph-dimension-selector.css' ]
 })
-export class GraphDimensionSelectorComponent implements OnInit {
+export class GraphDimensionSelectorComponent implements AfterViewInit {
     @Input() axis: 'x' | 'y';
     @Input() graph: Graph;
     @Input() size: number = 1000;
@@ -28,18 +28,24 @@ export class GraphDimensionSelectorComponent implements OnInit {
 
     constructor(private graphDataProvider: GraphDataProvider, private filterProvider: FilterProvider) {}
 
-    ngOnInit() {
+    ngAfterViewInit() {
         this.graphDataProvider.getDimensions()
             .first()
             .subscribe((dims) => {
                 this.dimensions = dims;
 
                 if (this.axis === 'x') {
-                    this.maxOffset = dims.length * ITEM_WIDTH - this.size + BORDER_SIZE * 2;
+                    this.maxOffset = dims.length * ITEM_WIDTH - this.size / 2 + BORDER_SIZE * 2;
                 } else {
-                    this.maxOffset = dims.length * ITEM_HEIGHT - this.size + BORDER_SIZE * 2;
+                    this.maxOffset = dims.length * ITEM_HEIGHT - this.size / 2 + BORDER_SIZE * 2;
                 }
 
+                let graphDim = (this.axis == 'x') ? this.graph.dimX : this.graph.dimY;
+                let itemSize = (this.axis == 'x') ? ITEM_WIDTH : ITEM_HEIGHT;
+                if (graphDim) {
+                    this.offset = -(dims.indexOf(graphDim) * itemSize - this.size / 2 + BORDER_SIZE * 2);
+                    this.updateOffset();
+                }
             });
 
         if (this.axis === 'x') {
@@ -71,7 +77,7 @@ export class GraphDimensionSelectorComponent implements OnInit {
     }
 
     private updateOffset(): void {
-        this.offset = -Math.max(0, Math.min(-this.offset, this.maxOffset));
+        this.offset = -Math.max(-this.size / 2, Math.min(-this.offset, this.maxOffset));
 
         // calculate max offset
         let transform = '';
