@@ -12,25 +12,19 @@ export class BarVisualisation1d extends ChartVisualisation1d {
 
     private dataContainer: HtmlChartElement;
     private data: { category: string, amount: number, isActive: boolean, categoryValue: number }[] = [];
-    private domain: [number, number] = [0, 0];
-    private categories: string[] = [];
     private yScale: d3.ScaleBand<string> = null;
 
     public constructor(public dimension: ChartDimension) {
         super();
 
         let tempData = {};
-        let maxDomain = 0;
         for (let category of dimension.data) {
-            if (tempData[category] !== undefined) {
-                tempData[category] += 1;
-                maxDomain = Math.max(maxDomain, tempData[category]);
-            } else {
+            if (tempData[category] === undefined) {
                 tempData[category] = 1;
+            } else {
+                tempData[category] += 1;
             }
         }
-
-        this.domain = [0, maxDomain];
 
         for (let mapping of dimension.mappings) {
             this.data.push({
@@ -39,17 +33,19 @@ export class BarVisualisation1d extends ChartVisualisation1d {
                 amount: tempData[mapping.value] || 0,
                 isActive: true
             });
-            this.categories.push(mapping.name);
         }
+        console.log(this.data);
     }
 
 
     public register(root: HtmlChartElement, width: number, height: number): void {
         this.dataContainer = root.append('g');
+        let categories = <string[]>_.map(this.data, 'category');
 
-        let x = d3.scaleLinear().rangeRound([0, width]).domain(this.domain);
-        let y = d3.scaleBand().rangeRound([0, height]).domain(this.categories);
+        let x = d3.scaleLinear().rangeRound([0, width]).domain([0, _.maxBy(this.data, 'amount').amount * 1.1]);
+        let y = d3.scaleBand().rangeRound([0, height]).domain(categories);
         this.yScale = y;
+        console.log([0, _.maxBy(this.data, 'categoryValue').amount]);
 
         this.dataContainer.selectAll('.bar')
             .data(this.data)
@@ -61,7 +57,7 @@ export class BarVisualisation1d extends ChartVisualisation1d {
                 .attr('height', y.bandwidth())
                 .attr('width', d => x(d.amount));
 
-        for (let category of this.categories) {
+        for (let category of categories) {
             let barWidth = y.step();
             let barHeight = y(category);
             this.dataContainer.append('text')

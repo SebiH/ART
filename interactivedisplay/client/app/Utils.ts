@@ -38,6 +38,30 @@ export class Utils {
     }
 
 
+
+    public static getGradientColor(gradients: {stop: number, color: string}[], value: number): string {
+        let sortedGradients = _.sortBy(gradients, 'stop');
+
+        for (let i = 0; i < sortedGradients.length - 1; i++) {
+            let currStop = sortedGradients[i];
+            let nextStop = sortedGradients[i + 1];
+
+            if (gradients[i].stop <= value && value <= gradients[i + 1].stop) {
+                let range = nextStop.stop - currStop.stop;
+                let gradientPos = (value - currStop.stop) / range;
+                return Utils.lerpColor(currStop.color, nextStop.color, gradientPos);
+            }
+        }
+
+
+        if (value <= 0) {
+            return sortedGradients[0].color;
+        } else {
+            return sortedGradients[sortedGradients.length - 1].color;
+        }
+    }
+
+
     public static lerpColor(col1: string, col2: string, weight: number): string {
         let rgb1 = Utils.hex2rgb(col1);
         let rgb2 = Utils.hex2rgb(col2);
