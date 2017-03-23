@@ -7,11 +7,8 @@ import { Graph } from '../../models/index';
     styleUrls: ['./app/components/graph-list-item/graph-list-item.css'],
 })
 export class GraphListItemComponent {
-    @Input()
-    private graph: Graph;
-
-    @Input()
-    private offset: number;
+    @Input() private graph: Graph;
+    @Input() private offset: number;
 
     private getGraphStyle() {
         let transform = 'translate3d(' + this.graph.posOffset + 'px, 0, 0)';
@@ -30,7 +27,7 @@ export class GraphListItemComponent {
             '-webkit-transform': transform,
             '-ms-transform': transform,
             transform: transform,
-            width: this.graph.width,
+            width: this.graph.width - this.graph.widthTempOffset,
             'z-index': this.graph.listIndex + (this.graph.isPickedUp ? 100 : 0)
         };
 

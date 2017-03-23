@@ -12,9 +12,9 @@
 }
 
 .list-item.moving {
-    -webkit-transition: top 0.1s linear, width 0.5s linear;
-    -ms-transition: top 0.1s linear, width 0.5s linear;
-    transition: top 0.1s linear, width 0.5s linear;
+    -webkit-transition: top 0.1s linear;
+    -ms-transition: top 0.1s linear;
+    transition: top 0.1s linear;
 }
 
 .list-item-container {

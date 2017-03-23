@@ -139,6 +139,9 @@ export class Graph {
         }
     }
 
+    // minor hack for visual effect
+    public widthTempOffset: number = 0;
+
     /*
      *    posOffset
      */

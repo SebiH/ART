@@ -1,6 +1,6 @@
 <div class="list-item" 
      [ngStyle]="getListItemStyle()"
-     [ngClass]="{ moving: graph.isPickedUp }">
+     [ngClass]="{ moving: graph.isPickedUp || graph.widthTempOffset !== 0 }">
 
     <div class="list-item-container">
         <!-- Placeholder to display original position -->
