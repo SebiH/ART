@@ -131,6 +131,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     }
 
     private toggleFlip() {
+        this.filterProvider.removeFilters(this.graph);
         this.graph.isFlipped = !this.graph.isFlipped;
     }
 

@@ -46,7 +46,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
         this.chart.addElement(this.pathContainer);
 
         this.filterProvider.getFilters()
-            .first()
+            .takeWhile(() => this.isActive)
             .subscribe((filters) => this.initFilters(filters));
 
         this.filterProvider.globalFilterUpdate()
