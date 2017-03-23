@@ -64,6 +64,7 @@
     width: 0;
     height: 0;
     border: 0 solid transparent;
+    transition: 0.5s linear;
 }
 
 /* Pointing up */
@@ -73,11 +74,19 @@
     border-bottom: 25px solid black;
 }
 
+.vertical .triangle.before.active {
+    border-bottom-color: #CDDC39;
+}
+
 /* Pointing left */
 .horizontal .triangle.before {
     border-top-width: 25px;
     border-bottom-width: 25px;
     border-right: 25px solid black;
+}
+
+.horizontal .triangle.before.active {
+    border-right-color: #CDDC39;
 }
 
 /* Pointing down */
@@ -87,6 +96,10 @@
     border-top: 25px solid black;
 }
 
+.vertical .triangle.after.active {
+    border-top-color: #CDDC39;
+}
+
 /* Pointing right */
 .horizontal .triangle.after {
     border-bottom-width: 25px;
@@ -94,3 +107,6 @@
     border-left: 25px solid black;
 }
 
+.horizontal .triangle.after.active {
+    border-left-color: #CDDC39;
+}

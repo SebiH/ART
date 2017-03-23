@@ -1,5 +1,10 @@
 <div class="root" [ngClass]="{ horizontal: axis === 'x', vertical: axis === 'y' }">
-    <div class="triangle before"></div>
+    <div class="triangle before"
+        [ngClass]="{ active: this.hasBeforeTouchDown }"
+        [ngStyle]="triangleBeforeStyle"
+        touch-button (touchclick)="scrollBack()"
+        moveable (moveStart)="onBeforeTouchDown()" (moveEnd)="onBeforeTouchUp()">
+    </div>
     <div class="scroller" [ngStyle]="scrollerStyle">
 
         <div class="list"
@@ -19,5 +24,10 @@
             </div>
         </div>
     </div>
-    <div class="triangle after"></div>
+    <div class="triangle after"
+        [ngClass]="{ active: this.hasAfterTouchDown }"
+        [ngStyle]="triangleAfterStyle"
+        touch-button (touchclick)="scrollForward()"
+        moveable (moveStart)="onAfterTouchDown()" (moveEnd)="onAfterTouchUp()">
+    </div>
 </div>
