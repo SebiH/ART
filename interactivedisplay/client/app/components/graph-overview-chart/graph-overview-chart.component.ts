@@ -347,8 +347,33 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
             this.filterProvider.updateFilter(this.currentFilter);
         }
 
+        this.mergeFilters();
+
         this.currentFilter = null;
         this.lineUpdateFilters();
+    }
+
+    private mergeFilters(): void {
+        for (let i = 0; i < this.filters.length; i++) {
+            let f1 = this.filters[i];
+
+            for (let j = this.filters.length - 1; j > i; j--) {
+                let f2 = this.filters[j];
+
+                let isMinContained = (f1.range[0] <= f2.range[0] && f2.range[0] <= f1.range[1]);
+                let isMaxContained = (f1.range[0] <= f2.range[1] && f2.range[1] <= f1.range[1]);
+
+                if (isMinContained || isMaxContained) {
+                    f1.range[0] = Math.min(f1.range[0], f2.range[0]);
+                    f1.range[1] = Math.max(f1.range[1], f2.range[1]);
+
+                    _.pull(this.filters, f2);
+                    this.filterProvider.removeFilter(f2);
+                    this.filterProvider.updateFilter(f1);
+                }
+            }
+
+        }
     }
 
     private lineUpdateFilters(): void {
