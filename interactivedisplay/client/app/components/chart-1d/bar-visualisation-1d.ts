@@ -34,7 +34,6 @@ export class BarVisualisation1d extends ChartVisualisation1d {
                 isActive: true
             });
         }
-        console.log(this.data);
     }
 
 
@@ -45,7 +44,6 @@ export class BarVisualisation1d extends ChartVisualisation1d {
         let x = d3.scaleLinear().rangeRound([0, width]).domain([0, _.maxBy(this.data, 'amount').amount * 1.1]);
         let y = d3.scaleBand().rangeRound([0, height]).domain(categories);
         this.yScale = y;
-        console.log([0, _.maxBy(this.data, 'categoryValue').amount]);
 
         this.dataContainer.selectAll('.bar')
             .data(this.data)

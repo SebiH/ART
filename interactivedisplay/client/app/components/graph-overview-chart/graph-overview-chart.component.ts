@@ -278,7 +278,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
             let buttonHeight = 50;
             this.deleteButtonStyle.top = event.relativePos.y - buttonHeight / 2;
 
-            let clickedData = this.chart.convertData(event.relativePos.y);
+            let clickedData = this.chart.invert(event.relativePos.y);
             for (let filter of this.filters) {
                 if (filter.range[0] <= clickedData && clickedData <= filter.range[1]) {
                     this.deleteButtonFilter = filter;
@@ -306,14 +306,14 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     private currentFilter: Filter = null;
 
     private lineMoveStart(event: any): void {
-        let selectedData = this.chart.convertData(event.relativePos.y);
+        let selectedData = this.chart.invert(event.relativePos.y);
         this.currentFilter = this.createLineFilter([selectedData, selectedData]);
         this.filters.push(this.currentFilter);
     }
 
 
     private lineMoveUpdate(event: any): void {
-        let selectedData = this.chart.convertData(event.relativePos.y);
+        let selectedData = this.chart.invert(event.relativePos.y);
         this.currentFilter.range[1] = selectedData;
         this.filterProvider.updateFilter(this.currentFilter);
 
@@ -327,10 +327,13 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
             this.currentFilter.range[1] = temp;
         }
 
-        let start = this.chart.invertData(this.currentFilter.range[0]);
-        let end = this.chart.invertData(this.currentFilter.range[1]);
 
-        if (Math.abs(start - end) < 0.3) {
+        // remove filters that are *too* small, probably accidentally created
+        let start = this.currentFilter.range[0];
+        let end = this.currentFilter.range[1];
+        let percent = Math.abs(end - start) / (this.dim.domain.max - this.dim.domain.min);
+
+        if (percent < 0.01) {
             this.filterProvider.removeFilter(this.currentFilter);
             _.pull(this.filters, this.currentFilter);
         } else {
@@ -346,8 +349,8 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
 
         for (let filter of this.filters) {
             if (filter.range && filter.range.length >= 2) {
-                let start = this.chart.invertData(filter.range[0]);
-                let end = this.chart.invertData(filter.range[1]);
+                let start = filter.range[0];
+                let end = filter.range[1];
 
                 if (start < end) {
                     ranges.push([start, end]);
