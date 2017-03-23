@@ -20,6 +20,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
 
     private isActive: boolean = true;
     private clearOnSwitch: boolean = false;
+    private has2dFilter: boolean = false;
 
     private readonly filters: Filter[] = [];
 
@@ -52,9 +53,15 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     }
 
     private initFilters(allFilters: Filter[]): void {
+        this.has2dFilter = false;
+
         for (let filter of allFilters) {
-            if (filter.origin.id == this.graph.id && filter.isOverview) {
-                this.filters.push(filter);
+            if (filter.origin.id == this.graph.id) {
+                if (filter.isOverview) {
+                    this.filters.push(filter);
+                } else {
+                    this.has2dFilter = true;
+                }
             }
         }
 
@@ -186,7 +193,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
         if (this.dim) {
             this.categoryColorUpdate();
 
-            if (this.filters.length > 0) {
+            if (this.filters.length > 0 || this.has2dFilter) {
                 for (let mapping of this.dim.mappings) {
                     let filter = _.find(this.filters, f => f.category == mapping.value);
                     this.chart.setCategoryActive(mapping.value, filter != null);
@@ -204,14 +211,14 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
                 }
             }
 
-            if (this.filters.length == 0 && this.graph.isColored) {
+            if (this.filters.length == 0 && this.graph.isColored && !this.has2dFilter) {
                 for (let mapping of this.dim.mappings) {
                     this.addCategoryFilter(mapping.value, mapping.color);
                     this.chart.setCategoryActive(mapping.value, true);
                 }
 
                 this.hasNoFilters = false;
-            }           
+            }
         }
     }
 
@@ -375,7 +382,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     private lineColorUpdate(): void {
         if (this.dim) {
             if (this.graph.isColored) {
-                if (this.filters.length == 0 && this.invisibleColorFilter === null) {
+                if (this.filters.length == 0 && this.invisibleColorFilter === null && !this.has2dFilter) {
                     this.invisibleColorFilter = this.createLineFilter([this.dim.domain.min, this.dim.domain.max]);
                 }
             } else {
