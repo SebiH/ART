@@ -64,33 +64,6 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
 
         this.dataContainer = root.append('g');
 
-        /*
-        **    Gradient
-        **/
-        // let id = Utils.getId();
-
-        // let gradient = this.dataContainer.append('defs').append('linearGradient')
-        //     .attr('id', 'gradient' + id)
-        //     .attr('x1', '100%')
-        //     .attr('x2', '100%')
-        //     .attr('y1', '100%')
-        //     .attr('y2', '0%');
-
-        // for (let gradientStop of this.dimension.gradient) {
-        //     gradient.append('stop')
-        //         .attr('offset', (gradientStop.stop * 100) + '%')
-        //         .attr('stop-color', gradientStop.color)
-        //         .attr('stop-opacity', 0.8);
-        // }
-
-
-        // let baseUrl = Utils.getBaseUrl();
-        // let background = this.dataContainer.append('rect')
-        //     .attr('width', width - 2) // - 2 due to borders..
-        //     .attr('height', height)
-        //     .attr('transform', 'translate(-2,0)') // -2 due to borders
-        //     .style('fill', 'url(' + baseUrl + '#gradient' + id + ')');
-
 
         /*
         **    Bars
@@ -140,24 +113,17 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
         **    Labels
         **/
 
-        // for (let i = 0; i < this.dimension.bins.length; i++) {
+        for (let i = 0; i < this.data.length; i++) {
 
-        //     let lineHeight = y(i + 1);
+            let lineHeight = y(this.data[i].bin.displayName) + y.bandwidth() + TEXT_Y_OFFSET;
 
-        //     // line
-        //     let tickLine = d3.line();
-        //     let tickLinePath = this.dataContainer.append('path')
-        //         .datum([[0, lineHeight], [width, lineHeight]])
-        //         .attr('class', 'tick-line')
-        //         .attr('d', tickLine);
-
-        //     // label
-        //     this.dataContainer.append('text')
-        //         .text(this.dimension.bins[i].displayName)
-        //         .attr('class', 'tick-label line-tick-label')
-        //         .attr('x', TEXT_X_OFFSET)
-        //         .attr('y', lineHeight + TEXT_Y_OFFSET);
-        // }
+            // label
+            this.dataContainer.append('text')
+                .text(this.data[i].bin.displayName)
+                .attr('class', 'tick-label line-tick-label')
+                .attr('x', TEXT_X_OFFSET)
+                .attr('y', lineHeight);
+        }
     }
 
     public unregister(): void {
