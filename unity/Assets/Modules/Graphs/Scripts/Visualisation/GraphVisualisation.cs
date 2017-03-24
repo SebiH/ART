@@ -10,7 +10,6 @@ namespace Assets.Modules.Graphs
         public GraphLabel LabelX;
         public GraphLabel LabelY;
         public GraphDataField DataField;
-        public GameObject FilterSymbol;
 
         private void OnEnable()
         {
