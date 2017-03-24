@@ -243,6 +243,6 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
             }
         }
 
-        return { min: minVal, max maxVal };
+        return { min: minVal, max: maxVal };
     }
 }
