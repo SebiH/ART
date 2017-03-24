@@ -78,24 +78,10 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
             .range([0, height])
             .domain(binNames);
 
-
-        // for later invert operations / selections
-        let minVal: number = this.data[0].bin.range ? this.data[0].bin.range[0] : this.data[0].bin.value;
-        let maxVal: number = this.data[0].bin.range ? this.data[0].bin.range[1] : this.data[0].bin.value;
-
-        for (let d of this.data) {
-            if (d.bin.range) {
-                minVal = Math.min(minVal, d.bin.range[0]);
-                maxVal = Math.max(maxVal, d.bin.range[1]);
-            } else {
-                minVal = Math.min(minVal, d.bin.value);
-                maxVal = Math.max(maxVal, d.bin.value);
-            }
-        }
-
+        let range = this.getRange();
         this.yScale = d3.scaleLinear()
             .range([0, height])
-            .domain([minVal, maxVal]);
+            .domain([range.min, range.max]);
 
         this.dataContainer.selectAll('.bar')
             .data(this.data)
@@ -107,7 +93,6 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
                 .attr('height', y.bandwidth())
                 .attr('width', d => x(d.amount));
 
-        this.rangeContainer = this.dataContainer.append('g');
 
         /*
         **    Labels
@@ -124,6 +109,9 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
                 .attr('x', TEXT_X_OFFSET)
                 .attr('y', lineHeight);
         }
+
+
+        this.rangeContainer = this.dataContainer.append('g');
     }
 
     public unregister(): void {
@@ -142,9 +130,48 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
 
     public setRanges(ranges: [number, number][]) {
         this.rangeContainer.html('');
-        let baseUrl = Utils.getBaseUrl();
+
+        if (ranges.length === 0) {
+            return;
+        }
+
+        // build the inverse of all ranges, black out everything *but* the actual ranges
+        let domain = this.getRange();
+
+        let invRanges: [number, number][] = [[domain.min, domain.max]];
 
         for (let range of ranges) {
+            for (let i = invRanges.length - 1; i >= 0; i--) {
+                let invRange = invRanges[i];
+
+                let isMinInRange = (invRange[0] <= range[0] && range[0] <= invRange[1]);
+                let isMaxInRange = (invRange[0] <= range[1] && range[1] <= invRange[1]);
+
+                if (isMinInRange && isMaxInRange) {
+                    // split into two
+                    _.pullAt(invRanges, i);
+                    if (invRange[0] != range[0]) {
+                        invRanges.push([invRange[0], range[0]]);
+                    }
+                    if (range[1] != invRange[1]) {
+                        invRanges.push([range[1], invRange[1]]);
+                    }
+                } else if (isMinInRange) {
+                    invRange[1] = range[0];
+                } else if (isMaxInRange) {
+                    invRange[0] = range[1];
+                }
+
+                let isRangeInverted = invRange[0] >= invRange[1];
+                let isInvRangeWithinRange = range[0] <= invRange[0] && invRange[1] <= range[1];
+                if (isRangeInverted || isInvRangeWithinRange) {
+                    _.pullAt(invRanges, i);
+                }
+            }
+        }
+
+
+        for (let range of invRanges) {
             let start = this.yScale(range[0]);
             let end = this.yScale(range[1]);
 
@@ -153,9 +180,27 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
                 .attr('height', end - start)
                 .attr('y', start)
                 .attr('transform', 'translate(-2,0)') // -2 due to borders
-                .style('fill', '#f44336')
-                .attr('opacity', '0.5');
+                .style('fill', '#000000')
+                .attr('opacity', '0.75');
         }
 
+    }
+
+
+    private getRange() {
+        let minVal: number = this.data[0].bin.range ? this.data[0].bin.range[0] : this.data[0].bin.value;
+        let maxVal: number = this.data[0].bin.range ? this.data[0].bin.range[1] : this.data[0].bin.value;
+
+        for (let d of this.data) {
+            if (d.bin.range) {
+                minVal = Math.min(minVal, d.bin.range[0]);
+                maxVal = Math.max(maxVal, d.bin.range[1]);
+            } else {
+                minVal = Math.min(minVal, d.bin.value);
+                maxVal = Math.max(maxVal, d.bin.value);
+            }
+        }
+
+        return { min: minVal, max maxVal };
     }
 }
