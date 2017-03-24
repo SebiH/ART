@@ -16,6 +16,7 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
     private dataContainer: HtmlChartElement;
     private rangeContainer: HtmlChartElement;
     private yScale: d3.ScaleLinear<number, number> = null;
+    private yBarScale: d3.ScaleBand<string> = null;
 
     private data: { bin: Bin, amount: number }[] = [];
 
@@ -77,6 +78,7 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
         let y = d3.scaleBand()
             .range([0, height])
             .domain(binNames);
+        this.yBarScale = y;
 
         let range = this.getRange();
         this.yScale = d3.scaleLinear()
@@ -131,59 +133,99 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
     public setRanges(ranges: [number, number][]) {
         this.rangeContainer.html('');
 
-        if (ranges.length === 0) {
-            return;
-        }
+        let minHeight = this.height;
+        let maxHeight = 0;
 
-        // build the inverse of all ranges, black out everything *but* the actual ranges
-        let domain = this.getRange();
+        if (ranges.length > 0) {
+            // build the inverse of all ranges, black out everything *but* the actual ranges
+            let domain = this.getRange();
 
-        let invRanges: [number, number][] = [[domain.min, domain.max]];
+            let invRanges: [number, number][] = [[domain.min, domain.max]];
 
-        for (let range of ranges) {
-            for (let i = invRanges.length - 1; i >= 0; i--) {
-                let invRange = invRanges[i];
+            for (let range of ranges) {
+                for (let i = invRanges.length - 1; i >= 0; i--) {
+                    let invRange = invRanges[i];
 
-                let isMinInRange = (invRange[0] <= range[0] && range[0] <= invRange[1]);
-                let isMaxInRange = (invRange[0] <= range[1] && range[1] <= invRange[1]);
+                    let isMinInRange = (invRange[0] <= range[0] && range[0] <= invRange[1]);
+                    let isMaxInRange = (invRange[0] <= range[1] && range[1] <= invRange[1]);
 
-                if (isMinInRange && isMaxInRange) {
-                    // split into two
-                    _.pullAt(invRanges, i);
-                    if (invRange[0] != range[0]) {
-                        invRanges.push([invRange[0], range[0]]);
+                    if (isMinInRange && isMaxInRange) {
+                        // split into two
+                        _.pullAt(invRanges, i);
+                        if (invRange[0] != range[0]) {
+                            invRanges.push([invRange[0], range[0]]);
+                        }
+                        if (range[1] != invRange[1]) {
+                            invRanges.push([range[1], invRange[1]]);
+                        }
+                    } else if (isMinInRange) {
+                        invRange[1] = range[0];
+                    } else if (isMaxInRange) {
+                        invRange[0] = range[1];
                     }
-                    if (range[1] != invRange[1]) {
-                        invRanges.push([range[1], invRange[1]]);
-                    }
-                } else if (isMinInRange) {
-                    invRange[1] = range[0];
-                } else if (isMaxInRange) {
-                    invRange[0] = range[1];
-                }
 
-                let isRangeInverted = invRange[0] >= invRange[1];
-                let isInvRangeWithinRange = range[0] <= invRange[0] && invRange[1] <= range[1];
-                if (isRangeInverted || isInvRangeWithinRange) {
-                    _.pullAt(invRanges, i);
+                    let isRangeInverted = invRange[0] >= invRange[1];
+                    let isInvRangeWithinRange = range[0] <= invRange[0] && invRange[1] <= range[1];
+                    if (isRangeInverted || isInvRangeWithinRange) {
+                        _.pullAt(invRanges, i);
+                    }
                 }
+            }
+
+            for (let range of invRanges) {
+                let start = this.yScale(range[0]);
+                let end = this.yScale(range[1]);
+
+                minHeight = Math.min(end, minHeight);
+                maxHeight = Math.max(start, maxHeight);
+
+                this.rangeContainer.append('rect')
+                    .attr('width', this.width)
+                    .attr('height', end - start)
+                    .attr('y', start)
+                    .attr('transform', 'translate(-2,0)') // -2 due to borders
+                    .style('fill', '#000000')
+                    .attr('opacity', '0.75');
             }
         }
 
-
-        for (let range of invRanges) {
-            let start = this.yScale(range[0]);
-            let end = this.yScale(range[1]);
-
-            this.rangeContainer.append('rect')
-                .attr('width', this.width)
-                .attr('height', end - start)
-                .attr('y', start)
-                .attr('transform', 'translate(-2,0)') // -2 due to borders
-                .style('fill', '#000000')
-                .attr('opacity', '0.75');
+        if (maxHeight <= 0) {
+            maxHeight = this.height;
         }
 
+        if (minHeight >= this.height) {
+            minHeight = 0;
+        }
+
+        if (minHeight > maxHeight) {
+            let temp = minHeight;
+            minHeight = maxHeight;
+            maxHeight = temp;
+        }
+
+        this.dataContainer.selectAll('.bar')
+            .attr('fill', (d: any, i) => {
+                let offset = 0;
+
+                if (d.bin.range !== undefined) {
+                    offset = (this.yScale(d.bin.range[0]) - minHeight) / (maxHeight - minHeight);
+                    if (offset < 0 || offset > 1) {
+                        offset = (this.yScale(d.bin.range[1]) - minHeight) / (maxHeight - minHeight);
+                    }
+                } else {
+                    let barWidth = this.yBarScale.bandwidth();
+                    offset = (this.yScale(d.bin.value) - minHeight - barWidth / 2) / (maxHeight - minHeight);
+                    if (offset < 0 || offset > 1) {
+                        offset = (this.yScale(d.bin.value) - minHeight + barWidth / 2) / (maxHeight - minHeight);
+                    }
+                }
+
+                if (offset < 0 || offset > 1) {
+                    return '#9E9E9E';
+                } else {
+                    return Utils.getGradientColor(this.dimension.gradient, offset);
+                }
+            });
     }
 
 
