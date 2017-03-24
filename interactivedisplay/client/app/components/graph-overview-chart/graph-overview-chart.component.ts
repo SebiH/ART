@@ -370,6 +370,11 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
                     _.pull(this.filters, f2);
                     this.filterProvider.removeFilter(f2);
                     this.filterProvider.updateFilter(f1);
+
+                } else if (f1.range[0] <= f2.range[0] && f2.range[1] <= f1.range[1]) {
+                    // f2 is contained within f1
+                    _.pull(this.filters, f2);
+                    this.filterProvider.removeFilter(f2);
                 }
             }
 
