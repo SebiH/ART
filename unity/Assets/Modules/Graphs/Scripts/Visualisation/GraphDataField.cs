@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Modules.Graphs
+namespace Assets.Modules.Graphs.Visualisation
 {
     public class GraphDataField : MonoBehaviour
     {

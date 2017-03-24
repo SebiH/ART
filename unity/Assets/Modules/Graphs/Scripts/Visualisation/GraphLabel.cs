@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Assets.Modules.Graphs
+namespace Assets.Modules.Graphs.Visualisation
 {
     public class GraphLabel : MonoBehaviour
     {
