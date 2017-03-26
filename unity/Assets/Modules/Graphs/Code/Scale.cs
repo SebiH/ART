@@ -7,5 +7,6 @@ namespace Assets.Modules.Graphs
 {
     public abstract class Scale
     {
+        public abstract float Convert(float data);
     }
 }

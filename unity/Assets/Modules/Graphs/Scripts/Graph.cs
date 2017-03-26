@@ -12,82 +12,64 @@ namespace Assets.Modules.Graphs
         public bool IsFlipped { get; set; }
         public bool IsNewlyCreated { get; set; }
 
+        public event Action OnDataChange;
+        public event Action OnPositionChange;
+
         private Dimension _dimX;
         public Dimension DimX
         {
             get { return _dimX; }
-            set { if (_dimX != value) { _dimX = value; BuildData(); } }
+            set
+            {
+                if (_dimX != value)
+                {
+                    _dimX = value;
+                    TriggerDataChange();
+                }
+            }
         }
 
         private Dimension _dimY;
         public Dimension DimY
         {
             get { return _dimY; }
-            set { if (_dimY != value) { _dimY = value; BuildData(); } }
-        }
-
-        // for layouter
-        public float Position { get; set; }
-        public float Scale { get; set; }
-        public float Width { get; set; }
-
-        public event Action OnDataChange;
-
-        private struct DataPoint
-        {
-            public float X;
-            public float Y;
-        }
-
-        private DataPoint[] _data = null;
-        public bool HasData { get { return _data != null; } }
-        public int DataLength { get { return _data.Length; } }
-
-        private void BuildData()
-        {
-            if (_dimX == null || _dimY == null)
+            set
             {
-                _data = null;
-            }
-            else
-            {
-                Debug.Assert(_dimX.Data.Length == _dimY.Data.Length);
-                var dataLength = _dimX.Data.Length;
-                _data = new DataPoint[dataLength];
-                for (int i = 0; i < dataLength; i++)
+                if (_dimY != value)
                 {
-                    _data[i] = new DataPoint { X = _dimX.Data[i], Y = _dimY.Data[i] };
+                    _dimY = value;
+                    TriggerDataChange();
                 }
             }
+        }
 
+        public void SetDimensions(Dimension x, Dimension y)
+        {
+            bool hasChanged = false;
+            if (x != _dimX)
+            {
+                hasChanged = true;
+                _dimX = x;
+            }
+
+            if (y != _dimY)
+            {
+                hasChanged = true;
+                _dimY = y;
+            }
+
+            if (hasChanged)
+            {
+                TriggerDataChange();
+            }
+        }
+
+        private void TriggerDataChange()
+        {
             if (OnDataChange != null)
             {
                 OnDataChange();
             }
-        }
-
-        private void OnEnable()
-        {
-            if (Scale < Mathf.Epsilon)
-            {
-                Scale = 1;
-            }
-        }
-
-        public Vector3 GetLocalCoordinates(int index)
-        {
-            if (_data != null)
-            {
-                var datum = _data[index];
-                return new Vector3(-datum.X, datum.Y, 0);
-            }
-
-            return Vector3.zero;
-        }
-
-        public Vector3 GetWorldCoordinates(int index)
-        {
-            return transform.TransformPoint(GetLocalCoordinates(index));
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Assets.Modules.ParallelCoordinates
+namespace Assets.Modules.ParallelCoordinates_Deprecated
 {
     public class SkinnedLineSegment
     {

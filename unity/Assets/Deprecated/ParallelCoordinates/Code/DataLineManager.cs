@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Assets.Modules.ParallelCoordinates
+namespace Assets.Modules.ParallelCoordinates_Deprecated
 {
     public static class DataLineManager
     {

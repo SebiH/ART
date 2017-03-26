@@ -1,7 +1,7 @@
 using Assets.Modules.Core.Animations;
 using UnityEngine;
 
-namespace Assets.Modules.ParallelCoordinates
+namespace Assets.Modules.ParallelCoordinates_Deprecated
 {
     public class LineSegment
     {

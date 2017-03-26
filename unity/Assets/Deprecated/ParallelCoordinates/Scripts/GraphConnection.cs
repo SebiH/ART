@@ -2,7 +2,7 @@ using Assets.Modules.Core;
 using Assets.Modules.Graphs;
 using UnityEngine;
 
-namespace Assets.Modules.ParallelCoordinates
+namespace Assets.Modules.ParallelCoordinates_Deprecated
 {
     [RequireComponent(typeof(GraphicsLineRenderer))]
     public class GraphConnection : MonoBehaviour

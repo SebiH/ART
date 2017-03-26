@@ -20,5 +20,7 @@ namespace Assets.Modules.Core
         public static readonly string OptitrackHmdName = "HMD";
 
         public static readonly string DefaultSurfaceName = "Surface";
+
+        public const int DataPointsCount = 1000;
     }
 }

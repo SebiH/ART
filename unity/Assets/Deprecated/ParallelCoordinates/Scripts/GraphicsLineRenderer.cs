@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Modules.ParallelCoordinates
+namespace Assets.Modules.ParallelCoordinates_Deprecated
 {
     [RequireComponent(typeof(MeshFilter))]
     public class GraphicsLineRenderer : MonoBehaviour

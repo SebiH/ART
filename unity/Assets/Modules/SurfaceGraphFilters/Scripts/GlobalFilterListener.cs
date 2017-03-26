@@ -1,5 +1,5 @@
 using Assets.Modules.Core;
-using Assets.Modules.ParallelCoordinates;
+using Assets.Modules.ParallelCoordinates_Deprecated;
 using Assets.Modules.Surfaces;
 using System;
 using System.Collections;

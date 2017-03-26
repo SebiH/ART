@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Modules.ParallelCoordinates
+namespace Assets.Modules.ParallelCoordinates_Deprecated
 {
     public class Debug_GraphConnections : MonoBehaviour
     {
