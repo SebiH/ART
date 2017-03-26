@@ -1,20 +1,22 @@
 using Assets.Modules.Core;
-using Assets.Modules.Graphs;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    public class MeshLineRenderer : MonoBehaviour
+    [RequireComponent(typeof(MeshFilter), typeof(SkinnedMeshRenderer))]
+    public class SkinnedMeshLineRenderer : MonoBehaviour
     {
         private readonly Mesh _mesh = new Mesh();
-        private Graph _graph;
         private MeshFilter _filter;
         private MeshRenderer _renderer;
 
+        // attached to destination graph, to avoid changing bone transform
+        private GraphTracker _destinationAnchor;
+
         public struct LineProperty
         {
-            public Vector3 Start;
-            public Vector3 End;
+            public Vector2 Start;
+            public Vector2 End;
             public Color32 Color;
             public float Size;
         }
@@ -33,20 +35,55 @@ namespace Assets.Modules.ParallelCoordinates
             _renderer = GetComponent<MeshRenderer>();
             _renderer.enabled = false;
 
-            _graph = UnityUtility.FindParent<Graph>(this);
-            _graph.OnDataChange += GenerateMesh;
+            _destinationAnchor = GetComponentInChildren<GraphTracker>();
+            if (!_destinationAnchor) { Debug.LogError("SkinnedMeshLineRenderer needs GraphTracker in as childobject"); }
 
+            // initialize unchanging properties of mesh
             var triangles = new int[Lines.Length * 6];
+            var bones = new Transform[Lines.Length * 2];
+            var bindPoses = new Matrix4x4[Lines.Length * 2];
+            var boneWeights = new BoneWeight[Lines.Length * 4];
 
             for (var i = 0; i < Lines.Length; i++)
             {
-                // triangle indices will stay static
+                /*
+                 *  Line composition:
+                 *
+                 *
+                 * 0                    1
+                 * o ------------------ o
+                 * |                  / |
+                 * |         /          |
+                 * | /                  |
+                 * o ------------------ o
+                 * 2                    3
+                 *
+                 * |                    |
+                 * Bone:               Bone:
+                 * Origin              Destination
+                 */
+
                 triangles[i * 6 + 0] = i;
                 triangles[i * 6 + 1] = i + 1;
                 triangles[i * 6 + 2] = i + 2;
                 triangles[i * 6 + 3] = i + 1;
                 triangles[i * 6 + 4] = i + 3;
                 triangles[i * 6 + 5] = i + 2;
+
+                bindPoses[i * 2 + 0] = Matrix4x4.identity;
+                bindPoses[i * 2 + 1] = Matrix4x4.identity;
+
+                bones[i * 2 + 0] = transform;
+                bones[i * 2 + 1] = _destinationAnchor.transform;
+
+                boneWeights[i * 4 + 0].weight0 = 1.0f;
+                boneWeights[i * 4 + 0].boneIndex0 = i * 2 + 0;
+                boneWeights[i * 4 + 1].weight0 = 1.0f;
+                boneWeights[i * 4 + 1].boneIndex0 = i * 2 + 1;
+                boneWeights[i * 4 + 2].weight0 = 1.0f;
+                boneWeights[i * 4 + 2].boneIndex0 = i * 2 + 0;
+                boneWeights[i * 4 + 3].weight0 = 1.0f;
+                boneWeights[i * 4 + 3].boneIndex0 = i * 2 + 1;
 
                 Lines[i] = new LineProperty
                 {
@@ -63,19 +100,8 @@ namespace Assets.Modules.ParallelCoordinates
             _mesh.MarkDynamic();
         }
 
-        private void OnDisable()
-        {
-            _graph.OnDataChange -= GenerateMesh;
-        }
-
         private void GenerateMesh()
         {
-            if (_graph.DimX == null || _graph.DimY == null)
-            {
-                _renderer.enabled = false;
-                return;
-            }
-
             _renderer.enabled = true;
 
             var vertices = _mesh.vertices;
@@ -84,10 +110,10 @@ namespace Assets.Modules.ParallelCoordinates
             for (var i = 0; i < Lines.Length; i++)
             {
                 var line = Lines[i];
-                vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y - line.Size, line.Start.z);
-                vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, line.End.z);
-                vertices[i * 4 + 2] = new Vector3(line.Start.x, line.Start.y - line.Size, line.Start.z);
-                vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, line.End.z);
+                vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
+                vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, 1);
+                vertices[i * 4 + 2] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
+                vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, 1);
 
                 colors[i * 4 + 0] = line.Color;
                 colors[i * 4 + 1] = line.Color;
@@ -97,7 +123,7 @@ namespace Assets.Modules.ParallelCoordinates
 
             _mesh.vertices = vertices;
             _mesh.colors32 = colors;
-            //_mesh.RecalculateBounds();
+            _mesh.RecalculateBounds();
         }
 
         public void UpdatePositions()
@@ -107,13 +133,14 @@ namespace Assets.Modules.ParallelCoordinates
             for (var i = 0; i < Lines.Length; i++)
             {
                 var line = Lines[i];
-                vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y - line.Size, line.Start.z);
-                vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, line.End.z);
-                vertices[i * 4 + 2] = new Vector3(line.Start.x, line.Start.y - line.Size, line.Start.z);
-                vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, line.End.z);
+                vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
+                vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, 1);
+                vertices[i * 4 + 2] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
+                vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, 1);
             }
 
             _mesh.vertices = vertices;
+            _mesh.RecalculateBounds();
         }
 
         public void UpdateColors()
@@ -130,6 +157,11 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             _mesh.colors32 = colors;
+        }
+
+        public void SetHidden(bool isHidden)
+        {
+            _renderer.enabled = !isHidden;
         }
     }
 }
