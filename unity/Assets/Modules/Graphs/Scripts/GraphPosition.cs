@@ -1,4 +1,5 @@
 using Assets.Modules.Core.Animations;
+using System;
 using UnityEngine;
 
 namespace Assets.Modules.Graphs
@@ -84,16 +85,46 @@ namespace Assets.Modules.Graphs
         }
 
 
+        private Graph _graph;
+        public event Action PositionUpdate;
 
         private void OnEnable()
         {
+            _graph = GetComponent<Graph>();
+
+            _position = transform.localPosition.x;
+            _positionAnimation.Init(_position);
+
+            _height = transform.localPosition.y;
+            _heightAnimation.Init(_height);
+
+            _offset = transform.localPosition.z;
+            _offsetAnimation.Init(_offset);
+
+            _rotationAnimation.Init(transform.localRotation);
         }
 
 
         private void Update()
         {
-            transform.localPosition = new Vector3(Position, Height, Offset);
-            transform.localRotation = Quaternion.Euler(0, SelectRotation, FlipRotation);
+            var actualPosition = _positionAnimation.CurrentValue;
+            var actualHeight = _heightAnimation.CurrentValue;
+            var actualOffset = _offsetAnimation.CurrentValue;
+            transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
+
+            transform.localRotation = _rotationAnimation.CurrentValue;
+        }
+
+        public void Init(float pos, float height, float offset)
+        {
+            _position = pos;
+            _positionAnimation.Init(_position);
+
+            _height = height;
+            _heightAnimation.Init(_height);
+
+            _offset = offset;
+            _offsetAnimation.Init(_offset);
         }
 
         public bool IsParallelTo(GraphPosition other)

@@ -23,6 +23,7 @@ namespace Assets.Modules.Core.Animations
 
         public void Init(T startValue)
         {
+            Stop();
             CurrentValue = startValue;
         }
 
