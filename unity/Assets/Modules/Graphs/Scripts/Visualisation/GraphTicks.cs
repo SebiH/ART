@@ -8,15 +8,29 @@ namespace Assets.Modules.Graphs.Visualisation
         public GraphLabel TickTemplate;
         private readonly List<GraphLabel> _ticks = new List<GraphLabel>();
 
-        private Dimension _sourceDimension;
+        private Dimension _dimension;
         public Dimension SourceDimension
         {
-            get { return _sourceDimension; }
+            get { return _dimension; }
             set
             {
-                if (_sourceDimension != value)
+                if (_dimension != value)
                 {
-                    _sourceDimension = value;
+                    _dimension = value;
+                    BuildTicks();
+                }
+            }
+        }
+
+        private Scale _scale;
+        public Scale SourceScale
+        {
+            get { return _scale; }
+            set
+            {
+                if (_scale != value)
+                {
+                    _scale = value;
                     BuildTicks();
                 }
             }
@@ -28,12 +42,9 @@ namespace Assets.Modules.Graphs.Visualisation
         {
             ClearTicks();
 
-            if (_sourceDimension is MetricDimension)
+            if (_dimension != null && _scale != null)
             {
-            }
-            else if (_sourceDimension is CategoricalDimension)
-            {
-
+                // TODO
             }
         }
 

@@ -5,16 +5,15 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class GraphTracker : MonoBehaviour
     {
-        private Graph _trackedGraph;
-
+        public GraphMetaData TrackedGraph;
 
         private void LateUpdate()
         {
-            if (_trackedGraph)
+            if (TrackedGraph)
             {
-                transform.position = _trackedGraph.transform.position;
-                transform.rotation = _trackedGraph.transform.rotation;
-                transform.localScale = _trackedGraph.transform.localScale;
+                transform.position = TrackedGraph.transform.position;
+                transform.rotation = TrackedGraph.transform.rotation;
+                transform.localScale = TrackedGraph.transform.localScale;
             }
         }
     }

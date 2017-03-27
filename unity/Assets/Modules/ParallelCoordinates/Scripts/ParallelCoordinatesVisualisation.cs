@@ -1,4 +1,3 @@
-using Assets.Modules.Core;
 using Assets.Modules.Graphs;
 using UnityEngine;
 
@@ -7,64 +6,124 @@ namespace Assets.Modules.ParallelCoordinates
     [RequireComponent(typeof(SkinnedMeshLineRenderer))]
     public class ParallelCoordinatesVisualisation : MonoBehaviour
     {
-        private GraphManager _graphManager;
-        private Graph _originGraph;
-        private Graph _connectedGraph;
+        private bool _hasLeftData = false;
+        private GraphMetaData _leftGraph;
+        public GraphMetaData Left
+        {
+            get { return _leftGraph; }
+            set
+            {
+                if (_leftGraph != value)
+                {
+                    if (_leftGraph)
+                    {
+                        _leftGraph.Graph.OnDataChange -= OnLeftDataChange;
+                    }
+
+                    Debug.Assert(value != null);
+                    _leftGraph = value;
+                    _leftGraph.Graph.OnDataChange += OnLeftDataChange;
+                    OnLeftDataChange();
+                }
+            }
+        }
+
+        private bool _hasRightData = false;
+        private GraphMetaData _rightGraph;
+        public GraphMetaData Right
+        {
+            get { return _rightGraph; }
+            set
+            {
+                if (_rightGraph != value)
+                {
+                    if (_rightGraph)
+                    {
+                        _rightGraph.Graph.OnDataChange -= OnRightDataChange;
+                    }
+
+                    Debug.Assert(value != null);
+                    _rightGraph = value;
+                    _rightGraph.Graph.OnDataChange += OnRightDataChange;
+                    OnRightDataChange();
+                }
+            }
+        }
 
         private SkinnedMeshLineRenderer _lineRenderer;
 
         private void OnEnable()
         {
-            _graphManager = UnityUtility.FindParent<GraphManager>(this);
-            _originGraph = UnityUtility.FindParent<Graph>(this);
-            _originGraph.OnDataChange += HandleDataChange;
-
             _lineRenderer = GetComponent<SkinnedMeshLineRenderer>();
             _lineRenderer.SetHidden(true);
         }
 
         private void OnDisable()
         {
-
-        }
-
-
-        private void LateUpdate()
-        {
-            var newConnectedGraph = FindConnectedGraph();
-            if (newConnectedGraph != _connectedGraph)
+            if (_leftGraph)
             {
-                _connectedGraph = newConnectedGraph;
+                _leftGraph.Graph.OnDataChange -= OnLeftDataChange;
+            }
 
-                if (_connectedGraph == null)
-                {
-                    _lineRenderer.SetHidden(true);
-                }
-                else
-                {
-                    _lineRenderer.SetHidden(false);
-                }
+            if (_rightGraph)
+            {
+                _rightGraph.Graph.OnDataChange -= OnRightDataChange;
             }
         }
 
-
-        private GraphPosition FindConnectedGraph()
+        private void OnLeftDataChange()
         {
-            GraphPosition newConnectedGraph = null;
-            foreach (var graph in _graphManager.GetAllGraphs())
+            if (_leftGraph.Graph.DimX == null || _leftGraph.Graph.DimY == null)
             {
-                var isEligible = !graph.IsNewlyCreated;
-                var isNext = graph.Position > _originGraph.Position;
-                var isNearest = (newConnectedGraph == null || newConnectedGraph.Position > graph.Position);
-
-                if (isEligible && isNext && isNearest)
-                {
-                    newConnectedGraph = graph;
-                }
+                _hasLeftData = false;
             }
-            return newConnectedGraph;
+            else
+            {
+                // TODO: update data
+            }
+
+            UpdateRenderer(UpdateMode.Position);
         }
 
+        private void OnRightDataChange()
+        {
+            if (_leftGraph.Graph.DimX == null || _leftGraph.Graph.DimY == null)
+            {
+                _hasLeftData = false;
+            }
+            else
+            {
+                // TODO: update data
+            }
 
+            UpdateRenderer(UpdateMode.Position);
+        }
+
+        private enum UpdateMode { Position, Color, Both }
+
+        private void UpdateRenderer(UpdateMode mode)
+        {
+            if (_hasLeftData && _hasRightData)
+            {
+                switch (mode)
+                {
+                    case UpdateMode.Both:
+                        _lineRenderer.GenerateMesh();
+                        break;
+                    case UpdateMode.Position:
+                        _lineRenderer.UpdatePositions();
+                        break;
+                    case UpdateMode.Color:
+                        _lineRenderer.UpdateColors();
+                        break;
+                }
+
+                _lineRenderer.SetHidden(false);
+            }
+            else
+            {
+                _lineRenderer.SetHidden(true);
+            }
+        }
     }
 }

@@ -6,45 +6,37 @@ namespace Assets.Modules.Graphs
 {
     public class GraphManager : MonoBehaviour
     {
-        public Graph GraphTemplate;
+        public GraphMetaData GraphTemplate;
+        private readonly List<GraphMetaData> _graphs = new List<GraphMetaData>();
 
-        private readonly List<Graph> _graphs = new List<Graph>();
-
-        public delegate void GraphEventHandler(Graph graph);
+        public delegate void GraphEventHandler(GraphMetaData graph);
         public event GraphEventHandler OnGraphAdded;
         public event GraphEventHandler OnGraphDeleted;
-
-        void OnEnable()
-        {
-
-        }
 
         void OnDisable()
         {
             while (_graphs.Count > 0)
             {
-                RemoveGraph(_graphs[0].Id);
+                RemoveGraph(_graphs[0].Graph.Id);
             }
         }
 
-
-
-        public Graph GetGraph(int id)
+        public GraphMetaData GetGraph(int id)
         {
-            return _graphs.FirstOrDefault(g => g.Id == id);
+            return _graphs.FirstOrDefault(g => g.Graph.Id == id);
         }
 
-        public IEnumerable<Graph> GetAllGraphs()
+        public IEnumerable<GraphMetaData> GetAllGraphs()
         {
             return _graphs;
         }
 
         public bool HasGraph(int id)
         {
-            return _graphs.Any(g => g.Id == id);
+            return _graphs.Any(g => g.Graph.Id == id);
         }
 
-        public Graph CreateGraph(int id)
+        public GraphMetaData CreateGraph(int id)
         {
             if (HasGraph(id))
             {
@@ -52,16 +44,16 @@ namespace Assets.Modules.Graphs
                 return GetGraph(id);
             }
 
-            var graph = SpawnGraph();
-            graph.Id = id;
-            _graphs.Add(graph);
+            var graphData = SpawnGraph();
+            graphData.Graph.Id = id;
+            _graphs.Add(graphData);
 
             if (OnGraphAdded != null)
             {
-                OnGraphAdded(graph);
+                OnGraphAdded(graphData);
             }
 
-            return graph;
+            return graphData;
         }
 
         public void RemoveGraph(int id)
@@ -81,7 +73,7 @@ namespace Assets.Modules.Graphs
         }
 
         
-        private Graph SpawnGraph()
+        private GraphMetaData SpawnGraph()
         {
             var graph = Instantiate(GraphTemplate);
             graph.transform.parent = transform;

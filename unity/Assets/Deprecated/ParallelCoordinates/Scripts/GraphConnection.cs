@@ -61,19 +61,20 @@ namespace Assets.Modules.ParallelCoordinates_Deprecated
 
         private Graph FindConnectedGraph()
         {
-            Graph newConnectedGraph = null;
-            foreach (var graph in _graphManager.GetAllGraphs())
-            {
-                var isEligible = !graph.IsNewlyCreated;
-                var isNext = graph.Position > _originGraph.Position;
-                var isNearest = (newConnectedGraph == null || newConnectedGraph.Position > graph.Position);
+            //Graph newConnectedGraph = null;
+            //foreach (var graph in _graphManager.GetAllGraphs())
+            //{
+            //    var isEligible = !graph.IsNewlyCreated;
+            //    var isNext = graph.Position > _originGraph.Position;
+            //    var isNearest = (newConnectedGraph == null || newConnectedGraph.Position > graph.Position);
 
-                if (isEligible && isNext && isNearest)
-                {
-                    newConnectedGraph = graph;
-                }
-            }
-            return newConnectedGraph;
+            //    if (isEligible && isNext && isNearest)
+            //    {
+            //        newConnectedGraph = graph;
+            //    }
+            //}
+            //return newConnectedGraph;
+            return null;
         }
 
 
@@ -100,57 +101,57 @@ namespace Assets.Modules.ParallelCoordinates_Deprecated
 
         private void GenerateLines(bool animate)
         {
-            UpdateScale(true);
-            var hasData = (_connectedGraph != null && _originGraph.HasData && _connectedGraph.HasData);
-            if (!hasData)
-            {
-                _lineRenderer.SetHidden(true);
-            }
-            else
-            {
-                if (_lineRenderer.IsHidden())
-                {
-                    _lineRenderer.SetHidden(false);
-                    animate = false;
-                }
+            //UpdateScale(true);
+            //var hasData = (_connectedGraph != null && _originGraph.HasData && _connectedGraph.HasData);
+            //if (!hasData)
+            //{
+            //    _lineRenderer.SetHidden(true);
+            //}
+            //else
+            //{
+            //    if (_lineRenderer.IsHidden())
+            //    {
+            //        _lineRenderer.SetHidden(false);
+            //        animate = false;
+            //    }
 
-                // micro optimisations to use pipelining as much as possible - incoming code duplication!
-                if (_lines == null)
-                {
-                    Debug.Assert(_originGraph.DataLength == _connectedGraph.DataLength);
-                    _lines = new LineSegment[_originGraph.DataLength];
+            //    // micro optimisations to use pipelining as much as possible - incoming code duplication!
+            //    if (_lines == null)
+            //    {
+            //        Debug.Assert(_originGraph.DataLength == _connectedGraph.DataLength);
+            //        _lines = new LineSegment[_originGraph.DataLength];
 
-                    for (int i = 0; i < _lines.Length; i++)
-                    {
-                        var line = new LineSegment();
-                        line.SetRenderer(_lineRenderer);
-                        _lines[i] = line;
-                        DataLineManager.GetLine(i).AddSegment(line);
+            //        for (int i = 0; i < _lines.Length; i++)
+            //        {
+            //            var line = new LineSegment();
+            //            line.SetRenderer(_lineRenderer);
+            //            _lines[i] = line;
+            //            DataLineManager.GetLine(i).AddSegment(line);
 
-                        line.Start = GetLineStart(i);
-                        line.End = GetLineEnd(i);
-                    }
-                }
-                else
-                {
-                    //if (animate)
-                    //{
-                    //    for (int i = 0; i < _lines.Length; i++)
-                    //    {
-                    //        _lines[i].DesiredStart = GetLineStart(i);
-                    //        _lines[i].DesiredEnd = GetLineEnd(i);
-                    //    }
-                    //}
-                    //else
-                    //{
-                        for (int i = 0; i < _lines.Length; i++)
-                        {
-                            _lines[i].Start = GetLineStart(i);
-                            _lines[i].End = GetLineEnd(i);
-                        }
-                    //}
-                }
-            }
+            //            line.Start = GetLineStart(i);
+            //            line.End = GetLineEnd(i);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        //if (animate)
+            //        //{
+            //        //    for (int i = 0; i < _lines.Length; i++)
+            //        //    {
+            //        //        _lines[i].DesiredStart = GetLineStart(i);
+            //        //        _lines[i].DesiredEnd = GetLineEnd(i);
+            //        //    }
+            //        //}
+            //        //else
+            //        //{
+            //            for (int i = 0; i < _lines.Length; i++)
+            //            {
+            //                _lines[i].Start = GetLineStart(i);
+            //                _lines[i].End = GetLineEnd(i);
+            //            }
+            //        //}
+            //    }
+            //}
         }
 
         private void UpdateScale(bool suppressLineGeneration = false)
@@ -180,12 +181,14 @@ namespace Assets.Modules.ParallelCoordinates_Deprecated
 
         private Vector3 GetLineStart(int index)
         {
-            return _originGraph.GetLocalCoordinates(index);
+            return Vector3.zero;
+            //return _originGraph.GetLocalCoordinates(index);
         }
 
         private Vector3 GetLineEnd(int index)
         {
-            return transform.InverseTransformPoint(_connectedGraph.GetWorldCoordinates(index));
+            return Vector3.zero;
+            //return transform.InverseTransformPoint(_connectedGraph.GetWorldCoordinates(index));
         }
 
         void OnDrawGizmosSelected()

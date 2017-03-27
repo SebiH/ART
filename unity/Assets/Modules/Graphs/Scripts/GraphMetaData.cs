@@ -6,13 +6,7 @@ namespace Assets.Modules.Graphs
     public class GraphMetaData : MonoBehaviour
     {
         public Graph Graph;
-        public GraphPosition Position;
-        public GraphAnimator Animator;
+        public GraphPosition Layout;
         public GraphVisualisation Visualisation;
-
-        private void OnEnable()
-        {
-
-        }
     }
 }

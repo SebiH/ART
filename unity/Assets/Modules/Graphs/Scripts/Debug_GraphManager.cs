@@ -21,12 +21,12 @@ namespace Assets.Modules.Graphs
 
             for (var i = 0; i < NumGraphs; i++)
             {
-                var graph = _graphManager.CreateGraph(i);
-                graph.Id = i;
-                graph.Color = Random.ColorHSV();
-                graph.DimX = GetRandomData("X" + i);
-                graph.DimY = GetRandomData("Y" + i);
-                graph.gameObject.SetActive(true);
+                var g = _graphManager.CreateGraph(i);
+                g.Graph.Id = i;
+                g.Graph.Color = Random.ColorHSV();
+                g.Graph.DimX = GetRandomData("X" + i);
+                g.Graph.DimY = GetRandomData("Y" + i);
+                g.Graph.gameObject.SetActive(true);
             }
 
             SetPositions();
@@ -71,12 +71,12 @@ namespace Assets.Modules.Graphs
 
         private void SetPositions()
         {
-            foreach (var graph in _graphManager.GetAllGraphs())
+            foreach (var g in _graphManager.GetAllGraphs())
             {
-                var pos = graph.Id * SpaceBetweenGraphs;
-                graph.transform.localPosition = new Vector3(pos, 0, 0);
-                graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
-                graph.Position = pos;
+                var pos = g.Graph.Id * SpaceBetweenGraphs;
+                g.Graph.transform.localPosition = new Vector3(pos, 0, 0);
+                g.Graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
+                g.Layout.Position = pos;
             }
         }
     }

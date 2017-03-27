@@ -6,7 +6,8 @@ namespace Assets.Modules.Graphs
     {
         public override float Convert(float data)
         {
-            throw new NotImplementedException();
+            // TODO
+            return 1f;
         }
     }
 }

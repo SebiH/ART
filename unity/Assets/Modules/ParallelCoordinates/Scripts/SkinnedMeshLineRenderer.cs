@@ -100,10 +100,8 @@ namespace Assets.Modules.ParallelCoordinates
             _mesh.MarkDynamic();
         }
 
-        private void GenerateMesh()
+        public void GenerateMesh()
         {
-            _renderer.enabled = true;
-
             var vertices = _mesh.vertices;
             var colors = _mesh.colors32;
 
@@ -123,7 +121,7 @@ namespace Assets.Modules.ParallelCoordinates
 
             _mesh.vertices = vertices;
             _mesh.colors32 = colors;
-            _mesh.RecalculateBounds();
+            //_mesh.RecalculateBounds();
         }
 
         public void UpdatePositions()
@@ -140,7 +138,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             _mesh.vertices = vertices;
-            _mesh.RecalculateBounds();
+            //_mesh.RecalculateBounds();
         }
 
         public void UpdateColors()

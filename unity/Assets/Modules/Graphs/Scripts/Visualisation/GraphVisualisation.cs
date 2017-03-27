@@ -16,14 +16,23 @@ namespace Assets.Modules.Graphs.Visualisation
         private void OnEnable()
         {
             _graph = UnityUtility.FindParent<Graph>(this);
+            _graph.OnDataChange += OnDataChange;
         }
 
-        private void Update()
+        private void OnDisable()
+        {
+            _graph.OnDataChange -= OnDataChange;
+        }
+
+        private void OnDataChange()
         {
             LabelX.Text = (_graph.DimX == null) ? "" : _graph.DimX.DisplayName;
             LabelY.Text = (_graph.DimY == null) ? "" : _graph.DimY.DisplayName;
 
-            TicksX.dimension = _graph.DimX;
+            TicksX.SourceDimension = _graph.DimX;
+            TicksX.SourceScale = _graph.ScaleX;
+            TicksY.SourceDimension = _graph.DimY;
+            TicksY.SourceScale = _graph.ScaleY;
         }
     }
 }

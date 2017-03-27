@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Modules.SurfaceGraphs
 {
-    [RequireComponent(typeof(GraphManager), typeof(SurfaceGraphLayouter))]
+    [RequireComponent(typeof(GraphManager))]
     public class SurfaceGraphInterface : MonoBehaviour
     {
         private Surface _surface;
@@ -87,44 +87,44 @@ namespace Assets.Modules.SurfaceGraphs
             }
         }
 
-        private void UpdateGraph(Graph graph, RemoteGraph remoteGraph)
+        private void UpdateGraph(GraphMetaData g, RemoteGraph remoteGraph)
         {
-            graph.IsColored = remoteGraph.isColored;
-            graph.IsSelected = remoteGraph.isSelected;
-            graph.IsFlipped = remoteGraph.isFlipped;
-            graph.IsNewlyCreated = remoteGraph.isNewlyCreated;
+            g.Graph.IsColored = remoteGraph.isColored;
+            g.Graph.IsSelected = remoteGraph.isSelected;
+            g.Graph.IsFlipped = remoteGraph.isFlipped;
+            g.Graph.IsNewlyCreated = remoteGraph.isNewlyCreated;
 
             var color = new Color();
             var colorSuccess = ColorUtility.TryParseHtmlString(remoteGraph.color, out color);
-            if (colorSuccess) { graph.Color = color; }
+            if (colorSuccess) { g.Graph.Color = color; }
             else { Debug.LogWarning("Could not parse color " + remoteGraph.color); }
 
             if (String.IsNullOrEmpty(remoteGraph.dimX))
             {
-                graph.DimX = null;
+                g.Graph.DimX = null;
             }
-            else if (graph.DimX == null || graph.DimX.DisplayName != remoteGraph.dimX)
+            else if (g.Graph.DimX == null || g.Graph.DimX.DisplayName != remoteGraph.dimX)
             {
                 _dataProvider.LoadDataAsync(remoteGraph.dimX, (dim) =>
                 {
-                    graph.DimX = dim;
+                    g.Graph.DimX = dim;
                 });
             }
 
             if (String.IsNullOrEmpty(remoteGraph.dimY))
             {
-                graph.DimY = null;
+                g.Graph.DimY = null;
             }
-            else if (graph.DimY == null || graph.DimY.DisplayName != remoteGraph.dimY)
+            else if (g.Graph.DimY == null || g.Graph.DimY.DisplayName != remoteGraph.dimY)
             {
                 _dataProvider.LoadDataAsync(remoteGraph.dimY, (dim) =>
                 {
-                    graph.DimY = dim;
+                    g.Graph.DimY = dim;
                 });
             }
 
-            graph.Position = _surface.PixelToUnityCoord(remoteGraph.pos);
-            graph.Width = _surface.PixelToUnityCoord(remoteGraph.width);
+            g.Layout.Position = _surface.PixelToUnityCoord(remoteGraph.pos);
+            g.Layout.Width = _surface.PixelToUnityCoord(remoteGraph.width);
         }
 
 

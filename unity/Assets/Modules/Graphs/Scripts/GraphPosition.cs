@@ -17,6 +17,8 @@ namespace Assets.Modules.Graphs
         private ValueAnimation _offsetAnimation = new ValueAnimation(0.6f);
         private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(0.6f);
 
+        // TODO - animate?
+        public float Width { get; set; }
 
         // Position on table
         private float _position;

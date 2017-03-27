@@ -12,4 +12,3 @@ export interface ChartDimension {
     bins?: { displayName: string, value?: number, range?: [number, number] }[];
     gradient?: { stop: number, color: string }[];
 }
-
