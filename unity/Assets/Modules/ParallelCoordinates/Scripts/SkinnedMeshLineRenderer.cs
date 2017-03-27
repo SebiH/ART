@@ -6,12 +6,12 @@ namespace Assets.Modules.ParallelCoordinates
     [RequireComponent(typeof(MeshFilter), typeof(SkinnedMeshRenderer))]
     public class SkinnedMeshLineRenderer : MonoBehaviour
     {
-        private readonly Mesh _mesh = new Mesh();
+        private Mesh _mesh;
         private MeshFilter _filter;
-        private MeshRenderer _renderer;
+        private SkinnedMeshRenderer _renderer;
 
-        // attached to destination graph, to avoid changing bone transform
-        private GraphTracker _destinationAnchor;
+        public Transform StartAnchor;
+        public Transform EndAnchor;
 
         public struct LineProperty
         {
@@ -26,17 +26,13 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void OnEnable()
         {
-            var x = new LineProperty();
-            Debug.LogError(System.Runtime.InteropServices.Marshal.SizeOf(x));
+            _mesh = new Mesh();
 
             _filter = GetComponent<MeshFilter>();
             _filter.mesh = _mesh;
 
-            _renderer = GetComponent<MeshRenderer>();
+            _renderer = GetComponent<SkinnedMeshRenderer>();
             _renderer.enabled = false;
-
-            _destinationAnchor = GetComponentInChildren<GraphTracker>();
-            if (!_destinationAnchor) { Debug.LogError("SkinnedMeshLineRenderer needs GraphTracker in as childobject"); }
 
             // initialize unchanging properties of mesh
             var triangles = new int[Lines.Length * 6];
@@ -73,8 +69,8 @@ namespace Assets.Modules.ParallelCoordinates
                 bindPoses[i * 2 + 0] = Matrix4x4.identity;
                 bindPoses[i * 2 + 1] = Matrix4x4.identity;
 
-                bones[i * 2 + 0] = transform;
-                bones[i * 2 + 1] = _destinationAnchor.transform;
+                bones[i * 2 + 0] = StartAnchor.transform;
+                bones[i * 2 + 1] = EndAnchor.transform;
 
                 boneWeights[i * 4 + 0].weight0 = 1.0f;
                 boneWeights[i * 4 + 0].boneIndex0 = i * 2 + 0;

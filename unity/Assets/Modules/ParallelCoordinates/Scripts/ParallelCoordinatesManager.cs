@@ -39,7 +39,7 @@ namespace Assets.Modules.ParallelCoordinates
 
             Debug.Assert(orderedGraphs.Length == _connections.Count - 1);
 
-            for (var i = 0; i < _connections.Count - 1; i++)
+            for (var i = 0; i < orderedGraphs.Length - 1; i++)
             {
                 var connection = _connections[i];
                 connection.Left = orderedGraphs[i];
@@ -68,6 +68,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             var connection = Instantiate(Template);
             _connections.Add(connection);
+            connection.transform.parent = transform;
             return connection;
         }
 

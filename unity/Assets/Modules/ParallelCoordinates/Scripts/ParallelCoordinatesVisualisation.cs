@@ -6,6 +6,9 @@ namespace Assets.Modules.ParallelCoordinates
     [RequireComponent(typeof(SkinnedMeshLineRenderer))]
     public class ParallelCoordinatesVisualisation : MonoBehaviour
     {
+        public GraphTracker LeftTracker;
+        public GraphTracker RightTracker;
+
         private bool _hasLeftData = false;
         private GraphMetaData _leftGraph;
         public GraphMetaData Left
@@ -23,6 +26,8 @@ namespace Assets.Modules.ParallelCoordinates
                     Debug.Assert(value != null);
                     _leftGraph = value;
                     _leftGraph.Graph.OnDataChange += OnLeftDataChange;
+                    LeftTracker.TrackedGraph = _leftGraph;
+                    LeftTracker.Track();
                     OnLeftDataChange();
                 }
             }
@@ -45,6 +50,8 @@ namespace Assets.Modules.ParallelCoordinates
                     Debug.Assert(value != null);
                     _rightGraph = value;
                     _rightGraph.Graph.OnDataChange += OnRightDataChange;
+                    RightTracker.TrackedGraph = _rightGraph;
+                    RightTracker.Track();
                     OnRightDataChange();
                 }
             }
@@ -55,7 +62,6 @@ namespace Assets.Modules.ParallelCoordinates
         private void OnEnable()
         {
             _lineRenderer = GetComponent<SkinnedMeshLineRenderer>();
-            _lineRenderer.SetHidden(true);
         }
 
         private void OnDisable()

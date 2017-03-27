@@ -9,6 +9,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void LateUpdate()
         {
+            Track();
+        }
+        
+        public void Track()
+        {
             if (TrackedGraph)
             {
                 transform.position = TrackedGraph.transform.position;

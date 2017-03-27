@@ -8,14 +8,14 @@ namespace Assets.Modules.Graphs
     public class GraphPosition : MonoBehaviour
     {
         // for selection, etc.
-        public float NormalAnimationSpeed = 0.6f;
+        const float NormalAnimationSpeed = 0.6f;
         // for scrolling, smoothing out values from webapp
-        public float FastAnimationSpeed = 0.05f;
+        const float FastAnimationSpeed = 0.05f;
 
-        private ValueAnimation _positionAnimation = new ValueAnimation(0.05f);
-        private ValueAnimation _heightAnimation = new ValueAnimation(0.6f);
-        private ValueAnimation _offsetAnimation = new ValueAnimation(0.6f);
-        private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(0.6f);
+        private ValueAnimation _positionAnimation = new ValueAnimation(FastAnimationSpeed);
+        private ValueAnimation _heightAnimation = new ValueAnimation(NormalAnimationSpeed);
+        private ValueAnimation _offsetAnimation = new ValueAnimation(NormalAnimationSpeed);
+        private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(NormalAnimationSpeed);
 
         // TODO - animate?
         public float Width { get; set; }
