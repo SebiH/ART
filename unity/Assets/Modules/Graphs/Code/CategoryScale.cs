@@ -4,10 +4,15 @@ namespace Assets.Modules.Graphs
 {
     public class CategoryScale : Scale
     {
+        public CategoryScale(CategoricalDimension dim)
+        {
+
+        }
+
         public override float Convert(float data)
         {
             // TODO
-            return 1f;
+            return data - 0.5f;
         }
     }
 }

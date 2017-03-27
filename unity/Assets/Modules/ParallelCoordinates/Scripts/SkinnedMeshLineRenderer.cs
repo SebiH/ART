@@ -3,11 +3,10 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    [RequireComponent(typeof(MeshFilter), typeof(SkinnedMeshRenderer))]
+    [RequireComponent(typeof(SkinnedMeshRenderer))]
     public class SkinnedMeshLineRenderer : MonoBehaviour
     {
         private Mesh _mesh;
-        private MeshFilter _filter;
         private SkinnedMeshRenderer _renderer;
 
         public Transform StartAnchor;
@@ -28,9 +27,6 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _mesh = new Mesh();
 
-            _filter = GetComponent<MeshFilter>();
-            _filter.mesh = _mesh;
-
             _renderer = GetComponent<SkinnedMeshRenderer>();
             _renderer.enabled = false;
 
@@ -39,6 +35,7 @@ namespace Assets.Modules.ParallelCoordinates
             var bones = new Transform[Lines.Length * 2];
             var bindPoses = new Matrix4x4[Lines.Length * 2];
             var boneWeights = new BoneWeight[Lines.Length * 4];
+            var colors = new Color32[Lines.Length * 4];
 
             for (var i = 0; i < Lines.Length; i++)
             {
@@ -88,12 +85,22 @@ namespace Assets.Modules.ParallelCoordinates
                     Color = new Color32(255, 255, 255, 255),
                     Size = 0.01f
                 };
+
+                colors[i * 4 + 0] = new Color32(255, 255, 255, 255);
+                colors[i * 4 + 1] = new Color32(255, 255, 255, 255);
+                colors[i * 4 + 2] = new Color32(255, 255, 255, 255);
+                colors[i * 4 + 3] = new Color32(255, 255, 255, 255);
             }
 
             _mesh.vertices = new Vector3[Lines.Length * 4];
-            _mesh.colors32 = new Color32[Lines.Length * 4];
+            _mesh.colors32 = colors;
             _mesh.triangles = triangles;
+            _mesh.boneWeights = boneWeights;
+            _mesh.bindposes = bindPoses;
             _mesh.MarkDynamic();
+
+            _renderer.sharedMesh = _mesh;
+            _renderer.bones = bones;
         }
 
         public void GenerateMesh()
@@ -104,7 +111,7 @@ namespace Assets.Modules.ParallelCoordinates
             for (var i = 0; i < Lines.Length; i++)
             {
                 var line = Lines[i];
-                vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
+                vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y + line.Size, 0);
                 vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, 1);
                 vertices[i * 4 + 2] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
                 vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, 1);
@@ -127,10 +134,10 @@ namespace Assets.Modules.ParallelCoordinates
             for (var i = 0; i < Lines.Length; i++)
             {
                 var line = Lines[i];
-                vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
-                vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, 1);
-                vertices[i * 4 + 2] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
-                vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, 1);
+                vertices[i * 4 + 0] = transform.InverseTransformVector(StartAnchor.TransformVector(new Vector3(0, line.Start.y + line.Size, line.Start.x)));
+                vertices[i * 4 + 1] = transform.InverseTransformVector(EndAnchor.TransformVector(new Vector3(0, line.End.y + line.Size, line.End.x)));
+                vertices[i * 4 + 2] = transform.InverseTransformVector(StartAnchor.TransformVector(new Vector3(0, line.Start.y - line.Size, line.Start.x)));
+                vertices[i * 4 + 3] = transform.InverseTransformVector(EndAnchor.TransformVector(new Vector3(0, line.End.y - line.Size, line.End.x)));
             }
 
             _mesh.vertices = vertices;

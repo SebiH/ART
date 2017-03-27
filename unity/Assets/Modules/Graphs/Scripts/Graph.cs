@@ -117,11 +117,11 @@ namespace Assets.Modules.Graphs
         {
             if (dim is CategoricalDimension)
             {
-                return new CategoryScale();
+                return new CategoryScale(dim as CategoricalDimension);
             }
             else if (dim is MetricDimension)
             {
-                return new LinearScale();
+                return new LinearScale(dim as MetricDimension);
             }
             else
             {
