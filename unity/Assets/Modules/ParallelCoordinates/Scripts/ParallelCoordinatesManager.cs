@@ -37,8 +37,6 @@ namespace Assets.Modules.ParallelCoordinates
                 .OrderBy(g => g.Layout.Position)
                 .ToArray();
 
-            Debug.Assert(orderedGraphs.Length == _connections.Count - 1);
-
             for (var i = 0; i < orderedGraphs.Length - 1; i++)
             {
                 var connection = _connections[i];
@@ -53,12 +51,12 @@ namespace Assets.Modules.ParallelCoordinates
             var graphs = Manager.GetAllGraphs();
             var graphCount = graphs.Count(g => !g.Graph.IsNewlyCreated);
 
-            while (graphCount < _connections.Count - 1)
+            while (Mathf.Max(graphCount - 1, 0) < _connections.Count)
             {
                 RemoveConnection(_connections.Last());
             }
             
-            while (graphCount > _connections.Count - 1)
+            while (graphCount > _connections.Count + 1)
             {
                 CreateConnection();
             }

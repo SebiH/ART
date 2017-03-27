@@ -79,6 +79,8 @@ namespace Assets.Modules.SurfaceGraphs
             {
                 var graph = _graphManager.CreateGraph(remoteGraph.id);
                 UpdateGraph(graph, remoteGraph);
+                graph.Layout.Init(remoteGraph.pos, 0.5f, 0.5f);
+                graph.Layout.Scale = Vector3.one * 0.7f;
                 graph.gameObject.SetActive(true);
             }
             else

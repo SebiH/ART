@@ -85,7 +85,13 @@ namespace Assets.Modules.ParallelCoordinates
             }
             else
             {
-                // TODO: update data
+                _hasLeftData = true;
+                var data = _leftGraph.Graph.GetDataPosition();
+                Debug.Assert(data.Length == _lineRenderer.Lines.Length);
+                for (var i = 0; i < _lineRenderer.Lines.Length; i++)
+                {
+                    _lineRenderer.Lines[i].Start = data[i];
+                }
             }
 
             UpdateRenderer(UpdateMode.Position);
@@ -93,13 +99,19 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void OnRightDataChange()
         {
-            if (_leftGraph.Graph.DimX == null || _leftGraph.Graph.DimY == null)
+            if (_rightGraph.Graph.DimX == null || _rightGraph.Graph.DimY == null)
             {
-                _hasLeftData = false;
+                _hasRightData = false;
             }
             else
             {
-                // TODO: update data
+                _hasRightData = true;
+                var data = _rightGraph.Graph.GetDataPosition();
+                Debug.Assert(data.Length == _lineRenderer.Lines.Length);
+                for (var i = 0; i < _lineRenderer.Lines.Length; i++)
+                {
+                    _lineRenderer.Lines[i].End = data[i];
+                }
             }
 
             UpdateRenderer(UpdateMode.Position);
@@ -111,6 +123,9 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (_hasLeftData && _hasRightData)
             {
+                LeftTracker.Track();
+                RightTracker.Track();
+
                 switch (mode)
                 {
                     case UpdateMode.Both:

@@ -22,7 +22,8 @@ namespace Assets.Modules.Graphs
 
         // Position on table
         private float _position;
-        public float Position {
+        public float Position
+        {
             set
             {
                 if (value != _position)
@@ -40,7 +41,8 @@ namespace Assets.Modules.Graphs
 
         // Distance from table
         private float _height;
-        public float Height {
+        public float Height
+        {
             set
             {
                 if (value != _height)
@@ -58,7 +60,8 @@ namespace Assets.Modules.Graphs
 
         // Distance from user
         private float _offset;
-        public float Offset {
+        public float Offset
+        {
             set
             {
                 if (value != _offset)
@@ -74,6 +77,11 @@ namespace Assets.Modules.Graphs
             }
         }
 
+        public Vector3 Scale
+        {
+            set { transform.localScale = value; }
+        }
+
         // x axis rotation
         public float FlipRotation
         {
@@ -86,26 +94,14 @@ namespace Assets.Modules.Graphs
             get { return _rotationAnimation.CurrentValue.eulerAngles.y; }
         }
 
+        private Quaternion _rotation = Quaternion.identity;
 
         private Graph _graph;
-        public event Action PositionUpdate;
 
         private void OnEnable()
         {
             _graph = GetComponent<Graph>();
-
-            _position = transform.localPosition.x;
-            _positionAnimation.Init(_position);
-
-            _height = transform.localPosition.y;
-            _heightAnimation.Init(_height);
-
-            _offset = transform.localPosition.z;
-            _offsetAnimation.Init(_offset);
-
-            _rotationAnimation.Init(transform.localRotation);
         }
-
 
         private void Update()
         {
@@ -113,8 +109,19 @@ namespace Assets.Modules.Graphs
             var actualHeight = _heightAnimation.CurrentValue;
             var actualOffset = _offsetAnimation.CurrentValue;
             transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
-
             transform.localRotation = _rotationAnimation.CurrentValue;
+
+            // TODO: from outside module?
+            Offset = _graph.IsSelected ? 0.7f : 0.5f;
+
+            var rotY = _graph.IsSelected ? 0 : 90;
+            var rotZ = _graph.IsFlipped ? 90 : 0;
+            var targetRotation = Quaternion.Euler(0, rotY, rotZ);
+            if (_rotation != targetRotation)
+            {
+                _rotation = targetRotation;
+                _rotationAnimation.Restart(_rotation);
+            }
         }
 
         public void Init(float pos, float height, float offset)
@@ -127,11 +134,6 @@ namespace Assets.Modules.Graphs
 
             _offset = offset;
             _offsetAnimation.Init(_offset);
-        }
-
-        public bool IsParallelTo(GraphPosition other)
-        {
-            return false;
         }
     }
 }
