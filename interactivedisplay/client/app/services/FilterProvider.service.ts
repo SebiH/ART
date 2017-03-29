@@ -298,7 +298,7 @@ export class FilterProvider {
             for (let data of this.globalFilter) {
                 syncFilter.push({
                     id: data.id,
-                    f: data.selectedBy.length < this.graphs.length,
+                    f: data.selectedBy.length < this.graphs.length ? 1 : 0,
                     c: data.color
                 });
 
@@ -307,7 +307,7 @@ export class FilterProvider {
             for (let data of this.globalFilter) {
                 syncFilter.push({
                     id: data.id,
-                    f: false,
+                    f: 0,
                     c: '#FFFFFF'
                 });
             }

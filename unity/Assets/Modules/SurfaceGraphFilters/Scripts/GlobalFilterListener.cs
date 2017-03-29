@@ -9,6 +9,9 @@ namespace Assets.Modules.SurfaceGraphFilters
 {
     public class GlobalFilterListener : MonoBehaviour
     {
+        const byte TRANSPARENCY_FILTERED = 10;
+        const byte TRANSPARENCY_NORMAL = 255;
+
         private Surface _surface;
 
         private void OnEnable()
@@ -71,6 +74,8 @@ namespace Assets.Modules.SurfaceGraphFilters
                     {
                         Debug.LogWarning("Unable to parse color " + metadata[i].c);
                     }
+
+                    colors[i].a = (metadata[i].f >= 1) ? TRANSPARENCY_FILTERED : TRANSPARENCY_NORMAL;
                 }
 
                 ParallelCoordinatesManager.Instance.SetColors(colors);

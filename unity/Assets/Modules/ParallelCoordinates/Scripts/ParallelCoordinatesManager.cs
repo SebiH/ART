@@ -61,7 +61,6 @@ namespace Assets.Modules.ParallelCoordinates
         {
             var graphs = Manager.GetAllGraphs();
             var graphCount = graphs.Count(g => !g.Graph.IsNewlyCreated);
-            Debug.LogWarning(graphCount);
 
             while (Mathf.Max(graphCount - 1, 0) < _connections.Count)
             {

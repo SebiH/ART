@@ -6,8 +6,8 @@ namespace Assets.Modules.SurfaceGraphFilters
     public struct RemoteValueMetadata
     {
         public int id;
-        // isFiltered
-        public bool f;
+        // isFiltered, 1 => true, 0 => false
+        public short f;
         // color in hex, e.g. #FFFFFF
         public string c;
     }
