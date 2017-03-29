@@ -1,6 +1,5 @@
 using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
-using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -8,9 +7,12 @@ namespace Assets.Modules.ParallelCoordinates
     [RequireComponent(typeof(SkinnedMeshLineRenderer))]
     public class ParallelCoordinatesVisualisation : MonoBehaviour
     {
+        const float LINE_ANIMATION_LENGTH = 0.5f;
+
         public GraphTracker LeftTracker;
         public GraphTracker RightTracker;
 
+        private Vec2ArrayAnimation _leftAnimation = new Vec2ArrayAnimation(LINE_ANIMATION_LENGTH);
         private bool _hasLeftData = false;
         private GraphMetaData _leftGraph;
         public GraphMetaData Left
@@ -35,6 +37,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
+        private Vec2ArrayAnimation _rightAnimation = new Vec2ArrayAnimation(LINE_ANIMATION_LENGTH);
         private bool _hasRightData = false;
         private GraphMetaData _rightGraph;
         public GraphMetaData Right
@@ -64,6 +67,8 @@ namespace Assets.Modules.ParallelCoordinates
         private void OnEnable()
         {
             _lineRenderer = GetComponent<SkinnedMeshLineRenderer>();
+            _rightAnimation.Update += SetRightData;
+            _leftAnimation.Update += SetLeftData;
         }
 
         private void OnDisable()
@@ -84,40 +89,70 @@ namespace Assets.Modules.ParallelCoordinates
             if (_leftGraph.Graph.DimX == null || _leftGraph.Graph.DimY == null)
             {
                 _hasLeftData = false;
+                UpdateRenderer(UpdateMode.Position);
             }
             else
             {
-                _hasLeftData = true;
                 var data = _leftGraph.Graph.GetDataPosition();
-                Debug.Assert(data.Length == _lineRenderer.Lines.Length);
-                for (var i = 0; i < _lineRenderer.Lines.Length; i++)
+                if (_hasLeftData && _hasRightData)
                 {
-                    _lineRenderer.Lines[i].Start = data[i];
+                    _leftAnimation.Restart(data);
+                }
+                else
+                {
+                    _hasLeftData = true;
+                    SetLeftData(data);
+                    _leftAnimation.Init(data);
                 }
             }
 
+        }
+        private void SetLeftData(Vector2[] data)
+        {
+            Debug.Assert(data.Length == _lineRenderer.Lines.Length);
+            for (var i = 0; i < _lineRenderer.Lines.Length; i++)
+            {
+                _lineRenderer.Lines[i].Start = data[i];
+            }
             UpdateRenderer(UpdateMode.Position);
         }
+
 
         private void OnRightDataChange()
         {
             if (_rightGraph.Graph.DimX == null || _rightGraph.Graph.DimY == null)
             {
                 _hasRightData = false;
+                UpdateRenderer(UpdateMode.Position);
             }
             else
             {
-                _hasRightData = true;
                 var data = _rightGraph.Graph.GetDataPosition();
-                Debug.Assert(data.Length == _lineRenderer.Lines.Length);
-                for (var i = 0; i < _lineRenderer.Lines.Length; i++)
+
+                if (_hasLeftData && _hasRightData)
                 {
-                    _lineRenderer.Lines[i].End = data[i];
+                    _rightAnimation.Restart(data);
+                }
+                else
+                {
+                    _hasRightData = true;
+                    SetRightData(data);
+                    _rightAnimation.Init(data);
                 }
             }
 
+        }
+
+        private void SetRightData(Vector2[] data)
+        {
+            Debug.Assert(data.Length == _lineRenderer.Lines.Length);
+            for (var i = 0; i < _lineRenderer.Lines.Length; i++)
+            {
+                _lineRenderer.Lines[i].End = data[i];
+            }
             UpdateRenderer(UpdateMode.Position);
         }
+
 
         public void SetColors(Color32[] colors)
         {
