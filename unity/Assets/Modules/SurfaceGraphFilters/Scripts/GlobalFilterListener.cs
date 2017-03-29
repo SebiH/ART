@@ -1,5 +1,4 @@
 using Assets.Modules.Core;
-using Assets.Modules.ParallelCoordinates_Deprecated;
 using Assets.Modules.Surfaces;
 using System;
 using System.Collections;
@@ -54,18 +53,18 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         private void ApplyMetadata(RemoteValueMetadata[] metadata)
         {
-            foreach (var md in metadata)
-            {
-                var line = DataLineManager.GetLine(md.id);
-                line.IsFiltered = md.f;
+            //foreach (var md in metadata)
+            //{
+            //    var line = DataLineManager.GetLine(md.id);
+            //    line.IsFiltered = md.f;
 
-                var color = new Color();
-                var parseSuccess = ColorUtility.TryParseHtmlString(md.c, out color);
-                if (parseSuccess)
-                {
-                    line.Color = color;
-                }
-            }
+            //    var color = new Color();
+            //    var parseSuccess = ColorUtility.TryParseHtmlString(md.c, out color);
+            //    if (parseSuccess)
+            //    {
+            //        line.Color = color;
+            //    }
+            //}
         }
 
 
