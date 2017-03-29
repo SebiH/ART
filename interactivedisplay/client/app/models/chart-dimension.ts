@@ -11,4 +11,5 @@ export interface ChartDimension {
     // only if isNumeric is true
     bins?: { displayName: string, value?: number, range?: [number, number] }[];
     gradient?: { stop: number, color: string }[];
+    ticks: number[];
 }

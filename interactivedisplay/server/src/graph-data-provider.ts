@@ -68,9 +68,11 @@ export class GraphDataProvider {
         let minValue = 0;
         let maxValue = 1;
         let isMetric = false;
+        let isTimeBased = false;
         let mappings: any[] | null = [];
         let bins: any[] | null = null;
         let gradient: any[] | null = null;
+        let ticks: number[] | null = null;
 
         switch (mapping.type) {
             case DataRepresentation.Categorical:
@@ -87,9 +89,11 @@ export class GraphDataProvider {
                 minValue = mapping.minValue;
                 maxValue = mapping.maxValue;
                 isMetric = true;
+                isTimeBased = mapping.isTimeBased;
                 mappings = null;
                 bins = mapping.bins;
                 gradient = mapping.gradient;
+                ticks = mapping.ticks;
                 break;
 
             default:
@@ -128,6 +132,7 @@ export class GraphDataProvider {
             },
             name: dimension,
             isMetric: isMetric,
+            isTimeBased: isTimeBased,
             mappings: mappings,
             bins: bins,
             gradient: gradient

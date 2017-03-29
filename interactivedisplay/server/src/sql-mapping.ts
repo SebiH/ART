@@ -34,11 +34,13 @@ export interface MetricSqlMapping {
     dbColumn: string;
     name: string;
     converter: (d: any) => number;
+    isTimeBased: boolean;
 
     minValue: number;
     maxValue: number;
     bins: Bin[];
     gradient: Gradient[];
+    ticks: number[];
 }
 
 export type SqlColumnMapping = CategoricalSqlMapping | MetricSqlMapping;
