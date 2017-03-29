@@ -56,12 +56,12 @@ namespace Assets.Modules.ParallelCoordinates
                  * Origin              Destination
                  */
 
-                triangles[i * 6 + 0] = i;
-                triangles[i * 6 + 1] = i + 1;
-                triangles[i * 6 + 2] = i + 2;
-                triangles[i * 6 + 3] = i + 1;
-                triangles[i * 6 + 4] = i + 3;
-                triangles[i * 6 + 5] = i + 2;
+                triangles[i * 6 + 0] = i * 4 + 0;
+                triangles[i * 6 + 1] = i * 4 + 1;
+                triangles[i * 6 + 2] = i * 4 + 2;
+                triangles[i * 6 + 3] = i * 4 + 1;
+                triangles[i * 6 + 4] = i * 4 + 3;
+                triangles[i * 6 + 5] = i * 4 + 2;
 
                 bindPoses[i * 2 + 0] = Matrix4x4.identity;
                 bindPoses[i * 2 + 1] = Matrix4x4.identity;
@@ -83,7 +83,7 @@ namespace Assets.Modules.ParallelCoordinates
                     Start = new Vector3(Random.value - 0.5f, Random.value - 0.5f, 0),
                     End = new Vector3(Random.value - 0.5f, Random.value - 0.5f, 1),
                     Color = new Color32(255, 255, 255, 255),
-                    Size = 0.01f
+                    Size = 0.0005f
                 };
 
                 colors[i * 4 + 0] = new Color32(255, 255, 255, 255);
@@ -112,9 +112,9 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 var line = Lines[i];
                 vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y + line.Size, 0);
-                vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, 1);
+                vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, 0);
                 vertices[i * 4 + 2] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
-                vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, 1);
+                vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, 0);
 
                 colors[i * 4 + 0] = line.Color;
                 colors[i * 4 + 1] = line.Color;
@@ -124,7 +124,7 @@ namespace Assets.Modules.ParallelCoordinates
 
             _mesh.vertices = vertices;
             _mesh.colors32 = colors;
-            //_mesh.RecalculateBounds();
+            _mesh.RecalculateBounds();
         }
 
         public void UpdatePositions()
@@ -134,14 +134,14 @@ namespace Assets.Modules.ParallelCoordinates
             for (var i = 0; i < Lines.Length; i++)
             {
                 var line = Lines[i];
-                vertices[i * 4 + 0] = transform.InverseTransformVector(StartAnchor.TransformVector(new Vector3(0, line.Start.y + line.Size, line.Start.x)));
-                vertices[i * 4 + 1] = transform.InverseTransformVector(EndAnchor.TransformVector(new Vector3(0, line.End.y + line.Size, line.End.x)));
-                vertices[i * 4 + 2] = transform.InverseTransformVector(StartAnchor.TransformVector(new Vector3(0, line.Start.y - line.Size, line.Start.x)));
-                vertices[i * 4 + 3] = transform.InverseTransformVector(EndAnchor.TransformVector(new Vector3(0, line.End.y - line.Size, line.End.x)));
+                vertices[i * 4 + 0] = new Vector3(line.Start.x, line.Start.y + line.Size, 0);
+                vertices[i * 4 + 1] = new Vector3(line.End.x, line.End.y + line.Size, 0);
+                vertices[i * 4 + 2] = new Vector3(line.Start.x, line.Start.y - line.Size, 0);
+                vertices[i * 4 + 3] = new Vector3(line.End.x, line.End.y - line.Size, 0);
             }
 
             _mesh.vertices = vertices;
-            //_mesh.RecalculateBounds();
+            _mesh.RecalculateBounds();
         }
 
         public void UpdateColors()

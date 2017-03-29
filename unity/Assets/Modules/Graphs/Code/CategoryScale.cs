@@ -12,7 +12,7 @@ namespace Assets.Modules.Graphs
         public override float Convert(float data)
         {
             // TODO
-            return data - 0.5f;
+            return data;
         }
     }
 }
