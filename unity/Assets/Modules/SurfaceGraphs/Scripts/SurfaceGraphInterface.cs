@@ -77,7 +77,17 @@ namespace Assets.Modules.SurfaceGraphs
             var hasDuplicate = (_graphManager.GetGraph(remoteGraph.id) != null);
             if (!hasDuplicate)
             {
-                var graph = _graphManager.CreateGraph(remoteGraph.id);
+                GraphMetaData graph;
+
+                if (remoteGraph.isNewlyCreated)
+                {
+                    graph = _graphManager.SpawnGraph(remoteGraph.id);
+                }
+                else
+                {
+                    graph = _graphManager.CreateGraph(remoteGraph.id);
+                }
+
                 UpdateGraph(graph, remoteGraph);
                 graph.Layout.Init(remoteGraph.pos, 0.5f, 0.5f);
                 graph.Layout.Scale = Vector3.one * 0.7f;
@@ -94,6 +104,12 @@ namespace Assets.Modules.SurfaceGraphs
             g.Graph.IsColored = remoteGraph.isColored;
             g.Graph.IsSelected = remoteGraph.isSelected;
             g.Graph.IsFlipped = remoteGraph.isFlipped;
+
+            if (g.Graph.IsNewlyCreated && !remoteGraph.isNewlyCreated)
+            {
+                _graphManager.RegisterGraph(g);
+            }
+
             g.Graph.IsNewlyCreated = remoteGraph.isNewlyCreated;
 
             var color = new Color();

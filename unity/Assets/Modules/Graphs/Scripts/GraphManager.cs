@@ -8,6 +8,7 @@ namespace Assets.Modules.Graphs
     {
         public GraphMetaData GraphTemplate;
         private readonly List<GraphMetaData> _graphs = new List<GraphMetaData>();
+        private readonly List<GraphMetaData> _tempGraphs = new List<GraphMetaData>();
 
         public delegate void GraphEventHandler(GraphMetaData graph);
         public event GraphEventHandler OnGraphAdded;
@@ -23,7 +24,12 @@ namespace Assets.Modules.Graphs
 
         public GraphMetaData GetGraph(int id)
         {
-            return _graphs.FirstOrDefault(g => g.Graph.Id == id);
+            var graph = _graphs.FirstOrDefault(g => g.Graph.Id == id);
+            if (!graph)
+            {
+                return _tempGraphs.FirstOrDefault(g => g.Graph.Id == id);
+            }
+            return graph;
         }
 
         public IEnumerable<GraphMetaData> GetAllGraphs()
@@ -33,7 +39,7 @@ namespace Assets.Modules.Graphs
 
         public bool HasGraph(int id)
         {
-            return _graphs.Any(g => g.Graph.Id == id);
+            return _graphs.Any(g => g.Graph.Id == id) || _tempGraphs.Any(g => g.Graph.Id == id);
         }
 
         public GraphMetaData CreateGraph(int id)
@@ -44,9 +50,10 @@ namespace Assets.Modules.Graphs
                 return GetGraph(id);
             }
 
-            var graphData = SpawnGraph();
-            graphData.Graph.Id = id;
+            var graphData = SpawnGraph(id);
+            graphData.Graph.IsNewlyCreated = false;
             _graphs.Add(graphData);
+            _tempGraphs.Remove(graphData);
 
             if (OnGraphAdded != null)
             {
@@ -54,6 +61,19 @@ namespace Assets.Modules.Graphs
             }
 
             return graphData;
+        }
+
+        public void RegisterGraph(GraphMetaData graphData)
+        {
+            _graphs.Add(graphData);
+            _tempGraphs.Remove(graphData);
+
+            graphData.Graph.IsNewlyCreated = false;
+
+            if (OnGraphAdded != null)
+            {
+                OnGraphAdded(graphData);
+            }
         }
 
         public void RemoveGraph(int id)
@@ -73,13 +93,17 @@ namespace Assets.Modules.Graphs
         }
 
         
-        private GraphMetaData SpawnGraph()
+        public GraphMetaData SpawnGraph(int id)
         {
             var graph = Instantiate(GraphTemplate);
+            graph.Graph.IsNewlyCreated = true;
             graph.transform.parent = transform;
             graph.transform.localPosition = Vector3.zero;
             graph.transform.localRotation = Quaternion.identity;
             graph.transform.localScale = Vector3.one;
+
+            graph.Graph.Id = id;
+            _tempGraphs.Add(graph);
 
             return graph;
         }

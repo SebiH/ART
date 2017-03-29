@@ -1,6 +1,7 @@
 using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -60,24 +61,52 @@ namespace Assets.Modules.ParallelCoordinates
         {
             var graphs = Manager.GetAllGraphs();
             var graphCount = graphs.Count(g => !g.Graph.IsNewlyCreated);
+            Debug.LogWarning(graphCount);
 
             while (Mathf.Max(graphCount - 1, 0) < _connections.Count)
             {
-                RemoveConnection(_connections.Last());
+                var connection = _connections.FirstOrDefault(c => c.Left == graph || c.Right == graph);
+                if (!connection)
+                {
+                    connection = _connections.Last();
+                }
+
+                var adjustConnection = _connections.FirstOrDefault(c => c.Left == connection.Right);
+                if (adjustConnection)
+                {
+                    adjustConnection.Left = null;
+                }
+
+                RemoveConnection(connection);
             }
             
             while (graphCount > _connections.Count + 1)
             {
-                CreateConnection();
+                CreateConnection(graph);
             }
         }
 
-        private ParallelCoordinatesVisualisation CreateConnection()
+        private ParallelCoordinatesVisualisation CreateConnection(GraphMetaData graph)
         {
             var connection = Instantiate(Template);
             connection.SetColors(_colorAnimation.CurrentValue);
             connection.transform.parent = transform;
-            _connections.Add(connection);
+
+            var orderedGraphs = Manager.GetAllGraphs()
+                .Where(g => !g.Graph.IsNewlyCreated)
+                .OrderBy(g => g.Layout.Position)
+                .ToList();
+
+            var graphPos = orderedGraphs.IndexOf(graph);
+            if (graphPos < 0 || graphPos >= _connections.Count)
+            {
+                _connections.Add(connection);
+            }
+            else
+            {
+                _connections.Insert(graphPos, connection);
+            }
+
             return connection;
         }
 

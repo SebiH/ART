@@ -7,7 +7,7 @@ namespace Assets.Modules.ParallelCoordinates
     [RequireComponent(typeof(SkinnedMeshLineRenderer))]
     public class ParallelCoordinatesVisualisation : MonoBehaviour
     {
-        const float LINE_ANIMATION_LENGTH = 0.5f;
+        const float LINE_ANIMATION_LENGTH = 5f;
 
         public GraphTracker LeftTracker;
         public GraphTracker RightTracker;
@@ -27,12 +27,20 @@ namespace Assets.Modules.ParallelCoordinates
                         _leftGraph.Graph.OnDataChange -= OnLeftDataChange;
                     }
 
-                    Debug.Assert(value != null);
                     _leftGraph = value;
-                    _leftGraph.Graph.OnDataChange += OnLeftDataChange;
-                    LeftTracker.TrackedGraph = _leftGraph;
-                    LeftTracker.Track();
-                    OnLeftDataChange();
+
+                    if (_leftGraph == null)
+                    {
+                        _hasLeftData = false;
+                        _lineRenderer.SetHidden(true);
+                    }
+                    else
+                    {
+                        _leftGraph.Graph.OnDataChange += OnLeftDataChange;
+                        LeftTracker.TrackedGraph = _leftGraph;
+                        LeftTracker.Track();
+                        OnLeftDataChange();
+                    }
                 }
             }
         }
@@ -52,12 +60,20 @@ namespace Assets.Modules.ParallelCoordinates
                         _rightGraph.Graph.OnDataChange -= OnRightDataChange;
                     }
 
-                    Debug.Assert(value != null);
                     _rightGraph = value;
-                    _rightGraph.Graph.OnDataChange += OnRightDataChange;
-                    RightTracker.TrackedGraph = _rightGraph;
-                    RightTracker.Track();
-                    OnRightDataChange();
+                    if (_rightGraph == null)
+                    {
+                        _hasRightData = false;
+                        _lineRenderer.SetHidden(true);
+                    }
+                    else
+                    {
+                        _rightGraph = value;
+                        _rightGraph.Graph.OnDataChange += OnRightDataChange;
+                        RightTracker.TrackedGraph = _rightGraph;
+                        RightTracker.Track();
+                        OnRightDataChange();
+                    }
                 }
             }
         }
@@ -116,7 +132,6 @@ namespace Assets.Modules.ParallelCoordinates
             }
             UpdateRenderer(UpdateMode.Position);
         }
-
 
         private void OnRightDataChange()
         {
