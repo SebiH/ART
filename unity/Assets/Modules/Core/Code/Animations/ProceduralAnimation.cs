@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -7,6 +8,7 @@ namespace Assets.Modules.Core.Animations
     {
         public delegate void UpdateHandler(T currentValue);
         public event UpdateHandler Update;
+        public event Action Finished;
 
         public T CurrentValue { get; private set; }
         public float AnimationSpeed { get; set; }
@@ -86,6 +88,11 @@ namespace Assets.Modules.Core.Animations
                         Update(CurrentValue);
                     }
                 }
+            }
+
+            if (Finished != null)
+            {
+                Finished();
             }
 
             _isRunning = false;
