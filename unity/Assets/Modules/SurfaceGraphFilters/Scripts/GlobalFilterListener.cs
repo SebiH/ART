@@ -1,4 +1,5 @@
 using Assets.Modules.Core;
+using Assets.Modules.ParallelCoordinates;
 using Assets.Modules.Surfaces;
 using System;
 using System.Collections;
@@ -53,18 +54,31 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         private void ApplyMetadata(RemoteValueMetadata[] metadata)
         {
-            //foreach (var md in metadata)
-            //{
-            //    var line = DataLineManager.GetLine(md.id);
-            //    line.IsFiltered = md.f;
+            if (metadata.Length == Globals.DataPointsCount)
+            {
+                var colors = new Color32[Globals.DataPointsCount];
 
-            //    var color = new Color();
-            //    var parseSuccess = ColorUtility.TryParseHtmlString(md.c, out color);
-            //    if (parseSuccess)
-            //    {
-            //        line.Color = color;
-            //    }
-            //}
+                for (var i = 0; i < colors.Length; i++)
+                {
+                    var color = new Color();
+                    var parseSuccess = ColorUtility.TryParseHtmlString(metadata[i].c, out color);
+
+                    if (parseSuccess)
+                    {
+                        colors[i] = color;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Unable to parse color " + metadata[i].c);
+                    }
+                }
+
+                ParallelCoordinatesManager.Instance.SetColors(colors);
+            }
+            else
+            {
+                Debug.LogError(String.Format("Invalid amount of metadata from globalfilter, expected {0}, got {1}", Globals.DataPointsCount, metadata.Length));
+            }
         }
 
 

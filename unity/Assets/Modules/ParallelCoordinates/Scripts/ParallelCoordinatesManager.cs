@@ -1,3 +1,5 @@
+using Assets.Modules.Core;
+using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,15 +9,23 @@ namespace Assets.Modules.ParallelCoordinates
 {
     public class ParallelCoordinatesManager : MonoBehaviour
     {
+        public static ParallelCoordinatesManager Instance { get; private set; }
+
         public GraphManager Manager;
         public ParallelCoordinatesVisualisation Template;
         private List<ParallelCoordinatesVisualisation> _connections = new List<ParallelCoordinatesVisualisation>();
+        private ColorsAnimation _colorAnimation = new ColorsAnimation(0.5f);
 
         private void OnEnable()
         {
+            Instance = this;
+
             Manager.OnGraphAdded += SyncConnectionCount;
             Manager.OnGraphDeleted += SyncConnectionCount;
             SyncConnectionCount(null);
+
+            _colorAnimation.Update += AnimateColors;
+            _colorAnimation.Init(new Color32[Globals.DataPointsCount]);
         }
 
         private void OnDisable()
@@ -65,8 +75,9 @@ namespace Assets.Modules.ParallelCoordinates
         private ParallelCoordinatesVisualisation CreateConnection()
         {
             var connection = Instantiate(Template);
-            _connections.Add(connection);
+            connection.SetColors(_colorAnimation.CurrentValue);
             connection.transform.parent = transform;
+            _connections.Add(connection);
             return connection;
         }
 
@@ -74,6 +85,21 @@ namespace Assets.Modules.ParallelCoordinates
         {
             _connections.Remove(connection);
             Destroy(connection);
+        }
+
+        // colorindex == data index
+        public void SetColors(Color32[] colors)
+        {
+            _colorAnimation.Restart(colors);
+        }
+
+
+        private void AnimateColors(Color32[] colors)
+        {
+            foreach (var connection in _connections)
+            {
+                connection.SetColors(colors);
+            }
         }
     }
 }

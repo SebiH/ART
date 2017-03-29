@@ -1,4 +1,6 @@
+using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -116,6 +118,17 @@ namespace Assets.Modules.ParallelCoordinates
 
             UpdateRenderer(UpdateMode.Position);
         }
+
+        public void SetColors(Color32[] colors)
+        {
+            for (var i = 0; i < _lineRenderer.Lines.Length; i++)
+            {
+                _lineRenderer.Lines[i].Color = colors[i];
+            }
+
+            UpdateRenderer(UpdateMode.Color);
+        }
+
 
         private enum UpdateMode { Position, Color, Both }
 
