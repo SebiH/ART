@@ -84,7 +84,7 @@ namespace Assets.Modules.ParallelCoordinates
         private void RemoveConnection(ParallelCoordinatesVisualisation connection)
         {
             _connections.Remove(connection);
-            Destroy(connection);
+            Destroy(connection.gameObject);
         }
 
         // colorindex == data index
