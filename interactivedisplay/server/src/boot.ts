@@ -156,7 +156,7 @@ sioServer.onMessageReceived({
 })
 
 
-let globalFilter = {};
+let globalFilter = [];
 
 webServer.addPath('/api/filter/global', (req, res, next) => {
     res.json({ globalfilter: globalFilter });
