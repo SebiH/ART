@@ -43,25 +43,7 @@ namespace Assets.Modules.SurfaceGraphs
             yield return dataWebRequest;
 
             var response = JsonUtility.FromJson<DataResponse>(dataWebRequest.text);
-            var dimData = response.data;
-            var range = response.domain.max - response.domain.min;
-
-            var data = new float[dimData.Length];
-            if (response.isMetric)
-            {
-                for (int i = 0; i < dimData.Length; i++)
-                {
-                    data[i] = (dimData[i] - response.domain.min) / range - 0.5f;
-                }
-            }
-            else
-            {
-                for (int i = 0; i < dimData.Length; i++)
-                {
-                    data[i] = (dimData[i] + 1 - response.domain.min) / (range + 2) - 0.5f;
-                }
-            }
-
+            Debug.Assert(response.data.Length == Globals.DataPointsCount, String.Format("Expected {0} datapoints, but received {1}", Globals.DataPointsCount, response.data.Length));
             Dimension dimension;
 
             if (response.isMetric)
@@ -78,7 +60,7 @@ namespace Assets.Modules.SurfaceGraphs
                 dimension = catDimension;
             }
 
-            dimension.Data = data;
+            dimension.Data = response.data;
             dimension.DisplayName = dimensionName;
             dimension.DomainMin = response.domain.min;
             dimension.DomainMax = response.domain.max;
