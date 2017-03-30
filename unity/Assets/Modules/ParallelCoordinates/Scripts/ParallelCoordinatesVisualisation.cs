@@ -7,7 +7,7 @@ namespace Assets.Modules.ParallelCoordinates
     [RequireComponent(typeof(SkinnedMeshLineRenderer))]
     public class ParallelCoordinatesVisualisation : MonoBehaviour
     {
-        const float LINE_ANIMATION_LENGTH = 5f;
+        const float LINE_ANIMATION_LENGTH = 0.5f;
 
         public GraphTracker LeftTracker;
         public GraphTracker RightTracker;

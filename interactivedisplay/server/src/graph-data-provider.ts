@@ -135,7 +135,8 @@ export class GraphDataProvider {
             isTimeBased: isTimeBased,
             mappings: mappings,
             bins: bins,
-            gradient: gradient
+            gradient: gradient,
+            ticks: ticks
         }
     }
 
