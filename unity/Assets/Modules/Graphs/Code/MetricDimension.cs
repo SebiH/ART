@@ -1,8 +1,11 @@
+using System.Collections.Generic;
+
 namespace Assets.Modules.Graphs
 {
     public class MetricDimension : Dimension
     {
         private float _range = 1;
+        public float[] PossibleTicks = new float[0];
 
         public override void RebuildData()
         {
@@ -11,6 +14,25 @@ namespace Assets.Modules.Graphs
             {
                 ScaledData[i] = Scale(Data[i]);
             }
+
+            var ticks = new List<Mapping>();
+            var format = (_range <= 10) ? "{0:0.0}" : "{0:0}";
+
+            for (var i = 0; i < PossibleTicks.Length; i++)
+            {
+                var tickNum = PossibleTicks[i];
+
+                if (DomainMin <= tickNum && tickNum <= DomainMax)
+                {
+                    ticks.Add(new Mapping
+                    {
+                        Name = tickNum.ToString(format),
+                        Value = tickNum
+                    });
+                }
+            }
+
+            Ticks = ticks.ToArray();
         }
 
         public override float Scale(float val)

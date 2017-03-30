@@ -48,14 +48,16 @@ namespace Assets.Modules.SurfaceGraphs
 
             if (response.isMetric)
             {
-                dimension = new MetricDimension();
+                var metricDimension = new MetricDimension();
+                metricDimension.PossibleTicks = response.ticks;
+                dimension = metricDimension;
             }
             else
             {
                 var catDimension = new CategoricalDimension();
                 foreach (var mapping in response.mappings)
                 {
-                    catDimension.Mappings.Add(new CategoricalDimension.Mapping { Name = mapping.name, Value = mapping.value });
+                    catDimension.Mappings.Add(new Dimension.Mapping { Name = mapping.name, Value = mapping.value });
                 }
                 dimension = catDimension;
             }
@@ -81,7 +83,10 @@ namespace Assets.Modules.SurfaceGraphs
             public DataDomain domain = null;
             public string name = "";
             public bool isMetric = true;
+            public bool isTimeBased = false;
             public DataMapping[] mappings = new DataMapping[0];
+            public GradientStop[] gradient = new GradientStop[0];
+            public float[] ticks = new float[0];
         }
 
         [Serializable]
@@ -96,6 +101,13 @@ namespace Assets.Modules.SurfaceGraphs
         {
             public float value = 0f;
             public string name = "";
+        }
+
+        [Serializable]
+        private class GradientStop
+        {
+            public float stop = 0f;
+            public string color = "#FFFFFF";
         }
     }
 }

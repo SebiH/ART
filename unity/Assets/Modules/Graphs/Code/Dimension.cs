@@ -11,6 +11,14 @@ namespace Assets.Modules.Graphs
         public float DomainMin = 0f;
         public float DomainMax = 1f;
 
+        public struct Mapping
+        {
+            public string Name;
+            public float Value;
+        }
+
+        public Mapping[] Ticks;
+
         public abstract void RebuildData();
         public abstract float Scale(float val);
     }

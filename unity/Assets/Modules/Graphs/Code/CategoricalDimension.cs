@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Assets.Modules.Graphs
@@ -6,12 +5,6 @@ namespace Assets.Modules.Graphs
     public class CategoricalDimension : Dimension
     {
         private float _range = 1;
-
-        public struct Mapping
-        {
-            public string Name;
-            public float Value;
-        }
 
         public List<Mapping> Mappings = new List<Mapping>();
 
@@ -22,6 +15,8 @@ namespace Assets.Modules.Graphs
             {
                 ScaledData[i] = Scale(Data[i]);
             }
+
+            Ticks = Mappings.ToArray();
         }
 
         public override float Scale(float val)
