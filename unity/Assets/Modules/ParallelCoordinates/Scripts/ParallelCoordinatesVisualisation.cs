@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
 using UnityEngine;
@@ -8,6 +9,21 @@ namespace Assets.Modules.ParallelCoordinates
     public class ParallelCoordinatesVisualisation : MonoBehaviour
     {
         const float LINE_ANIMATION_LENGTH = 0.5f;
+
+        protected static float[] RandomOffsetX = null;
+        protected static float[] RandomOffsetY = null;
+        static ParallelCoordinatesVisualisation()
+        {
+            RandomOffsetX = new float[Globals.DataPointsCount];
+            RandomOffsetY = new float[Globals.DataPointsCount];
+            for (var i = 0; i < RandomOffsetX.Length; i++)
+            {
+                RandomOffsetX[i] = (Random.value - 0.5f) / 70f;
+                RandomOffsetY[i] = (Random.value - 0.5f) / 70f;
+            }
+        }
+
+
 
         public GraphTracker LeftTracker;
         public GraphTracker RightTracker;
@@ -128,7 +144,7 @@ namespace Assets.Modules.ParallelCoordinates
             Debug.Assert(data.Length == _lineRenderer.Lines.Length);
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
-                _lineRenderer.Lines[i].Start = data[i];
+                _lineRenderer.Lines[i].Start = data[i] + new Vector2(RandomOffsetX[i], RandomOffsetY[i]);
             }
             UpdateRenderer(UpdateMode.Position);
         }
@@ -163,7 +179,7 @@ namespace Assets.Modules.ParallelCoordinates
             Debug.Assert(data.Length == _lineRenderer.Lines.Length);
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
-                _lineRenderer.Lines[i].End = data[i];
+                _lineRenderer.Lines[i].End = data[i] + new Vector2(RandomOffsetX[i], RandomOffsetY[i]);
             }
             UpdateRenderer(UpdateMode.Position);
         }

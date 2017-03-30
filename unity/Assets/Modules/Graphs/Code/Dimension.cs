@@ -22,15 +22,5 @@ namespace Assets.Modules.Graphs
 
         public abstract void RebuildData();
         public abstract float Scale(float val);
-
-        protected static float[] RandomOffset = null;
-        static Dimension()
-        {
-            RandomOffset = new float[Globals.DataPointsCount];
-            for (var i = 0; i < RandomOffset.Length; i++)
-            {
-                RandomOffset[i] = Random.value / 50f;
-            }
-        }
     }
 }
