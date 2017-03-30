@@ -83,6 +83,8 @@ namespace Assets.Modules.SurfaceGraphs
             dimension.DomainMin = response.domain.min;
             dimension.DomainMax = response.domain.max;
 
+            dimension.RebuildData();
+
             foreach (var onDataLoaded in _loadOperations[dimensionName])
             {
                 onDataLoaded(dimension);

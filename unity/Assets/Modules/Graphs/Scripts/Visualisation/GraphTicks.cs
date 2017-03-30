@@ -22,27 +22,11 @@ namespace Assets.Modules.Graphs.Visualisation
             }
         }
 
-        private Scale _scale;
-        public Scale SourceScale
-        {
-            get { return _scale; }
-            set
-            {
-                if (_scale != value)
-                {
-                    _scale = value;
-                    BuildTicks();
-                }
-            }
-        }
-
-
-
         private void BuildTicks()
         {
             ClearTicks();
 
-            if (_dimension != null && _scale != null)
+            if (_dimension != null)
             {
                 // TODO
             }

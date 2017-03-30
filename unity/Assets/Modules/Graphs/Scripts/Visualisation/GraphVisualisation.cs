@@ -30,9 +30,7 @@ namespace Assets.Modules.Graphs.Visualisation
             LabelY.Text = (_graph.DimY == null) ? "" : _graph.DimY.DisplayName;
 
             TicksX.SourceDimension = _graph.DimX;
-            TicksX.SourceScale = _graph.ScaleX;
             TicksY.SourceDimension = _graph.DimY;
-            TicksY.SourceScale = _graph.ScaleY;
         }
     }
 }
