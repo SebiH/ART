@@ -1,7 +1,6 @@
 using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -23,7 +22,6 @@ namespace Assets.Modules.ParallelCoordinates
 
             Manager.OnGraphAdded += SyncConnectionCount;
             Manager.OnGraphDeleted += SyncConnectionCount;
-            SyncConnectionCount(null);
 
             _colorAnimation.Update += AnimateColors;
             _colorAnimation.Init(new Color32[Globals.DataPointsCount]);
@@ -47,6 +45,11 @@ namespace Assets.Modules.ParallelCoordinates
                 .Where(g => !g.Graph.IsNewlyCreated)
                 .OrderBy(g => g.Layout.Position)
                 .ToArray();
+
+            if (_connections.Count != Mathf.Max(orderedGraphs.Length - 1, 0))
+            {
+                SyncConnectionCount(null);
+            }
 
             for (var i = 0; i < orderedGraphs.Length - 1; i++)
             {
