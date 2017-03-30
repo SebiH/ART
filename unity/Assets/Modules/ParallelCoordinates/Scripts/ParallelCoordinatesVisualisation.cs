@@ -12,7 +12,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         protected static float[] RandomOffsetX = null;
         protected static float[] RandomOffsetY = null;
-        static ParallelCoordinatesVisualisation()
+        private void InitRandom()
         {
             RandomOffsetX = new float[Globals.DataPointsCount];
             RandomOffsetY = new float[Globals.DataPointsCount];
@@ -98,6 +98,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void OnEnable()
         {
+            if (RandomOffsetX == null)
+            {
+                InitRandom();
+            }
+
             _lineRenderer = GetComponent<SkinnedMeshLineRenderer>();
             _rightAnimation.Update += SetRightData;
             _leftAnimation.Update += SetLeftData;
