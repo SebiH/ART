@@ -12,7 +12,7 @@ namespace Assets.Modules.Graphs
             _range = DomainMax - DomainMin;
             for (var i = 0; i < Data.Length; i++)
             {
-                ScaledData[i] = Scale(Data[i]);
+                ScaledData[i] = Scale(Data[i]) + RandomOffset[i];
             }
 
             var ticks = new List<Mapping>();
