@@ -15,7 +15,7 @@ namespace Assets.Modules.Graphs.Visualisation
         private bool _hasData = false;
         private Vec2ArrayAnimation _posAnimation = new Vec2ArrayAnimation(POINT_ANIMATION_LENGTH);
 
-        private void Start()
+        private void OnEnable()
         {
             _pointRenderer = GetComponent<PointRenderer>();
             _graph = UnityUtility.FindParent<Graph>(this);
