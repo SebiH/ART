@@ -28,7 +28,11 @@ namespace Assets.Modules.Graphs.Visualisation
 
             if (_dimension != null)
             {
-                // TODO
+                foreach (var tick in _dimension.Ticks)
+                {
+                    var tickGO = SpawnTick(tick.Name, _dimension.Scale(tick.Value));
+                    _ticks.Add(tickGO);
+                }
             }
         }
 
@@ -40,6 +44,20 @@ namespace Assets.Modules.Graphs.Visualisation
             }
 
             _ticks.Clear();
+        }
+
+        private GraphLabel SpawnTick(string name, float position)
+        {
+            var tick = Instantiate(TickTemplate);
+            tick.Text = name;
+
+            var tickTransform = tick.transform as RectTransform;
+            tickTransform.SetParent(transform);
+            tickTransform.localPosition = new Vector3(position * 20, 0, 0) * 2;
+            tickTransform.localRotation = Quaternion.Euler(0, 0, -65);
+            tickTransform.localScale = Vector3.one;
+
+            return tick;
         }
     }
 }

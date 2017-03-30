@@ -26,7 +26,7 @@ namespace Assets.Modules.Graphs
                 {
                     ticks.Add(new Mapping
                     {
-                        Name = tickNum.ToString(format),
+                        Name = string.Format(format, tickNum),
                         Value = tickNum
                     });
                 }
