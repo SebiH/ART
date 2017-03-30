@@ -92,6 +92,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             var connection = Instantiate(Template);
             connection.SetColors(_colorAnimation.CurrentValue);
+            if (graph != null) { graph.Visualisation.DataField.SetColors(_colorAnimation.CurrentValue); }
             connection.transform.parent = transform;
 
             var orderedGraphs = Manager.GetAllGraphs()
@@ -130,6 +131,11 @@ namespace Assets.Modules.ParallelCoordinates
             foreach (var connection in _connections)
             {
                 connection.SetColors(colors);
+            }
+
+            foreach (var graph in Manager.GetAllGraphs())
+            {
+                graph.Visualisation.DataField.SetColors(colors);
             }
         }
     }
