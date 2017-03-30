@@ -1,4 +1,4 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright file="Polygon.cs" company="">
 // Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
@@ -107,7 +107,7 @@ namespace TriangleNet.Geometry
         public Rectangle Bounds()
         {
             var bounds = new Rectangle();
-            bounds.Expand(this.points);
+            bounds.Expand(this.points.ConvertAll(v => new Point(v.x, v.y, v.label)));
 
             return bounds;
         }

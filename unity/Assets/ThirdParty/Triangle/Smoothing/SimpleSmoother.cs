@@ -1,4 +1,4 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright file="SimpleSmoother.cs" company="">
 // Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
@@ -6,6 +6,7 @@
 
 namespace TriangleNet.Smoothing
 {
+    using System.Linq;
     using TriangleNet.Geometry;
     using TriangleNet.Meshing;
     using TriangleNet.Topology.DCEL;
@@ -159,7 +160,7 @@ namespace TriangleNet.Smoothing
                 data.Points.Add(v);
             }
 
-            data.Segments.AddRange(mesh.subsegs.Values);
+            data.Segments.AddRange(mesh.subsegs.Values.ToArray());
 
             data.Holes.AddRange(mesh.holes);
             data.Regions.AddRange(mesh.regions);

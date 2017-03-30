@@ -1,4 +1,4 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright file="Contour.cs" company="">
 // Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
 // </copyright>
@@ -130,7 +130,7 @@ namespace TriangleNet.Geometry
         private static Point FindPointInPolygon(List<Vertex> contour, int limit, double eps)
         {
             var bounds = new Rectangle();
-            bounds.Expand(contour);
+            bounds.Expand(contour.ConvertAll(v => new Point(v.x, v.y, v.label)));
 
             int length = contour.Count;
 

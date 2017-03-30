@@ -1,4 +1,4 @@
-﻿// -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // <copyright file="TriangleReader.cs" company="">
 // Original Triangle code by Jonathan Richard Shewchuk, http://www.cs.cmu.edu/~quake/triangle.html
 // Triangle.NET code by Christian Woltering, http://triangle.codeplex.com/
@@ -35,7 +35,7 @@ namespace TriangleNet.IO
 
             string line = reader.ReadLine().Trim();
 
-            while (String.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+            while (String.IsNullOrEmpty(line) || line.StartsWith("#"))
             {
                 if (reader.EndOfStream)
                 {
