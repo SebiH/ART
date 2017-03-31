@@ -9,13 +9,16 @@ namespace Assets.Modules.SurfaceGraphFilters
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class FilterRenderer : MonoBehaviour
     {
-        public int Id;
+        const byte TRANSPARENCY = 80;
+
+        public int Id { get; set; }
 
         private MeshFilter _filter;
         private MeshRenderer _renderer;
 
         private Graph _graph = null;
         private float[] _path = null;
+        private Color32 _color = new Color32(255, 255, 255, TRANSPARENCY);
 
         private void OnEnable()
         {
@@ -46,10 +49,19 @@ namespace Assets.Modules.SurfaceGraphFilters
             }
         }
 
+        public void SetColor(Color32 color)
+        {
+            _color = new Color32(color.r, color.g, color.b, TRANSPARENCY);
+        }
+
+        public void UpdateColor(Color32 color)
+        {
+            SetColor(color);
+            RegeneratePath();
+        }
+
         public void RenderPath(float[] path)
         {
-            var mesh = new Mesh();
-            _filter.mesh = mesh;
             _path = path;
 
             if (path.Length < 6)
@@ -92,6 +104,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             // convert triangulated mesh into unity mesh
             var triangles = new int[generatedMesh.Triangles.Count * 3];
             var vertices = new Vector3[generatedMesh.Triangles.Count * 3];
+            var colors = new Color32[vertices.Length];
             var counter = 0;
 
             foreach (var triangle in generatedMesh.Triangles)
@@ -105,11 +118,18 @@ namespace Assets.Modules.SurfaceGraphFilters
                 vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
                 vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
 
+                colors[counter + 0] = _color;
+                colors[counter + 1] = _color;
+                colors[counter + 2] = _color;
+
                 counter += 3;
             }
 
+            var mesh = new Mesh();
+            _filter.mesh = mesh;
             mesh.vertices = vertices;
             mesh.triangles = triangles;
+            mesh.colors32 = colors;
             //mesh.RecalculateBounds();
         }
     }

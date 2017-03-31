@@ -18,6 +18,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         private Surface _surface;
         private GraphManager _graphManager;
         private readonly List<FilterRenderer> _filters = new List<FilterRenderer>();
+        private readonly List<RemoteFilter> _remoteFilters = new List<RemoteFilter>();
 
         private void OnEnable()
         {
@@ -128,7 +129,39 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         private void UpdateFilter(RemoteFilter rFilter, FilterRenderer filter)
         {
-            filter.RenderPath(rFilter.path);
+            var matchingFilter = _remoteFilters.FirstOrDefault(rf => rf.id == rFilter.id);
+            bool needsPathUpdate = true;
+            bool needsColorUpdate = true;
+
+            if (matchingFilter != null)
+            {
+                needsPathUpdate = (matchingFilter.path.Length != rFilter.path.Length);
+                needsColorUpdate = (matchingFilter.color != rFilter.color);
+                _remoteFilters.Remove(matchingFilter);
+            }
+
+            _remoteFilters.Add(rFilter);
+
+            var color = new Color(255, 255, 255, 255);
+            var colorSuccess = ColorUtility.TryParseHtmlString(rFilter.color, out color);
+            if (!colorSuccess)
+            {
+                Debug.LogWarning("Could not parse color " + rFilter.color);
+            }
+
+            if (needsPathUpdate && needsColorUpdate)
+            {
+                filter.SetColor(color);
+                filter.RenderPath(rFilter.path);
+            }
+            else if (needsPathUpdate)
+            {
+                filter.RenderPath(rFilter.path);
+            }
+            else if (needsColorUpdate)
+            {
+                filter.UpdateColor(color);
+            }
         }
 
         private void RemoveFilter(int id)

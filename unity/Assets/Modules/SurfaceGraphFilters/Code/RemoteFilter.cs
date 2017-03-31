@@ -6,7 +6,6 @@ namespace Assets.Modules.SurfaceGraphFilters
     public class RemoteFilter
     {
         public int id = -1;
-        public int[] indices = new int[0];
         public int origin;
         public string color;
         public bool isOverview;
