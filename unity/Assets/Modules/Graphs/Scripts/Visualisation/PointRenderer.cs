@@ -68,10 +68,11 @@ namespace Assets.Modules.Graphs.Visualisation
             for (var i = 0; i < Points.Length; i++)
             {
                 var point = Points[i];
-                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, 0);
-                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, 0);
-                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, 0);
-                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, 0);
+                var rndOffset = (Random.value - 0.5f) / 1000f;
+                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, rndOffset);
+                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, rndOffset);
+                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, rndOffset);
+                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, rndOffset);
 
                 colors[i * 4 + 0] = point.Color;
                 colors[i * 4 + 1] = point.Color;
@@ -107,10 +108,12 @@ namespace Assets.Modules.Graphs.Visualisation
             for (var i = 0; i < Points.Length; i++)
             {
                 var point = Points[i];
-                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, 0);
-                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, 0);
-                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, 0);
-                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, 0);
+                // to avoid z-fighting
+                var rndOffset = (Random.value - 0.5f) / 1000f;
+                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, rndOffset);
+                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, rndOffset);
+                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, rndOffset);
+                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, rndOffset);
             }
 
             _mesh.vertices = vertices;
