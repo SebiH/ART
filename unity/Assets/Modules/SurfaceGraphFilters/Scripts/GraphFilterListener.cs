@@ -1,4 +1,6 @@
 using Assets.Modules.Core;
+using Assets.Modules.Graphs;
+using Assets.Modules.SurfaceGraphs;
 using Assets.Modules.Surfaces;
 using System;
 using System.Collections;
@@ -8,17 +10,21 @@ using UnityEngine;
 
 namespace Assets.Modules.SurfaceGraphFilters
 {
+    [RequireComponent(typeof(GraphManager), typeof(SurfaceGraphInterface))]
     public class GraphFilterListener : MonoBehaviour
     {
         public FilterRenderer FilterTemplate;
 
         private Surface _surface;
+        private GraphManager _graphManager;
         private readonly List<FilterRenderer> _filters = new List<FilterRenderer>();
 
         private void OnEnable()
         {
             _surface = UnityUtility.FindParent<Surface>(this);
             _surface.OnAction += HandleSurfaceAction;
+
+            _graphManager = GetComponent<GraphManager>();
 
             StartCoroutine(InitWebData());
         }
@@ -32,6 +38,12 @@ namespace Assets.Modules.SurfaceGraphFilters
         {
             var request = new WWW(String.Format("{0}:{1}/api/filter/list", Globals.SurfaceServerIp, Globals.SurfaceWebPort));
             yield return request;
+
+            var graphInterface = GetComponent<SurfaceGraphInterface>();
+            while (!graphInterface.IsInitialized)
+            {
+                yield return new WaitForEndOfFrame();
+            }
 
             if (request.text != null && request.text.Length > 0)
             {
@@ -76,18 +88,28 @@ namespace Assets.Modules.SurfaceGraphFilters
         private void AddFilter(RemoteFilter rFilter)
         {
             var filter = _filters.FirstOrDefault(f => f.Id == rFilter.id);
-            if (!filter)
+            var graph = _graphManager.GetGraph(rFilter.origin);
+            if (graph)
             {
-                filter = Instantiate(FilterTemplate);
-                _filters.Add(filter);
-                filter.Id = rFilter.id;
+                if (!filter)
+                {
+                    filter = Instantiate(FilterTemplate);
+                    filter.Init(graph);
+
+                    _filters.Add(filter);
+                    filter.Id = rFilter.id;
+                }
+                else
+                {
+                    Debug.LogWarning("Tried to add already existing filter with id " + rFilter.id);
+                }
+
+                UpdateFilter(rFilter, filter);
             }
             else
             {
-                Debug.LogWarning("Tried to add already existing filter with id " + rFilter.id);
+                Debug.LogWarning("Tried to add filter for non-existing graph " + rFilter.id);
             }
-
-            UpdateFilter(rFilter, filter);
         }
 
         private void UpdateFilter(RemoteFilter rFilter)

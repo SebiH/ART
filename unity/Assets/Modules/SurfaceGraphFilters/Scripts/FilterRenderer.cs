@@ -1,3 +1,4 @@
+using Assets.Modules.Graphs;
 using System;
 using TriangleNet.Geometry;
 using TriangleNet.Meshing;
@@ -13,17 +14,43 @@ namespace Assets.Modules.SurfaceGraphFilters
         private MeshFilter _filter;
         private MeshRenderer _renderer;
 
+        private Graph _graph = null;
+        private float[] _path = null;
+
         private void OnEnable()
         {
             _filter = GetComponent<MeshFilter>();
             _renderer = GetComponent<MeshRenderer>();
         }
 
+        private void OnDisable()
+        {
+            if (_graph)
+            {
+                _graph.OnDataChange -= RegeneratePath;
+            }
+        }
+
+        public void Init(GraphMetaData g)
+        {
+            transform.SetParent(g.Visualisation.transform, false);
+            _graph = g.Graph;
+            _graph.OnDataChange += RegeneratePath;
+        }
+
+        private void RegeneratePath()
+        {
+            if (_path != null)
+            {
+                RenderPath(_path);
+            }
+        }
 
         public void RenderPath(float[] path)
         {
             var mesh = new Mesh();
             _filter.mesh = mesh;
+            _path = path;
 
             if (path.Length < 6)
             {
@@ -37,11 +64,21 @@ namespace Assets.Modules.SurfaceGraphFilters
                 return;
             }
 
+            if (_graph.DimX == null || _graph.DimY == null)
+            {
+                // might occur if dimensions haven't been loaded yet
+                Debug.LogWarning("Graph has filters without dimensions");
+                return;
+            }
+
+
             // triangulate polygon into mesh
             var polyVertices = new Vertex[path.Length / 2];
+            var dimX = _graph.DimX;
+            var dimY = _graph.DimY;
             for (var i = 0; i < path.Length / 2; i++)
             {
-                polyVertices[i] = new Vertex(path[i * 2], path[i * 2 + 1]);
+                polyVertices[i] = new Vertex(dimX.Scale(path[i * 2]), dimY.Scale(path[i * 2 + 1]));
             }
 
             var polygon = new Polygon();

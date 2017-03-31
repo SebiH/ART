@@ -10,12 +10,15 @@ namespace Assets.Modules.SurfaceGraphs
     [RequireComponent(typeof(GraphManager))]
     public class SurfaceGraphInterface : MonoBehaviour
     {
+        public bool IsInitialized { get; private set; }
+
         private Surface _surface;
         private GraphManager _graphManager;
         private RemoteDataProvider _dataProvider = new RemoteDataProvider();
 
         void OnEnable()
         {
+            IsInitialized = false;
             // search for Surface anchor on parents
             _surface = UnityUtility.FindParent<Surface>(this);
             _surface.OnAction += HandleSurfaceAction;
@@ -43,6 +46,8 @@ namespace Assets.Modules.SurfaceGraphs
                     AddGraph(graph);
                 }
             }
+
+            IsInitialized = true;
         }
 
         private void HandleSurfaceAction(string command, string payload)
