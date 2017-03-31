@@ -37,6 +37,12 @@ export class Filter {
             ];
         }
 
+        let unityPath: number[] = [];
+        for (let p of this.path) {
+            unityPath.push(p[0]);
+            unityPath.push(p[1]);
+        }
+
         return {
             id: this.id,
             origin: this.origin.id,
@@ -44,7 +50,7 @@ export class Filter {
             isOverview: this.isOverview,
 
             type: this.type,
-            path: this.path,
+            path: unityPath,
             category: this.category,
             range: sortedRange
         };
@@ -64,7 +70,10 @@ export class Filter {
                 filter.range = jFilter.range;
                 break;
             case FilterType.Detail:
-                filter.path = jFilter.path;
+                filter.path = [];
+                for (let i = 0; i < jFilter.path.length; i += 2) {
+                    filter.path.push([jFilter.path[i], jFilter.path[i + 1]])
+                }
                 break;
         }
 

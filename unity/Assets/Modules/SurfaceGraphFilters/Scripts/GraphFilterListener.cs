@@ -2,13 +2,18 @@ using Assets.Modules.Core;
 using Assets.Modules.Surfaces;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.SurfaceGraphFilters
 {
     public class GraphFilterListener : MonoBehaviour
     {
+        public FilterRenderer FilterTemplate;
+
         private Surface _surface;
+        private readonly List<FilterRenderer> _filters = new List<FilterRenderer>();
 
         private void OnEnable()
         {
@@ -33,7 +38,11 @@ namespace Assets.Modules.SurfaceGraphFilters
                 var filterWrapper = JsonUtility.FromJson<RemoteFilterWrapper>(request.text);
                 foreach (var filter in filterWrapper.filters)
                 {
-                    // TODO
+                    var filterGO = Instantiate(FilterTemplate);
+                    Debug.Log(request.text);
+                    _filters.Add(filterGO);
+                    filterGO.Id = filter.id;
+                    filterGO.RenderPath(filter.path);
                 }
             }
         }
@@ -43,12 +52,33 @@ namespace Assets.Modules.SurfaceGraphFilters
             switch (cmd)
             {
                 case "+filter":
+                    {
+                        var filterWrapper = JsonUtility.FromJson<RemoteFilterWrapper>(payload);
+                        foreach (var filter in filterWrapper.filters)
+                        {
+                            var filterGO = Instantiate(FilterTemplate);
+                            _filters.Add(filterGO);
+                            filterGO.Id = filter.id;
+                            filterGO.RenderPath(filter.path);
+                        }
+                    }
                     break;
 
                 case "filter":
+                    {
+                        var filter = JsonUtility.FromJson<RemoteFilter>(payload);
+                        var filterGO = _filters.FirstOrDefault(f => f.Id == filter.id);
+                        if (filterGO) { filterGO.RenderPath(filter.path); }
+                    }
                     break;
 
                 case "-filter":
+                    {
+                        var id = int.Parse(payload);
+                        var filterGO = _filters.FirstOrDefault(f => f.Id == id);
+                        _filters.Remove(filterGO);
+                        Destroy(filterGO.gameObject);
+                    }
                     break;
             }
         }

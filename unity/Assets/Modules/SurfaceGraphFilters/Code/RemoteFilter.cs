@@ -12,8 +12,8 @@ namespace Assets.Modules.SurfaceGraphFilters
         public bool isOverview;
 
         public int type;
-        public int[][] path;
+        public float[] path;
         public int category;
-        public int[] range;
+        public float[] range;
     }
 }
