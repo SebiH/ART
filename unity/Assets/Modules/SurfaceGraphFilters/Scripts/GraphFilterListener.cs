@@ -38,11 +38,7 @@ namespace Assets.Modules.SurfaceGraphFilters
                 var filterWrapper = JsonUtility.FromJson<RemoteFilterWrapper>(request.text);
                 foreach (var filter in filterWrapper.filters)
                 {
-                    var filterGO = Instantiate(FilterTemplate);
-                    Debug.Log(request.text);
-                    _filters.Add(filterGO);
-                    filterGO.Id = filter.id;
-                    filterGO.RenderPath(filter.path);
+                    AddFilter(filter);
                 }
             }
         }
@@ -53,42 +49,81 @@ namespace Assets.Modules.SurfaceGraphFilters
             {
                 case "+filter":
                     {
-                        var filterWrapper = JsonUtility.FromJson<RemoteFilterWrapper>(payload);
-                        foreach (var filter in filterWrapper.filters)
-                        {
-                            var filterGO = Instantiate(FilterTemplate);
-                            _filters.Add(filterGO);
-                            filterGO.Id = filter.id;
-                            filterGO.RenderPath(filter.path);
-                        }
+                        var filter = JsonUtility.FromJson<RemoteFilter>(payload);
+                        AddFilter(filter);
                     }
                     break;
 
                 case "filter":
                     {
-                        var filter = JsonUtility.FromJson<RemoteFilter>(payload);
-                        var filterGO = _filters.FirstOrDefault(f => f.Id == filter.id);
-                        if (filterGO) { filterGO.RenderPath(filter.path); }
+                        var filterWrapper = JsonUtility.FromJson<RemoteFilterWrapper>(payload);
+                        foreach (var filter in filterWrapper.filters)
+                        {
+                            UpdateFilter(filter);
+                        }
                     }
                     break;
 
                 case "-filter":
                     {
                         var id = int.Parse(payload);
-                        var filterGO = _filters.FirstOrDefault(f => f.Id == id);
-                        _filters.Remove(filterGO);
-                        Destroy(filterGO.gameObject);
+                        RemoveFilter(id);
                     }
                     break;
             }
         }
 
+        private void AddFilter(RemoteFilter rFilter)
+        {
+            var filter = _filters.FirstOrDefault(f => f.Id == rFilter.id);
+            if (!filter)
+            {
+                filter = Instantiate(FilterTemplate);
+                _filters.Add(filter);
+                filter.Id = rFilter.id;
+            }
+            else
+            {
+                Debug.LogWarning("Tried to add already existing filter with id " + rFilter.id);
+            }
+
+            UpdateFilter(rFilter, filter);
+        }
+
+        private void UpdateFilter(RemoteFilter rFilter)
+        {
+            var filter = _filters.FirstOrDefault(f => f.Id == rFilter.id);
+
+            if (!filter)
+            {
+                AddFilter(rFilter);
+            }
+            else
+            {
+                UpdateFilter(rFilter, filter);
+            }
+        }
+
+        private void UpdateFilter(RemoteFilter rFilter, FilterRenderer filter)
+        {
+            filter.RenderPath(rFilter.path);
+        }
+
+        private void RemoveFilter(int id)
+        {
+            var filter = _filters.FirstOrDefault(f => f.Id == id);
+            if (filter)
+            {
+                _filters.Remove(filter);
+                Destroy(filter.gameObject);
+            }
+        }
 
 
         [Serializable]
         private class RemoteFilterWrapper
         {
-            public RemoteFilter[] filters = null;
+            public RemoteFilter[] filters = new RemoteFilter[0];
         }
     }
 
