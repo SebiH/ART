@@ -1,5 +1,6 @@
 using Assets.Modules.Graphs;
 using System;
+using System.Linq;
 using TriangleNet.Geometry;
 using TriangleNet.Meshing;
 using UnityEngine;
@@ -19,6 +20,25 @@ namespace Assets.Modules.SurfaceGraphFilters
         private Graph _graph = null;
         private float[] _path = null;
         private Color32 _color = new Color32(255, 255, 255, TRANSPARENCY);
+        private bool _useGradients = false;
+        private GradientStop[] _gradients;
+
+        public struct GradientStop
+        {
+            public float Stop;
+            public Color32 Color;
+            public GradientStop(float stop, string color)
+            {
+                Stop = stop;
+                Color = new Color32(255, 255, 255, TRANSPARENCY);
+                var col = new Color();
+                var colorSuccess = ColorUtility.TryParseHtmlString(color, out col);
+                if (colorSuccess)
+                {
+                    Color = new Color32((byte)(col.r * 255), (byte)(col.g * 255), (byte)(col.b * 255), TRANSPARENCY);
+                }
+            }
+        }
 
         private void OnEnable()
         {
@@ -51,12 +71,25 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         public void SetColor(Color32 color)
         {
+            _useGradients = false;
             _color = new Color32(color.r, color.g, color.b, TRANSPARENCY);
+        }
+
+        public void SetGradient(GradientStop[] gradients)
+        {
+            _useGradients = true;
+            _gradients = gradients.OrderBy(g => g.Stop).ToArray();
         }
 
         public void UpdateColor(Color32 color)
         {
             SetColor(color);
+            RegeneratePath();
+        }
+
+        public void UpdateGradient(GradientStop[] gradients)
+        {
+            SetGradient(gradients);
             RegeneratePath();
         }
 
@@ -83,7 +116,18 @@ namespace Assets.Modules.SurfaceGraphFilters
                 return;
             }
 
+            if (_useGradients)
+            {
+                RenderGradientPath(path);
+            }
+            else
+            {
+                RenderColorPath(path);
+            }
+        }
 
+        private void RenderColorPath(float[] path)
+        {
             // triangulate polygon into mesh
             var polyVertices = new Vertex[path.Length / 2];
             var dimX = _graph.DimX;
@@ -131,6 +175,107 @@ namespace Assets.Modules.SurfaceGraphFilters
             mesh.triangles = triangles;
             mesh.colors32 = colors;
             //mesh.RecalculateBounds();
+        }
+        
+        private void RenderGradientPath(float[] path)
+        {
+            // triangulate polygon into mesh
+            var polyVertices = new Vertex[path.Length / 2];
+            var dimX = _graph.DimX;
+            var dimY = _graph.DimY;
+            for (var i = 0; i < path.Length / 2; i++)
+            {
+                polyVertices[i] = new Vertex(dimX.Scale(path[i * 2]), dimY.Scale(path[i * 2 + 1]));
+            }
+
+            var polygon = new Polygon();
+            polygon.Add(new Contour(polyVertices));
+
+            var options = new ConstraintOptions { Convex = false, ConformingDelaunay = false };
+            var quality = new QualityOptions { };
+            var generatedMesh = polygon.Triangulate(options, quality);
+
+            // quick hack: gradient cannot expand outside of graph bounds [-0.5, 0.5]
+            double min, max;
+            if (_graph.IsFlipped)
+            {
+                min = Math.Max(generatedMesh.Bounds.Top, -0.5);
+                max = Math.Min(generatedMesh.Bounds.Bottom, 0.5);
+            }
+            else
+            {
+                min = Math.Max(generatedMesh.Bounds.Left, -0.5);
+                max = Math.Min(generatedMesh.Bounds.Right, 0.5);
+            }
+            var range = max - min;
+
+            // convert triangulated mesh into unity mesh
+            var triangles = new int[generatedMesh.Triangles.Count * 3];
+            var vertices = new Vector3[generatedMesh.Triangles.Count * 3];
+            var colors = new Color32[vertices.Length];
+            var counter = 0;
+
+            foreach (var triangle in generatedMesh.Triangles)
+            {
+                triangles[counter + 0] = counter + 0;
+                triangles[counter + 1] = counter + 2;
+                triangles[counter + 2] = counter + 1;
+
+                var vectors = triangle.vertices;
+                vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
+                vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
+                vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
+
+                if (_graph.IsFlipped)
+                {
+                    colors[counter + 0] = GetGradient((vectors[0].y - min) / range);
+                    colors[counter + 1] = GetGradient((vectors[1].y - min) / range);
+                    colors[counter + 2] = GetGradient((vectors[2].y - min) / range);
+                }
+                else
+                {
+                    colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
+                    colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
+                    colors[counter + 2] = GetGradient((vectors[2].x - min) / range);
+                }
+
+                counter += 3;
+            }
+
+            var mesh = new Mesh();
+            _filter.mesh = mesh;
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            mesh.colors32 = colors;
+            //mesh.RecalculateBounds();
+        }
+
+        private Color32 GetGradient(double position)
+        {
+            if (position <= 0)
+            {
+                return _gradients[0].Color;
+            }
+
+            if (position >= 1)
+            {
+                return _gradients[_gradients.Length - 1].Color;
+            }
+
+
+            for (var i = 0; i < _gradients.Length - 1; i++)
+            {
+                var g1 = _gradients[i];
+                var g2 = _gradients[i + 1];
+
+                if (g1.Stop <= position && position <= g2.Stop)
+                {
+                    var weight = (position - g1.Stop) / (g2.Stop - g1.Stop);
+                    return Color32.Lerp(g1.Color, g2.Color, Convert.ToSingle(weight));
+                }
+            }
+
+            return new Color32(255, 255, 255, TRANSPARENCY);
         }
     }
 }

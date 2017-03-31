@@ -14,5 +14,14 @@ namespace Assets.Modules.SurfaceGraphFilters
         public float[] path;
         public int category;
         public float[] range;
+
+        public GradientStop[] gradient = null;
+
+        [Serializable]
+        public struct GradientStop
+        {
+            public float stop;
+            public string color;
+        }
     }
 }

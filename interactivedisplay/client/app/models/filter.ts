@@ -23,6 +23,7 @@ export class Filter {
     public category?: number;
     // for 1d metric chart filters
     public range?: [number, number];
+    public gradient?: { stop: number, color: string }[];
 
     constructor(id: number) {
         this.id = id;
@@ -52,7 +53,8 @@ export class Filter {
             type: this.type,
             path: unityPath,
             category: this.category,
-            range: sortedRange
+            range: sortedRange,
+            gradient: this.gradient
         };
     }
 
@@ -72,7 +74,7 @@ export class Filter {
             case FilterType.Detail:
                 break;
         }
-        
+
         filter.path = [];
         for (let i = 0; i < jFilter.path.length; i += 2) {
             filter.path.push([jFilter.path[i], jFilter.path[i + 1]])

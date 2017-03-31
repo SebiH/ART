@@ -142,26 +142,29 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             _remoteFilters.Add(rFilter);
 
-            var color = new Color(255, 255, 255, 255);
+            var color = new Color(1, 1, 1, 1);
             var colorSuccess = ColorUtility.TryParseHtmlString(rFilter.color, out color);
             if (!colorSuccess)
             {
                 Debug.LogWarning("Could not parse color " + rFilter.color);
             }
 
-            if (needsPathUpdate && needsColorUpdate)
+            if (needsPathUpdate)
             {
-                filter.SetColor(color);
-                filter.RenderPath(rFilter.path);
-            }
-            else if (needsPathUpdate)
-            {
+                if (rFilter.gradient == null) { filter.SetColor(color); }
+                else { filter.SetGradient(ConvertGradient(rFilter.gradient)); }
                 filter.RenderPath(rFilter.path);
             }
             else if (needsColorUpdate)
             {
-                filter.UpdateColor(color);
+                if (rFilter.gradient == null) { filter.UpdateColor(color); }
+                else { filter.UpdateGradient(ConvertGradient(rFilter.gradient)); }
             }
+        }
+
+        private FilterRenderer.GradientStop[] ConvertGradient(RemoteFilter.GradientStop[] gradients)
+        {
+            return gradients.Select(g => new FilterRenderer.GradientStop(g.stop, g.color)).ToArray();
         }
 
         private void RemoveFilter(int id)

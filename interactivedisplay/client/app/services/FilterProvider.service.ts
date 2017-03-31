@@ -160,24 +160,39 @@ export class FilterProvider {
                         let data = overviewDim.data[i];
                         let minRange = Math.min(filter.range[0], filter.range[1]);
                         let maxRange = Math.max(filter.range[0], filter.range[1]);
+                        filter.gradient = overviewDim.gradient;
 
                         if (minRange <= data && data <= maxRange) {
                             filter.indices.push(i);
                         }
 
                         if (filter.origin.isFlipped) {
+                            // add more paths for better gradient resolution
                             filter.path = [
                                 [dimX.domain.min, minRange],
+                                [this.half(dimX.domain.min, dimX.domain.max), minRange],
                                 [dimX.domain.max, minRange],
+                                [dimX.domain.max, this.half(minRange, maxRange)],
                                 [dimX.domain.max, maxRange],
+                                [this.half(dimX.domain.min, dimX.domain.max), maxRange],
                                 [dimX.domain.min, maxRange],
+                                [dimX.domain.min, this.half(minRange, maxRange)],
+                                [this.half(dimX.domain.min, dimX.domain.max), this.half(minRange, maxRange)],
+                                [dimX.domain.min, this.half(minRange, maxRange)],
                             ];
                         } else {
+                            // add more paths for better gradient resolution
                             filter.path = [
                                 [minRange, dimY.domain.min],
+                                [minRange, this.half(dimY.domain.min, dimY.domain.max)],
                                 [minRange, dimY.domain.max],
+                                [this.half(minRange, maxRange), dimY.domain.max],
                                 [maxRange, dimY.domain.max],
+                                [maxRange, this.half(dimY.domain.min, dimY.domain.max)],
                                 [maxRange, dimY.domain.min],
+                                [this.half(minRange, maxRange), dimY.domain.min],
+                                [this.half(minRange, maxRange), this.half(dimY.domain.min, dimY.domain.max)],
+                                [this.half(minRange, maxRange), dimY.domain.min],
                             ];
                         }
                     }
@@ -188,6 +203,10 @@ export class FilterProvider {
         this.filterUpdateQueue[filter.id] = filter.toJson();
         this.delayedFilterSync();
         this.delayedGlobalFilterUpdate();
+    }
+
+    private half(min: number, max: number): number {
+        return min + ((max - min) / 2);
     }
 
     public createFilter(origin: Graph): Filter {
