@@ -70,11 +70,12 @@ export class Filter {
                 filter.range = jFilter.range;
                 break;
             case FilterType.Detail:
-                filter.path = [];
-                for (let i = 0; i < jFilter.path.length; i += 2) {
-                    filter.path.push([jFilter.path[i], jFilter.path[i + 1]])
-                }
                 break;
+        }
+        
+        filter.path = [];
+        for (let i = 0; i < jFilter.path.length; i += 2) {
+            filter.path.push([jFilter.path[i], jFilter.path[i + 1]])
         }
 
         filter.origin = origin;
