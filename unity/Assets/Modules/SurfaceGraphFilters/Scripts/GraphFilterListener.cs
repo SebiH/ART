@@ -135,7 +135,7 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             if (matchingFilter != null)
             {
-                needsPathUpdate = (matchingFilter.path.Length != rFilter.path.Length);
+                needsPathUpdate = (matchingFilter.path.Length != rFilter.path.Length) || rFilter.isOverview;
                 needsColorUpdate = (matchingFilter.color != rFilter.color);
                 _remoteFilters.Remove(matchingFilter);
             }
@@ -171,6 +171,12 @@ namespace Assets.Modules.SurfaceGraphFilters
             {
                 _filters.Remove(filter);
                 Destroy(filter.gameObject);
+            }
+
+            var rFilter = _remoteFilters.FirstOrDefault(f => f.id == id);
+            if (rFilter != null)
+            {
+                _remoteFilters.Remove(rFilter);
             }
         }
 

@@ -9,7 +9,7 @@ namespace Assets.Modules.SurfaceGraphFilters
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class FilterRenderer : MonoBehaviour
     {
-        const byte TRANSPARENCY = 80;
+        const byte TRANSPARENCY = 30;
 
         public int Id { get; set; }
 
@@ -66,7 +66,7 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             if (path.Length < 6)
             {
-                Debug.Log("Not enough points to render filter");
+                Debug.Log("Not enough points to render filter: " + path.Length);
                 return;
             }
 
