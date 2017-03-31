@@ -1,4 +1,4 @@
-Shader "ParallelCoordinates/ColorLine"
+Shader "Graph/ColorLine"
 {
     Properties
     {

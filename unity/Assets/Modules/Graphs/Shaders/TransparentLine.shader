@@ -1,4 +1,4 @@
-Shader "ParallelCoordinates/TransparentLine"
+Shader "Graph/TransparentLine"
 {
     Properties
     {
