@@ -62,6 +62,8 @@ namespace Assets.Modules.Graphs
                     DomainMax = 0.5f,
                     Data = rndValues
                 };
+                dimension.PossibleTicks = new[] { -0.4f, 0, 0.4f };
+                dimension.RebuildData();
 
                 _rndValues.Add(name, dimension);
             }
