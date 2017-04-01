@@ -9,6 +9,8 @@ namespace Assets.Modules.Graphs.Visualisation
         private Mesh _mesh;
         private MeshFilter _filter;
         private MeshRenderer _renderer;
+        // to avoid zFighting between points
+        private float[] _rndOffsets = new float[Globals.DataPointsCount];
 
         public struct PointProperty
         {
@@ -30,6 +32,11 @@ namespace Assets.Modules.Graphs.Visualisation
 
             var triangles = new int[Points.Length * 6];
             var colors = new Color32[Points.Length * 4];
+
+            for (var i = 0; i < _rndOffsets.Length; i++)
+            {
+                _rndOffsets[i] = (Random.value - 0.5f) / 10000f;
+            }
 
             for (var i = 0; i < Points.Length; i++)
             {
@@ -68,11 +75,10 @@ namespace Assets.Modules.Graphs.Visualisation
             for (var i = 0; i < Points.Length; i++)
             {
                 var point = Points[i];
-                var rndOffset = (Random.value - 0.5f) / 1000f;
-                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, rndOffset);
-                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, rndOffset);
-                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, rndOffset);
-                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, rndOffset);
+                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, _rndOffsets[i]);
+                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, _rndOffsets[i]);
+                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, _rndOffsets[i]);
+                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, _rndOffsets[i]);
 
                 colors[i * 4 + 0] = point.Color;
                 colors[i * 4 + 1] = point.Color;
@@ -109,11 +115,10 @@ namespace Assets.Modules.Graphs.Visualisation
             {
                 var point = Points[i];
                 // to avoid z-fighting
-                var rndOffset = (Random.value - 0.5f) / 1000f;
-                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, rndOffset);
-                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, rndOffset);
-                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, rndOffset);
-                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, rndOffset);
+                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, _rndOffsets[i]);
+                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, _rndOffsets[i]);
+                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, _rndOffsets[i]);
+                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, _rndOffsets[i]);
             }
 
             _mesh.vertices = vertices;
