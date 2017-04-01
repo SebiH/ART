@@ -83,7 +83,7 @@ namespace Assets.Modules.ParallelCoordinates
                     Start = new Vector3(Random.value - 0.5f, Random.value - 0.5f, 0),
                     End = new Vector3(Random.value - 0.5f, Random.value - 0.5f, 1),
                     Color = new Color32(255, 255, 255, 255),
-                    Size = 0.0005f
+                    Size = 0.001f
                 };
 
                 colors[i * 4 + 0] = new Color32(255, 255, 255, 255);
