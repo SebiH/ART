@@ -125,11 +125,16 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
             return;
         }
 
-        if (Point.areaOf(this.currentSelection.filter.path) < this.dimX.domain.max / 100) {
+        if (Point.areaOf(this.currentSelection.filter.path) < Math.max(this.dimX.domain.max, this.dimY.domain.max) / 100) {
             // avoid small polygons
             this.removeSelection(this.currentSelection);
         } else { 
             this.updatePath(this.currentSelection);
+            this.filterProvider.updateFilter(this.currentSelection.filter);
+
+            if (this.currentSelection.filter.indices.length == 0){
+                this.removeSelection(this.currentSelection);
+            }
         }
 
         this.currentSelection = null;
