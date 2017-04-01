@@ -22,6 +22,8 @@ namespace Assets.Modules.SurfaceGraphFilters
         private Color32 _color = new Color32(255, 255, 255, TRANSPARENCY);
         private bool _useGradients = false;
         private GradientStop[] _gradients;
+        // to avoid z-fighting between filters - needs to be class member for consistent redrawing
+        private float _randomOffset;
 
         public struct GradientStop
         {
@@ -44,6 +46,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         {
             _filter = GetComponent<MeshFilter>();
             _renderer = GetComponent<MeshRenderer>();
+            _randomOffset = (UnityEngine.Random.value - 0.5f) / 10000f;
         }
 
         private void OnDisable()
@@ -222,9 +225,9 @@ namespace Assets.Modules.SurfaceGraphFilters
                 triangles[counter + 2] = counter + 1;
 
                 var vectors = triangle.vertices;
-                vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
-                vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
-                vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
+                vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), _randomOffset);
+                vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), _randomOffset);
+                vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), _randomOffset);
 
                 if (_graph.IsFlipped)
                 {
