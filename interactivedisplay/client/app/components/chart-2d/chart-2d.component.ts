@@ -130,4 +130,10 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
 
         return [0, 0];
     }
+
+    public setAttributes(attributes: any[]): void {
+        if (this.dataVisualisation) {
+            this.dataVisualisation.setAttributes(attributes);
+        }
+    }
 }

@@ -76,4 +76,33 @@ export class ScatterplotVisualisation extends ChartElement {
             .attr('cx', d => d[0])
             .attr('cy', d => d[1]);
     }
+
+    public setAttributes(attributes: any[]): void {
+        this.dataContainer.selectAll('.point')
+            .each(function(data, index, elements) {
+                let attribute = attributes[index];
+                let radius = 5;
+
+                // hacked together, see filterprovider for attributes
+                let cssClass = 'point';
+                let stroke = <string>attribute.c;
+                if (stroke == '#FFFFFF') {
+                    stroke = '#616161';
+                }
+
+                if (attribute.f) {
+                    cssClass += ' filtered';
+                    radius = 3;
+                } else {
+                    cssClass += ' selected';
+                    radius = 7;
+                }
+
+                let circle = elements[index];
+                d3.select(circle)
+                    .attr('class', cssClass)
+                    .attr('stroke', stroke)
+                    .attr('r', radius);
+            });
+    }
 }

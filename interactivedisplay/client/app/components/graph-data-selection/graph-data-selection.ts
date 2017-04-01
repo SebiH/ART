@@ -5,7 +5,7 @@ import { Chart2dComponent } from '../chart-2d/chart-2d.component';
 import { PathSelection } from '../chart-2d/path-selection';
 import { PathContainer } from '../chart-2d/path-container';
 import { Graph, Filter, FilterType, FilterPoint, ChartDimension, Point } from '../../models/index';
-import { FilterProvider } from '../../services/index';
+import { FilterProvider, DataHighlight } from '../../services/index';
 import { Utils } from '../../Utils';
 
 import * as _ from 'lodash';
@@ -63,7 +63,9 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
         if (this.pathContainer && (changes['dimX'] || changes['dimY'])) {
             this.filterProvider.getFilters()
                 .first()
-                .subscribe((filters) => this.initFilters(filters));
+                .subscribe((filters) => {
+                    this.initFilters(filters);
+                });
         }
     }
 
@@ -172,8 +174,9 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
         return this.chart.invert([p.x - this.margin.left, p.y - this.margin.top]);
     }
 
-    private highlightData(globalFilter: any[]): void {
-        // TODO
+    private highlightData(globalFilter: DataHighlight[]): void {
+        // TODO: convert
+        // this.chart.setAttributes(globalFilter);
     }
 
 

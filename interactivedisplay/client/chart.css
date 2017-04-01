@@ -9,23 +9,19 @@
 /* Scatterplot */
 
 .point {
-    fill: black;
+    stroke-width: 3px;
     transition: 0.3s linear;
-    r: 5;
 }
 
 .point.selected {
-    fill: #03A9F4;
-    r: 7;
+    fill: black;
 }
 
 .point.filtered {
-    fill: #607D8B;
-    r: 3;
+    fill: transparent;
 }
 
 .point.selected.filtered {
-    fill: #FF5722;
 }
 
 /* Overview line chart */

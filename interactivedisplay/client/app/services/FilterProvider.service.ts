@@ -10,7 +10,7 @@ import { Utils } from '../Utils';
 
 import * as _ from 'lodash';
 
-interface DataHighlight {
+export interface DataHighlight {
     id: number;
     color: string;
     selectedBy: number[];
@@ -21,7 +21,7 @@ export class FilterProvider {
     private filters: Filter[] = [];
     private idCounter: number = 0;
     private filterObserver: ReplaySubject<Filter[]> = new ReplaySubject<Filter[]>(1);
-    private globalFilterObserver: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
+    private globalFilterObserver: ReplaySubject<DataHighlight[]> = new ReplaySubject<DataHighlight[]>(1);
 
     private graphs: Graph[] = [];
     private globalFilter: DataHighlight[] = [];
@@ -348,7 +348,7 @@ export class FilterProvider {
         }
 
         this.socketio.sendMessage('globalfilter', { globalfilter: syncFilter });
-        this.globalFilterObserver.next(syncFilter);
+        this.globalFilterObserver.next(this.globalFilter);
     }
 
 
