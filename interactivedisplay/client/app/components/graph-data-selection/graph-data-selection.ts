@@ -100,6 +100,10 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
 
 
     private handleTouchDown(event): void {
+        if (!(this.graph.dimX) || !(this.graph.dimY)) {
+            return;
+        }
+
         let filter = this.filterProvider.createFilter(this.graph);
         filter.category = FilterType.Detail;
 
@@ -117,6 +121,10 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
     }
 
     private handleTouchUp(event): void {
+        if (!(this.graph.dimX) || !(this.graph.dimY)) {
+            return;
+        }
+
         if (Point.areaOf(this.currentSelection.filter.path) < this.dimX.domain.max / 100) {
             // avoid small polygons
             this.removeSelection(this.currentSelection);
@@ -128,6 +136,10 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
     }
 
     private handleTouchMove(event): void {
+        if (!(this.graph.dimX) || !(this.graph.dimY)) {
+            return;
+        }
+
         this.currentSelection.filter.path.push(this.positionInGraph(event.relativePos));
 
         // TODO: disabled because selection lags behind?
