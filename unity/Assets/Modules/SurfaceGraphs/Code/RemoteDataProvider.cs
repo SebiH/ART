@@ -50,6 +50,8 @@ namespace Assets.Modules.SurfaceGraphs
             {
                 var metricDimension = new MetricDimension();
                 metricDimension.PossibleTicks = response.ticks;
+                metricDimension.IsTimeBased = response.isTimeBased;
+                metricDimension.TimeFormat = response.timeFormat;
                 dimension = metricDimension;
             }
             else
@@ -84,6 +86,7 @@ namespace Assets.Modules.SurfaceGraphs
             public string name = "";
             public bool isMetric = true;
             public bool isTimeBased = false;
+            public string timeFormat = "";
             public DataMapping[] mappings = new DataMapping[0];
             public GradientStop[] gradient = new GradientStop[0];
             public float[] ticks = new float[0];

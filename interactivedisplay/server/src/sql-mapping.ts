@@ -34,7 +34,9 @@ export interface MetricSqlMapping {
     dbColumn: string;
     name: string;
     converter: (d: any) => number;
+
     isTimeBased: boolean;
+    timeFormat?: string;
 
     minValue: number;
     maxValue: number;

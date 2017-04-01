@@ -69,6 +69,7 @@ export class GraphDataProvider {
         let maxValue = 1;
         let isMetric = false;
         let isTimeBased = false;
+        let timeFormat = "";
         let mappings: any[] | null = [];
         let bins: any[] | null = null;
         let gradient: any[] | null = null;
@@ -90,6 +91,7 @@ export class GraphDataProvider {
                 maxValue = mapping.maxValue;
                 isMetric = true;
                 isTimeBased = mapping.isTimeBased;
+                timeFormat = mapping.timeFormat || "";
                 mappings = null;
                 bins = mapping.bins;
                 gradient = mapping.gradient;
@@ -133,6 +135,7 @@ export class GraphDataProvider {
             name: dimension,
             isMetric: isMetric,
             isTimeBased: isTimeBased,
+            timeFormat: timeFormat,
             mappings: mappings,
             bins: bins,
             gradient: gradient,

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Assets.Modules.Graphs
@@ -6,6 +7,8 @@ namespace Assets.Modules.Graphs
     {
         private float _range = 1;
         public float[] PossibleTicks = new float[0];
+        public bool IsTimeBased = false;
+        public string TimeFormat = "HH:mm";
 
         public override void RebuildData()
         {
@@ -24,9 +27,21 @@ namespace Assets.Modules.Graphs
 
                 if (DomainMin <= tickNum && tickNum <= DomainMax)
                 {
+                    var name = "";
+                    if (IsTimeBased)
+                    {
+                        var date = new DateTime();
+                        date = date.AddSeconds(tickNum);
+                        name = date.ToString(TimeFormat);
+                    }
+                    else
+                    {
+                        name = string.Format(format, tickNum);
+                    }
+
                     ticks.Add(new Mapping
                     {
-                        Name = string.Format(format, tickNum),
+                        Name = name,
                         Value = tickNum
                     });
                 }
