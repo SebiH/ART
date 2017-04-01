@@ -121,95 +121,97 @@ export class FilterProvider {
                 this.graphDataProvider.getData(filter.origin.dimY),
                 (x, y) => { return { x: x, y: y }; })
             .first()
-            .subscribe((dim) => {
-                this.doUpdateFilter(filter, dim.x, dim.y);
-            });
+            .subscribe((dim) => this.doUpdateFilter(filter, dim.x, dim.y));
     }
 
     private doUpdateFilter(filter: Filter, dimX: ChartDimension, dimY: ChartDimension) {
         let overviewDim = filter.origin.isFlipped ? dimY : dimX;
 
-        if (dimX && dimY) {
-            filter.indices = [];
+        filter.indices = [];
 
-            switch (filter.type) {
-                case FilterType.Detail:
-                    let boundingRect = Utils.buildBoundingRect(filter.path);
-                    for (let i = 0; i < dimX.data.length; i++) {
-                        let p = new Point(dimX.data[i], dimY.data[i]);
-                        if (p.isInPolygonOf(filter.path, boundingRect)) {
-                            filter.indices.push(i);
-                        }
+        switch (filter.type) {
+            case FilterType.Detail:
+                let boundingRect = Utils.buildBoundingRect(filter.path);
+                for (let i = 0; i < dimX.data.length; i++) {
+
+                    let p: Point;
+                    if (filter.origin.isFlipped) {
+                        p = new Point(dimY.data[i], dimX.data[i]);
+                    } else {
+                        p = new Point(dimX.data[i], dimY.data[i]);
                     }
-                    break;
-
-                case FilterType.Categorical:
-                    for (let i = 0; i < overviewDim.data.length; i++) {
-                        if (overviewDim.data[i] === filter.category) {
-                            filter.indices.push(i);
-                        }
-
-                        if (filter.origin.isFlipped) {
-                            filter.path = [
-                                [dimX.domain.min, filter.category - 0.5],
-                                [dimX.domain.max, filter.category - 0.5],
-                                [dimX.domain.max, filter.category + 0.5],
-                                [dimX.domain.min, filter.category + 0.5],
-                            ];
-                        } else {
-                            filter.path = [
-                                [filter.category - 0.5, dimY.domain.min],
-                                [filter.category - 0.5, dimY.domain.max],
-                                [filter.category + 0.5, dimY.domain.max],
-                                [filter.category + 0.5, dimY.domain.min],
-                            ];
-                        }
+                    if (p.isInPolygonOf(filter.path, boundingRect)) {
+                        filter.indices.push(i);
                     }
-                    break;
+                }
+                break;
 
-                case FilterType.Metric:
-                    for (let i = 0; i < overviewDim.data.length; i++) {
-                        let data = overviewDim.data[i];
-                        let minRange = Math.min(filter.range[0], filter.range[1]);
-                        let maxRange = Math.max(filter.range[0], filter.range[1]);
-                        filter.gradient = overviewDim.gradient;
-
-                        if (minRange <= data && data <= maxRange) {
-                            filter.indices.push(i);
-                        }
-
-                        if (filter.origin.isFlipped) {
-                            // add more paths for better gradient resolution
-                            filter.path = [
-                                [dimX.domain.min, minRange],
-                                [this.half(dimX.domain.min, dimX.domain.max), minRange],
-                                [dimX.domain.max, minRange],
-                                [dimX.domain.max, this.half(minRange, maxRange)],
-                                [dimX.domain.max, maxRange],
-                                [this.half(dimX.domain.min, dimX.domain.max), maxRange],
-                                [dimX.domain.min, maxRange],
-                                [dimX.domain.min, this.half(minRange, maxRange)],
-                                [this.half(dimX.domain.min, dimX.domain.max), this.half(minRange, maxRange)],
-                                [dimX.domain.min, this.half(minRange, maxRange)],
-                            ];
-                        } else {
-                            // add more paths for better gradient resolution
-                            filter.path = [
-                                [minRange, dimY.domain.min],
-                                [minRange, this.half(dimY.domain.min, dimY.domain.max)],
-                                [minRange, dimY.domain.max],
-                                [this.half(minRange, maxRange), dimY.domain.max],
-                                [maxRange, dimY.domain.max],
-                                [maxRange, this.half(dimY.domain.min, dimY.domain.max)],
-                                [maxRange, dimY.domain.min],
-                                [this.half(minRange, maxRange), dimY.domain.min],
-                                [this.half(minRange, maxRange), this.half(dimY.domain.min, dimY.domain.max)],
-                                [this.half(minRange, maxRange), dimY.domain.min],
-                            ];
-                        }
+            case FilterType.Categorical:
+                for (let i = 0; i < overviewDim.data.length; i++) {
+                    if (overviewDim.data[i] === filter.category) {
+                        filter.indices.push(i);
                     }
-                    break;
-            }
+
+                    if (filter.origin.isFlipped) {
+                        filter.path = [
+                            [dimX.domain.min, filter.category - 0.5],
+                            [dimX.domain.max, filter.category - 0.5],
+                            [dimX.domain.max, filter.category + 0.5],
+                            [dimX.domain.min, filter.category + 0.5],
+                        ];
+                    } else {
+                        filter.path = [
+                            [filter.category - 0.5, dimY.domain.min],
+                            [filter.category - 0.5, dimY.domain.max],
+                            [filter.category + 0.5, dimY.domain.max],
+                            [filter.category + 0.5, dimY.domain.min],
+                        ];
+                    }
+                }
+                break;
+
+            case FilterType.Metric:
+                for (let i = 0; i < overviewDim.data.length; i++) {
+                    let data = overviewDim.data[i];
+                    let minRange = Math.min(filter.range[0], filter.range[1]);
+                    let maxRange = Math.max(filter.range[0], filter.range[1]);
+                    filter.gradient = overviewDim.gradient;
+
+                    if (minRange <= data && data <= maxRange) {
+                        filter.indices.push(i);
+                    }
+
+                    if (filter.origin.isFlipped) {
+                        // add more paths for better gradient resolution
+                        filter.path = [
+                            [dimX.domain.min, minRange],
+                            [this.half(dimX.domain.min, dimX.domain.max), minRange],
+                            [dimX.domain.max, minRange],
+                            [dimX.domain.max, this.half(minRange, maxRange)],
+                            [dimX.domain.max, maxRange],
+                            [this.half(dimX.domain.min, dimX.domain.max), maxRange],
+                            [dimX.domain.min, maxRange],
+                            [dimX.domain.min, this.half(minRange, maxRange)],
+                            [this.half(dimX.domain.min, dimX.domain.max), this.half(minRange, maxRange)],
+                            [dimX.domain.min, this.half(minRange, maxRange)],
+                        ];
+                    } else {
+                        // add more paths for better gradient resolution
+                        filter.path = [
+                            [minRange, dimY.domain.min],
+                            [minRange, this.half(dimY.domain.min, dimY.domain.max)],
+                            [minRange, dimY.domain.max],
+                            [this.half(minRange, maxRange), dimY.domain.max],
+                            [maxRange, dimY.domain.max],
+                            [maxRange, this.half(dimY.domain.min, dimY.domain.max)],
+                            [maxRange, dimY.domain.min],
+                            [this.half(minRange, maxRange), dimY.domain.min],
+                            [this.half(minRange, maxRange), this.half(dimY.domain.min, dimY.domain.max)],
+                            [this.half(minRange, maxRange), dimY.domain.min],
+                        ];
+                    }
+                }
+                break;
         }
 
         this.filterUpdateQueue[filter.id] = filter.toJson();
