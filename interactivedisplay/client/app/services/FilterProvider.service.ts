@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { Graph, Filter, FilterType, Point } from '../models/index';
+import { Observable } from 'rxjs/Observable';
+import { Graph, Filter, FilterType, Point, ChartDimension } from '../models/index';
 import { SocketIO } from './SocketIO.service';
 import { GraphProvider } from './GraphProvider.service';
 import { GraphDataProvider } from './GraphDataProvider.service';
@@ -65,6 +66,7 @@ export class FilterProvider {
                     if (originGraph) {
                         let filter = Filter.fromJson(rFilter, originGraph);
                         localFilters.push(filter);
+                        this.updateFilter(filter);
                     } else {
                         console.warn('Could not find origin graph ' + rFilter.origin + ' for filter ' + rFilter.id)
                     }
@@ -113,8 +115,18 @@ export class FilterProvider {
     }
 
     public updateFilter(filter: Filter): void {
-        let dimX = this.graphDataProvider.tryGetDimension(filter.origin.dimX);
-        let dimY = this.graphDataProvider.tryGetDimension(filter.origin.dimY);
+        Observable
+            .zip(
+                this.graphDataProvider.getData(filter.origin.dimX),
+                this.graphDataProvider.getData(filter.origin.dimY),
+                (x, y) => { return { x: x, y: y }; })
+            .first()
+            .subscribe((dim) => {
+                this.doUpdateFilter(filter, dim.x, dim.y);
+            });
+    }
+
+    private doUpdateFilter(filter: Filter, dimX: ChartDimension, dimY: ChartDimension) {
         let overviewDim = filter.origin.isFlipped ? dimY : dimX;
 
         if (dimX && dimY) {
@@ -203,6 +215,7 @@ export class FilterProvider {
         this.filterUpdateQueue[filter.id] = filter.toJson();
         this.delayedFilterSync();
         this.delayedGlobalFilterUpdate();
+
     }
 
     private half(min: number, max: number): number {
@@ -338,38 +351,41 @@ export class FilterProvider {
 
 
     private calculateMetricGradient(filter: Filter) {
-        let overviewDim = this.graphDataProvider.tryGetDimension(filter.origin.isFlipped ? filter.origin.dimY : filter.origin.dimX);
+        this.graphDataProvider
+            .getData(filter.origin.isFlipped ? filter.origin.dimY : filter.origin.dimX)
+            .first()
+            .subscribe((overviewDim) => {
+                if (overviewDim && overviewDim.gradient) {
 
-        if (overviewDim && overviewDim.gradient) {
+                    let minValue = filter.range[0];
+                    let maxValue = filter.range[1];
 
-            let minValue = filter.range[0];
-            let maxValue = filter.range[1];
+                    for (let f of this.filters) {
+                        if (f.origin.id == filter.origin.id && f.isOverview && f.type == FilterType.Metric) {
+                            minValue = Math.min(minValue, Math.min(f.range[0], f.range[1]));
+                            maxValue = Math.max(maxValue, Math.max(f.range[0], f.range[1]));
+                        }
+                    }
 
-            for (let f of this.filters) {
-                if (f.origin.id == filter.origin.id && f.isOverview && f.type == FilterType.Metric) {
-                    minValue = Math.min(minValue, Math.min(f.range[0], f.range[1]));
-                    maxValue = Math.max(maxValue, Math.max(f.range[0], f.range[1]));
+                    minValue = Math.max(overviewDim.domain.min, minValue);
+                    maxValue = Math.min(overviewDim.domain.max, maxValue);
+
+                    let gradient = overviewDim.gradient;
+                    // determine gradient position for each data value
+                    for (let index of filter.indices) {
+                        let gfData = this.globalFilter[index];
+                        let val = (overviewDim.data[index] - minValue) / Math.abs(maxValue - minValue);
+
+                        if (val < 0 || val > 1) {
+                            // TODO: should not happen?
+                            console.warn('Value not inside gradient: ' + val);
+                            val = _.clamp(val, 0, 1);
+                        } 
+
+                        gfData.color = Utils.getGradientColor(gradient, val);
+                    }
                 }
-            }
-
-            minValue = Math.max(overviewDim.domain.min, minValue);
-            maxValue = Math.min(overviewDim.domain.max, maxValue);
-
-            let gradient = overviewDim.gradient;
-            // determine gradient position for each data value
-            for (let index of filter.indices) {
-                let gfData = this.globalFilter[index];
-                let val = (overviewDim.data[index] - minValue) / Math.abs(maxValue - minValue);
-
-                if (val < 0 || val > 1) {
-                    // TODO: should not happen?
-                    console.warn('Value not inside gradient: ' + val);
-                    val = _.clamp(val, 0, 1);
-                } 
-
-                gfData.color = Utils.getGradientColor(gradient, val);
-            }
-        }
+            });
     }
 
 }
