@@ -35,6 +35,8 @@ export interface MetricSqlMapping {
     name: string;
     converter: (d: any) => number;
 
+    // quick hack to trigger time-based restrictions in sql
+    dbTime?: boolean;
     isTimeBased: boolean;
     timeFormat?: string;
 

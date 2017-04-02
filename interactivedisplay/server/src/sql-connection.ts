@@ -1,5 +1,5 @@
 import { ReplaySubject } from 'rxjs';
-import { SqlColumnMapping } from './sql-mapping';
+import { SqlColumnMapping, CategoricalSqlMapping, MetricSqlMapping, DataRepresentation } from './sql-mapping';
 
 import * as sql from 'tedious';
 import * as _ from 'lodash';
@@ -107,9 +107,40 @@ export class SqlConnection {
         }
 
         let requestedData: any[] = [];
+        let filters: string[] = [];
+
+        for (let map of this.mapping) {
+            let min: any;
+            let max: any;
+
+            if (map.type == DataRepresentation.Categorical) {
+                min = +_.minBy(map.values, 'dbValue').dbValue;
+                max = +_.maxBy(map.values, 'dbValue').dbValue;
+            } else {
+                min = map.minValue;
+                max = map.maxValue;
+
+                if (map.dbTime) {
+                    min = '\'' + this.formatDate(new Date(min * 1000)) + '\'';
+                    max = '\'' + this.formatDate(new Date(max * 1000)) + '\'';
+                }
+            }
+
+            filters.push(map.dbColumn + ' BETWEEN ' + min + ' AND ' + max);
+            // filters.push(map.dbColumn + ' >= ' + min);
+            // filters.push(map.dbColumn + ' <= ' + max);
+        }
+
         let requestSql = '\
             SELECT TOP 1000 Sess_Id, ' + mapping.dbColumn + '\
             FROM Flat_Dataset_1';
+
+        for (let i = 0; i < filters.length; i++) {
+            requestSql += (i == 0) ? ' WHERE ' : ' AND ';
+            requestSql += filters[i];
+        }
+
+        requestSql += ';';
 
         let request = new sql.Request(requestSql, (error: Error, rowCount: number, rows: any[]) => {
             if (error) {
@@ -134,6 +165,13 @@ export class SqlConnection {
         this.sqlConnection.execSql(request);
     }
 
+    private formatDate(date: Date): string {
+        let hours = '0' + date.getUTCHours();
+        let minutes = '0' + date.getUTCMinutes();
+        let seconds = '0' + date.getUTCSeconds();
+
+        return hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2) + '.0000000';
+    }
 
     private idToNumber(sessId: string): number {
         if (this.idTable[sessId] === undefined) {
