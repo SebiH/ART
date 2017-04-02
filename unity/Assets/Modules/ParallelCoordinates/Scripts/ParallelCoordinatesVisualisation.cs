@@ -227,6 +227,11 @@ namespace Assets.Modules.ParallelCoordinates
             }
             else
             {
+                if (mode == UpdateMode.Color)
+                {
+                    _lineRenderer.UpdateColors();
+                }
+
                 _lineRenderer.SetHidden(true);
             }
         }
