@@ -5,10 +5,14 @@ export interface ChartDimension {
     name: string;
 
     isMetric: boolean;
-    // only if isNumeric is false
+
+    isTimeBased: boolean;
+    timeFormat?: string;
+
+    // only if isMetric is false
     mappings?: { value: number, name: string, color: string }[];
 
-    // only if isNumeric is true
+    // only if isMetric is true
     bins?: { displayName: string, value?: number, range?: [number, number] }[];
     gradient?: { stop: number, color: string }[];
     ticks: number[];
