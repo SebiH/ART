@@ -152,19 +152,27 @@ export class FilterProvider {
                         filter.indices.push(i);
                     }
 
+                    let paddingScale = 1.1;
+                    let rangeX = dimX.domain.max - dimX.domain.min;
+                    let rangeY = dimY.domain.max - dimY.domain.min;
+                    let minX = dimX.domain.min - rangeX * 0.1;
+                    let maxX = dimX.domain.max + rangeX * 0.1;
+                    let minY = dimY.domain.min - rangeY * 0.1;
+                    let maxY = dimY.domain.max + rangeY * 0.1;
+
                     if (filter.origin.isFlipped) {
                         filter.path = [
-                            [dimX.domain.min, filter.category - 0.5],
-                            [dimX.domain.max, filter.category - 0.5],
-                            [dimX.domain.max, filter.category + 0.5],
-                            [dimX.domain.min, filter.category + 0.5],
+                            [minX, filter.category - 0.5],
+                            [maxX, filter.category - 0.5],
+                            [maxX, filter.category + 0.5],
+                            [minX, filter.category + 0.5],
                         ];
                     } else {
                         filter.path = [
-                            [filter.category - 0.5, dimY.domain.min],
-                            [filter.category - 0.5, dimY.domain.max],
-                            [filter.category + 0.5, dimY.domain.max],
-                            [filter.category + 0.5, dimY.domain.min],
+                            [filter.category - 0.5, minY],
+                            [filter.category - 0.5, maxY],
+                            [filter.category + 0.5, maxY],
+                            [filter.category + 0.5, minY],
                         ];
                     }
                 }
