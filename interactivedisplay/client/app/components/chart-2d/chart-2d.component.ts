@@ -58,9 +58,10 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
         }
 
         this.xScale = this.getScale(this.dimensionX, 'x');
+        this.xAxis.setScale(this.getScaleHack(this.dimensionX, 'x'));
+
         this.yScale = this.getScale(this.dimensionY, 'y');
-        this.xAxis.setScale(this.xScale);
-        this.yAxis.setScale(this.yScale);
+        this.yAxis.setScale(this.getScaleHack(this.dimensionY, 'y'));
 
         if (this.dimensionX == null || this.dimensionY == null) {
             this.dataVisualisation.clearData();
@@ -83,28 +84,55 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
 
         if (dim == null) {
             return d3.scaleLinear().range(range).domain([0, 1]);
-        } else { //if (dim.isMetric) {
+        } else if (dim.isMetric) {
             return d3.scaleLinear().range(range).domain([dim.domain.min, dim.domain.max]);
+        } else {
+            let domain = <number[]>_.map(dim.mappings, 'value');
+
+            // flip domain
+            // if (type === 'y') {
+            //     let flipped: number[] = [];
+            //     for (let i = 0; i < domain.length; i++) {
+            //         flipped[domain.length - 1 - i] = domain[i];
+            //     }
+            //     domain = flipped;
+            // }
+
+            // pad domain
+            let min = _.min(domain) - 1;
+            let max = _.max(domain) + 1;
+
+            let adjustedDomain = type === 'y' ? [max, min] : [min, max];
+
+            return d3.scaleLinear().domain(adjustedDomain).range([0, type === 'x' ? this.width : this.height]);
         }
-        // else {
-        //     let domain = <string[]>_.map(dim.mappings, 'name');
+    }
 
-        //     // flip domain
-        //     if (type === 'y') {
-        //         let flipped: string[] = [];
-        //         for (let i = 0; i < domain.length; i++) {
-        //             flipped[domain.length - 1 - i] = domain[i];
-        //         }
-        //         domain = flipped;
-        //     }
+    private getScaleHack(dim: ChartDimension, type: 'x' | 'y') {
+        let range = type === 'x' ? [0, this.width] : [this.height, 0];
 
-        //     // pad domain
-        //     domain.unshift('');
-        //     domain.push(' ');
-        //     console.log(dim);
+        if (dim == null) {
+            return d3.scaleLinear().range(range).domain([0, 1]);
+        } else if (dim.isMetric) {
+            return d3.scaleLinear().range(range).domain([dim.domain.min, dim.domain.max]);
+        } else {
+            let domain = <string[]>_.map(dim.mappings, 'name');
 
-        //     return d3.scalePoint().domain(domain).range([0, type === 'x' ? this.width : this.height]);
-        // }
+            // flip domain
+            if (type === 'y') {
+                let flipped: string[] = [];
+                for (let i = 0; i < domain.length; i++) {
+                    flipped[domain.length - 1 - i] = domain[i];
+                }
+                domain = flipped;
+            }
+
+            // pad domain
+            domain.unshift('');
+            domain.push(' ');
+
+            return d3.scalePoint().domain(domain).range([0, type === 'x' ? this.width : this.height]);
+        }
     }
 
     public invert(pos: [number, number]): [number, number] {
