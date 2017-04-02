@@ -155,17 +155,17 @@ export class FilterProvider {
                     let paddingScale = 1.1;
                     let rangeX = dimX.domain.max - dimX.domain.min;
                     let rangeY = dimY.domain.max - dimY.domain.min;
-                    let minX = dimX.domain.min - rangeX * 0.1;
-                    let maxX = dimX.domain.max + rangeX * 0.1;
-                    let minY = dimY.domain.min - rangeY * 0.1;
-                    let maxY = dimY.domain.max + rangeY * 0.1;
+                    let minX = dimX.domain.min - rangeX * 0.2;
+                    let maxX = dimX.domain.max + rangeX * 0.2;
+                    let minY = dimY.domain.min - rangeY * 0.2;
+                    let maxY = dimY.domain.max + rangeY * 0.2;
 
                     if (filter.origin.isFlipped) {
                         filter.path = [
-                            [minX, filter.category - 0.5],
-                            [maxX, filter.category - 0.5],
-                            [maxX, filter.category + 0.5],
-                            [minX, filter.category + 0.5],
+                            [filter.category - 0.5, minX],
+                            [filter.category - 0.5, maxX],
+                            [filter.category + 0.5, maxX],
+                            [filter.category + 0.5, minX],
                         ];
                     } else {
                         filter.path = [
@@ -189,35 +189,22 @@ export class FilterProvider {
                         filter.indices.push(i);
                     }
 
-                    if (filter.origin.isFlipped) {
-                        // add more paths for better gradient resolution
-                        filter.path = [
-                            [dimX.domain.min, minRange],
-                            [this.half(dimX.domain.min, dimX.domain.max), minRange],
-                            [dimX.domain.max, minRange],
-                            [dimX.domain.max, this.half(minRange, maxRange)],
-                            [dimX.domain.max, maxRange],
-                            [this.half(dimX.domain.min, dimX.domain.max), maxRange],
-                            [dimX.domain.min, maxRange],
-                            [dimX.domain.min, this.half(minRange, maxRange)],
-                            [this.half(dimX.domain.min, dimX.domain.max), this.half(minRange, maxRange)],
-                            [dimX.domain.min, this.half(minRange, maxRange)],
-                        ];
-                    } else {
-                        // add more paths for better gradient resolution
-                        filter.path = [
-                            [minRange, dimY.domain.min],
-                            [minRange, this.half(dimY.domain.min, dimY.domain.max)],
-                            [minRange, dimY.domain.max],
-                            [this.half(minRange, maxRange), dimY.domain.max],
-                            [maxRange, dimY.domain.max],
-                            [maxRange, this.half(dimY.domain.min, dimY.domain.max)],
-                            [maxRange, dimY.domain.min],
-                            [this.half(minRange, maxRange), dimY.domain.min],
-                            [this.half(minRange, maxRange), this.half(dimY.domain.min, dimY.domain.max)],
-                            [this.half(minRange, maxRange), dimY.domain.min],
-                        ];
-                    }
+                    let min = filter.origin.isFlipped ? dimX.domain.min : dimY.domain.min;
+                    let max = filter.origin.isFlipped ? dimX.domain.max : dimY.domain.max;
+
+                    // add more paths for better gradient resolution
+                    filter.path = [
+                        [minRange, min],
+                        [minRange, this.half(min, max)],
+                        [minRange, max],
+                        [this.half(minRange, maxRange), max],
+                        [maxRange, max],
+                        [maxRange, this.half(min, max)],
+                        [maxRange, min],
+                        [this.half(minRange, maxRange), min],
+                        [this.half(minRange, maxRange), this.half(min, max)],
+                        [this.half(minRange, maxRange), min],
+                    ];
                 }
                 break;
         }
