@@ -13,6 +13,10 @@
     transition: 0.3s linear;
 }
 
+.axis line {
+    opacity: 1 !important;
+}
+
 /* Overview line chart */
 
 .line-point {

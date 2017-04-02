@@ -37,6 +37,7 @@ export class ChartAxis extends ChartElement {
         }
 
         this.svgElement
+            .attr('class', 'axis')
             .selectAll('text')  
                 .style('text-anchor', 'end')
                 .attr('dx', '-.8em')
