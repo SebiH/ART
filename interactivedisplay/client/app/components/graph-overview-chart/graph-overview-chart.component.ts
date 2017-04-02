@@ -357,7 +357,11 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
         for (let i = 0; i < this.filters.length; i++) {
             let f1 = this.filters[i];
 
-            for (let j = this.filters.length - 1; j > i; j--) {
+            for (let j = this.filters.length - 1; j >= 0; j--) {
+                if (i == j) {
+                    continue;
+                }
+
                 let f2 = this.filters[j];
 
                 let isMinContained = (f1.range[0] <= f2.range[0] && f2.range[0] <= f1.range[1]);
@@ -377,7 +381,14 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
                     this.filterProvider.removeFilter(f2);
                 }
             }
+        }
 
+        for (let i = this.filters.length - 1; i >= 0; i--) {
+            let filter = this.filters[i];
+            if (filter.range[0] == filter.range[1]) {
+                _.pull(this.filters, filter);
+                this.filterProvider.removeFilter(filter);
+            }
         }
     }
 
