@@ -78,18 +78,12 @@ namespace Assets.Modules.ParallelCoordinates
                 boneWeights[i * 4 + 3].weight0 = 1.0f;
                 boneWeights[i * 4 + 3].boneIndex0 = i * 2 + 1;
 
-                Lines[i] = new LineProperty
-                {
-                    Start = new Vector3(Random.value - 0.5f, Random.value - 0.5f, 0),
-                    End = new Vector3(Random.value - 0.5f, Random.value - 0.5f, 1),
-                    Color = new Color32(255, 255, 255, 255),
-                    Size = 0.001f
-                };
+                Lines[i].Size = 0.001f;
 
-                colors[i * 4 + 0] = new Color32(255, 255, 255, 255);
-                colors[i * 4 + 1] = new Color32(255, 255, 255, 255);
-                colors[i * 4 + 2] = new Color32(255, 255, 255, 255);
-                colors[i * 4 + 3] = new Color32(255, 255, 255, 255);
+                colors[i * 4 + 0] = Lines[i].Color;
+                colors[i * 4 + 1] = Lines[i].Color;
+                colors[i * 4 + 2] = Lines[i].Color;
+                colors[i * 4 + 3] = Lines[i].Color;
             }
 
             _mesh.vertices = new Vector3[Lines.Length * 4];

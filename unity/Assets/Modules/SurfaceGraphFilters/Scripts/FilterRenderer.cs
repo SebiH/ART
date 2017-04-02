@@ -10,7 +10,7 @@ namespace Assets.Modules.SurfaceGraphFilters
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class FilterRenderer : MonoBehaviour
     {
-        const byte TRANSPARENCY = 30;
+        const byte TRANSPARENCY = 120;
 
         public int Id { get; set; }
 
