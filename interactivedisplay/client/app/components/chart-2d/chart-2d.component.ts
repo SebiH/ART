@@ -28,6 +28,7 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
 
     private isLoaded = false;
 
+    private background: HtmlChartElement;
     private dataVisualisation: ScatterplotVisualisation;
     private xAxis: ChartAxis;
     private yAxis: ChartAxis;
@@ -68,9 +69,8 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
         }
     }
 
-
     public addElement(chartElement: ChartElement): void {
-        this.chart.addElement(chartElement);
+        this.chart.addBackgroundElement(chartElement);
     }
 
     public removeElement(chartElement: ChartElement): void {

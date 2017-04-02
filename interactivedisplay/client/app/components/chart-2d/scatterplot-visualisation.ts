@@ -64,7 +64,8 @@ export class ScatterplotVisualisation extends ChartElement {
                 .attr('cx', d => d[0])
                 .attr('cy', d => d[1])
                 .attr('r', 5)
-                .attr('class', 'point');
+                .attr('class', 'point')
+                .attr('fill', '#000000');
     }
 
     private animateValues(data: number[][]): void {
@@ -78,31 +79,9 @@ export class ScatterplotVisualisation extends ChartElement {
     }
 
     public setAttributes(attributes: any[]): void {
-        this.dataContainer.selectAll('.point')
-            .each(function(data, index, elements) {
-                let attribute = attributes[index];
-                let radius = 5;
-
-                // hacked together, see filterprovider for attributes
-                let cssClass = 'point';
-                let stroke = <string>attribute.c;
-                if (stroke == '#FFFFFF') {
-                    stroke = '#616161';
-                }
-
-                if (attribute.f) {
-                    cssClass += ' filtered';
-                    radius = 3;
-                } else {
-                    cssClass += ' selected';
-                    radius = 7;
-                }
-
-                let circle = elements[index];
-                d3.select(circle)
-                    .attr('class', cssClass)
-                    .attr('stroke', stroke)
-                    .attr('r', radius);
-            });
+        this.dataContainer.selectAll('circle')
+            .attr('fill', (d, i) => attributes[i].fill)
+            .attr('stroke', (d, i) => attributes[i].stroke)
+            .attr('r', (d, i) => attributes[i].radius);
     }
 }

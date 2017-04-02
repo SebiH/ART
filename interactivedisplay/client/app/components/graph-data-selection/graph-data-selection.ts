@@ -5,7 +5,7 @@ import { Chart2dComponent } from '../chart-2d/chart-2d.component';
 import { PathSelection } from '../chart-2d/path-selection';
 import { PathContainer } from '../chart-2d/path-container';
 import { Graph, Filter, FilterType, FilterPoint, ChartDimension, Point } from '../../models/index';
-import { FilterProvider, DataHighlight } from '../../services/index';
+import { GraphProvider, FilterProvider, DataHighlight } from '../../services/index';
 import { Utils } from '../../Utils';
 
 import * as _ from 'lodash';
@@ -38,10 +38,15 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
     private selections: Selection[] = [];
     private currentSelection: Selection;
     private pathContainer: PathContainer;
+    private graphs: Graph[] = [];
 
-    constructor(private filterProvider: FilterProvider) {}
+    constructor(private filterProvider: FilterProvider, private graphProvider: GraphProvider) {}
 
     ngAfterViewInit() {
+        this.graphProvider.getGraphs()
+            .takeWhile(() => this.isActive)
+            .subscribe((graphs) => this.graphs = graphs);
+
         this.pathContainer = new PathContainer();
         this.chart.addElement(this.pathContainer);
 
@@ -49,9 +54,21 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
             .takeWhile(() => this.isActive)
             .subscribe((filters) => this.initFilters(filters));
 
+        let currentFilter: DataHighlight[] = null;
         this.filterProvider.globalFilterUpdate()
             .takeWhile(() => this.isActive)
-            .subscribe(filter => this.highlightData(filter));
+            .subscribe(filter => {
+                currentFilter = filter;
+                this.highlightData(filter);
+            });
+
+        this.graph.onUpdate
+            .takeWhile(() => this.isActive)
+            .subscribe(filter => {
+                if (currentFilter != null) {
+                    this.highlightData(currentFilter);
+                }
+            });
     }
 
     ngOnDestroy() {
@@ -175,8 +192,32 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
     }
 
     private highlightData(globalFilter: DataHighlight[]): void {
-        // TODO: convert
-        // this.chart.setAttributes(globalFilter);
+        let attributes = [];
+
+        let totalGraphCount = this.graphs.length;
+
+        for (let gfData of globalFilter) {
+            let stroke = gfData.color == '#FFFFFF' ? '#000000' : gfData.color;
+            let fill = '#000000';
+            let radius = 10;
+
+            if (gfData.selectedBy.indexOf(this.graph.id) < 0 && gfData.selectedBy.length == this.graphs.length - 1) {
+                fill = '#616161';
+                radius = 7;
+            } else if (gfData.selectedBy.length < this.graphs.length) {
+                fill = 'transparent';
+                radius = 1;
+            }
+
+            attributes.push({
+                stroke: stroke,
+                fill: fill,
+                radius: radius
+            });
+
+        }
+
+        this.chart.setAttributes(attributes);
     }
 
 

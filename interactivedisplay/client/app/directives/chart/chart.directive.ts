@@ -18,6 +18,7 @@ export class ChartDirective implements OnInit, OnChanges {
 
     private svgElement: HtmlChartElement;
     private chartContainer: HtmlChartElement;
+    private backgroundContainer: HtmlChartElement;
     private chartElements: ChartElement[] = []
 
     constructor(private elementRef: ElementRef) { }
@@ -28,6 +29,11 @@ export class ChartDirective implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
 
+    }
+
+    public addBackgroundElement(element: ChartElement): void {
+        element.register(this.backgroundContainer, this.width, this.height);
+        this.chartElements.push(element);
     }
 
     public addElement(element: ChartElement): void {
@@ -56,6 +62,9 @@ export class ChartDirective implements OnInit, OnChanges {
         this.svgElement = d3element.append('svg')
             .attr('width', totalSize.width)
             .attr('height', totalSize.height);
+        this.backgroundContainer = this.svgElement
+            .append('g')
+            .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
         this.chartContainer = this.svgElement
             .append('g')
             .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')');
