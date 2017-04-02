@@ -334,7 +334,7 @@ export class InteractionManager {
     private onTouchStart(el: HTMLElement, ev: TouchEvent): void {
         for (let i = 0; i < ev.changedTouches.length; i++) {
             let touch = ev.changedTouches[i];
-            let touchPos = new Point(touch.screenX, touch.screenY);
+            let touchPos = new Point(touch.pageX, touch.pageY);
 
             let interaction = new InteractionData(touchPos);
             interaction.element = el;
@@ -358,7 +358,7 @@ export class InteractionManager {
 
         for (let i = 0; i < ev.changedTouches.length; i++) {
             let touch = ev.changedTouches[i];
-            let touchPos = new Point(touch.screenX, touch.screenY);
+            let touchPos = new Point(touch.pageX, touch.pageY);
             let interaction = this.activeTouches[touch.identifier];
 
             if (!interaction) {
@@ -436,7 +436,7 @@ export class InteractionManager {
 
         for (let i = 0; i < ev.changedTouches.length; i++) {
             let touch = ev.changedTouches[i];
-            let touchPos = new Point(touch.screenX, touch.screenY);
+            let touchPos = new Point(touch.pageX, touch.pageY);
 
             let interaction = this.activeTouches[touch.identifier];
 
