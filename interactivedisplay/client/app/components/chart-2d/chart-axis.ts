@@ -35,5 +35,13 @@ export class ChartAxis extends ChartElement {
             this.svgElement
                 .call(d3.axisLeft(scale));
         }
+
+        this.svgElement
+            .selectAll('text')  
+                .style('text-anchor', 'end')
+                .attr('dx', '-.8em')
+                .attr('dy', '.15em')
+                .attr('font-size', '16px')
+                .attr('transform', 'rotate(-35)');
     }
 }

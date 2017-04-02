@@ -28,7 +28,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
 
     @Input() public width = 600;
     @Input() public height = 600;
-    @Input() public margin = { top: 50, right: 50, bottom: 100, left: 100 };
+    @Input() public margin = { top: 50, right: 50, bottom: 200, left: 200 };
 
     @ViewChild(Chart2dComponent) private chart: Chart2dComponent;
 
