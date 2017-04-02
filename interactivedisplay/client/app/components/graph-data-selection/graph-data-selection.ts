@@ -59,14 +59,14 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
             .takeWhile(() => this.isActive)
             .subscribe(filter => {
                 currentFilter = filter;
-                this.highlightData(filter);
+                setTimeout(() => this.highlightData(filter));
             });
 
         this.graph.onUpdate
             .takeWhile(() => this.isActive)
             .subscribe(filter => {
                 if (currentFilter != null) {
-                    this.highlightData(currentFilter);
+                    setTimeout(() => this.highlightData(currentFilter));
                 }
             });
     }
