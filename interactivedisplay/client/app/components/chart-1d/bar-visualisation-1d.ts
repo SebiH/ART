@@ -41,7 +41,7 @@ export class BarVisualisation1d extends ChartVisualisation1d {
         this.dataContainer = root.append('g');
         let categories = <string[]>_.map(this.data, 'category');
 
-        let x = d3.scaleLinear().rangeRound([0, width]).domain([0, _.maxBy(this.data, 'amount').amount * 1.1]);
+        let x = d3.scalePow().exponent(0.5).rangeRound([0, width]).domain([0, _.maxBy(this.data, 'amount').amount * 1.1]);
         let y = d3.scaleBand().rangeRound([0, height]).domain(categories);
         this.yScale = y;
 

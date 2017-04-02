@@ -70,7 +70,8 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
         **    Bars
         **/
 
-        let x = d3.scaleLinear()
+        let x = d3.scalePow()
+            .exponent(0.5)
             .rangeRound([0, width])
             .domain([0, _.maxBy(this.data, 'amount').amount * 1.1]);
 

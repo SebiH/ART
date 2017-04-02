@@ -202,7 +202,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
             let radius = 10;
 
             if (gfData.selectedBy.indexOf(this.graph.id) < 0 && gfData.selectedBy.length == this.graphs.length - 1) {
-                fill = '#616161';
+                fill = '#9E9E9E';
                 radius = 7;
             } else if (gfData.selectedBy.length < this.graphs.length) {
                 fill = 'transparent';
