@@ -78,7 +78,7 @@ namespace Assets.Modules.ParallelCoordinates
                 boneWeights[i * 4 + 3].weight0 = 1.0f;
                 boneWeights[i * 4 + 3].boneIndex0 = i * 2 + 1;
 
-                Lines[i].Size = 0.001f;
+                Lines[i].Size = 0.0035f;
 
                 colors[i * 4 + 0] = Lines[i].Color;
                 colors[i * 4 + 1] = Lines[i].Color;

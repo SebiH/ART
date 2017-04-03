@@ -111,7 +111,6 @@ namespace Assets.Modules.Graphs
             transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
             transform.localRotation = _rotationAnimation.CurrentValue;
 
-            // TODO: from outside module?
             Offset = _graph.IsSelected ? 0.2f : 0.5f;
 
             var rotY = _graph.IsSelected ? 0 : 90;

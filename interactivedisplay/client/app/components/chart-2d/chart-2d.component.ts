@@ -120,7 +120,12 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
                 for (let tick of dim.ticks) {
                     if (dim.domain.min <= tick && tick <= dim.domain.max) {
                         let tickDate = new Date(tick * 1000);
-                        timeTicks.unshift(this.formatDate(tickDate, dim.timeFormat, true))
+                        let tickName = this.formatDate(tickDate, dim.timeFormat, true);
+                        if (type == 'x') {
+                            timeTicks.push(tickName);
+                        } else {
+                            timeTicks.unshift(tickName);
+                        }
                     }
                 }
 
