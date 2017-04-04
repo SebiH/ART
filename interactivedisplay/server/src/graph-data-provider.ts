@@ -1,4 +1,4 @@
-import { SqlConnection } from './sql-connection';
+import { SqlConnection, SqlData } from './sql-connection';
 import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
 import * as _ from 'lodash';
@@ -45,17 +45,19 @@ export class GraphDataProvider {
     public getData(dimension: string, onDataRetrieved: (data: any) => void): void {
         if (this.dataCache[dimension] === undefined) {
 
-            this.sqlConnection.getData(dimension, (data) => {
-                this.dataCache[dimension] = this.convertData(dimension, data);
-                onDataRetrieved(this.dataCache[dimension]);
-            });
+            this.sqlConnection.getData()
+                .first()
+                .subscribe((data) => {
+                    this.dataCache[dimension] = this.convertData(dimension, data);
+                    onDataRetrieved(this.dataCache[dimension]);
+                });
 
         } else {
             onDataRetrieved(this.dataCache[dimension]);
         }
     }
 
-    private convertData(dimension: string, data: any): any {
+    private convertData(dimension: string, data: SqlData[]): any {
         let mapping = _.find(SmartactMapping, m => m.name === dimension);
 
         if (!mapping) {
@@ -63,8 +65,11 @@ export class GraphDataProvider {
             return {};
         }
 
+        let values: number[] = [];
+        for (let datum of data) {
+            values.push(datum.dimensions[dimension]);
+        }
 
-        let values = _.map(data, 'value');
         let minValue = 0;
         let maxValue = 1;
         let isMetric = false;
@@ -109,9 +114,9 @@ export class GraphDataProvider {
             let dynMinValue = maxValue;
             let dynMaxValue = minValue;
 
-            for (let i = 0; i < data.length; i++) {
-                dynMinValue = Math.min(dynMinValue, data[i].value);
-                dynMaxValue = Math.max(dynMaxValue, data[i].value);
+            for (let i = 0; i < values.length; i++) {
+                dynMinValue = Math.min(dynMinValue, values[i]);
+                dynMaxValue = Math.max(dynMaxValue, values[i]);
             }
 
             // let range = (maxValue - minValue);

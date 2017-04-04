@@ -1,8 +1,13 @@
-import { ReplaySubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { SqlColumnMapping, CategoricalSqlMapping, MetricSqlMapping, DataRepresentation } from './sql-mapping';
 
 import * as sql from 'tedious';
 import * as _ from 'lodash';
+
+export interface SqlData {
+    id: number,
+    dimensions: { [dim: string]: number }
+}
 
 enum ConnectionState {
     Offline, Connected, Busy
@@ -50,8 +55,9 @@ export class SqlConnection {
     private sqlConnection: sql.Connection;
     private status: Status = new Status();
 
+    private sqlData: ReplaySubject<SqlData[]>;
     private idCounter: number = 0;
-    private idTable: { [sess_id: string]: number } = {};
+    private readonly idTable: { [sess_id: string]: number } = {};
 
     public constructor(private mapping: SqlColumnMapping[]) {}
 
@@ -88,25 +94,25 @@ export class SqlConnection {
         return <string[]> _.map(this.mapping, 'name');
     }
 
-    public getData(dimension: string, onSuccess: (data: any[]) => void): void {
-        this.status.whenReady(() => this.getDataConnectionEstablished(dimension, (data) => {
-            onSuccess(data);
-            // unmark connection from being busy, so that next request can be started
-            this.status.set(ConnectionState.Connected);
-        }));
+    public getData(): Observable<SqlData[]> {
+        if (!this.sqlData) {
+            this.sqlData = new ReplaySubject<SqlData[]>(1);
+
+            this.status.whenReady(() => {
+                this.getDataConnectionEstablished((data) => {
+                    this.sqlData.next(data);
+                    // unmark connection from being busy, so that next request can be started
+                    this.status.set(ConnectionState.Connected);
+                });
+            });
+        }
+
+        return this.sqlData.asObservable();
     }
 
     // assumes connection is established
-    private getDataConnectionEstablished(dimension: string, onSuccess: (data: any[]) => void): void {
+    private getDataConnectionEstablished(onSuccess: (data: SqlData[]) => void): void {
 
-        let mapping = _.find(this.mapping, map => map.name === dimension);
-
-        if (!mapping) {
-            console.error('Could not find database mapping of ' + dimension);
-            return;
-        }
-
-        let requestedData: any[] = [];
         let filters: string[] = [];
 
         for (let map of this.mapping) {
@@ -127,13 +133,15 @@ export class SqlConnection {
             }
 
             filters.push(map.dbColumn + ' BETWEEN ' + min + ' AND ' + max);
-            // filters.push(map.dbColumn + ' >= ' + min);
-            // filters.push(map.dbColumn + ' <= ' + max);
         }
 
-        let requestSql = '\
-            SELECT TOP 1000 Sess_Id, ' + mapping.dbColumn + '\
-            FROM Flat_Dataset_1';
+        let requestSql = 'SELECT TOP 1000 Sess_Id';
+
+        for (let map of this.mapping) {
+            requestSql += ', ' + map.dbColumn;
+        }
+
+        requestSql += ' FROM Flat_Dataset_1 ';
 
         for (let i = 0; i < filters.length; i++) {
             requestSql += (i == 0) ? ' WHERE ' : ' AND ';
@@ -142,23 +150,34 @@ export class SqlConnection {
 
         requestSql += ';';
 
+        let requestedData: SqlData[] = [];
         let request = new sql.Request(requestSql, (error: Error, rowCount: number, rows: any[]) => {
             if (error) {
-                console.error('Could not complete request for ' + dimension);
+                console.error('Could not complete sql request');
                 console.error(error);
             } else {
                 onSuccess(requestedData);
             }
         });
 
+
         request.on('row', (columns) => {
-            if (columns.length == 2) {
+            if (columns.length == this.mapping.length + 1) {
+                let values: {[dim: string]: number} = { };
+
+                for (let i = 0; i < this.mapping.length; i++) {
+                    let map = this.mapping[i];
+                    let value = columns[i + 1].value;
+
+                    values[map.name] = map.converter(value);
+                }
+
                 requestedData.push({
                     id: this.idToNumber(columns[0].value),
-                    value: mapping.converter(columns[1].value)
+                    dimensions: values
                 });
             } else {
-                console.error('Unexpected number of columns: Expected 2, got ' + columns.length);
+                console.error('Unexpected number of columns: Expected ' + (this.mapping.length + 1) + ', got ' + columns.length);
             }
         });
 
