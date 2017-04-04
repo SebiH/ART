@@ -136,9 +136,9 @@ export class FilterProvider {
 
                     let p: Point;
                     if (filter.origin.isFlipped) {
-                        p = new Point(dimY.data[i], dimX.data[i]);
+                        p = new Point(dimY.data[i].value, dimX.data[i].value);
                     } else {
-                        p = new Point(dimX.data[i], dimY.data[i]);
+                        p = new Point(dimX.data[i].value, dimY.data[i].value);
                     }
                     if (p.isInPolygonOf(filter.path, boundingRect)) {
                         filter.indices.push(i);
@@ -148,17 +148,17 @@ export class FilterProvider {
 
             case FilterType.Categorical:
                 for (let i = 0; i < overviewDim.data.length; i++) {
-                    if (overviewDim.data[i] === filter.category) {
+                    if (overviewDim.data[i].value === filter.category) {
                         filter.indices.push(i);
                     }
 
-                    let paddingScale = 1.1;
+                    let paddingScale = 0.1;
                     let rangeX = dimX.domain.max - dimX.domain.min;
                     let rangeY = dimY.domain.max - dimY.domain.min;
-                    let minX = dimX.domain.min - rangeX * 0.2;
-                    let maxX = dimX.domain.max + rangeX * 0.2;
-                    let minY = dimY.domain.min - rangeY * 0.2;
-                    let maxY = dimY.domain.max + rangeY * 0.2;
+                    let minX = dimX.domain.min - rangeY * paddingScale;
+                    let maxX = dimX.domain.max + rangeY * paddingScale;
+                    let minY = dimY.domain.min - rangeX * paddingScale;
+                    let maxY = dimY.domain.max + rangeX * paddingScale;
 
                     if (filter.origin.isFlipped) {
                         filter.path = [
@@ -180,7 +180,7 @@ export class FilterProvider {
 
             case FilterType.Metric:
                 for (let i = 0; i < overviewDim.data.length; i++) {
-                    let data = overviewDim.data[i];
+                    let data = overviewDim.data[i].value;
                     let minRange = Math.min(filter.range[0], filter.range[1]);
                     let maxRange = Math.max(filter.range[0], filter.range[1]);
                     filter.gradient = overviewDim.gradient;
@@ -371,7 +371,7 @@ export class FilterProvider {
                     // determine gradient position for each data value
                     for (let index of filter.indices) {
                         let gfData = this.globalFilter[index];
-                        let val = (overviewDim.data[index] - minValue) / Math.abs(maxValue - minValue);
+                        let val = (overviewDim.data[index].value - minValue) / Math.abs(maxValue - minValue);
 
                         if (val < 0 || val > 1) {
                             // TODO: should not happen?

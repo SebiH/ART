@@ -34,12 +34,12 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
             for (let container of this.data) {
                 let bin = container.bin;
                 if (bin.value !== undefined) {
-                    if (bin.value === Math.floor(data)) {
+                    if (bin.value === Math.floor(data.value)) {
                         container.amount += 1;
                         break;
                     }
                 } else {
-                    if (bin.range[0] <= data && bin.range[1] >= data) {
+                    if (bin.range[0] <= data.value && bin.range[1] >= data.value) {
                         container.amount += 1;
                         break;
                     }

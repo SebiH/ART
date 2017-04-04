@@ -28,8 +28,8 @@ export class ScatterplotVisualisation extends ChartElement {
 
         // assuming dimX data length === dimY data length
         for (let i = 0; i < dimX.data.length; i++) {
-            let x = scaleX(dataX[i]);
-            let y = scaleY(dataY[i]);
+            let x = scaleX(dataX[i].value);
+            let y = scaleY(dataY[i].value);
             data.push([x, y]);
         }
 

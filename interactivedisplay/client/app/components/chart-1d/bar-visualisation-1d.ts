@@ -19,10 +19,10 @@ export class BarVisualisation1d extends ChartVisualisation1d {
 
         let tempData = {};
         for (let category of dimension.data) {
-            if (tempData[category] === undefined) {
-                tempData[category] = 1;
+            if (tempData[category.value] === undefined) {
+                tempData[category.value] = 1;
             } else {
-                tempData[category] += 1;
+                tempData[category.value] += 1;
             }
         }
 

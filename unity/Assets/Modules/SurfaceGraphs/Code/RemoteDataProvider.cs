@@ -64,7 +64,15 @@ namespace Assets.Modules.SurfaceGraphs
                 dimension = catDimension;
             }
 
-            dimension.Data = response.data;
+            var data = new float[Globals.DataPointsCount];
+            foreach (var d in response.data)
+            {
+                // assuming ids are 0 - data.length
+                var id = int.Parse(d.id);
+                data[id] = d.value;
+            }
+
+            dimension.Data = data;
             dimension.DisplayName = dimensionName;
             dimension.DomainMin = response.domain.min;
             dimension.DomainMax = response.domain.max;
@@ -81,7 +89,7 @@ namespace Assets.Modules.SurfaceGraphs
         [Serializable]
         private class DataResponse
         {
-            public float[] data = null;
+            public DataValue[] data = null;
             public DataDomain domain = null;
             public string name = "";
             public bool isMetric = true;
@@ -91,6 +99,13 @@ namespace Assets.Modules.SurfaceGraphs
             public GradientStop[] gradient = new GradientStop[0];
             public float[] ticks = new float[0];
         }
+
+        [Serializable]
+        private class DataValue
+        {
+            public string id = "0";
+            public float value = -1;
+        } 
 
         [Serializable]
         private class DataDomain

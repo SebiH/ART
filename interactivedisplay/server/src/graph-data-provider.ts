@@ -13,9 +13,14 @@ export class GraphDataProvider {
 
         if (config.debug) {
             console.log('Using random data');
+            let randomDataCount = 1000;
+            let data: SqlData[] = [];
+            for (let i = 0; i < randomDataCount; i++) {
+                data.push({ id: i, dimensions: {} });
+            }
+
             for (let mapping of SmartactMapping) {
                 let dimension = mapping.name;
-                let data: any[] = [];
                 let minValue = (mapping.type === DataRepresentation.Categorical) ?
                     +_.minBy(mapping.values, 'dbValue').dbValue :
                     +mapping.minValue;
@@ -23,12 +28,12 @@ export class GraphDataProvider {
                     +_.maxBy(mapping.values, 'dbValue').dbValue :
                     +mapping.maxValue;
 
-                for (let i = 0; i < 1000; i++) {
-                    let val = Math.random() * (maxValue) + minValue;
+                for (let i = 0; i < randomDataCount; i++) {
+                    let val = Math.random() * (maxValue - minValue + 1) + minValue;
                     if (mapping.type === DataRepresentation.Categorical) {
                         val = Math.floor(val);
                     }
-                    data.push({ value: val });
+                    data[i].dimensions[dimension] = val;
                 }
                 this.dataCache[dimension] = this.convertData(dimension, data);
             }
@@ -65,9 +70,12 @@ export class GraphDataProvider {
             return {};
         }
 
-        let values: number[] = [];
+        let values: {id: string, value: number}[] = [];
         for (let datum of data) {
-            values.push(datum.dimensions[dimension]);
+            values.push({
+                id: '' + datum.id,
+                value: datum.dimensions[dimension],
+            });
         }
 
         let minValue = 0;
@@ -115,8 +123,8 @@ export class GraphDataProvider {
             let dynMaxValue = minValue;
 
             for (let i = 0; i < values.length; i++) {
-                dynMinValue = Math.min(dynMinValue, values[i]);
-                dynMaxValue = Math.max(dynMaxValue, values[i]);
+                dynMinValue = Math.min(dynMinValue, values[i].value);
+                dynMaxValue = Math.max(dynMaxValue, values[i].value);
             }
 
             // let range = (maxValue - minValue);
