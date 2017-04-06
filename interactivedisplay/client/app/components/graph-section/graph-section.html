@@ -62,8 +62,8 @@
         </div>
 
 
-        <div class="row">
-            <div class="button-container">
+        <div class="row" style="align-items: flex-start;">
+            <div class="button-container" style="margin: 30px;">
                 <div class="button"
                     [ngClass]="{ active: graph.isPickedUp }"
                     moveable
@@ -101,7 +101,7 @@
                 <ar-marker [marker]="markers[7]"></ar-marker>
             </div>
 
-            <div class="button-container">
+            <div class="button-container" style="margin: 30px;">
                 <div class="button"
                     touch-button
                     (touchclick)="toggleFlip()"
