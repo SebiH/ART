@@ -16,7 +16,6 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
     private selectedGraph: Graph = null;
     private isScrolling: boolean = false;
-    private hasClosedGraph: boolean = false;
     private interactionCounter: number = 0;
 
     private listStyle = {
@@ -79,17 +78,12 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
     private handleMoveStart(event: any): void {
         // TODO: multitouch??
-        this.hasClosedGraph = false;
         if (this.selectedGraph === null) {
             this.isScrolling = true;
         }
     }
 
     private handleMoveUpdate(event: any): void {
-        if (this.hasClosedGraph) {
-            return;
-        }
-
         if (this.selectedGraph === null) {
             this.scrollOffset += event.deltaX;
 
@@ -118,8 +112,6 @@ export class GraphListComponent implements OnInit, OnDestroy {
             this.isScrolling = false;
             this.applyScrollOffsetLimits();
         }
-
-        this.hasClosedGraph = false;
     }
 
 
