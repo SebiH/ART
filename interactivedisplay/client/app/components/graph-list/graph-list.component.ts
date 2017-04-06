@@ -51,8 +51,11 @@ export class GraphListComponent implements OnInit, OnDestroy {
         this.graphProvider.onGraphSelectionChanged()
             .takeWhile(() => this.isActive)
             .subscribe(selectedGraph => {
+                let prevSelectedGraph = this.selectedGraph;
                 if (selectedGraph) {
                     this.focusGraph(selectedGraph);
+                } else if (prevSelectedGraph) {
+                    this.focusGraph(prevSelectedGraph);
                 }
                 this.selectedGraph = selectedGraph;
             });
