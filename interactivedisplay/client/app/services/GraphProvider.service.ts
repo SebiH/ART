@@ -80,7 +80,6 @@ export class GraphProvider {
 
     public selectGraph(graph: Graph) {
         for (let g of this.graphs) {
-            g.widthTempOffset = 0;
             if (g.isSelected && g !== graph) {
                 g.isSelected = false;
             }

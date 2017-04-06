@@ -98,12 +98,6 @@ export class GraphListComponent implements OnInit, OnDestroy {
                     graph.posOffset += event.deltaX;
                 }
             }
-        } else {
-            this.selectedGraph.widthTempOffset += Math.abs(event.deltaX);
-            if (this.selectedGraph.widthTempOffset > 400) {
-                this.graphProvider.selectGraph(null);
-                this.hasClosedGraph = true;
-            }
         }
     }
 
@@ -123,8 +117,6 @@ export class GraphListComponent implements OnInit, OnDestroy {
         if (this.selectedGraph === null) {
             this.isScrolling = false;
             this.applyScrollOffsetLimits();
-        } else {
-            this.selectedGraph.widthTempOffset = 0;
         }
 
         this.hasClosedGraph = false;
