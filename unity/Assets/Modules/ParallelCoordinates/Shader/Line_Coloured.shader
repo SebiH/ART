@@ -72,6 +72,8 @@
                 o.color = start.color;
                 tristream.Append(o);
 
+                tristream.RestartStrip();
+
 
                 o.position = UnityObjectToClipPos(start.vertex - lineWidth);
                 o.color = start.color;
@@ -84,6 +86,8 @@
                 o.position = UnityObjectToClipPos(end.vertex - lineWidth);
                 o.color = end.color;
                 tristream.Append(o);
+                
+                tristream.RestartStrip();
             }
 
 

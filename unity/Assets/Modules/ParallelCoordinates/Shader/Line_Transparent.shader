@@ -41,8 +41,6 @@
                 float4 color : COLOR;
             };
 
-            uniform float _saturation;
-
             v2g vert (Input input)
             {
                 v2g output;
@@ -74,6 +72,8 @@
                 o.color = start.color;
                 tristream.Append(o);
 
+                tristream.RestartStrip();
+
 
                 o.position = UnityObjectToClipPos(start.vertex - lineWidth);
                 o.color = start.color;
@@ -86,6 +86,8 @@
                 o.position = UnityObjectToClipPos(end.vertex - lineWidth);
                 o.color = end.color;
                 tristream.Append(o);
+
+                tristream.RestartStrip();
             }
 
 

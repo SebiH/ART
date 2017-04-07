@@ -9,14 +9,11 @@ namespace Assets.Modules.Graphs.Visualisation
         private Mesh _mesh;
         private MeshFilter _filter;
         private MeshRenderer _renderer;
-        // to avoid zFighting between points
-        private float[] _rndOffsets = new float[Globals.DataPointsCount];
 
         public struct PointProperty
         {
             public Vector2 Position;
             public Color32 Color;
-            public float Size;
         }
 
         public PointProperty[] Points = new PointProperty[Globals.DataPointsCount];
@@ -30,40 +27,31 @@ namespace Assets.Modules.Graphs.Visualisation
 
             _renderer = GetComponent<MeshRenderer>();
 
-            var triangles = new int[Points.Length * 6];
-            var colors = new Color32[Points.Length * 4];
-
-            for (var i = 0; i < _rndOffsets.Length; i++)
-            {
-                _rndOffsets[i] = (Random.value - 0.5f) / 10000f;
-            }
+            var triangles = new int[Points.Length * 3];
+            var colors = new Color32[Points.Length];
+            var uvs = new Vector2[Points.Length];
 
             for (var i = 0; i < Points.Length; i++)
             {
-                // triangle indices will stay static
-                triangles[i * 6 + 0] = i * 4 + 0;
-                triangles[i * 6 + 1] = i * 4 + 1;
-                triangles[i * 6 + 2] = i * 4 + 2;
-                triangles[i * 6 + 3] = i * 4 + 1;
-                triangles[i * 6 + 4] = i * 4 + 3;
-                triangles[i * 6 + 5] = i * 4 + 2;
+                // triangles are calculated in geometry shader, only first one triangleindex has to include point
+                triangles[i * 3 + 0] = i;
+                triangles[i * 3 + 1] = 0;
+                triangles[i * 3 + 2] = 1;
 
-                colors[i * 4 + 0] = new Color32(255, 255, 255, 255);
-                colors[i * 4 + 1] = new Color32(255, 255, 255, 255);
-                colors[i * 4 + 2] = new Color32(255, 255, 255, 255);
-                colors[i * 4 + 3] = new Color32(255, 255, 255, 255);
+                colors[i] = new Color32(255, 255, 255, 255);
 
-                Points[i] = new PointProperty
-                {
-                    Color = new Color32(255, 255, 255, 255),
-                    Size = 0.005f,
-                    Position = Vector2.zero
-                };
+                // pass in random z-offset via UV, to avoid z-fighting inbetween points
+                uvs[i] = new Vector2(Random.value / 10000f, 0);
             }
 
-            _mesh.vertices = new Vector3[Points.Length * 4];
+            // special cases for first two triangles, cannot have repeating indices in triangle
+            triangles[1] = Points.Length - 1;
+            triangles[5] = Points.Length - 1;
+
+            _mesh.vertices = new Vector3[Points.Length];
             _mesh.colors32 = colors;
             _mesh.triangles = triangles;
+            _mesh.uv2 = uvs;
             _mesh.MarkDynamic();
         }
 
@@ -75,15 +63,8 @@ namespace Assets.Modules.Graphs.Visualisation
             for (var i = 0; i < Points.Length; i++)
             {
                 var point = Points[i];
-                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, _rndOffsets[i]);
-                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, _rndOffsets[i]);
-                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, _rndOffsets[i]);
-                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, _rndOffsets[i]);
-
-                colors[i * 4 + 0] = point.Color;
-                colors[i * 4 + 1] = point.Color;
-                colors[i * 4 + 2] = point.Color;
-                colors[i * 4 + 3] = point.Color;
+                vertices[i] = new Vector3(point.Position.x, point.Position.y, 0);
+                colors[i] = point.Color;
             }
 
             _mesh.vertices = vertices;
@@ -97,11 +78,7 @@ namespace Assets.Modules.Graphs.Visualisation
 
             for (var i = 0; i < Points.Length; i++)
             {
-                var point = Points[i];
-                colors[i * 4 + 0] = point.Color;
-                colors[i * 4 + 1] = point.Color;
-                colors[i * 4 + 2] = point.Color;
-                colors[i * 4 + 3] = point.Color;
+                colors[i] = Points[i].Color;
             }
 
             _mesh.colors32 = colors;
@@ -114,11 +91,7 @@ namespace Assets.Modules.Graphs.Visualisation
             for (var i = 0; i < Points.Length; i++)
             {
                 var point = Points[i];
-                // to avoid z-fighting
-                vertices[i * 4 + 0] = new Vector3(point.Position.x - point.Size, point.Position.y + point.Size, _rndOffsets[i]);
-                vertices[i * 4 + 1] = new Vector3(point.Position.x + point.Size, point.Position.y + point.Size, _rndOffsets[i]);
-                vertices[i * 4 + 2] = new Vector3(point.Position.x - point.Size, point.Position.y - point.Size, _rndOffsets[i]);
-                vertices[i * 4 + 3] = new Vector3(point.Position.x + point.Size, point.Position.y - point.Size, _rndOffsets[i]);
+                vertices[i] = new Vector3(point.Position.x, point.Position.y, 0);
             }
 
             _mesh.vertices = vertices;
