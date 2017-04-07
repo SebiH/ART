@@ -54,38 +54,37 @@
             }
 
             [maxvertexcount(6)]
-            void geo(triangle v2g IN[3], inout TriangleStream<g2f> tristream)
+            void geo(line v2g IN[2], inout TriangleStream<g2f> tristream)
             {
                 g2f o;
                 float3 lineWidth = float3(0, 0.002 * max(IN[0].color.a, 0.2), 0);
 
-                // IN[0] -- Start
-                // IN[1] -- End
-                // IN[2] -- Start (to create triangle, or unity crashes)
+                v2g start = IN[0];
+                v2g end = IN[1];
 
-                o.position = UnityObjectToClipPos(IN[0].vertex + lineWidth);
-                o.color = IN[0].color;
+                o.position = UnityObjectToClipPos(start.vertex + lineWidth);
+                o.color = start.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(IN[1].vertex + lineWidth);
-                o.color = IN[1].color;
+                o.position = UnityObjectToClipPos(end.vertex + lineWidth);
+                o.color = end.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(IN[2].vertex - lineWidth);
-                o.color = IN[2].color;
+                o.position = UnityObjectToClipPos(start.vertex - lineWidth);
+                o.color = start.color;
                 tristream.Append(o);
 
 
-                o.position = UnityObjectToClipPos(IN[0].vertex - lineWidth);
-                o.color = IN[0].color;
+                o.position = UnityObjectToClipPos(start.vertex - lineWidth);
+                o.color = start.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(IN[1].vertex + lineWidth);
-                o.color = IN[1].color;
+                o.position = UnityObjectToClipPos(end.vertex + lineWidth);
+                o.color = end.color;
                 tristream.Append(o);
                 
-                o.position = UnityObjectToClipPos(IN[1].vertex - lineWidth);
-                o.color = IN[1].color;
+                o.position = UnityObjectToClipPos(end.vertex - lineWidth);
+                o.color = end.color;
                 tristream.Append(o);
             }
 
