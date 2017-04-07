@@ -1,8 +1,6 @@
 import {Injectable, NgZone} from '@angular/core';
 import {Point} from '../../models/index';
 
-import {Logger} from '../logger.service';
-
 import {InteractionListener} from './Listener';
 import {InteractionType} from './Type';
 import {InteractionData} from './Data';
@@ -21,7 +19,6 @@ export class InteractionManager {
     private listeners: InteractionListener[] = [];
 
     // constructor(private logger: Logger) {
-    private logger: Logger = new Logger(); // TODO: inject?
     constructor(private ngZone: NgZone) {
 
         // in case 'touchup/move' etc ends up on unregistered elements
@@ -362,7 +359,7 @@ export class InteractionManager {
             let interaction = this.activeTouches[touch.identifier];
 
             if (!interaction) {
-                this.logger.error('No matching touch identifier found, didn\'t receive onTouchStart??');
+                console.error('No matching touch identifier found, didn\'t receive onTouchStart??');
             } else {
                 let prevPos = interaction.currPos;
                 interaction.currPos = touchPos;
@@ -441,7 +438,7 @@ export class InteractionManager {
             let interaction = this.activeTouches[touch.identifier];
 
             if (!interaction) {
-                this.logger.error('No matching touch identifier found, didn\'t receive onTouchStart??');
+                console.error('No matching touch identifier found, didn\'t receive onTouchStart??');
                 continue;
             }
 
