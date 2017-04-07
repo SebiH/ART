@@ -10,19 +10,15 @@ namespace Assets.Modules.SurfaceGraphFilters
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class FilterRenderer : MonoBehaviour
     {
-        const byte TRANSPARENCY = 120;
-
         public int Id { get; set; }
 
         private MeshFilter _filter;
 
         private Graph _graph = null;
         private float[] _path = null;
-        private Color32 _color = new Color32(255, 255, 255, TRANSPARENCY);
+        private Color32 _color = new Color32(255, 255, 255, 255);
         private bool _useGradients = false;
         private GradientStop[] _gradients;
-        // to avoid z-fighting between filters - needs to be class member for consistent redrawing
-        private float _randomOffset;
 
         public struct GradientStop
         {
@@ -31,12 +27,12 @@ namespace Assets.Modules.SurfaceGraphFilters
             public GradientStop(float stop, string color)
             {
                 Stop = stop;
-                Color = new Color32(255, 255, 255, TRANSPARENCY);
+                Color = new Color32(255, 255, 255, 255);
                 var col = new Color();
                 var colorSuccess = ColorUtility.TryParseHtmlString(color, out col);
                 if (colorSuccess)
                 {
-                    Color = new Color32((byte)(col.r * 255), (byte)(col.g * 255), (byte)(col.b * 255), TRANSPARENCY);
+                    Color = col;
                 }
             }
         }
@@ -44,7 +40,8 @@ namespace Assets.Modules.SurfaceGraphFilters
         private void OnEnable()
         {
             _filter = GetComponent<MeshFilter>();
-            _randomOffset = (UnityEngine.Random.value - 0.5f) / 10000f;
+            // to avoid z-fighting between filters - needs to be class member for consistent redrawing
+            GetComponent<MeshRenderer>().material.SetFloat("_randomOffset", UnityEngine.Random.value / 1000f);
         }
 
         private void OnDisable()
@@ -73,7 +70,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         public void SetColor(Color32 color)
         {
             _useGradients = false;
-            _color = new Color32(color.r, color.g, color.b, TRANSPARENCY);
+            _color = color;
         }
 
         public void SetGradient(GradientStop[] gradients)
@@ -162,19 +159,24 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             foreach (var triangle in generatedMesh.Triangles)
             {
-                triangles[counter + 0] = counter + 0;
-                triangles[counter + 1] = counter + 2;
-                triangles[counter + 2] = counter + 1;
 
                 var vectors = triangle.vertices;
                 if (_graph.IsFlipped)
                 {
-                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].y), Convert.ToSingle(vectors[0].x), _randomOffset);
-                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), _randomOffset);
-                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), _randomOffset);
+                    triangles[counter + 0] = counter + 0;
+                    triangles[counter + 1] = counter + 1;
+                    triangles[counter + 2] = counter + 2;
+
+                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].y), Convert.ToSingle(vectors[0].x), 0);
+                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), 0);
+                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), 0);
                 }
                 else
                 {
+                    triangles[counter + 0] = counter + 0;
+                    triangles[counter + 1] = counter + 2;
+                    triangles[counter + 2] = counter + 1;
+
                     vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
                     vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
                     vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
@@ -243,17 +245,17 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             foreach (var triangle in generatedMesh.Triangles)
             {
-                triangles[counter + 0] = counter + 0;
-                triangles[counter + 1] = counter + 2;
-                triangles[counter + 2] = counter + 1;
-
                 var vectors = triangle.vertices;
 
                 if (_graph.IsFlipped)
                 {
-                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].y), Convert.ToSingle(vectors[0].x), _randomOffset);
-                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), _randomOffset);
-                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), _randomOffset);
+                    triangles[counter + 0] = counter + 0;
+                    triangles[counter + 1] = counter + 1;
+                    triangles[counter + 2] = counter + 2;
+
+                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].y), Convert.ToSingle(vectors[0].x), 0);
+                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), 0);
+                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), 0);
 
                     colors[counter + 0] = GetGradient((vectors[0].y - min) / range);
                     colors[counter + 1] = GetGradient((vectors[1].y - min) / range);
@@ -261,9 +263,13 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
                 else
                 {
-                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), _randomOffset);
-                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), _randomOffset);
-                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), _randomOffset);
+                    triangles[counter + 0] = counter + 0;
+                    triangles[counter + 1] = counter + 2;
+                    triangles[counter + 2] = counter + 1;
+
+                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
+                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
+                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
 
                     colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
                     colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
@@ -306,7 +312,7 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
             }
 
-            return new Color32(255, 255, 255, TRANSPARENCY);
+            return new Color32(255, 255, 255, 255);
         }
     }
 }
