@@ -3,6 +3,7 @@ Shader "Graph/Point_Transparent"
     Properties
     {
         _zOffset ("ZOffset", Range(0, 0.05)) = 0.003
+        _pointWidth ("Point Width", Range(0.0001, 0.01)) = 0.005
     }
 
 
@@ -25,6 +26,7 @@ Shader "Graph/Point_Transparent"
             #include "UnityCG.cginc"
 
             uniform float _zOffset;
+            uniform float _pointWidth;
 
             struct Input
             {
@@ -65,17 +67,17 @@ Shader "Graph/Point_Transparent"
                 g2f o;
 
                 v2g p = IN[0];
-                float pWidth = 0.005 * max(p.color.a, 0.6);
+                float _pointWidth = 0.005 * max(p.color.a, 0.6);
                 float offset = p.uv2.x - 0.001 * (1 - p.color.a);
 
                 float zOffsets[2] = { _zOffset, -_zOffset };
 
                 for (int i = 0; i < 2; i++)
                 {
-                    float3 topLeft = float3(-pWidth, pWidth, offset + zOffsets[i]);
-                    float3 topRight = float3(pWidth, pWidth, offset + zOffsets[i]);
-                    float3 bottomLeft = float3(-pWidth, -pWidth, offset + zOffsets[i]);
-                    float3 bottomRight = float3(pWidth, -pWidth, offset + zOffsets[i]);
+                    float3 topLeft = float3(-_pointWidth, _pointWidth, offset + zOffsets[i]);
+                    float3 topRight = float3(_pointWidth, _pointWidth, offset + zOffsets[i]);
+                    float3 bottomLeft = float3(-_pointWidth, -_pointWidth, offset + zOffsets[i]);
+                    float3 bottomRight = float3(_pointWidth, -_pointWidth, offset + zOffsets[i]);
 
                     o.position = UnityObjectToClipPos(p.vertex + topLeft);
                     o.color = p.color;
@@ -108,116 +110,116 @@ Shader "Graph/Point_Transparent"
                 }
 
                 /* right */
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, _pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, _pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, -pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, -_pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
                 tristream.RestartStrip();
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, _pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, -pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, -_pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, -pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, -_pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
                 tristream.RestartStrip();
 
                 /* left */
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, _pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, _pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, -pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, -_pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
                 tristream.RestartStrip();
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, _pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, -pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, -_pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, -pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, -_pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
                 tristream.RestartStrip();
 
                 /* bottom */
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, -pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, -_pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, -pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, -_pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, -pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, -_pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
                 tristream.RestartStrip();
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, -pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, -_pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, -pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, -_pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, -pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, -_pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
                 tristream.RestartStrip();
 
                 /* top */
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, _pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, _pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, _pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
                 tristream.RestartStrip();
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(pWidth, pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(_pointWidth, _pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, pWidth, offset + zOffsets[1]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, _pointWidth, offset + zOffsets[1]));
                 o.color = p.color;
                 tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(p.vertex + float3(-pWidth, pWidth, offset + zOffsets[0]));
+                o.position = UnityObjectToClipPos(p.vertex + float3(-_pointWidth, _pointWidth, offset + zOffsets[0]));
                 o.color = p.color;
                 tristream.Append(o);
 
