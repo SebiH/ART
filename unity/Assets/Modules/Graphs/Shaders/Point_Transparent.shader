@@ -65,8 +65,8 @@ Shader "Graph/Point_Transparent"
                 g2f o;
 
                 v2g p = IN[0];
-                float pWidth = 0.005 * max(IN[0].color.a, 0.6);
-                float offset = p.uv2.x;
+                float pWidth = 0.005 * max(p.color.a, 0.6);
+                float offset = p.uv2.x - 0.001 * (1 - p.color.a);
 
                 float zOffsets[2] = { _zOffset, -_zOffset };
 
