@@ -133,6 +133,14 @@ namespace Assets.Modules.SurfaceGraphFilters
             var polyVertices = new Vertex[path.Length / 2];
             var dimX = _graph.DimX;
             var dimY = _graph.DimY;
+
+            if (_graph.IsFlipped)
+            {
+                var temp = dimX;
+                dimX = dimY;
+                dimY = temp;
+            }
+
             for (var i = 0; i < path.Length / 2; i++)
             {
                 polyVertices[i] = new Vertex(dimX.Scale(path[i * 2]), dimY.Scale(path[i * 2 + 1]));
@@ -159,9 +167,18 @@ namespace Assets.Modules.SurfaceGraphFilters
                 triangles[counter + 2] = counter + 1;
 
                 var vectors = triangle.vertices;
-                vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
-                vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
-                vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
+                if (_graph.IsFlipped)
+                {
+                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].y), Convert.ToSingle(vectors[0].x), _randomOffset);
+                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), _randomOffset);
+                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), _randomOffset);
+                }
+                else
+                {
+                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
+                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
+                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
+                }
 
                 colors[counter + 0] = _color;
                 colors[counter + 1] = _color;
@@ -184,6 +201,14 @@ namespace Assets.Modules.SurfaceGraphFilters
             var polyVertices = new Vertex[path.Length / 2];
             var dimX = _graph.DimX;
             var dimY = _graph.DimY;
+
+            if (_graph.IsFlipped)
+            {
+                var temp = dimX;
+                dimX = dimY;
+                dimY = temp;
+            }
+
             for (var i = 0; i < path.Length / 2; i++)
             {
                 polyVertices[i] = new Vertex(dimX.Scale(path[i * 2]), dimY.Scale(path[i * 2 + 1]));
@@ -223,18 +248,23 @@ namespace Assets.Modules.SurfaceGraphFilters
                 triangles[counter + 2] = counter + 1;
 
                 var vectors = triangle.vertices;
-                vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), _randomOffset);
-                vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), _randomOffset);
-                vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), _randomOffset);
 
                 if (_graph.IsFlipped)
                 {
+                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].y), Convert.ToSingle(vectors[0].x), _randomOffset);
+                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), _randomOffset);
+                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), _randomOffset);
+
                     colors[counter + 0] = GetGradient((vectors[0].y - min) / range);
                     colors[counter + 1] = GetGradient((vectors[1].y - min) / range);
                     colors[counter + 2] = GetGradient((vectors[2].y - min) / range);
                 }
                 else
                 {
+                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), _randomOffset);
+                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), _randomOffset);
+                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), _randomOffset);
+
                     colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
                     colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
                     colors[counter + 2] = GetGradient((vectors[2].x - min) / range);
