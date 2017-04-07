@@ -1,4 +1,4 @@
-Shader "Graph/ColorLine"
+Shader "Graph/Point_Coloured"
 {
     Properties
     {

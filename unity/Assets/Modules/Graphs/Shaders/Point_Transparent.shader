@@ -1,4 +1,4 @@
-Shader "Graph/TransparentLine"
+Shader "Graph/Point_Transparent"
 {
     Properties
     {
