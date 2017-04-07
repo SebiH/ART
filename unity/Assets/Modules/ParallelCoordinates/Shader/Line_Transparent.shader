@@ -58,7 +58,7 @@
             void geo(line v2g IN[2], inout TriangleStream<g2f> tristream)
             {
                 g2f o;
-                float3 lineWidth = float3(0, 0.002 * max(IN[0].color.a, 0.2), 0);
+                float3 lineWidth = float3(0, _lineWidth * max(IN[0].color.a, 0.2), 0);
 
                 v2g start = IN[0];
                 v2g end = IN[1];
