@@ -2,6 +2,7 @@
 {
     Properties
     {
+        _lineWidth ("Line Width", Range(0.0001, 0.01)) = 0.002
     }
 
 
@@ -21,6 +22,8 @@
             #pragma geometry geo
 
             #include "UnityCG.cginc"
+
+            uniform float _lineWidth;
 
             struct Input
             {

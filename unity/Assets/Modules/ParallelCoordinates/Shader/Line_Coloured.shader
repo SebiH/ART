@@ -2,6 +2,7 @@
 {
     Properties
     {
+        _lineWidth ("Line Width", Range(0.0001, 0.01)) = 0.002
     }
 
 
@@ -21,6 +22,8 @@
             #pragma geometry geo
 
             #include "UnityCG.cginc"
+
+            uniform float _lineWidth;
 
             struct Input
             {
@@ -55,7 +58,7 @@
             void geo(line v2g IN[2], inout TriangleStream<g2f> tristream)
             {
                 g2f o;
-                float3 lineWidth = float3(0, 0.002, 0);
+                float3 lineWidth = float3(0, _lineWidth, 0);
 
                 v2g start = IN[0];
                 v2g end = IN[1];
@@ -86,7 +89,7 @@
                 o.position = UnityObjectToClipPos(end.vertex - lineWidth);
                 o.color = end.color;
                 tristream.Append(o);
-                
+
                 tristream.RestartStrip();
             }
 
