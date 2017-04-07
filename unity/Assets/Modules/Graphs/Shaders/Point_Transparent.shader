@@ -9,7 +9,7 @@ Shader "Graph/Point_Transparent"
 
     SubShader
     {
-        Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+        Tags {"Queue"="Transparent+2" "IgnoreProjector"="True" "RenderType"="Transparent"}
 
         Lighting Off
         Cull Off

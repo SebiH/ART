@@ -8,13 +8,14 @@
 
     SubShader
     {
-        Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+        Tags {"Queue"="Transparent+1" "IgnoreProjector"="True" "RenderType"="Transparent"}
 
         Cull Off
 		ZWrite On
         Blend SrcAlpha OneMinusSrcAlpha 
 
         Pass {
+	        ColorMask RGB
 
             CGPROGRAM
             #pragma vertex vert
