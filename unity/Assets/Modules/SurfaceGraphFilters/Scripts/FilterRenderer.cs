@@ -15,7 +15,6 @@ namespace Assets.Modules.SurfaceGraphFilters
         public int Id { get; set; }
 
         private MeshFilter _filter;
-        private MeshRenderer _renderer;
 
         private Graph _graph = null;
         private float[] _path = null;
@@ -45,7 +44,6 @@ namespace Assets.Modules.SurfaceGraphFilters
         private void OnEnable()
         {
             _filter = GetComponent<MeshFilter>();
-            _renderer = GetComponent<MeshRenderer>();
             _randomOffset = (UnityEngine.Random.value - 0.5f) / 10000f;
         }
 
