@@ -16,6 +16,7 @@ namespace Assets.Modules.Core.Animations
         private float _startTime = 0f;
         private bool _isRunning = false;
         private T _end;
+        public T End { get { return _end; } }
         private T _start;
 
         public ProceduralAnimation(float animationSpeed)

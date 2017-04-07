@@ -9,14 +9,18 @@ namespace Assets.Modules.Graphs
     {
         // for selection, etc.
         const float NormalAnimationSpeed = 0.6f;
+        const float QuickAnimationSpeed = 0.3f;
         // for scrolling, smoothing out values from webapp
         const float FastAnimationSpeed = 0.05f;
 
         const float OFFSET_SELECTED = 0.2f;
         const float OFFSET_NORMAL = 0.8f;
 
+        const float HEIGHT_NORMAL = 0.5f;
+        const float HEIGHT_PICKEDUP = 0.6f;
+
         private ValueAnimation _positionAnimation = new ValueAnimation(FastAnimationSpeed);
-        private ValueAnimation _heightAnimation = new ValueAnimation(NormalAnimationSpeed);
+        private ValueAnimation _heightAnimation = new ValueAnimation(QuickAnimationSpeed);
         private ValueAnimation _offsetAnimation = new ValueAnimation(NormalAnimationSpeed);
         private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(NormalAnimationSpeed);
 
@@ -97,8 +101,6 @@ namespace Assets.Modules.Graphs
             get { return _rotationAnimation.CurrentValue.eulerAngles.y; }
         }
 
-        private Quaternion _rotation = Quaternion.identity;
-
         private Graph _graph;
 
         private void OnEnable()
@@ -108,22 +110,23 @@ namespace Assets.Modules.Graphs
 
         private void Update()
         {
-            var actualPosition = _positionAnimation.CurrentValue;
-            var actualHeight = _heightAnimation.CurrentValue;
-            var actualOffset = _offsetAnimation.CurrentValue;
-            transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
-            transform.localRotation = _rotationAnimation.CurrentValue;
-
             Offset = _graph.IsSelected ? OFFSET_SELECTED : OFFSET_NORMAL;
+            Height = _graph.IsPickedUp ? HEIGHT_PICKEDUP : HEIGHT_NORMAL;
 
             var rotY = _graph.IsSelected ? 0 : 90;
             var rotZ = _graph.IsFlipped ? 90 : 0;
             var targetRotation = Quaternion.Euler(0, rotY, rotZ);
-            if (_rotation != targetRotation)
+            if (_rotationAnimation.End != targetRotation)
             {
-                _rotation = targetRotation;
-                _rotationAnimation.Restart(_rotation);
+                _rotationAnimation.Restart(targetRotation);
             }
+
+            var actualPosition = _positionAnimation.CurrentValue;
+            var actualHeight = _heightAnimation.CurrentValue;
+            var actualOffset = _offsetAnimation.CurrentValue;
+
+            transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
+            transform.localRotation = _rotationAnimation.CurrentValue;
         }
 
         public void Init(float pos, float height, float offset)

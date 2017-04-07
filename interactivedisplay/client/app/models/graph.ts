@@ -206,10 +206,11 @@ export class Graph {
             dimX: this.dimX,
             dimY: this.dimY,
             color: this.color,
-            isSelected: this.isSelected,
-            isNewlyCreated: this.isNewlyCreated,
-            isFlipped: this.isFlipped,
             isColored: this.isColored,
+            isFlipped: this.isFlipped,
+            isNewlyCreated: this.isNewlyCreated,
+            isPickedUp: this.isPickedUp,
+            isSelected: this.isSelected,
 
             pos: this.absolutePos,
             width: this.width

@@ -12,6 +12,7 @@ namespace Assets.Modules.Graphs
         public bool IsSelected { get; set; }
         public bool IsFlipped { get; set; }
         public bool IsNewlyCreated { get; set; }
+        public bool IsPickedUp { get; set; }
 
         public event Action OnDataChange;
 
