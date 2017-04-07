@@ -12,6 +12,9 @@ namespace Assets.Modules.Graphs
         // for scrolling, smoothing out values from webapp
         const float FastAnimationSpeed = 0.05f;
 
+        const float OFFSET_SELECTED = 0.2f;
+        const float OFFSET_NORMAL = 0.8f;
+
         private ValueAnimation _positionAnimation = new ValueAnimation(FastAnimationSpeed);
         private ValueAnimation _heightAnimation = new ValueAnimation(NormalAnimationSpeed);
         private ValueAnimation _offsetAnimation = new ValueAnimation(NormalAnimationSpeed);
@@ -111,7 +114,7 @@ namespace Assets.Modules.Graphs
             transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
             transform.localRotation = _rotationAnimation.CurrentValue;
 
-            Offset = _graph.IsSelected ? 0.2f : 0.5f;
+            Offset = _graph.IsSelected ? OFFSET_SELECTED : OFFSET_NORMAL;
 
             var rotY = _graph.IsSelected ? 0 : 90;
             var rotZ = _graph.IsFlipped ? 90 : 0;

@@ -12,7 +12,7 @@ namespace Assets.Modules.SurfaceGraphs
         const float OFFSET_NORMAL = 0.2f;
 
         private GraphManager _graphManager;
-        private ValueAnimation _offsetAnimation = new ValueAnimation(0.75f);
+        private ValueAnimation _offsetAnimation = new ValueAnimation(0.6f);
         private bool _wasGraphSelected = false;
 
         private void OnEnable()
