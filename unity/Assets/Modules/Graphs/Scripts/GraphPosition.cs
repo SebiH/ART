@@ -139,6 +139,12 @@ namespace Assets.Modules.Graphs
 
             _offset = offset;
             _offsetAnimation.Init(_offset);
+
+            var rotation = Quaternion.Euler(0, 90, 0);
+            _rotationAnimation.Init(rotation);
+
+            transform.localPosition = new Vector3(_position, _height, _offset);
+            transform.localRotation = rotation;
         }
     }
 }
