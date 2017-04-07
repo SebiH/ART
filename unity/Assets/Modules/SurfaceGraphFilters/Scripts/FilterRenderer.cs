@@ -225,16 +225,16 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             // quick hack: gradient cannot expand outside of graph bounds [-0.5, 0.5]
             double min, max;
-            if (_graph.IsFlipped)
-            {
-                min = Math.Max(generatedMesh.Bounds.Top, -0.5);
-                max = Math.Min(generatedMesh.Bounds.Bottom, 0.5);
-            }
-            else
-            {
+            //if (_graph.IsFlipped)
+            //{
+            //    min = Math.Max(generatedMesh.Bounds.Top, -0.5);
+            //    max = Math.Min(generatedMesh.Bounds.Bottom, 0.5);
+            //}
+            //else
+            //{
                 min = Math.Max(generatedMesh.Bounds.Left, -0.5);
                 max = Math.Min(generatedMesh.Bounds.Right, 0.5);
-            }
+            //}
             var range = max - min;
 
             // convert triangulated mesh into unity mesh
@@ -257,9 +257,9 @@ namespace Assets.Modules.SurfaceGraphFilters
                     vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), 0);
                     vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), 0);
 
-                    colors[counter + 0] = GetGradient((vectors[0].y - min) / range);
-                    colors[counter + 1] = GetGradient((vectors[1].y - min) / range);
-                    colors[counter + 2] = GetGradient((vectors[2].y - min) / range);
+                    colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
+                    colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
+                    colors[counter + 2] = GetGradient((vectors[2].x - min) / range);
                 }
                 else
                 {
