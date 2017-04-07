@@ -76,6 +76,7 @@ Shader "Graph/TransparentLine"
                 fixed3 hsv = rgb2hsv(inputColor.rgb);
                 hsv.y += _saturation;
                 fixed3 adjustedColor = hsv2rgb(hsv);
+                clip((1 - input.color.a) - 0.001);
                 return fixed4(adjustedColor.rgb, inputColor.a);
             }
 

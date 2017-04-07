@@ -3,41 +3,58 @@ Shader "Graph/ColorLine"
     Properties
     {
     }
+
+
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue"="Geometry" }
+        Tags {"Queue"="Geometry" "RenderType"="Opaque"}
 
-        ZWrite On
-		Lighting Off
+        Lighting Off
         Cull Off
+        ZWrite On
 
         Pass {
-            ZWrite On
-            ColorMask 0
-        }
 
-        CGPROGRAM
-        #pragma surface surf Unlit noforwardadd
-        #pragma target 3.0
-       
-        struct Input
-        {
-            float4 color: Color;
-        };
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 5.0
 
-        void surf (Input IN, inout SurfaceOutput o)
-        {
-            o.Albedo = IN.color.rgb;
-        }
+            #include "UnityCG.cginc"
 
-        fixed4 LightingUnlit(SurfaceOutput so, fixed3 lightDir, fixed att)
-        {
-            fixed4 col;
-            col.rgb = so.Albedo;
-            return col;
+            struct Input
+            {
+                float4 vertex : POSITION;
+                float4 color: COLOR;
+            };
+
+            struct v2f
+            {
+                float4 vertex : SV_POSITION;
+                float4 color : COLOR;
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            v2f vert (Input input)
+            {
+                v2f output;
+                UNITY_SETUP_INSTANCE_ID(input);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
+                output.vertex = UnityObjectToClipPos(input.vertex);
+                output.color = input.color;
+                return output;
+            }
+
+            fixed4 frag (v2f input) : SV_Target
+            {
+                fixed4 inputColor = input.color;
+                clip(input.color.a - 0.999);
+                return inputColor;
+            }
+
+
+            ENDCG
         }
- 
-        ENDCG
     }
  }
 
