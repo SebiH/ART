@@ -6,11 +6,11 @@ Shader "GUI/3D Text Shader - Cull Back" {
 	}
 
 	SubShader {
-		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags{ "Queue" = "Transparent+20" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 
 		Lighting Off
 		Cull Back
-		ZWrite Off
+		ZWrite On
 		Fog { Mode Off }
 
 		Blend SrcAlpha OneMinusSrcAlpha
