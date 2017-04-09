@@ -19,11 +19,23 @@ namespace Assets.Modules.ParallelCoordinates
             public Color32 Color;
         }
 
+        private static float[] ColorOffsets = null;
+
         // Array position == data index
         public LineProperty[] Lines = new LineProperty[Globals.DataPointsCount];
 
         private void OnEnable()
         {
+            if (ColorOffsets == null)
+            {
+                ColorOffsets = new float[Globals.DataPointsCount];
+                for (var i = 0; i < ColorOffsets.Length; i++)
+                {
+                    ColorOffsets[i] = (i - Globals.DataPointsCount / 2f) / (2f * Globals.DataPointsCount);
+                }
+            }
+
+
             _mesh = new Mesh();
 
             _renderer = GetComponent<SkinnedMeshRenderer>();
@@ -35,6 +47,7 @@ namespace Assets.Modules.ParallelCoordinates
             var bindPoses = new Matrix4x4[Lines.Length * 2];
             var boneWeights = new BoneWeight[Lines.Length * 2];
             var colors = new Color32[Lines.Length * 2];
+            var uv2 = new Vector2[Lines.Length * 2];
 
             for (var i = 0; i < Lines.Length; i++)
             {
@@ -67,11 +80,15 @@ namespace Assets.Modules.ParallelCoordinates
 
                 colors[i * 2 + 0] = Lines[i].Color;
                 colors[i * 2 + 1] = Lines[i].Color;
+
+                uv2[i * 2 + 0].x = ColorOffsets[i];
+                uv2[i * 2 + 1].x = ColorOffsets[i];
             }
 
             triangles[triangles.Length - 1] = 0;
 
             _mesh.vertices = new Vector3[Lines.Length * 2];
+            _mesh.uv2 = uv2;
             _mesh.colors32 = colors;
             _mesh.triangles = triangles;
             _mesh.boneWeights = boneWeights;
