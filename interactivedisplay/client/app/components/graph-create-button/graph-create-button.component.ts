@@ -17,6 +17,7 @@ export class GraphCreateButtonComponent {
     constructor(private graphProvider: GraphProvider) {}
 
     private handleCreateStart(event: any): void {
+        this.graphProvider.selectGraph(null);
         let graph = this.graphProvider.addGraph();
         this.createdGraph = graph;
         this.createdGraph.isPickedUp = true;
