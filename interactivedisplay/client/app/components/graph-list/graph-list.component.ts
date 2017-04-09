@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observer } from 'rxjs/Observer';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
 
@@ -16,6 +17,8 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
     private selectedGraph: Graph = null;
     private isScrolling: boolean = false;
+    private hasInertia: boolean = false;
+    private lastMovement: number = 0;
     private interactionCounter: number = 0;
 
     private listStyle = {
@@ -80,12 +83,14 @@ export class GraphListComponent implements OnInit, OnDestroy {
         // TODO: multitouch??
         if (this.selectedGraph === null) {
             this.isScrolling = true;
+            this.lastMovement = 0;
         }
     }
 
     private handleMoveUpdate(event: any): void {
         if (this.selectedGraph === null) {
             this.scrollOffset += event.deltaX;
+            this.lastMovement = event.deltaX;
 
             for (let graph of this.graphs) {
                 if (graph.isPickedUp) {
@@ -111,7 +116,21 @@ export class GraphListComponent implements OnInit, OnDestroy {
         if (this.selectedGraph === null) {
             this.isScrolling = false;
             this.applyScrollOffsetLimits();
+            this.applyInertia(this.lastMovement);
         }
+    }
+
+    private applyInertia(force: number): void {
+        if (Math.abs(force) < 1 || this.isScrolling || this.selectedGraph) {
+            this.hasInertia = false;
+            this.applyScrollOffsetLimits();
+            return;
+        }
+
+        this.hasInertia = true;
+        this.scrollOffset += force;
+
+        setTimeout(() => this.applyInertia(force * 0.95), 10);
     }
 
 

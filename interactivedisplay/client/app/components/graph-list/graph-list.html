@@ -23,7 +23,7 @@
         <!-- Scrollable list -->
         <div class="list"
              [ngStyle]="listStyle"
-             [ngClass]="{ moving: isScrolling }">
+             [ngClass]="{ moving: isScrolling || hasInertia }">
             <!-- Graph visualisation that can be dragged&dropped -->
             <graph-list-item *ngFor="let graph of graphs; trackBy: graph?.id"
                 [graph]="graph" [offset]="getOffset(graph)">
