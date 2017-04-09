@@ -519,10 +519,8 @@ export class InteractionManager {
         if (pressListeners.length > 0 || clickListeners.length > 0) {
             interaction.timeoutId = window.setTimeout(() => {
                 interaction.timeoutId = -1;
-                if (interaction.isActive && this.isEligibleForPress(interaction)) {
-                    if (pressListeners.length > 0) {
-                        this.triggerPressDown(interaction);
-                    }
+                if (interaction.isActive && this.isEligibleForPress(interaction) && pressListeners.length > 0) {
+                    this.triggerPressDown(interaction);
                 } else {
                     this.triggerTouchDown(interaction);
                 }
