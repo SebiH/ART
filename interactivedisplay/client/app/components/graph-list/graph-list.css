@@ -33,15 +33,22 @@
 
 .add-button-container {
     position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
 
     height: 100%;
     width: 100%;
 
     display: flex;
     align-items: center;
+}
+
+.add-button-container.left {
     justify-content: flex-start;
+}
+
+.add-button-container.right {
+    justify-content: flex-end;
 }
 
 .add-button {

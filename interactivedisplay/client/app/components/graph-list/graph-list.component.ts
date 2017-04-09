@@ -115,8 +115,14 @@ export class GraphListComponent implements OnInit, OnDestroy {
     }
 
 
-    private onGraphCreation(graph: Graph): void {
-        graph.posOffset = graph.posOffset + this.scrollOffset - graph.width * 0.8;
+    private onGraphCreation(graph: Graph, pos: 'left' | 'right'): void {
+        if (pos === 'left') {
+            graph.posOffset = graph.posOffset + this.scrollOffset - graph.width * 0.8;
+        }
+
+        if (pos == 'right') {
+            graph.posOffset = graph.posOffset + window.innerWidth + this.scrollOffset - graph.width * 0.8;
+        }
     }
 
     private focusGraph(graph: Graph): void {

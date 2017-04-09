@@ -5,10 +5,15 @@
      (moveUpdate)="handleMoveUpdate($event)"
      (moveEnd)="handleMoveEnd($event)">
 
-    <!-- Button to add new graphs -->
-    <div class="add-button-container">
+    <!-- Buttons to add new graphs -->
+    <div class="add-button-container left">
         <graph-create-button class="add-button"
-            (graphCreation)="onGraphCreation($event)">
+            (graphCreation)="onGraphCreation($event, 'left')">
+        </graph-create-button>
+    </div>
+    <div class="add-button-container right">
+        <graph-create-button class="add-button"
+            (graphCreation)="onGraphCreation($event, 'right')">
         </graph-create-button>
     </div>
 
