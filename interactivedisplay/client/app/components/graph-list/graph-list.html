@@ -28,6 +28,11 @@
             <graph-list-item *ngFor="let graph of graphs; trackBy: graph?.id"
                 [graph]="graph" [offset]="getOffset(graph)">
             </graph-list-item>
+
+            <div class="indicator"
+                *ngFor="let graph of newGraphs; trackBy: graph?.id"
+                [ngStyle]="getIndicatorStyle(graph)">
+            </div>
         </div>
     </div>
 

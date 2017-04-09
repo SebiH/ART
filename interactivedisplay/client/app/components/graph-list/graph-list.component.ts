@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 export class GraphListComponent implements OnInit, OnDestroy {
 
     private graphs: Graph[] = [];
+    private newGraphs: Graph[] = [];
     private isActive: boolean = true;
 
     private selectedGraph: Graph = null;
@@ -53,6 +54,8 @@ export class GraphListComponent implements OnInit, OnDestroy {
         this.graphProvider.onGraphSelectionChanged()
             .takeWhile(() => this.isActive)
             .subscribe(selectedGraph => {
+                this.newGraphs = [];
+
                 let prevSelectedGraph = this.selectedGraph;
                 if (selectedGraph) {
                     this.focusGraph(selectedGraph);
@@ -142,10 +145,28 @@ export class GraphListComponent implements OnInit, OnDestroy {
         if (pos == 'right') {
             graph.posOffset = graph.posOffset + window.innerWidth + this.scrollOffset - graph.width * 0.8;
         }
+
+        this.newGraphs.push(graph);
     }
 
     private focusGraph(graph: Graph): void {
         this.scrollOffset = this.getOffset(graph) + graph.width / 2 - window.innerWidth / 2;
+    }
+
+    private getIndicatorStyle(graph: Graph): any {
+        let offset = 0;
+        for (let g of this.graphs) {
+            if (g.absolutePos < graph.absolutePos && !g.isNewlyCreated) {
+                offset += g.width;
+            }
+        }
+
+        let transform = 'translate3d(' + offset + 'px, 0, 0)';
+        return {
+            '-webkit-transform': transform,
+            '-ms-transform': transform,
+            transform: transform
+        };
     }
 
     private selectNext(): void {

@@ -75,3 +75,14 @@
 .selection-close-area.right {
     right: 0;
 }
+
+.indicator {
+    width: 40px;
+    height: 100%;
+
+    border: 3px dotted black;
+
+    position: absolute;
+    top: 0;
+    left: -20px;
+}
