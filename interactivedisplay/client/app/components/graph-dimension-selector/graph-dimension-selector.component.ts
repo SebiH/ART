@@ -1,6 +1,6 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { GraphDataProvider } from '../../services/index';
+import { DataProvider } from '../../services/index';
 import { Graph, ChartDimension } from '../../models/index'; 
 
 const BORDER_SIZE = 30;
@@ -37,10 +37,10 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
         'opacity': 1
     };
 
-    constructor(private graphDataProvider: GraphDataProvider) {}
+    constructor(private dataProvider: DataProvider) {}
 
     ngAfterViewInit() {
-        this.graphDataProvider.getDimensions()
+        this.dataProvider.getDimensions()
             .first()
             .subscribe((dims) => {
                 this.dimensions = dims;
@@ -78,9 +78,10 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
 
     private scrollToCurrent(): void {
         let graphDim = this.getActiveDim();
+        let dim = graphDim ? graphDim.name : '';
         let itemSize = this.getItemSize();
         if (graphDim && this.dimensions) {
-            this.offset = this.dimensions.indexOf(graphDim) * itemSize - this.size / 2 + BORDER_SIZE * 2;
+            this.offset = this.dimensions.indexOf(dim) * itemSize - this.size / 2 + BORDER_SIZE * 2;
             this.updateOffset();
         }
     }
@@ -104,7 +105,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
     }
 
     private applyDimension(dim: string, axis: 'x' | 'y') {
-        this.graphDataProvider.getData(dim)
+        this.dataProvider.getData(dim)
             .first()
             .subscribe((data) => {
                 if (axis == 'x') {

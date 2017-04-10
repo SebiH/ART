@@ -8,7 +8,7 @@ import { ChartDimension } from '../models/index';
 import * as _ from 'lodash';
 
 @Injectable()
-export class GraphDataProvider {
+export class DataProvider {
 
     private dataCount: ReplaySubject<number> = new ReplaySubject<number>(1);
     private dimensions: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);

@@ -5,7 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { SocketIO } from './SocketIO.service';
 import { Graph } from '../models/index';
-import { GraphDataProvider } from './GraphDataProvider.service';
+import { DataProvider } from './DataProvider.service';
 import * as _ from 'lodash';
 
 const COLOURS = [
@@ -33,12 +33,12 @@ export class GraphProvider {
     constructor(
         private socketio: SocketIO,
         private http: Http,
-        private graphDataProvider: GraphDataProvider) {
+        private dataProvider: DataProvider) {
 
         this.http.get('/api/graph/list')
             .subscribe(response => {
                 // response gives graphs as interface, *not* as class
-                this.graphs = _.map(<any[]>response.json().graphs, g => Graph.fromJson(g, this.graphDataProvider));
+                this.graphs = _.map(<any[]>response.json().graphs, g => Graph.fromJson(g, this.dataProvider));
                 if (this.graphs.length > 0) {
                     this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
                 }
