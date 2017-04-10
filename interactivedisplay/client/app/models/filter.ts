@@ -1,87 +1,83 @@
-import { Graph } from './graph';
+// import { Graph } from './graph';
 
-export type FilterPoint = [number, number];
+// export type FilterPoint = [number, number];
 
-export enum FilterType {
-    Categorical = 0,
-    Metric = 1,
-    Detail = 2
-}
+// export enum FilterType {
+//     Categorical = 0,
+//     Metric = 1,
+//     Detail = 2
+// }
 
-export class Filter {
-    public readonly id: number;
-    public indices: number[] = [];
-    public origin: Graph = null;
-    public color: string = "#03A9F4";
-    public isOverview: boolean = false;
+// export class Filter {
+//     public readonly id: number;
+//     public indices: number[] = [];
+//     public origin: Graph = null;
+//     public color: string = "#03A9F4";
+//     public isOverview: boolean = false;
 
-    // type determines which of the following three optional properties is set
-    public type: FilterType = FilterType.Detail;
-    // for 2d detail filters
-    public path: FilterPoint[] = [];
-    // for 1d categorical filters
-    public category?: number;
-    // for 1d metric chart filters
-    public range?: [number, number];
-    public gradient?: { stop: number, color: string }[];
+//     // only for overview filters
+//     public dimType: 'x' | 'y' | 'xy' = 'xy';
 
-    constructor(id: number) {
-        this.id = id;
-    }
+//     // type determines which of the following three optional properties is set
+//     public type: FilterType = FilterType.Detail;
+//     // for 2d detail filters
+//     public path: FilterPoint[] = [];
+//     // for 1d categorical filters
+//     public category?: number;
+//     // for 1d metric chart filters
+//     public range?: [number, number];
+//     public gradient?: { stop: number, color: string }[];
 
-    public toJson(): any {
-        let sortedRange: [number,number];
-        if (this.type == FilterType.Metric) {
-            sortedRange = [
-                Math.min(this.range[0]),
-                Math.max(this.range[1])
-            ];
-        }
+//     constructor(id: number) {
+//         this.id = id;
+//     }
 
-        let unityPath: number[] = [];
-        for (let p of this.path) {
-            unityPath.push(p[0]);
-            unityPath.push(p[1]);
-        }
+//     public toJson(): any {
 
-        return {
-            id: this.id,
-            origin: this.origin.id,
-            color: this.color,
-            isOverview: this.isOverview,
+//         let unityPath: number[] = [];
+//         for (let p of this.path) {
+//             unityPath.push(p[0]);
+//             unityPath.push(p[1]);
+//         }
 
-            type: this.type,
-            path: unityPath,
-            category: this.category,
-            range: sortedRange,
-            gradient: this.gradient
-        };
-    }
+//         return {
+//             id: this.id,
+//             origin: this.origin.id,
+//             color: this.color,
+//             isOverview: this.isOverview,
 
-    public static fromJson(jFilter: any, origin: Graph): Filter {
-        var filter = new Filter(jFilter.id);
-        filter.color = jFilter.color;
-        filter.isOverview = jFilter.isOverview;
+//             type: this.type,
+//             path: unityPath,
+//             category: this.category,
+//             range: sortedRange,
+//             gradient: this.gradient
+//         };
+//     }
 
-        filter.type = <FilterType>jFilter.type;
-        switch (filter.type) {
-            case FilterType.Categorical:
-                filter.category = jFilter.category;
-                break;
-            case FilterType.Metric:
-                filter.range = jFilter.range;
-                break;
-            case FilterType.Detail:
-                break;
-        }
+//     public static fromJson(jFilter: any, origin: Graph): Filter {
+//         var filter = new Filter(jFilter.id);
+//         filter.color = jFilter.color;
+//         filter.isOverview = jFilter.isOverview;
 
-        filter.path = [];
-        for (let i = 0; i < jFilter.path.length; i += 2) {
-            filter.path.push([jFilter.path[i], jFilter.path[i + 1]])
-        }
+//         filter.type = <FilterType>jFilter.type;
+//         switch (filter.type) {
+//             case FilterType.Categorical:
+//                 filter.category = jFilter.category;
+//                 break;
+//             case FilterType.Metric:
+//                 filter.range = jFilter.range;
+//                 break;
+//             case FilterType.Detail:
+//                 break;
+//         }
 
-        filter.origin = origin;
+//         filter.path = [];
+//         for (let i = 0; i < jFilter.path.length; i += 2) {
+//             filter.path.push([jFilter.path[i], jFilter.path[i + 1]])
+//         }
 
-        return filter;
-    }
-}
+//         filter.origin = origin;
+
+//         return filter;
+//     }
+// }

@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Chart2dComponent } from '../chart-2d/chart-2d.component';
 import { PathSelection } from '../chart-2d/path-selection';
 import { PathContainer } from '../chart-2d/path-container';
-import { Graph, Filter, FilterType, FilterPoint, ChartDimension, Point } from '../../models/index';
+import { Graph, Filter, Point } from '../../models/index';
 import { GraphProvider, FilterProvider, DataHighlight } from '../../services/index';
 import { Utils } from '../../Utils';
 
@@ -123,6 +123,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, On
 
         let filter = this.filterProvider.createFilter(this.graph);
         filter.category = FilterType.Detail;
+        filter.dimType = 'xy';
 
         let path = new PathSelection(this.chart, filter.color);
         this.pathContainer.addPath(path);

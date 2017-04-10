@@ -32,11 +32,6 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
             .filter(changes => changes.indexOf('isColored') >= 0)
             .subscribe(changes => this.colorUpdate());
 
-        this.graph.onUpdate
-            .takeWhile(() => this.isActive)
-            .filter(changes => changes.indexOf('isFlipped') >= 0)
-            .subscribe(changes => this.clearOnSwitch = true);
-
         this.filterProvider.getFilters()
             .first()
             .subscribe(filters => this.initFilters(filters));
@@ -54,9 +49,10 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
 
     private initFilters(allFilters: Filter[]): void {
         this.has2dFilter = false;
+        let dimType = this.graph.isFlipped ? 'y' : 'x';
 
         for (let filter of allFilters) {
-            if (filter.origin.id == this.graph.id) {
+            if (filter.origin.id == this.graph.id && filter.dimType == dimType) {
                 if (filter.isOverview) {
                     this.filters.push(filter);
                 } else {
@@ -85,14 +81,6 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     }
 
     private switchFilter(): void {
-        if (this.clearOnSwitch) {
-            this.clearOnSwitch = true;
-            while (this.filters.length > 0) {
-                let filter = this.filters.pop();
-                this.filterProvider.removeFilter(filter);
-            }
-        }
-
         if (this.invisibleColorFilter !== null) {
             this.filterProvider.removeFilter(this.invisibleColorFilter);
             this.invisibleColorFilter = null;
@@ -261,6 +249,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     private addCategoryFilter(category: number, color: string): void {
         let filter = this.filterProvider.createFilter(this.graph);
         filter.isOverview = true;
+        filter.dimType = this.graph.isFlipped ? 'y' : 'x';
         filter.type = FilterType.Categorical;
         filter.category = category;
         filter.color = color;
@@ -445,6 +434,7 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
         let filter = this.filterProvider.createFilter(this.graph);
 
         filter.isOverview = true;
+        filter.dimType = this.graph.isFlipped ? 'y' : 'x';
         filter.type = FilterType.Metric;
         filter.range = range;
 

@@ -1,5 +1,6 @@
 export * from './FilterProvider.service';
-export * from './GraphDataProvider.service';
+export * from './GlobalFilterProvider.service';
+export * from './DataProvider.service';
 export * from './GraphProvider.service';
 export * from './interaction/index';
 export * from './Logger.service';

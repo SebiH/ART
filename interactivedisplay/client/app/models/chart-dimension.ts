@@ -1,3 +1,8 @@
+export interface GradientStop {
+    stop: number;
+    color: string 
+}
+
 export interface ChartDimension {
     data: { id: string, value: number }[];
     domain: { min: number, max: number };
@@ -14,6 +19,6 @@ export interface ChartDimension {
 
     // only if isMetric is true
     bins?: { displayName: string, value?: number, range?: [number, number] }[];
-    gradient?: { stop: number, color: string }[];
+    gradient?: GradientStop[];
     ticks: number[];
 }

@@ -1,5 +1,5 @@
 export * from './chart-dimension';
-export * from './filter';
+export * from './filters/index';
 export * from './graph';
 export * from './map';
 export * from './marker';
