@@ -1,14 +1,26 @@
-import { Component, Input, AfterViewInit, OnDestroy, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
-import { Graph, ChartDimension, Filter, FilterType } from '../../models/index';
-import { FilterProvider } from '../../services/index';
-import { Chart1dComponent } from '../chart-1d/chart-1d.component';
+import { Component, Input } from '@angular/core';
+import { Graph, ChartDimension } from '../../models/index';
 
 import * as _ from 'lodash';
 
 @Component({
     selector: 'graph-overview-chart',
-    templateUrl: './app/components/graph-overview-chart/graph-overview-chart.html',
-    styleUrls: [ './app/components/graph-overview-chart/graph-overview-chart.css' ]
+    template: `
+    <div *ngIf="dim && !dim.isMetric">
+        <category-overview-chart
+            [width]="width" [height]="height"
+            [graph]="graph"
+            [dim]="dim">
+        </category-overview-chart>
+    </div>
+    <div *ngIf="dim && dim.isMetric">
+        <metric-overview-chart
+            [width]="width" [height]="height"
+            [graph]="graph"
+            [dim]="dim">
+        </metric-overview-chart>
+    </div>
+    `
 })
 export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     @Input() graph: Graph;
@@ -90,172 +102,23 @@ export class GraphOverviewChartComponent implements AfterViewInit, OnDestroy, On
     }
 
     private colorUpdate(): void {
-        if (this.dim) {
-            if (this.dim.isMetric) {
-                this.lineColorUpdate();
-            } else {
-                this.categoryColorUpdate();
-            }
-        }
     }
 
     private onClick(event: any): void {
-        if (this.dim) {
-            if (this.dim.isMetric) {
-                this.lineClick(event);
-            } else {
-                this.categoryClick(event);
-            }
-        }
     }
 
 
     private onMoveStart(event: any): void {
-        if (this.dim) {
-            if (this.dim.isMetric) {
-                this.lineMoveStart(event);
-            } else {
-                this.categoryMoveStart(event);
-            }
-        }
     }
 
     private onMoveUpdate(event: any): void {
-        if (this.dim) {
-            if (this.dim.isMetric) {
-                this.lineMoveUpdate(event);
-            } else {
-                this.categoryMoveUpdate(event);
-            }
-        }
     }
 
     private onMoveEnd(event: any): void {
-        if (this.dim) {
-            if (this.dim.isMetric) {
-                this.lineMoveEnd(event);
-            } else {
-                this.categoryMoveEnd(event);
-            }
-        }
     }
 
 
 
-
-
-
-    /**
-     *    Category handling
-     */
-
-    private flippedCategories: number[] = [];
-    private hasNoFilters: boolean = false;
-
-    private categoryClick(event: any): void {
-        let clickedCategory = this.chart.invert(event.relativePos.y);
-        this.flipCategory(clickedCategory);
-    }
-
-    private categoryMoveStart(event: any): void {
-        this.flippedCategories = [];
-
-        let clickedCategory = this.chart.invert(event.relativePos.y);
-        this.flipCategory(clickedCategory);
-        this.flippedCategories.push(clickedCategory);
-    }
-
-
-    private categoryMoveUpdate(event: any): void {
-        let clickedCategory = this.chart.invert(event.relativePos.y);
-        if (this.flippedCategories.indexOf(clickedCategory) < 0) {
-            this.flipCategory(clickedCategory);
-            this.flippedCategories.push(clickedCategory);
-        }
-    }
-
-    private categoryMoveEnd(event: any): void {
-    }
-
-    private categoryUpdateFilters(): void {
-        if (this.dim) {
-            this.categoryColorUpdate();
-
-            if (this.filters.length > 0 || this.has2dFilter) {
-                for (let mapping of this.dim.mappings) {
-                    let filter = _.find(this.filters, f => f.category == mapping.value);
-                    this.chart.setCategoryActive(mapping.value, filter != null);
-                }
-            }
-        }
-    }
-
-    private categoryColorUpdate(): void {
-        if (this.dim) {
-            if (this.filters.length == this.dim.mappings.length && !this.graph.isColored) {
-                // all categories are active -> remove all filters
-                while (this.filters.length > 0) {
-                    this.filterProvider.removeFilter(this.filters.pop());
-                }
-            }
-
-            if (this.filters.length == 0 && this.graph.isColored && !this.has2dFilter) {
-                for (let mapping of this.dim.mappings) {
-                    this.addCategoryFilter(mapping.value, mapping.color);
-                    this.chart.setCategoryActive(mapping.value, true);
-                }
-
-                this.hasNoFilters = false;
-            }
-        }
-    }
-
-
-    private flipCategory(category: number): void {
-        let mapping = _.find(this.dim ? this.dim.mappings : [], m => m.value == category);
-
-        if (mapping) {
-
-            if (this.filters.length == 0 && !this.hasNoFilters) {
-                // no categorical filters => all categories are active
-                for (let mapping of this.dim.mappings) {
-                    this.addCategoryFilter(mapping.value, mapping.color);
-                }
-            }
-
-            let filter = _.find(this.filters, f => f.category == category);
-
-            if (filter) {
-                this.chart.setCategoryActive(category, false);
-                _.pull(this.filters, filter);
-                this.filterProvider.removeFilter(filter);
-                this.hasNoFilters = (this.filters.length === 0);
-
-            } else {
-                this.addCategoryFilter(category, mapping.color);
-                this.chart.setCategoryActive(category, true);
-                this.hasNoFilters = false;
-            }
-
-            if (this.filters.length == this.dim.mappings.length && !this.graph.isColored) {
-                // all categories are active -> remove all filters
-                while (this.filters.length > 0) {
-                    this.filterProvider.removeFilter(this.filters.pop());
-                }
-            }
-        }
-    }
-
-    private addCategoryFilter(category: number, color: string): void {
-        let filter = this.filterProvider.createFilter(this.graph);
-        filter.isOverview = true;
-        filter.dimType = this.graph.isFlipped ? 'y' : 'x';
-        filter.type = FilterType.Categorical;
-        filter.category = category;
-        filter.color = color;
-        this.filterProvider.updateFilter(filter);
-        this.filters.push(filter);
-    }
 
 
 
