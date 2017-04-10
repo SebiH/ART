@@ -26,10 +26,12 @@ import { routing } from './routes';
     Components.GraphListComponent,
     Components.GraphListItemComponent,
     Components.GraphOverviewChartComponent,
+    Components.GraphOverviewChartComponent,
     Components.GraphSectionComponent,
     Components.MarkerComponent,
     Components.MeasurementComponent,
     Components.MenuComponent,
+    Components.MetricOverviewChartComponent,
     Components.SurfaceComponent,
     Directives.ChartDirective,
     Directives.MoveableDirective,
@@ -45,6 +47,7 @@ import { routing } from './routes';
     Services.Logger,
     Services.MapProvider,
     Services.MarkerProvider,
+    Services.ServiceLoader,
     Services.SocketIO,
     Services.SurfaceProvider
   ]

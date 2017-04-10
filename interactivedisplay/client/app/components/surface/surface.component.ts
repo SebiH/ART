@@ -1,16 +1,28 @@
-import { Component, HostListener } from '@angular/core';
-import { SurfaceProvider, SocketIO } from '../../services/index';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { SurfaceProvider, SocketIO, ServiceLoader } from '../../services/index';
 
 @Component({
     selector: 'surface-container',
-    templateUrl: './app/components/surface/surface.html',
-    styleUrls: ['./app/components/surface/surface.css']
+    template: `<graph-list *ngIf="isLoaded"></graph-list>
+        <div ngIf="!isLoaded"> <h1> Initializing... </h1> </div>`,
+    styles: [ 'div { height: 100%; width: 100%; display: flex; justify-content: center; align-items: center; }' ]
 })
 
-export class SurfaceComponent {
-    constructor (private surfaceProvider: SurfaceProvider, private socketio: SocketIO) {
+export class SurfaceComponent implements OnInit {
+    private isLoaded: boolean = false;
+
+    constructor (
+        private surfaceProvider: SurfaceProvider,
+        private socketio: SocketIO,
+        private serviceLoader: ServiceLoader) {
         socketio.connect();
         this.disableBackNavigation();
+    }
+
+    ngOnInit() {
+        this.serviceLoader.onLoaded()
+            .first()
+            .subscribe(() => this.isLoaded = true);
     }
 
     @HostListener('window:resize', ['$event'])
