@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef, animate, trigger, state, transition, style } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { Marker, Graph, Point, ChartDimension } from '../../models/index';
-import { MarkerProvider, GraphProvider, GraphDataProvider, FilterProvider } from '../../services/index';
+import { Marker, Graph } from '../../models/index';
+import { MarkerProvider, GraphProvider } from '../../services/index';
 
 const NUM_MARKERS = 8;
 
@@ -31,14 +31,9 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     private isActive: boolean = true;
     private isAnyGraphSelected: boolean = false;
 
-    private dimX: ChartDimension = null;
-    private dimY: ChartDimension = null;
-
     constructor (
         private markerProvider: MarkerProvider,
         private graphProvider: GraphProvider,
-        private dataProvider: GraphDataProvider,
-        private filterProvider: FilterProvider,
         private elementRef: ElementRef
         ) {}
 
@@ -51,18 +46,11 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
             .takeWhile(() => this.isActive)
             .subscribe(this.checkForChanges.bind(this));
 
-        this.graph.onUpdate
-            .takeWhile(() => this.isActive)
-            .filter(changes => changes.indexOf('dimX') >= 0 || changes.indexOf('dimY') >= 0)
-            .subscribe(changes => this.updateDimensions(this.graph.dimX, this.graph.dimY));
-
         this.graphProvider.onGraphSelectionChanged()
             .takeWhile(() => this.isActive)
             .subscribe(selectedGraph => {
                 this.isAnyGraphSelected = (selectedGraph != null);
             });
-
-        this.updateDimensions(this.graph.dimX, this.graph.dimY);
     }
 
     ngOnDestroy() {
@@ -71,38 +59,6 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         }
 
         this.isActive = false;
-    }
-
-    private updateDimensions(newDimX: string, newDimY: string): void {
-        if (newDimX) {
-            if (this.dimX === null || this.dimX.name !== newDimX) {
-                this.dataProvider.getData(newDimX)
-                    .first()
-                    .subscribe(data => {
-                        // just in case it has changed in the meantime
-                        if (newDimX === this.graph.dimX) {
-                            this.dimX = data;
-                        }
-                    });
-            }
-        } else {
-            this.dimX = null;
-        }
-
-        if (newDimY) {
-            if (this.dimY === null || this.dimY.name !== newDimY) {
-                this.dataProvider.getData(newDimY)
-                    .first()
-                    .subscribe(data => {
-                        // just in case it has changed in the meantime
-                        if (newDimY === this.graph.dimY) {
-                            this.dimY = data;
-                        }
-                    });
-            }
-        } else {
-            this.dimY = null;
-        }
     }
 
 
@@ -126,12 +82,9 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         } else {
             this.graphProvider.setColor(this.graph);
         }
-
-        this.filterProvider.triggerGlobalFilterUpdate();
     }
 
     private toggleFlip() {
-        this.filterProvider.removeFilters(this.graph);
         this.graph.isFlipped = !this.graph.isFlipped;
     }
 

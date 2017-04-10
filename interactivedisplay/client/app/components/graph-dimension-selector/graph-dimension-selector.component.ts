@@ -1,7 +1,7 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { GraphDataProvider, FilterProvider } from '../../services/index';
-import { Graph, ChartDimension, Filter } from '../../models/index'; 
+import { GraphDataProvider } from '../../services/index';
+import { Graph, ChartDimension } from '../../models/index'; 
 
 const BORDER_SIZE = 30;
 const ITEM_WIDTH = 200;
@@ -37,7 +37,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
         'opacity': 1
     };
 
-    constructor(private graphDataProvider: GraphDataProvider, private filterProvider: FilterProvider) {}
+    constructor(private graphDataProvider: GraphDataProvider) {}
 
     ngAfterViewInit() {
         this.graphDataProvider.getDimensions()
@@ -90,24 +90,32 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
 
         if (this.graph.isFlipped) {
             if (this.axis === 'x') {
-                this.graph.dimY = dim;
+                this.applyDimension(dim, 'y');
             } else {
-                this.graph.dimX = dim;
+                this.applyDimension(dim, 'x');
             }
         } else {
             if (this.axis === 'x') {
-                this.graph.dimX = dim;
+                this.applyDimension(dim, 'x');
             } else {
-                this.graph.dimY = dim;
+                this.applyDimension(dim, 'y');
             }
-        }
-
-        if (prevDim != dim) {
-            this.filterProvider.removeFilters(this.graph);
         }
     }
 
-    private getActiveDim(): string {
+    private applyDimension(dim: string, axis: 'x' | 'y') {
+        this.graphDataProvider.getData(dim)
+            .first()
+            .subscribe((data) => {
+                if (axis == 'x') {
+                    this.graph.dimX = data;
+                } else {
+                    this.graph.dimY = data;
+                }
+            })
+    }
+
+    private getActiveDim(): ChartDimension {
         if (this.graph.isFlipped) {
             return this.axis === 'x' ? this.graph.dimY : this.graph.dimX;
         } else {

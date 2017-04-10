@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { SocketIO } from './SocketIO.service';
 import { Graph } from '../models/index';
+import { GraphDataProvider } from './GraphDataProvider.service';
 import * as _ from 'lodash';
 
 const COLOURS = [
@@ -29,11 +30,15 @@ export class GraphProvider {
 
     private delayedGraphUpdate: Function;
 
-    constructor(private socketio: SocketIO, private http: Http) {
+    constructor(
+        private socketio: SocketIO,
+        private http: Http,
+        private graphDataProvider: GraphDataProvider) {
+
         this.http.get('/api/graph/list')
             .subscribe(response => {
                 // response gives graphs as interface, *not* as class
-                this.graphs = _.map(<any[]>response.json().graphs, g => Graph.fromJson(g));
+                this.graphs = _.map(<any[]>response.json().graphs, g => Graph.fromJson(g, this.graphDataProvider));
                 if (this.graphs.length > 0) {
                     this.idCounter = _.max(<number[]>_.map(this.graphs, 'id')) + 1;
                 }

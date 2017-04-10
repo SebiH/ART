@@ -1,6 +1,9 @@
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { Point } from './point';
+import { ChartDimension } from './chart-dimension';
+import { GraphDataProvider } from '../services/index';
+
+import * as _ from 'lodash';
 
 const DEFAULT_GRAPH_WIDTH = 1250;
 
@@ -16,11 +19,11 @@ export class Graph {
     /*
      *    dimX
      */
-    private _dimX : string = "";
-    public get dimX() : string {
+    private _dimX: ChartDimension = null;
+    public get dimX() : ChartDimension {
         return this._dimX;
     }
-    public set dimX(v : string) {
+    public set dimX(v : ChartDimension) {
         if (this._dimX != v) {
             this._dimX = v;
             this.propagateUpdates(['dimX']);
@@ -30,11 +33,11 @@ export class Graph {
     /*
      *    dimY
      */
-    private _dimY : string = "";
-    public get dimY() : string {
+    private _dimY: ChartDimension = null;
+    public get dimY() : ChartDimension {
         return this._dimY;
     }
-    public set dimY(v : string) {
+    public set dimY(v : ChartDimension) {
         if (this._dimY != v) {
             this._dimY = v;
             this.propagateUpdates(['dimY']);
@@ -203,8 +206,8 @@ export class Graph {
         return {
             id: this.id,
             
-            dimX: this.dimX,
-            dimY: this.dimY,
+            dimX: (this.dimX ? this.dimX.name : ''),
+            dimY: (this.dimY ? this.dimY.name : ''),
             color: this.color,
             isColored: this.isColored,
             isFlipped: this.isFlipped,
@@ -219,20 +222,31 @@ export class Graph {
 
 
     // inverse of .toJson()
-    public static fromJson(jGraph: any): Graph {
+    public static fromJson(jGraph: any, provider: GraphDataProvider): Graph {
         let graph = new Graph(jGraph.id);
 
-        graph._dimX = jGraph.dimX;
-        graph._dimY = jGraph.dimY;
+        if (jGraph.dimX) {
+            provider.getData(jGraph.dimX)
+                .first()
+                .subscribe(data => graph.dimX = data);
+        }
+
+        if (jGraph.dimY) {
+            provider.getData(jGraph.dimY)
+                .first()
+                .subscribe(data => graph.dimY = data);
+        }
+
         graph._color = jGraph.color;
         graph._isColored = jGraph.isColored;
         graph._isSelected = jGraph.isSelected;
         graph._isFlipped = jGraph.isFlipped;
+
         // force newly created to false because touch events won't persist
         graph._isNewlyCreated = false;
 
         graph._absolutePos = jGraph.pos;
-        // graph._width = jGraph.width;
+      // graph._width = jGraph.width;
         // overwrite width since scaling isn't implemented
         graph._width = DEFAULT_GRAPH_WIDTH;
 

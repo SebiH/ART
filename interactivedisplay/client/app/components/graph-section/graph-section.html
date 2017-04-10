@@ -42,9 +42,7 @@
                 <div [@visibility]="graph.isSelected ? 'visible' : 'hidden'">
                     <graph-detail
                         *ngIf="graph.isSelected"
-                        [graph]="graph"
-                        [dimX]="dimX"
-                        [dimY]="dimY">
+                        [graph]="graph">
                     </graph-detail>
                 </div>
             </div>

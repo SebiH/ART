@@ -23,8 +23,6 @@ interface Selection {
 export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     @Input() graph: Graph;
-    @Input() dimX: ChartDimension;
-    @Input() dimY: ChartDimension;
 
     @Input() public width = 600;
     @Input() public height = 600;

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Graph, ChartDimension } from '../../models/index';
+import { Graph } from '../../models/index';
 
 @Component({
     selector: 'graph-detail',
@@ -8,6 +8,4 @@ import { Graph, ChartDimension } from '../../models/index';
 })
 export class GraphDetailComponent {
     @Input() graph: Graph;
-    @Input() dimX: ChartDimension;
-    @Input() dimY: ChartDimension;
 }
