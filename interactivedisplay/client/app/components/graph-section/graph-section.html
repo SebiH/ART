@@ -25,13 +25,13 @@
                             [width]="300"
                             [height]="1250"
                             [graph]="graph"
-                            [dim]="graph.isFlipped ? dimY : dimX">
+                            [dim]="graph.isFlipped ? graph.dimY : graph.dimX">
                         </graph-overview-chart>
 
                         <div class="button chart-button"
                             touch-button
                             (touchclick)="toggleColor()"
-                            [ngClass]="{ active: this.graph.isColored }">
+                            [ngClass]="{ active: graph.isColored }">
                             <div class="text">
                                 Colour
                             </div>

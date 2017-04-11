@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 
 @Component({
     selector: 'category-overview-chart',
-    templateUrl: `
+    template: `
 <div class="root" [style.height.px]="height">
     <chart-1d class="chart"
             [height]="height"

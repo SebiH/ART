@@ -91,10 +91,27 @@ export class FilterProvider {
         }
     }
 
-    private setupFilter(filter: Filter): void {
+    private getJson(filter: Filter): any {
+        let jFilter = filter.toJson();
+
+        if (filter instanceof CategoryFilter) {
+            jFilter.type = FilterType.Categorical;
+        }
+        if (filter instanceof MetricFilter) {
+            jFilter.type = FilterType.Metric;
+        }
+        if (filter instanceof DetailFilter) {
+            jFilter.type = FilterType.Detail;
+        }
+
+        return jFilter;
+    }
+
+    private setupFilter(filter: Filter, graph: Graph): void {
+        filter.origin = graph;
         this.filters.push(filter);
         this.filterObserver.next(this.filters);
-        this.socketio.sendMessage('+filter', filter.toJson());
+        this.socketio.sendMessage('+filter', this.getJson(filter));
     }
 
 
@@ -102,19 +119,19 @@ export class FilterProvider {
 
     public createDetailFilter(origin): DetailFilter {
         let filter = new DetailFilter(this.idCounter++);
-        this.setupFilter(filter);
+        this.setupFilter(filter, origin);
         return filter;
     }
 
     public createCategoryFilter(origin): CategoryFilter {
         let filter = new CategoryFilter(this.idCounter++);
-        this.setupFilter(filter);
+        this.setupFilter(filter, origin);
         return filter;
     }
 
     public createMetricFilter(origin): MetricFilter {
         let filter = new MetricFilter(this.idCounter++);
-        this.setupFilter(filter);
+        this.setupFilter(filter, origin);
         return filter;
     }
 

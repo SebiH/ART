@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 
 @Component({
     selector: 'metric-overview-chart',
-    templateUrl: `
+    template: `
 <div class="root" [style.height.px]="height">
     <chart-1d class="chart"
             [height]="height"
@@ -105,7 +105,7 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
         let ranges: [number, number][] = [];
 
         for (let filter of this.getActiveFilters()) {
-            ranges.push[filter.range.min, filter.range.max];
+            ranges.push([filter.range.min, filter.range.max]);
         }
 
         this.chart.setHighlightedRanges(ranges);
