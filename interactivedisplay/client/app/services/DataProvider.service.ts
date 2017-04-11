@@ -29,7 +29,7 @@ export class DataProvider {
             this.data[dim] = rs;
             this.http.post('/api/graph/data', { dimension: dim })
                 .subscribe(res => {
-                    let chartDim = <ChartDimension>res.json();
+                    let chartDim = ChartDimension.fromJson(res.json());
                     rs.next(chartDim);
                     this.dataCount.next(chartDim.data.length);
                 });

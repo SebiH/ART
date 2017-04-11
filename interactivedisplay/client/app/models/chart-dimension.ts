@@ -3,22 +3,38 @@ export interface GradientStop {
     color: string 
 }
 
-export interface ChartDimension {
-    data: { id: string, value: number }[];
-    domain: { min: number, max: number };
+export class ChartDimension {
+    public data: { id: string, value: number }[];
+    public domain: { min: number, max: number };
 
-    name: string;
+    public name: string;
 
-    isMetric: boolean;
+    public isMetric: boolean;
 
-    isTimeBased: boolean;
-    timeFormat?: string;
+    public isTimeBased: boolean;
+    public timeFormat?: string;
 
     // only if isMetric is false
-    mappings?: { value: number, name: string, color: string }[];
+    public mappings?: { value: number, name: string, color: string }[];
 
     // only if isMetric is true
-    bins?: { displayName: string, value?: number, range?: [number, number] }[];
-    gradient?: GradientStop[];
-    ticks: number[];
+    public bins?: { displayName: string, value?: number, range?: [number, number] }[];
+    public gradient?: GradientStop[];
+    public ticks: number[];
+
+    public static fromJson(jDim: any): ChartDimension {
+        let dim = new ChartDimension();
+        dim.data = jDim.data;
+        dim.domain = jDim.domain;
+        dim.name = jDim.name;
+        dim.isMetric = jDim.isMetric;
+        dim.isTimeBased = jDim.isTimeBased;
+        dim.timeFormat = jDim.timeFormat;
+        dim.mappings = jDim.mappings;
+        dim.bins = jDim.bins;
+        dim.gradient = jDim.gradient;
+        dim.ticks = jDim.ticks;
+
+        return dim;
+    }
 }
