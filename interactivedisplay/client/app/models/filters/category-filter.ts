@@ -33,9 +33,22 @@ export class CategoryFilter extends Filter {
     }
 
 
-    // todo
     private generatePath(): void {
+        let left, right, top, bottom;
 
+        if (this.boundDimensions == 'x') {
+            left = this.category - 0.5;
+            right = this.category + 0.5;
+            top = this.origin.dimY.getMaxValue();
+            bottom = this.origin.dimY.getMinValue();
+        } else {
+            left = this.origin.dimX.getMinValue();
+            right = this.origin.dimX.getMaxValue();
+            top = this.category - 0.5;
+            bottom = this.category + 0.5;
+        }
+
+        this.path = [[left, top], [left, bottom], [right, bottom], [right, top]];
     }
 
 

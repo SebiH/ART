@@ -19,7 +19,7 @@
             <div class="chart-container" [ngClass]="{ selected: graph.isSelected }">
 
                 <div [@visibility]="graph.isSelected ? 'hidden' : 'visible'">
-                    <div *ngIf="!graph.isSelected">
+                    <div *ngIf="!graph.isSelected && graph.dimX && graph.dimY">
                         <!-- Width & height from css -->
                         <graph-overview-chart
                             [width]="300"

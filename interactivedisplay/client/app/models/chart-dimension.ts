@@ -26,7 +26,7 @@ export class ChartDimension {
 
     public getMinValue(): number {
         if (this.isMetric) {
-            return this.domain.min + 0.1;
+            return this.domain.min - 0.1;
         } else {
             return _.minBy(this.mappings, 'value').value - 1;
         }

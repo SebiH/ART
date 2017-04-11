@@ -46,9 +46,22 @@ export class MetricFilter extends Filter {
         this.range = sortedRange;
     }
 
-    // todo
     private generatePath(): void {
+        let left, right, top, bottom;
 
+        if (this.boundDimensions == 'x') {
+            left = this.range.min;
+            right = this.range.max;
+            top = this.origin.dimY.getMaxValue();
+            bottom = this.origin.dimY.getMinValue();
+        } else {
+            left = this.origin.dimX.getMinValue();
+            right = this.origin.dimX.getMaxValue();
+            top = this.range.max;
+            bottom = this.range.min;
+        }
+
+        this.path = [[left, top], [left, bottom], [right, bottom], [right, top]];
     }
 
 
