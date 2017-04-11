@@ -1,6 +1,7 @@
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import { Graph } from '../graph';
+import { ChartDimension } from '../chart-dimension';
 
 type BD = 'x' | 'y' | 'xy';
 
@@ -18,6 +19,17 @@ export abstract class Filter {
         if (this._origin != v) {
             this._origin = v;
             this.propagateUpdates(['origin']);
+
+            let prevDimX = v.dimX;
+            let prevDimY = v.dimY;
+            v.onUpdate
+                .takeWhile(() => this.isActive)
+                .filter(changes => changes.indexOf('dimX') >= 0 || changes.indexOf('dimY') >= 0)
+                .subscribe((changes) => {
+                    this.onDimensionChanged(prevDimX, prevDimY);
+                    prevDimX = v.dimX;
+                    prevDimY = v.dimY;
+                });
         }
     }
 
@@ -79,6 +91,10 @@ export abstract class Filter {
     }
 
 
+    // for pseudo-deconstructor
+    protected isActive: boolean = true;
+
+
     constructor(id: number) {
         this.id = id;
     }
@@ -90,11 +106,19 @@ export abstract class Filter {
     }
 
     protected propagateUpdates(changes: string[]) {
-        this.updateSubscription.next(changes);
+        if (this.isActive) {
+            this.updateSubscription.next(changes);
+        }
     }
 
 
     public abstract getColor(): string;
+    public abstract onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void;
+
+    public destroy(): void {
+        this.isActive = false;
+        this.updateSubscription.complete();
+    }
 
     public toJson(): any {
         let unityPath: number[] = [];

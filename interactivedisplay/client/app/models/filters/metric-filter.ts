@@ -1,6 +1,6 @@
 import { Filter } from './filter';
 import { Graph } from '../graph';
-import { GradientStop } from '../chart-dimension';
+import { ChartDimension, GradientStop } from '../chart-dimension';
 
 interface Range {
     readonly min: number,
@@ -10,7 +10,7 @@ interface Range {
 export class MetricFilter extends Filter {
 
     /*
-     *    gradinet
+     *    gradient
      */
     private _gradient : GradientStop[];
     public get gradient() : GradientStop[] {
@@ -62,6 +62,11 @@ export class MetricFilter extends Filter {
         }
 
         this.path = [[left, top], [left, bottom], [right, bottom], [right, top]];
+    }
+
+
+    public onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
+        this.generatePath();
     }
 
 

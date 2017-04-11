@@ -1,5 +1,6 @@
 import { Filter } from './filter';
 import { Graph } from '../graph';
+import { ChartDimension } from '../chart-dimension';
 
 export class CategoryFilter extends Filter {
 
@@ -49,6 +50,12 @@ export class CategoryFilter extends Filter {
         }
 
         this.path = [[left, top], [left, bottom], [right, bottom], [right, top]];
+    }
+
+
+
+    public onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
+        this.generatePath();
     }
 
 

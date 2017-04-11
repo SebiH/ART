@@ -1,5 +1,6 @@
 import { Filter } from './filter';
 import { Graph } from '../graph';
+import { ChartDimension } from '../chart-dimension';
 
 const DEFAULT_FILTER_COLOUR = "#03A9F4";
 
@@ -17,6 +18,9 @@ export class DetailFilter extends Filter {
         this.path = [];
     }
 
+    public onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
+        // filter will be deleted
+    }
 
 
     public getColor(): string {

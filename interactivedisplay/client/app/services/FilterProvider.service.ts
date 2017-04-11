@@ -156,6 +156,7 @@ export class FilterProvider {
     public removeFilter(filter: Filter): void {
         this.socketio.sendMessage('-filter', filter.id);
         _.pull(this.filters, filter);
+        filter.destroy();
         this.filterObserver.next(this.filters);
     }
 
