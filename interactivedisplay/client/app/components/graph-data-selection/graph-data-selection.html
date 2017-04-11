@@ -15,6 +15,7 @@
 
     <div class="button popup"
          [ngStyle]="popupStyle"
+         *ngIf="clickedFilter !== null"
 
          touch-button
          (touchclick)="popupClick($event)">

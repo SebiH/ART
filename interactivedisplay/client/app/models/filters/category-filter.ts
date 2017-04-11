@@ -39,6 +39,10 @@ export class CategoryFilter extends Filter {
     }
 
 
+    public getColor(): string {
+        return this._color;
+    }
+
     public toJson(): any {
         let jFilter = super.toJson();
         jFilter.color = this.color;

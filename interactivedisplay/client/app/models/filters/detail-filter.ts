@@ -1,6 +1,8 @@
 import { Filter } from './filter';
 import { Graph } from '../graph';
 
+const DEFAULT_FILTER_COLOUR = "#03A9F4";
+
 export class DetailFilter extends Filter {
 
     public addPathPoint(p: [number, number]): void {
@@ -12,6 +14,11 @@ export class DetailFilter extends Filter {
         this.path = [];
     }
 
+
+
+    public getColor(): string {
+        return DEFAULT_FILTER_COLOUR;
+    }
 
     public static fromJson(jFilter: any, origin: Graph): Filter {
         let filter = new DetailFilter(jFilter.id);

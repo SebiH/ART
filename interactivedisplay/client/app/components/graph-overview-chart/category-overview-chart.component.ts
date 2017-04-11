@@ -58,6 +58,7 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
     ngOnChanges(changes: SimpleChanges) {
         // let chart update first
         if (changes['dim']) {
+            this.userDeletedAllFilters = false;
             setTimeout(() => this.draw());
         }
     }
@@ -119,7 +120,7 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
 
 
     private toggleCategory(category: number): void {
-        let mapping = _.find(this.dim ? this.dim.mappings : [], m => m.value == category);
+        let mapping = _.find(this.dim.mappings, m => m.value == category);
 
         if (mapping) {
 
@@ -141,9 +142,9 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
                 this.userDeletedAllFilters = false;
             }
 
-            if (this.filters.length == this.dim.mappings.length && !this.graph.isColored) {
+            let filters = this.getActiveFilters();
+            if (filters.length == this.dim.mappings.length && !this.graph.isColored) {
                 // all categories are active -> remove all filters
-                let filters = this.getActiveFilters();
                 while (filters.length > 0) {
                     this.filterProvider.removeFilter(filters.pop());
                 }

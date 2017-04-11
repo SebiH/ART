@@ -52,6 +52,10 @@ export class MetricFilter extends Filter {
     }
 
 
+    public getColor(): string {
+        return this._gradient[this._gradient.length - 1].color;
+    }
+
     public toJson(): any {
         let jFilter = super.toJson();
         jFilter.range = [ this._range.min, this._range.max ];

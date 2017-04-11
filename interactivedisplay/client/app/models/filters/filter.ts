@@ -94,6 +94,8 @@ export abstract class Filter {
     }
 
 
+    public abstract getColor(): string;
+
     public toJson(): any {
         let unityPath: number[] = [];
         for (let p of this.path) {
@@ -113,7 +115,11 @@ export abstract class Filter {
     protected applyJsonProperties(jFilter: any, origin: Graph): void {
         this._origin = origin;
         this._boundDimensions = jFilter.boundDimensions;
-        this._path = jFilter.path;
         this._isUserGenerated = jFilter.isUserGenerated;
+
+        this._path = [];
+        for (var i = 0; i < jFilter.path.length; i += 2) {
+            this._path.push([jFilter.path[i], jFilter.path[i + 1]]);
+        }
     }
 }

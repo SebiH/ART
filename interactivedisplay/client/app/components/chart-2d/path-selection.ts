@@ -12,7 +12,7 @@ export class PathSelection extends ChartElement {
     private textureFill: string;
     private line: d3.Line<number[]>;
 
-    public constructor(private parent: Chart2dComponent, private color: string) {
+    public constructor(public id: number, private parent: Chart2dComponent, private color: string) {
         super();
     }
 
