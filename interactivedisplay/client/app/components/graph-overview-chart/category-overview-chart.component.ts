@@ -38,6 +38,7 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
 
     private isActive: boolean = true;
     private filters: Filter[] = [];
+    private userDeletedAllFilters: boolean = false;
 
     constructor(private filterProvider: FilterProvider) {}
 
@@ -48,11 +49,6 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
                 this.filters = filters;
                 this.draw();
             });
-
-        this.graph.onUpdate
-            .takeWhile(() => this.isActive)
-            .filter(changes => changes.indexOf('isColored') >= 0)
-            .subscribe(changes => this.colorUpdate());
     }
 
     ngOnDestroy() {
@@ -78,17 +74,16 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
         return _.map(filters, f => f as CategoryFilter);
     }
 
-    private draw(forceActive: boolean = false) {
-        let axis = this.graph.isFlipped ? 'y' : 'x';
+    private draw() {
+        let filters = this.getActiveFilters();
 
-        for (let mapping of this.dim.mappings) {
-            this.chart.setCategoryActive(mapping.value, forceActive);
-        }
-
-        for (let filter of this.filters) {
-            let catFilter = filter as CategoryFilter;
-            if (filter && filter.origin.id == this.graph.id && filter.boundDimensions == axis) {
-                this.chart.setCategoryActive(catFilter.category, true);
+        if (filters.length === 0 && !this.userDeletedAllFilters) {
+            for (let mapping of this.dim.mappings) {
+                this.chart.setCategoryActive(mapping.value, true);
+            }
+        } else {
+            for (let mapping of this.dim.mappings) {
+                this.chart.setCategoryActive(mapping.value, !!_.find(filters, f => f.category == mapping.value));
             }
         }
     }
@@ -96,13 +91,10 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
 
 
     private flippedCategories: number[] = [];
-    // stop automatic creation of filters when
-    private hasNoFilters: boolean = false;
-
 
     private onClick(event: any): void {
         let clickedCategory = this.chart.invert(event.relativePos.y);
-        this.flipCategory(clickedCategory);
+        this.toggleCategory(clickedCategory);
     }
 
 
@@ -110,14 +102,14 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
         this.flippedCategories = [];
 
         let clickedCategory = this.chart.invert(event.relativePos.y);
-        this.flipCategory(clickedCategory);
+        this.toggleCategory(clickedCategory);
         this.flippedCategories.push(clickedCategory);
     }
 
     private onMoveUpdate(event: any): void {
         let clickedCategory = this.chart.invert(event.relativePos.y);
         if (this.flippedCategories.indexOf(clickedCategory) < 0) {
-            this.flipCategory(clickedCategory);
+            this.toggleCategory(clickedCategory);
             this.flippedCategories.push(clickedCategory);
         }
     }
@@ -126,66 +118,38 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
     }
 
 
-    private colorUpdate(): void {
-        let activeFilters = this.getActiveFilters();       
-
-        if (activeFilters.length == this.dim.mappings.length && !this.graph.isColored) {
-            // all categories are active -> remove all filters
-            while (activeFilters.length > 0) {
-                this.filterProvider.removeFilter(activeFilters.pop());
-            }
-        }
-
-        let hasDetailFilter = _.find(this.filters, f => 
-            f.boundDimensions == 'xy' && f.origin.id == this.graph.id
-        ) != null;
-
-        if (this.filters.length == 0 && this.graph.isColored && !hasDetailFilter) {
-            for (let mapping of this.dim.mappings) {
-                this.addCategoryFilter(mapping.value, mapping.color);
-            }
-
-            this.draw();
-            this.hasNoFilters = false;
-        }
-    }
-
-
-
-    private flipCategory(category: number): void {
+    private toggleCategory(category: number): void {
         let mapping = _.find(this.dim ? this.dim.mappings : [], m => m.value == category);
-        let activeFilters = this.getActiveFilters();
 
         if (mapping) {
 
-            if (activeFilters.length == 0 && !this.hasNoFilters) {
+            if (this.getActiveFilters().length == 0 && !this.userDeletedAllFilters) {
                 // no categorical filters => all categories are active
                 for (let mapping of this.dim.mappings) {
                     this.addCategoryFilter(mapping.value, mapping.color);
                 }
             }
 
-            let filter = _.find(activeFilters, f => f.category == category);
+            let filter = _.find(this.getActiveFilters(), f => f.category == category);
 
             if (filter) {
                 this.filterProvider.removeFilter(filter);
-                this.hasNoFilters = (activeFilters.length === 0);
+                this.userDeletedAllFilters = (this.getActiveFilters().length === 0);
 
             } else {
                 this.addCategoryFilter(category, mapping.color);
-                this.hasNoFilters = false;
+                this.userDeletedAllFilters = false;
             }
 
             if (this.filters.length == this.dim.mappings.length && !this.graph.isColored) {
                 // all categories are active -> remove all filters
-                while (activeFilters.length > 0) {
-                    this.filterProvider.removeFilter(activeFilters.pop());
+                let filters = this.getActiveFilters();
+                while (filters.length > 0) {
+                    this.filterProvider.removeFilter(filters.pop());
                 }
-                this.draw(true);
-            } else {
-                this.draw();
             }
 
+            this.draw();
         }
     }
 
@@ -195,5 +159,6 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
         filter.boundDimensions = this.graph.isFlipped ? 'y' : 'x';
         filter.color = color;
         filter.category = category;
+        filter.isUserGenerated = true;
     }
 }

@@ -218,7 +218,6 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
         for (let i = activeFilters.length - 1; i >= 0; i--) {
             let filter = activeFilters[i];
             if (filter.range.min == filter.range.max) {
-                _.pull(this.filters, filter);
                 this.filterProvider.removeFilter(filter);
             }
         }
