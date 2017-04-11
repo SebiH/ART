@@ -61,7 +61,9 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
 
     ngOnChanges(changes: SimpleChanges) {
         // let chart update first
-        setTimeout(() => this.draw());
+        if (changes['dim']) {
+            setTimeout(() => this.draw());
+        }
     }
 
     private getActiveFilters(): CategoryFilter[] {

@@ -6,6 +6,7 @@ export abstract class Filter {
     public origin: Graph = null;
     public boundDimensions: 'x' | 'y' | 'xy';
     public selectedDataIndices: number[] = [];
+    public isUserGenerated: boolean = false;
 
     protected _path : [number, number][] = [];
     public get path() : [number, number][] {
@@ -29,6 +30,7 @@ export abstract class Filter {
             id: this.id,
             origin: this.origin.id,
             boundDimensions: this.boundDimensions,
+            isUserGenerated: this.isUserGenerated,
             path: unityPath
         };
     }
@@ -37,5 +39,6 @@ export abstract class Filter {
         this.origin = origin;
         this.boundDimensions = jFilter.boundDimensions;
         this._path = jFilter.path;
+        this.isUserGenerated = jFilter.isUserGenerated;
     }
 }
