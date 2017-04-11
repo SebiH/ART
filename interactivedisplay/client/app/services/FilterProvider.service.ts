@@ -120,7 +120,7 @@ export class FilterProvider {
 
         filter.onUpdate
             .takeWhile(() => this.filters.indexOf(filter) >= 0)
-            .filter((changes) => changes.indexOf('selectedIndices') < 0 && changes.indexOf('isInvalid') < 0)
+            .filter((changes) => changes.indexOf('selectedDataIndices') < 0 && changes.indexOf('isInvalid') < 0)
             .subscribe(() => this.syncFilter(filter));
     }
 

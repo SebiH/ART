@@ -1,10 +1,21 @@
 import { Filter } from './filter';
 import { Graph } from '../graph';
+import { Point } from '../point';
 import { ChartDimension } from '../chart-dimension';
+import { Utils } from '../../Utils';
+
+import * as _ from 'lodash';
 
 const DEFAULT_FILTER_COLOUR = "#03A9F4";
 
 export class DetailFilter extends Filter {
+
+    private delayedRecalculateIndices: Function;
+
+    constructor(id: number) {
+        super(id);
+        this.delayedRecalculateIndices = _.debounce(this.recalculateIndices, 300);
+    }
 
     public addPathPoint(p: [number, number]): void {
         let x = Math.max(this.origin.dimX.getMinValue(), Math.min(p[0], this.origin.dimX.getMaxValue()));
@@ -12,13 +23,32 @@ export class DetailFilter extends Filter {
 
         this.path.push([x, y]);
         this.propagateUpdates(['path']);
+        this.delayedRecalculateIndices();
     }
 
     public clearPath(): void {
         this.path = [];
     }
 
-    public onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
+
+    protected recalculateIndices(): void {
+        let dimX = this.origin.dimX;
+        let dimY = this.origin.dimY;
+
+        let indices: number[] = [];
+        let boundingRect = Utils.buildBoundingRect(this.path);
+        for (let i = 0; i < dimX.data.length; i++) {
+            let d = new Point(dimX.data[i].value, dimY.data[i].value);
+            if (d.isInPolygonOf(this.path, boundingRect)) {
+                indices.push(i);
+            }
+        }
+
+        this.selectedDataIndices = indices;
+    }
+
+
+    protected onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
         this.isInvalid = true;
     }
 

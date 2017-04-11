@@ -129,7 +129,8 @@ export abstract class Filter {
 
 
     public abstract getColor(): string;
-    public abstract onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void;
+    protected abstract recalculateIndices(): void;
+    protected abstract onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void;
 
     public destroy(): void {
         this.isActive = false;

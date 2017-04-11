@@ -30,6 +30,7 @@ export class CategoryFilter extends Filter {
             this._category = v;
             this.propagateUpdates(['category']);
             this.generatePath();
+            this.recalculateIndices();
         }
     }
 
@@ -52,9 +53,21 @@ export class CategoryFilter extends Filter {
         this.path = [[left, top], [left, bottom], [right, bottom], [right, top]];
     }
 
+    protected recalculateIndices(): void {
+        let dim = this.boundDimensions == 'x' ? this.origin.dimX : this.origin.dimY;
 
+        let indices: number[] = [];
+        for (let i = 0; i < dim.data.length; i++) {
+            let d = dim.data[i].value;
+            if (d == this.category) {
+                indices.push(i);
+            }
+        }
 
-    public onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
+        this.selectedDataIndices = indices;
+    }
+
+    protected onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
         if (this.origin.dimX !== prevDimX && this.boundDimensions == 'x') {
             this.isInvalid = true;
         } else if (this.origin.dimY !== prevDimY && this.boundDimensions == 'y') {

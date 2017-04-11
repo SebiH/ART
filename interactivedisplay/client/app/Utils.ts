@@ -13,7 +13,7 @@ export class Utils {
         return window.location.href.replace(/\!+/, '').replace(/\#+/, '');
     }
 
-    public static buildBoundingRect(polygon: number[][]): Point[] {
+    public static buildBoundingRect(polygon: [number, number][]): Point[] {
         if (polygon.length === 0) {
             return [new Point(0, 0), new Point(0, 0)];
         }
