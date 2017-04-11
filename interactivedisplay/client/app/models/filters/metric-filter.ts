@@ -66,7 +66,13 @@ export class MetricFilter extends Filter {
 
 
     public onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
-        this.generatePath();
+        if (this.origin.dimX !== prevDimX && this.boundDimensions == 'x') {
+            this.isInvalid = true;
+        } else if (this.origin.dimY !== prevDimY && this.boundDimensions == 'y') {
+            this.isInvalid = true;
+        } else {
+            this.generatePath();
+        }
     }
 
 

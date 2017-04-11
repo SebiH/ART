@@ -19,17 +19,6 @@ export abstract class Filter {
         if (this._origin != v) {
             this._origin = v;
             this.propagateUpdates(['origin']);
-
-            let prevDimX = v.dimX;
-            let prevDimY = v.dimY;
-            v.onUpdate
-                .takeWhile(() => this.isActive)
-                .filter(changes => changes.indexOf('dimX') >= 0 || changes.indexOf('dimY') >= 0)
-                .subscribe((changes) => {
-                    this.onDimensionChanged(prevDimX, prevDimY);
-                    prevDimX = v.dimX;
-                    prevDimY = v.dimY;
-                });
         }
     }
 
@@ -77,6 +66,20 @@ export abstract class Filter {
     }
 
     /*
+     *    isInvalid
+     */
+    private _isInvalid : boolean = false;
+    public get isInvalid() : boolean {
+        return this._isInvalid;
+    }
+    public set isInvalid(v : boolean) {
+        if (this._isInvalid != v) {
+            this._isInvalid = v;
+            this.propagateUpdates(['isInvalid']);
+        }
+    }
+
+    /*
      *    path
      */
     private _path : [number, number][] = [];
@@ -97,6 +100,19 @@ export abstract class Filter {
 
     constructor(id: number) {
         this.id = id;
+    }
+
+    private attachListener(graph: Graph): void {
+        let prevDimX = graph.dimX;
+        let prevDimY = graph.dimY;
+        graph.onUpdate
+            .takeWhile(() => this.isActive)
+            .filter(changes => changes.indexOf('dimX') >= 0 || changes.indexOf('dimY') >= 0)
+            .subscribe((changes) => {
+                this.onDimensionChanged(prevDimX, prevDimY);
+                prevDimX = graph.dimX;
+                prevDimY = graph.dimY;
+            });
     }
 
 
@@ -138,6 +154,7 @@ export abstract class Filter {
 
     protected applyJsonProperties(jFilter: any, origin: Graph): void {
         this._origin = origin;
+        this.attachListener(origin);
         this._boundDimensions = jFilter.boundDimensions;
         this._isUserGenerated = jFilter.isUserGenerated;
 

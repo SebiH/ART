@@ -55,10 +55,7 @@ export class FilterProvider {
                     if (originGraph) {
                         let filter = this.fromJson(rFilter, originGraph);
                         localFilters.push(filter);
-                        filter.onUpdate
-                            .takeWhile(() => this.filters.indexOf(filter) >= 0)
-                            .filter((changes) => changes.indexOf('selectedIndices') < 0)
-                            .subscribe(() => this.syncFilter(filter));
+                        this.attachListeners(filter);
                     } else {
                         console.warn('Could not find origin graph ' + rFilter.origin + ' for filter ' + rFilter.id)
                     }
@@ -111,16 +108,24 @@ export class FilterProvider {
         return jFilter;
     }
 
+    private attachListeners(filter: Filter): void {
+        filter.onUpdate
+            .takeWhile(() => this.filters.indexOf(filter) >= 0)
+            .filter(changes => changes.indexOf('isInvalid') >= 0)
+            .subscribe(() => this.removeFilter(filter));
+
+        filter.onUpdate
+            .takeWhile(() => this.filters.indexOf(filter) >= 0)
+            .filter((changes) => changes.indexOf('selectedIndices') < 0 && changes.indexOf('isInvalid') < 0)
+            .subscribe(() => this.syncFilter(filter));
+    }
+
     private setupFilter(filter: Filter, graph: Graph): void {
         filter.origin = graph;
         this.filters.push(filter);
         this.filterObserver.next(this.filters);
         this.socketio.sendMessage('+filter', this.getJson(filter));
-
-        filter.onUpdate
-            .takeWhile(() => this.filters.indexOf(filter) >= 0)
-            .filter((changes) => changes.indexOf('selectedIndices') < 0)
-            .subscribe(() => this.syncFilter(filter));
+        this.attachListeners(filter);
     }
 
     private syncFilter(filter: Filter): void {

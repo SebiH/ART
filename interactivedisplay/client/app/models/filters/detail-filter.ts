@@ -19,7 +19,7 @@ export class DetailFilter extends Filter {
     }
 
     public onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
-        // filter will be deleted
+        this.isInvalid = true;
     }
 
 
