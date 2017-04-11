@@ -55,6 +55,10 @@ export class FilterProvider {
                     if (originGraph) {
                         let filter = this.fromJson(rFilter, originGraph);
                         localFilters.push(filter);
+                        filter.onUpdate
+                            .takeWhile(() => this.filters.indexOf(filter) >= 0)
+                            .filter((changes) => changes.indexOf('selectedIndices') < 0)
+                            .subscribe(() => this.syncFilter(filter));
                     } else {
                         console.warn('Could not find origin graph ' + rFilter.origin + ' for filter ' + rFilter.id)
                     }
@@ -112,6 +116,16 @@ export class FilterProvider {
         this.filters.push(filter);
         this.filterObserver.next(this.filters);
         this.socketio.sendMessage('+filter', this.getJson(filter));
+
+        filter.onUpdate
+            .takeWhile(() => this.filters.indexOf(filter) >= 0)
+            .filter((changes) => changes.indexOf('selectedIndices') < 0)
+            .subscribe(() => this.syncFilter(filter));
+    }
+
+    private syncFilter(filter: Filter): void {
+        this.filterUpdateQueue[filter.id] = this.getJson(filter);
+        this.delayedFilterSync();
     }
 
 

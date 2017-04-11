@@ -4,11 +4,12 @@ import { Graph } from '../graph';
 export class DetailFilter extends Filter {
 
     public addPathPoint(p: [number, number]): void {
-        this._path.push(p);
+        this.path.push(p);
+        this.propagateUpdates(['path']);
     }
 
     public clearPath(): void {
-        this._path = [];
+        this.path = [];
     }
 
 

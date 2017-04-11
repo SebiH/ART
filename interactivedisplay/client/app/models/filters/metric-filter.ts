@@ -9,8 +9,23 @@ interface Range {
 
 export class MetricFilter extends Filter {
 
-    public gradient: GradientStop[] = [];
+    /*
+     *    gradinet
+     */
+    private _gradient : GradientStop[];
+    public get gradient() : GradientStop[] {
+        return this._gradient;
+    }
+    public set gradient(v : GradientStop[]) {
+        if (this._gradient != v) {
+            this._gradient = v;
+            this.propagateUpdates(['gradient']);
+        }
+    }
 
+    /*
+     *    range
+     */
     private _range: Range = { min: 0, max: 0 };
     public get range(): Range {
         return this._range;
@@ -18,6 +33,7 @@ export class MetricFilter extends Filter {
     public set range(v: Range) {
         if (v.min != this._range.min || v.max != this._range.max) {
             this._range = v;
+            this.propagateUpdates(['range']);
             this.generatePath();
         }
     }
@@ -52,7 +68,7 @@ export class MetricFilter extends Filter {
 
     protected applyJsonProperties(jFilter: any, origin: Graph): void {
         super.applyJsonProperties(jFilter, origin);
-        this.setRange(jFilter.range);
-        this.gradient = jFilter.gradient;
+        this._range = { min: jFilter.range[0], max: jFilter.range[1] };
+        this._gradient = jFilter.gradient;
     }
 }

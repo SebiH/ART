@@ -3,8 +3,23 @@ import { Graph } from '../graph';
 
 export class CategoryFilter extends Filter {
 
-    public color: string;
+    /*
+     *    color
+     */
+    private _color : string;
+    public get color() : string {
+        return this._color;
+    }
+    public set color(v : string) {
+        if (this._color != v) {
+            this._color = v;
+            this.propagateUpdates(['color']);
+        }
+    }
 
+    /*
+     *    category
+     */
     protected _category : number;
     public get category() : number {
         return this._category;
@@ -12,6 +27,7 @@ export class CategoryFilter extends Filter {
     public set category(v : number) {
         if (this._category !== v) {
             this._category = v;
+            this.propagateUpdates(['category']);
             this.generatePath();
         }
     }
@@ -39,7 +55,7 @@ export class CategoryFilter extends Filter {
 
     protected applyJsonProperties(jFilter: any, origin: Graph): void {
         super.applyJsonProperties(jFilter, origin);
-        this.color = jFilter.color;
+        this._color = jFilter.color;
         this._category = jFilter.category;
     }
 }
