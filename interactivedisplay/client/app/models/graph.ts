@@ -87,16 +87,30 @@ export class Graph {
     }
 
     /*
-     *    isColored
+     *    useColorY
      */
-    private _isColored : boolean = false;
-    public get isColored() : boolean {
-        return this._isColored;
+    private _useColorY : boolean = false;
+    public get useColorY() : boolean {
+        return this._useColorY;
     }
-    public set isColored(v : boolean) {
-        if (this._isColored != v) {
-            this._isColored = v;
-            this.propagateUpdates(['isColored']);
+    public set useColorY(v : boolean) {
+        if (this._useColorY != v) {
+            this._useColorY = v;
+            this.propagateUpdates(['useColorY']);
+        }
+    }
+
+    /*
+     *    useColorX
+     */
+    private _useColorX : boolean = false;
+    public get useColorX() : boolean {
+        return this._useColorX;
+    }
+    public set useColorX(v : boolean) {
+        if (this._useColorX != v) {
+            this._useColorX = v;
+            this.propagateUpdates(['useColorX']);
         }
     }
 
@@ -209,7 +223,8 @@ export class Graph {
             dimX: (this.dimX ? this.dimX.name : ''),
             dimY: (this.dimY ? this.dimY.name : ''),
             color: this.color,
-            isColored: this.isColored,
+            useColorX: this.useColorX,
+            useColorY: this.useColorY,
             isFlipped: this.isFlipped,
             isNewlyCreated: this.isNewlyCreated,
             isPickedUp: this.isPickedUp,
@@ -238,7 +253,8 @@ export class Graph {
         }
 
         graph._color = jGraph.color;
-        graph._isColored = jGraph.isColored;
+        graph._useColorX = jGraph.useColorX;
+        graph._useColorY = jGraph.useColorY;
         graph._isSelected = jGraph.isSelected;
         graph._isFlipped = jGraph.isFlipped;
 

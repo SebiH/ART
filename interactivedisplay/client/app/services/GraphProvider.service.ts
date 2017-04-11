@@ -26,6 +26,7 @@ export class GraphProvider {
     private graphObserver: ReplaySubject<Graph[]> = new ReplaySubject<Graph[]>(1);
     private graphSelectionChanged: ReplaySubject<Graph> = new ReplaySubject<Graph>(1);
     private graphDeletionObserver: Subject<Graph> = new Subject<Graph>();
+    private graphColorChangeObserver: Subject<Graph> = new Subject<Graph>();
     private idCounter: number = 0;
 
     private delayedGraphUpdate: Function;
@@ -71,16 +72,29 @@ export class GraphProvider {
         return this.graphDeletionObserver.asObservable();
     }
 
+    public onGraphColorChange(): Observable<Graph> {
+        return this.graphColorChangeObserver.asObservable();
+    }
+
     public setColor(graph: Graph) {
         for (let g of this.graphs) {
-            if (g.isColored && g != graph) {
-                g.isColored = false;
+            if (g != graph) {
+                g.useColorX = false;
+                g.useColorY = false;
             }
         }
 
         if (graph) {
-            graph.isColored = true;
+            if (graph.isFlipped) {
+                graph.useColorX = false;
+                graph.useColorY = true;
+            } else {
+                graph.useColorX = true;
+                graph.useColorY = false;
+            }
         }
+
+        this.graphColorChangeObserver.next(graph);
     }
 
     public selectGraph(graph: Graph) {

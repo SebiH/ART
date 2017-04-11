@@ -77,7 +77,9 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     }
 
     private toggleColor() {
-        if (this.graph.isColored) {
+        let isColored = (this.graph.isFlipped ? this.graph.useColorY : this.graph.useColorX);
+
+        if (isColored) {
             this.graphProvider.setColor(null);
         } else {
             this.graphProvider.setColor(this.graph);

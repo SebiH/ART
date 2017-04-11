@@ -35,6 +35,10 @@ export class FilterProvider {
                 this.initFilters(graphs);
             });
 
+
+        this.graphProvider.onGraphColorChange()
+            .subscribe(graph => this.colorUpdate(graph));
+
         this.graphProvider.onGraphDeletion()
             .subscribe(graph => this.clearFilters(graph));
 
@@ -133,6 +137,9 @@ export class FilterProvider {
         this.delayedFilterSync();
     }
 
+    private colorUpdate(graph: Graph): void {
+
+    }
 
 
 
