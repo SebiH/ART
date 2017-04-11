@@ -17,6 +17,7 @@ import { routing } from './routes';
     Components.AdminChangeMonitorComponent,
     Components.AdminPanelComponent,
     Components.AppComponent,
+    Components.CategoryOverviewChartComponent,
     Components.Chart1dComponent,
     Components.Chart2dComponent,
     Components.GraphCreateButtonComponent,

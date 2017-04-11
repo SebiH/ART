@@ -6,7 +6,7 @@ export * from './app/app';
 export * from './chart-1d/chart-1d.component';
 export * from './chart-2d/chart-2d.component';
 export * from './graph-create-button/graph-create-button.component';
-export * from './graph-data-selection/graph-data-selection';
+export * from './graph-data-selection/graph-data-selection.component';
 export * from './graph-detail/graph-detail';
 export * from './graph-dimension-selector/graph-dimension-selector.component';
 export * from './graph-list-item/graph-list-item.component';

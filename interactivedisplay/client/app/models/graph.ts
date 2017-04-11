@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 import { ChartDimension } from './chart-dimension';
-import { GraphDataProvider } from '../services/index';
+import { DataProvider } from '../services/index';
 
 import * as _ from 'lodash';
 
@@ -222,7 +222,7 @@ export class Graph {
 
 
     // inverse of .toJson()
-    public static fromJson(jGraph: any, provider: GraphDataProvider): Graph {
+    public static fromJson(jGraph: any, provider: DataProvider): Graph {
         let graph = new Graph(jGraph.id);
 
         if (jGraph.dimX) {

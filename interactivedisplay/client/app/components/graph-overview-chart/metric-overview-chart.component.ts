@@ -96,6 +96,8 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
         filter.boundDimensions = this.graph.isFlipped ? 'y' : 'x';
         filter.gradient = this.dim.gradient;
         filter.setRange(range);
+
+        return filter;
     }
 
 
