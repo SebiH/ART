@@ -4,7 +4,7 @@ import { SurfaceProvider, SocketIO, ServiceLoader } from '../../services/index';
 @Component({
     selector: 'surface-container',
     template: `<graph-list *ngIf="isLoaded"></graph-list>
-        <div ngIf="!isLoaded"> <h1> Initializing... </h1> </div>`,
+        <div *ngIf="!isLoaded"> <h1> Initializing... </h1> </div>`,
     styles: [ 'div { height: 100%; width: 100%; display: flex; justify-content: center; align-items: center; }' ]
 })
 
@@ -16,13 +16,15 @@ export class SurfaceComponent implements OnInit {
         private socketio: SocketIO,
         private serviceLoader: ServiceLoader) {
         socketio.connect();
-        this.disableBackNavigation();
     }
 
     ngOnInit() {
         this.serviceLoader.onLoaded()
             .first()
-            .subscribe(() => this.isLoaded = true);
+            .subscribe(() => {
+                this.isLoaded = true;
+                this.disableBackNavigation();
+            });
     }
 
     @HostListener('window:resize', ['$event'])
