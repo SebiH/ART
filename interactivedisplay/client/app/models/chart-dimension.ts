@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 export interface GradientStop {
     stop: number;
     color: string 
@@ -21,6 +23,22 @@ export class ChartDimension {
     public bins?: { displayName: string, value?: number, range?: [number, number] }[];
     public gradient?: GradientStop[];
     public ticks: number[];
+
+    public getMinValue(): number {
+        if (this.isMetric) {
+            return this.domain.min + 0.1;
+        } else {
+            return _.minBy(this.mappings, 'value').value - 1;
+        }
+    }
+
+    public getMaxValue(): number {
+        if (this.isMetric) {
+            return this.domain.max + 0.1;
+        } else {
+            return _.maxBy(this.mappings, 'value').value + 1;
+        }
+    }
 
     public static fromJson(jDim: any): ChartDimension {
         let dim = new ChartDimension();

@@ -6,7 +6,10 @@ const DEFAULT_FILTER_COLOUR = "#03A9F4";
 export class DetailFilter extends Filter {
 
     public addPathPoint(p: [number, number]): void {
-        this.path.push(p);
+        let x = Math.max(this.origin.dimX.getMinValue(), Math.min(p[0], this.origin.dimX.getMaxValue()));
+        let y = Math.max(this.origin.dimY.getMinValue(), Math.min(p[1], this.origin.dimY.getMaxValue()));
+
+        this.path.push([x, y]);
         this.propagateUpdates(['path']);
     }
 
