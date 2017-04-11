@@ -17,7 +17,7 @@
             (moveEnd)="onDragEnd($event)">
             <div *ngFor="let dim of dimensions">
                 <div class="item"
-                    [ngClass]="{ selected: getActiveDim() === dim }"
+                    [ngClass]="{ selected: getActiveDim()?.name === dim }"
                     touch-button
                     (touchclick)="setDimension(dim)">
 
