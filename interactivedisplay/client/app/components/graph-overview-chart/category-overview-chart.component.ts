@@ -47,7 +47,7 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
             .takeWhile(() => this.isActive)
             .subscribe((filters) => {
                 this.filters = filters;
-                this.draw();
+                setTimeout(() => this.draw());
             });
     }
 
@@ -129,6 +129,10 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
                 for (let mapping of this.dim.mappings) {
                     this.addCategoryFilter(mapping.value, mapping.color);
                 }
+            }
+
+            for (let filter of this.getActiveFilters()) {
+                filter.isUserGenerated = true;
             }
 
             let filter = _.find(this.getActiveFilters(), f => f.category == category);

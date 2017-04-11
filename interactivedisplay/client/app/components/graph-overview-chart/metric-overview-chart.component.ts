@@ -55,7 +55,7 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
             .takeWhile(() => this.isActive)
             .subscribe((filters) => {
                 this.filters = filters;
-                this.draw();
+                setTimeout(() => this.draw());
             });
     }
 
@@ -124,7 +124,7 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
 
             let clickedData = this.chart.invert(event.relativePos.y);
             for (let filter of this.getActiveFilters()) {
-                if (filter.range.min <= clickedData && clickedData <= filter.range.max) {
+                if (filter.isUserGenerated && filter.range.min <= clickedData && clickedData <= filter.range.max) {
                     this.deleteButtonFilter = filter;
                     break;
                 }
@@ -137,7 +137,7 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
 
     private deleteButtonClick(event: any): void {
         if (this.deleteButtonFilter !== null) {
-            this.filterProvider.removeFilter(this.deleteButtonFilter);
+            this.removeFilterReapplyColour(this.deleteButtonFilter);
             this.deleteButtonFilter = null;
         }
     }
@@ -149,6 +149,11 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
 
     private onMoveStart(event: any): void {
         this.mergeFilters();
+        let activeFilters = this.getActiveFilters();
+        if (activeFilters.length === 1 && !activeFilters[0].isUserGenerated) {
+            this.filterProvider.removeFilter(activeFilters[0]);
+        }
+
         this.startPoint = this.chart.invert(event.relativePos.y);
         this.activeFilter = this.createFilter([this.startPoint, this.startPoint]);
         this.draw();
@@ -172,7 +177,7 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
             // delete filters that are too small (probably created on accident)
             let percent = Math.abs(endPoint - this.startPoint) / (this.dim.domain.max - this.dim.domain.min);
             if (percent < 0.01) {
-                this.filterProvider.removeFilter(this.activeFilter);
+                this.removeFilterReapplyColour(this.activeFilter);
             }
 
             this.activeFilter = null;
@@ -181,6 +186,19 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
         }
 
         this.draw();
+    }
+
+    private removeFilterReapplyColour(filter: Filter): void {
+        this.filterProvider.removeFilter(filter);
+
+        let isColored = this.graph.isFlipped ? this.graph.useColorY : this.graph.useColorX;
+        if (this.getActiveFilters().length == 0 && isColored) {
+            let filter = this.filterProvider.createMetricFilter(this.graph);
+            filter.isUserGenerated = false;
+            filter.boundDimensions = this.graph.isFlipped ? 'y' : 'x';
+            filter.gradient = this.dim.gradient;
+            filter.range = this.dim.domain; 
+        }
     }
 
 
