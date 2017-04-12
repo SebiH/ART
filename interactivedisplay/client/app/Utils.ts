@@ -19,7 +19,7 @@ export class Utils {
         }
 
         let topLeft = new Point(polygon[0][0], polygon[0][1]);
-        let bottomRight = new Point(polygon[0][1], polygon[0][1]);
+        let bottomRight = new Point(polygon[0][0], polygon[0][1]);
 
         for (let p of polygon) {
             topLeft.x = Math.min(topLeft.x, p[0]);

@@ -32,7 +32,11 @@ export class MetricFilter extends Filter {
     }
     public set range(v: Range) {
         if (v.min != this._range.min || v.max != this._range.max) {
-            this._range = v;
+            let dim = this.boundDimensions == 'x' ? this.origin.dimX : this.origin.dimY;
+            let min = Math.max(v.min, dim.getMinValue());
+            let max = Math.min(v.max, dim.getMaxValue());
+
+            this._range = {min: min, max: max};
             this.propagateUpdates(['range']);
             this.generatePath();
             this.recalculateIndices();
@@ -99,7 +103,7 @@ export class MetricFilter extends Filter {
         let jFilter = super.toJson();
         jFilter.range = [ this._range.min, this._range.max ];
         jFilter.gradient = this.gradient;
-        
+
         return jFilter;
     }
 
@@ -113,5 +117,6 @@ export class MetricFilter extends Filter {
         super.applyJsonProperties(jFilter, origin);
         this._range = { min: jFilter.range[0], max: jFilter.range[1] };
         this._gradient = jFilter.gradient;
+        this.recalculateIndices();
     }
 }

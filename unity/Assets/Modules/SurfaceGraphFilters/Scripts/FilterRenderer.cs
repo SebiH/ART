@@ -114,13 +114,20 @@ namespace Assets.Modules.SurfaceGraphFilters
                 return;
             }
 
-            if (_useGradients)
+            try
             {
-                RenderGradientPath(path);
+                if (_useGradients)
+                {
+                    RenderGradientPath(path);
+                }
+                else
+                {
+                    RenderColorPath(path);
+                }
             }
-            else
+            catch (Exception e)
             {
-                RenderColorPath(path);
+                Debug.LogError(e.Message);
             }
         }
 

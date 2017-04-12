@@ -86,7 +86,7 @@ export class CategoryFilter extends Filter {
         let jFilter = super.toJson();
         jFilter.color = this.color;
         jFilter.category = this.category;
-        
+
         return jFilter;
     }
 
@@ -100,5 +100,6 @@ export class CategoryFilter extends Filter {
         super.applyJsonProperties(jFilter, origin);
         this._color = jFilter.color;
         this._category = jFilter.category;
+        this.recalculateIndices();
     }
 }

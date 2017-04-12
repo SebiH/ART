@@ -143,10 +143,13 @@ namespace Assets.Modules.SurfaceGraphFilters
             _remoteFilters.Add(rFilter);
 
             var color = new Color(1, 1, 1, 1);
-            var colorSuccess = ColorUtility.TryParseHtmlString(rFilter.color, out color);
-            if (!colorSuccess)
+            if (rFilter.color != null)
             {
-                Debug.LogWarning("Could not parse color " + rFilter.color);
+                var colorSuccess = ColorUtility.TryParseHtmlString(rFilter.color, out color);
+                if (!colorSuccess)
+                {
+                    Debug.LogWarning("Could not parse color " + rFilter.color);
+                }
             }
 
             if (needsPathUpdate)

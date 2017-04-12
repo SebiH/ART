@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { DataProvider } from './DataProvider.service';
 import { FilterProvider } from './FilterProvider.service';
 import { GraphProvider } from './GraphProvider.service';
+import { GlobalFilterProvider } from './GlobalFilterProvider.service';
 
 @Injectable()
 export class ServiceLoader {
@@ -19,6 +20,7 @@ export class ServiceLoader {
         dataProvider: DataProvider,
         filterProvider: FilterProvider,
         graphProvider: GraphProvider,
+        globalFilterProvider: GlobalFilterProvider
         ) {
 
         filterProvider.getFilters()

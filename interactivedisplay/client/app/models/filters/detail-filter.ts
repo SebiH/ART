@@ -65,5 +65,6 @@ export class DetailFilter extends Filter {
 
     protected applyJsonProperties(jFilter: any, origin: Graph): void {
         super.applyJsonProperties(jFilter, origin);
+        this.recalculateIndices();
     }
 }
