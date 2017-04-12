@@ -55,7 +55,7 @@
 }
 
 .item.selected {
-    background: #CDDC39;
+    background: #8BC34A;
     border: 1px solid black;
 }
 
@@ -92,7 +92,7 @@
 }
 
 .vertical .triangle .before.active {
-    border-bottom-color: #CDDC39;
+    border-bottom-color: #8BC34A;
 }
 
 /* Pointing left */
@@ -103,7 +103,7 @@
 }
 
 .horizontal .triangle .before.active {
-    border-right-color: #CDDC39;
+    border-right-color: #8BC34A;
 }
 
 /* Pointing down */
@@ -114,7 +114,7 @@
 }
 
 .vertical .triangle .after.active {
-    border-top-color: #CDDC39;
+    border-top-color: #8BC34A;
 }
 
 /* Pointing right */
@@ -125,5 +125,5 @@
 }
 
 .horizontal .triangle .after.active {
-    border-left-color: #CDDC39;
+    border-left-color: #8BC34A;
 }
