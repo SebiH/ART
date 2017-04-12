@@ -1,4 +1,4 @@
-﻿Shader "Graph/Line_Transparent"
+Shader "Graph/Line_Transparent"
 {
     Properties
     {
@@ -8,7 +8,7 @@
 
     SubShader
     {
-        Tags {"Queue"="Transparent+1" "IgnoreProjector"="True" "RenderType"="Transparent"}
+        Tags {"Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparent"}
 
         Cull Off
 		ZWrite On
