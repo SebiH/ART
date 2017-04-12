@@ -108,11 +108,11 @@ export class GraphProvider {
 
         if (graph) {
             if (axis == 'x') {
-                graph.useColorX = true;
+                graph.useColorX = !graph.useColorX;
                 graph.useColorY = false;
             } else {
                 graph.useColorX = false;
-                graph.useColorY = true;
+                graph.useColorY = !graph.useColorY;
             }
         }
 
