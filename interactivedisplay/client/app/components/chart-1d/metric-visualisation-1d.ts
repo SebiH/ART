@@ -215,9 +215,9 @@ export class MetricVisualisation1d extends ChartVisualisation1d {
                     }
                 } else {
                     let barWidth = this.yBarScale.bandwidth();
-                    offset = (this.yScale(d.bin.value) - minHeight - barWidth / 2) / (maxHeight - minHeight);
+                    offset = (this.yScale(d.bin.value) - minHeight) / (maxHeight - minHeight);
                     if (offset < 0 || offset > 1) {
-                        offset = (this.yScale(d.bin.value) - minHeight + barWidth / 2) / (maxHeight - minHeight);
+                        offset = (this.yScale(d.bin.value) - minHeight + barWidth - 0.001) / (maxHeight - minHeight);
                     }
                 }
 
