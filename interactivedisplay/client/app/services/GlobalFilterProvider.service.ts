@@ -42,6 +42,11 @@ export class GlobalFilterProvider {
             .subscribe(graphs => {
                 this.graphs = graphs;
             });
+
+        graphProvider.onGraphColorChange()
+            .subscribe(() => {
+                this.delayedGlobalFilterUpdate();
+            });
     }
 
 
