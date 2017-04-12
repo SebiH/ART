@@ -97,6 +97,28 @@ export class GraphProvider {
         this.graphColorChangeObserver.next(graph);
     }
 
+    // meh
+    public setColor2(graph: Graph, axis: 'x' | 'y') {
+        for (let g of this.graphs) {
+            if (g != graph) {
+                g.useColorX = false;
+                g.useColorY = false;
+            }
+        }
+
+        if (graph) {
+            if (axis == 'x') {
+                graph.useColorX = true;
+                graph.useColorY = false;
+            } else {
+                graph.useColorX = false;
+                graph.useColorY = true;
+            }
+        }
+
+        this.graphColorChangeObserver.next(graph);
+    }
+
     public selectGraph(graph: Graph) {
         for (let g of this.graphs) {
             if (g.isSelected && g !== graph) {

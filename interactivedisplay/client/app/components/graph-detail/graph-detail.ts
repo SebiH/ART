@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Graph } from '../../models/index';
+import { GraphProvider } from '../../services/index';
 
 @Component({
     selector: 'graph-detail',
@@ -8,4 +9,16 @@ import { Graph } from '../../models/index';
 })
 export class GraphDetailComponent {
     @Input() graph: Graph;
+
+    constructor(private graphProvider: GraphProvider) {
+
+    }
+
+    private useColorX() {
+        this.graphProvider.setColor2(this.graph, 'x');
+    }
+
+    private useColorY() {
+        this.graphProvider.setColor2(this.graph, 'y');
+    }
 }

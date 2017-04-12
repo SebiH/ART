@@ -24,6 +24,57 @@
     height: 1150px;
 }
 
-.unused {
-    width: 200px;
+.buttons {
+    position: relative;
+    width: 300px;
+    margin-right: 20px;
+    font-size: 30px;
 }
+
+.buttons .active {
+    background: #8BC34A;
+}
+
+.colbutton {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.colbutton.top {
+    -webkit-clip-path: polygon(0 0, 0 100%, 100% 0);
+    -ms-clip-path: polygon(0 0, 0 100%, 100% 0);
+    clip-path: polygon(0 0, 0 100%, 100% 0);
+    border-top: 1px solid black;
+}
+
+.colbutton.top > span {
+    position: absolute;
+    left: 40px;
+    top: 8px;
+}
+
+.colbutton.right {
+    border-right: 1px solid black;
+    -webkit-clip-path: polygon(0 100%, 100% 100%, 100% 0);
+    -ms-clip-path: polygon(0 100%, 100% 100%, 100% 0);
+    clip-path: polygon(0 100%, 100% 100%, 100% 0);
+}
+
+.colbutton.right > span {
+    position: absolute;
+    left: 140px;
+    top: 70px;
+}
+
+.divider {
+    border-top: 1px solid black;
+    position: absolute;
+    left: -4px;
+    top: 68px;
+    width: 106%;
+    transform: rotate(-25deg);
+}
+
