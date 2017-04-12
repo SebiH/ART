@@ -130,6 +130,11 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
                 }
             }
 
+            // clicked on inactive region -> create filter!
+            if (this.deleteButtonFilter == null) {
+                this.createBinFilter(clickedData);
+            }
+
         } else {
             this.deleteButtonFilter = null;
         }
@@ -141,6 +146,27 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
             this.deleteButtonFilter = null;
         }
     }
+
+
+    private createBinFilter(data: number) {
+        // find matching bin
+        for (let bin of this.dim.bins) {
+            if (bin.range) {
+                if (bin.range[0] <= data && data <= bin.range[1]) {
+                    this.createFilter([bin.range[0], bin.range[1]]);
+                    this.mergeFilters();
+                    break;
+                }
+            } else {
+                if (bin.value == Math.floor(data)) {
+                    this.createFilter([bin.value, bin.value + 0.9999]);
+                    this.mergeFilters();
+                    break;
+                }
+            }
+        }
+    }
+
 
 
 
@@ -197,7 +223,7 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
             filter.isUserGenerated = false;
             filter.boundDimensions = this.graph.isFlipped ? 'y' : 'x';
             filter.gradient = this.dim.gradient;
-            filter.range = this.dim.domain; 
+            filter.range = this.dim.domain;
         }
     }
 
