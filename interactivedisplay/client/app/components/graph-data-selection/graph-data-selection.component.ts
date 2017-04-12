@@ -19,7 +19,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     @Input() public width = 600;
     @Input() public height = 600;
-    @Input() public margin = { top: 50, right: 50, bottom: 200, left: 200 }; 
+    @Input() public margin = { top: 50, right: 50, bottom: 200, left: 200 };
 
     @ViewChild(Chart2dComponent) private chart: Chart2dComponent;
 
@@ -79,7 +79,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         } else {
             return pos;
         }
-    } 
+    }
 
 
     /*
@@ -131,6 +131,16 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private handleTouchUp(event): void {
         if (this.activeFilter) {
+            let filter = this.activeFilter;
+            this.activeFilter.onUpdate
+                .filter(changes => changes.indexOf('selectedDataIndices') >= 0)
+                .first()
+                .subscribe(() => {
+                    if (filter.selectedDataIndices.length == 0) {
+                        setTimeout(() => this.filterProvider.removeFilter(filter));
+                    }
+                });
+
             this.activeFilter.addPathPoint(this.positionInGraph(event.relativePos));
             this.drawFilter(this.activeFilter, this.getSelection(this.activeFilter));
             this.activeFilter = null;
@@ -175,7 +185,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                     let transform = 'translate3d(' + (event.relativePos.x - 100) + 'px,' + (event.relativePos.y - 25) + 'px,0)';
                     this.popupStyle['-webkit-transform'] = transform;
                     this.popupStyle['-ms-transform'] = transform;
-                    this.popupStyle['transform'] = transform; 
+                    this.popupStyle['transform'] = transform;
                     break;
                 }
             }
