@@ -18,6 +18,7 @@ export abstract class Filter {
     public set origin(v : Graph) {
         if (this._origin != v) {
             this._origin = v;
+            this.attachListener(v);
             this.propagateUpdates(['origin']);
         }
     }
