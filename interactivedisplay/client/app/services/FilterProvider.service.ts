@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 enum FilterType {
     Categorical = 0,
     Metric = 1,
-    Detail = 2   
+    Detail = 2
 }
 
 @Injectable()
@@ -31,7 +31,7 @@ export class FilterProvider {
         ) {
         this.graphProvider.getGraphs()
             .first()
-            .subscribe(graphs => { 
+            .subscribe(graphs => {
                 this.initFilters(graphs);
             });
 
@@ -148,8 +148,8 @@ export class FilterProvider {
             let filters = _.filter(this.filters, f => f.origin.id == graph.id);
 
             if (filters.length == 0) {
-                let dimension = graph.isFlipped ? graph.dimY : graph.dimX;
-                let axis: 'x' | 'y' = graph.isFlipped ? 'y' : 'x';
+                let dimension = graph.useColorX ? graph.dimX : graph.dimY;
+                let axis: 'x' | 'y' = graph.useColorX ? 'x' : 'y';
                 if (dimension.isMetric) {
                     let filter = this.createMetricFilter(graph);
                     filter.isUserGenerated = false;

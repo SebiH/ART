@@ -114,9 +114,15 @@ export class GraphProvider {
                 graph.useColorX = false;
                 graph.useColorY = !graph.useColorY;
             }
+
         }
 
-        this.graphColorChangeObserver.next(graph);
+        if (graph && (graph.useColorX || graph.useColorY)) {
+            this.graphColorChangeObserver.next(graph);
+        } else {
+            this.graphColorChangeObserver.next(null);
+        }
+
     }
 
     public selectGraph(graph: Graph) {

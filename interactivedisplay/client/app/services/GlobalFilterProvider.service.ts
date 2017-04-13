@@ -66,7 +66,7 @@ export class GlobalFilterProvider {
 
     private applyFilterColor(filter: Filter): void {
         let categoryFilter = filter as CategoryFilter;
-        if (categoryFilter) {
+        if (filter instanceof CategoryFilter) {
             for (let index of filter.selectedDataIndices) {
                 this.globalFilter[index].color = categoryFilter.color;
             }
@@ -74,7 +74,7 @@ export class GlobalFilterProvider {
 
 
         let metricFilter= filter as MetricFilter;
-        if (metricFilter) {
+        if (filter instanceof MetricFilter) {
             if (filter.boundDimensions == 'x') {
                 this.applyFilterGradient(metricFilter, metricFilter.origin.dimX);
             } else {
