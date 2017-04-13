@@ -8,7 +8,7 @@ export class ChartAxis extends ChartElement {
     private width: number;
     private height: number;
 
-    public constructor(private type: 'x' | 'y') {
+    public constructor(private type: 'x' | 'y',) {
         super();
     }
 
@@ -38,11 +38,45 @@ export class ChartAxis extends ChartElement {
 
         this.svgElement
             .attr('class', 'axis')
-            .selectAll('text')  
-                .style('text-anchor', 'end')
-                .attr('dx', '-.8em')
-                .attr('dy', '.15em')
-                .attr('font-size', '16px')
-                .attr('transform', 'rotate(-35)');
+            .selectAll('text')
+                .attr('font-size', '26px')
+                .call(this.wrap, 160, this.type);
     }
+
+    // see: https://bl.ocks.org/mbostock/7555321
+    private wrap(text, width, axis) {
+        text.each(function() {
+            let text = d3.select(this);
+            let words = text.text().split(/\s+/).reverse();
+            let word;
+            let line = [];
+            let lineNumber = 0;
+            let lineHeight = 1.1; // ems
+            let y = text.attr("y");
+            let dy = parseFloat(text.attr("dy")) + (axis == 'x' ? 0.5 : 0);
+            let dx = axis == 'x' ? 0 : -1;
+            let tspan = text.text(null).append("tspan")
+                .attr("x", 0)
+                .attr("y", y)
+                .attr("dx", dx + "em")
+                .attr("dy", dy + "em");
+
+            while (word = words.pop()) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                if ((<any>tspan.node()).getComputedTextLength() > width) {
+                    line.pop();
+                    tspan.text(line.join(" "));
+                    line = [word];
+                    tspan = text.append("tspan")
+                        .attr("x", 0)
+                        .attr("y", y)
+                        .attr("dy", ++lineNumber * lineHeight + dy + "em")
+                        .attr("dx", dx + "em")
+                        .text(word);
+                }
+            }
+        });
+    }
+
 }

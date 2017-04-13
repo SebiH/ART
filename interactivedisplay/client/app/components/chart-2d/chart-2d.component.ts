@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 
 @Component({
     selector: 'chart-2d',
-    template: `<div chart 
+    template: `<div chart
                     [width]="width"
                     [height]="height"
                     [margin]="margin">
