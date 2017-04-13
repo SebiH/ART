@@ -47,7 +47,7 @@ export class ChartAxis extends ChartElement {
     private wrap(text, width, axis) {
         text.each(function() {
             let text = d3.select(this);
-            let words = text.text().split(/\s+/).reverse();
+            let words = text.text().trim().split(/\s+/).reverse();
             let word;
             let line = [];
             let lineNumber = 0;

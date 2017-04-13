@@ -85,7 +85,22 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
         if (dim == null) {
             return d3.scaleLinear().range(range).domain([0, 1]);
         } else if (dim.isMetric) {
-            return d3.scaleLinear().range(range).domain([dim.domain.min, dim.domain.max]);
+            if (!dim.isTimeBased) {
+                return d3.scaleLinear().range(range).domain([dim.domain.min, dim.domain.max]);
+            } else {
+                let min = _.min(dim.ticks);
+                let max = _.max(dim.ticks);
+
+                for (let tick of dim.ticks) {
+                    if (tick < dim.domain.min && tick > min) {
+                        min = tick;
+                    }
+                    if (tick > dim.domain.max && tick < max) {
+                        max = tick;
+                    }
+                }
+                return d3.scaleLinear().range(range).domain([min, max]);
+            }
         } else {
             let domain = <number[]>_.map(dim.mappings, 'value');
 
@@ -117,10 +132,28 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
             if (dim.isTimeBased) {
                 let timeTicks: string[] = [];
 
+                let min = _.min(dim.ticks);
+                let max = _.max(dim.ticks);
+
                 for (let tick of dim.ticks) {
-                    if (dim.domain.min <= tick && tick <= dim.domain.max) {
+                    if (tick < dim.domain.min && tick > min) {
+                        min = tick;
+                    }
+                    if (tick > dim.domain.max && tick < max) {
+                        max = tick;
+                    }
+                }
+
+                for (let tick of dim.ticks) {
+                    if (min <= tick && tick <= max) {
                         let tickDate = new Date(tick * 1000);
                         let tickName = this.formatDate(tickDate, dim.timeFormat, true);
+
+                        // d3 groups same ticks together, which we don't want
+                        while (timeTicks.indexOf(tickName) >= 0) {
+                            tickName = ' ' + tickName;
+                        }
+
                         if (type == 'x') {
                             timeTicks.push(tickName);
                         } else {
