@@ -20,7 +20,7 @@ class Status {
     private connectionStatus = ConnectionState.Offline;
 
     public isConnected(): boolean {
-        return this.connectionStatus === ConnectionState.Connected || 
+        return this.connectionStatus === ConnectionState.Connected ||
             this.connectionStatus === ConnectionState.Busy;
     }
 
@@ -74,7 +74,7 @@ export class SqlConnection {
             if (error) {
                 console.error('Cannot connect to sql server: Connection terminated');
                 console.error(error);
-                this.status.set(ConnectionState.Connected); 
+                this.status.set(ConnectionState.Connected);
             } else {
                 console.log('Established connection to SQL Server @ ' + config.server);
                 this.status.set(ConnectionState.Connected);
@@ -116,23 +116,31 @@ export class SqlConnection {
         let filters: string[] = [];
 
         for (let map of this.mapping) {
-            let min: any;
-            let max: any;
 
             if (map.type == DataRepresentation.Categorical) {
-                min = +_.minBy(map.values, 'dbValue').dbValue;
-                max = +_.maxBy(map.values, 'dbValue').dbValue;
+                let filter = map.dbColumn + ' IN (';
+                for (let i = 0; i < map.values.length; i++) {
+                    if (i > 0) {
+                        filter += ',';
+                    }
+                    filter += '' + map.values[i].dbValue;
+                }
+
+                filter += ')';
+                filters.push(filter);
+
             } else {
-                min = map.minValue;
-                max = map.maxValue;
+                let min: any = map.minValue;
+                let max: any = map.maxValue;
 
                 if (map.dbTime) {
                     min = '\'' + this.formatDate(new Date(min * 1000)) + '\'';
                     max = '\'' + this.formatDate(new Date(max * 1000)) + '\'';
                 }
+
+                filters.push(map.dbColumn + ' BETWEEN ' + min + ' AND ' + max);
             }
 
-            filters.push(map.dbColumn + ' BETWEEN ' + min + ' AND ' + max);
         }
 
         let requestSql = 'SELECT TOP 1000 Sess_Id';
