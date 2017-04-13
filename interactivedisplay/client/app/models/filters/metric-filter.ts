@@ -96,7 +96,11 @@ export class MetricFilter extends Filter {
 
 
     public getColor(): string {
-        return this._gradient[this._gradient.length - 1].color;
+        if (this._gradient) {
+            return this._gradient[this._gradient.length - 1].color;
+        } else {
+            return "#FFFFFF";
+        }
     }
 
     public toJson(): any {
