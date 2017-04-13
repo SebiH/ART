@@ -14,7 +14,7 @@ export class DetailFilter extends Filter {
 
     constructor(id: number) {
         super(id);
-        this.delayedRecalculateIndices = _.debounce(this.recalculateIndices, 300);
+        this.delayedRecalculateIndices = _.debounce(this.recalculateIndices, 100);
     }
 
     public addPathPoint(p: [number, number]): void {
