@@ -2,7 +2,7 @@
     [style.background]="graph.color">
 
     <div class="graph-section">
-        
+
         <div class="row">
             <div class="markers horizontal">
                 <ar-marker [marker]="markers[0]"></ar-marker>
@@ -18,8 +18,8 @@
 
             <div class="chart-container" [ngClass]="{ selected: graph.isSelected }">
 
-                <div [@visibility]="graph.isSelected ? 'hidden' : 'visible'">
-                    <div *ngIf="!graph.isSelected && graph.dimX && graph.dimY">
+                <div>
+                    <div *ngIf="showOverview && graph.dimX && graph.dimY">
                         <!-- Width & height from css -->
                         <graph-overview-chart
                             [width]="300"
@@ -39,9 +39,9 @@
                 </div>
                 </div>
 
-                <div [@visibility]="graph.isSelected ? 'visible' : 'hidden'">
+                <div>
                     <graph-detail
-                        *ngIf="graph.isSelected"
+                        *ngIf="showDetail"
                         [graph]="graph">
                     </graph-detail>
                 </div>

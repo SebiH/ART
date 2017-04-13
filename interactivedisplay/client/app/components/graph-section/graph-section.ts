@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ElementRef, animate, trigger, state, transition, style } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { Marker, Graph } from '../../models/index';
 import { MarkerProvider, GraphProvider } from '../../services/index';
@@ -9,19 +9,6 @@ const NUM_MARKERS = 8;
     selector: 'graph-section',
     templateUrl: './app/components/graph-section/graph-section.html',
     styleUrls: ['./app/components/graph-section/graph-section.css'],
-    animations: [
-        trigger('visibility', [
-            state('visible', style({
-                opacity: 1,
-                visibility: 'visible'
-            })),
-            state('hidden', style({
-                opacity: 0,
-                visibility: 'collapse'
-            })),
-            transition('* => *', [ animate('0.5s 500ms linear') ])
-    ])
-    ]
 })
 export class GraphSectionComponent implements OnInit, OnDestroy {
 
@@ -29,6 +16,8 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
 
     private markers: Marker[] = [];
     private isActive: boolean = true;
+    private showOverview: boolean = false;
+    private showDetail: boolean = false;
     private isAnyGraphSelected: boolean = false;
 
     constructor (
@@ -51,6 +40,22 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
             .subscribe(selectedGraph => {
                 this.isAnyGraphSelected = (selectedGraph != null);
             });
+
+
+        // quick hack to not show either detail nor overview graph while graph
+        // is in transition from being (de)selected
+        // (especially since angular animations do not seem to work in Edge)
+        this.graph.onUpdate
+            .takeWhile(() => this.isActive)
+            .filter(changes => changes.indexOf('isSelected') >= 0)
+            .subscribe(() => { this.showDetail = false; this.showOverview = false; })
+
+        this.graph.onUpdate
+            .takeWhile(() => this.isActive)
+            .filter(changes => changes.indexOf('isSelected') >= 0)
+            .delay(600)
+            .subscribe(() => this.setIsSelected());
+        this.setIsSelected();
     }
 
     ngOnDestroy() {
@@ -59,6 +64,16 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         }
 
         this.isActive = false;
+    }
+
+    private setIsSelected() {
+        if (this.graph.isSelected) {
+            this.showOverview = false;
+            this.showDetail = true;
+        } else {
+            this.showOverview = true;
+            this.showDetail = false;
+        }
     }
 
 
