@@ -38,8 +38,6 @@
 
 .item {
     font-size: 30px;
-    width: 200px;
-    height: 140px;
     padding: 20px;
     text-align: center;
     transition: all 0.2s linear;
@@ -50,8 +48,14 @@
     align-items: center;
 }
 
-.vertical .item {
+.horizontal .item {
+    width: 350px;
+    height: 140px;
+}
 
+.vertical .item {
+    width: 250px;
+    height: 240px;
 }
 
 .item.selected {

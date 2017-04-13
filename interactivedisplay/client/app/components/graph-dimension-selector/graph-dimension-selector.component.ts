@@ -1,11 +1,11 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { DataProvider } from '../../services/index';
-import { Graph, ChartDimension } from '../../models/index'; 
+import { Graph, ChartDimension } from '../../models/index';
 
 const BORDER_SIZE = 30;
-const ITEM_WIDTH = 200;
-const ITEM_HEIGHT = 140;
+const VERTICAL_ITEM_SIZE = 240;
+const HORIZONTAL_ITEM_SIZE = 350;
 
 @Component({
     selector: 'graph-dimension-selector',
@@ -44,11 +44,12 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
             .first()
             .subscribe((dims) => {
                 this.dimensions = dims;
+                let itemSize = this.getItemSize();
 
                 if (this.axis === 'x') {
-                    this.maxOffset = dims.length * ITEM_WIDTH - this.size / 2 + BORDER_SIZE * 2;
+                    this.maxOffset = dims.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
                 } else {
-                    this.maxOffset = dims.length * ITEM_HEIGHT - this.size / 2 + BORDER_SIZE * 2;
+                    this.maxOffset = dims.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
                 }
 
                 this.scrollToCurrent();
@@ -125,7 +126,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
     }
 
     private getItemSize(): number {
-        return (this.axis == 'x') ? ITEM_WIDTH : ITEM_HEIGHT;
+        return (this.axis == 'x') ? HORIZONTAL_ITEM_SIZE : VERTICAL_ITEM_SIZE;
     }
 
     private updateOffset(): void {
@@ -240,4 +241,3 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
     }
 
 }
-
