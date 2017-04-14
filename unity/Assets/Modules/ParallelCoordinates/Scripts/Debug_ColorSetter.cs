@@ -8,6 +8,9 @@ namespace Assets.Modules.ParallelCoordinates.Scripts
     {
         public bool DoUpdate = false;
 
+        [Range(0f, 1f)]
+        public float FilterPercent = 0.3f;
+
         private Color32[] _colors = new[]
         {
             new Color32(244, 67, 54, 255), // red
@@ -37,7 +40,7 @@ namespace Assets.Modules.ParallelCoordinates.Scripts
 
             for (var i = 0; i < colors.Length; i++)
             {
-                var isFiltered = Random.value < 0.3;
+                var isFiltered = Random.value < FilterPercent;
                 var col = _colors[Random.Range(0, _colors.Length)];
                 col.a = (byte)(isFiltered ? 60 : 255);
 
