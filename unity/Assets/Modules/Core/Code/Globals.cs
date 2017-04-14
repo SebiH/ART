@@ -8,6 +8,8 @@ namespace Assets.Modules.Core
     {
         public static readonly string CustomDataPath = Path.Combine(Application.dataPath, "../data/");
 
+        public static readonly string CalibrationSavefile = "calibration_autosave.json";
+
         public static readonly string SurfaceServerIp = "127.0.0.1";
         public static readonly int SurfaceServerPort = 8835;
         public static readonly int SurfaceWebPort = 81;
