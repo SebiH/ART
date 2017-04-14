@@ -115,5 +115,14 @@ namespace Assets.Modules.Calibration
 
         #endregion
 
+
+        public static void PrimeCalibration(Vector3 positionOffset, Quaternion rotationOffset)
+        {
+            _avgPosSamples = STABLE_SAMPLE_COUNT;
+            _positionOffset = positionOffset;
+
+            _avgRotSamples = STABLE_SAMPLE_COUNT;
+            _rotationOffset = rotationOffset;
+        }
     }
 }
