@@ -235,5 +235,11 @@ namespace Assets.Modules.ParallelCoordinates
                 _lineRenderer.SetHidden(true);
             }
         }
+
+
+        private void Update()
+        {
+            transform.position = (LeftTracker.transform.position + RightTracker.transform.position) / 2;
+        }
     }
 }
