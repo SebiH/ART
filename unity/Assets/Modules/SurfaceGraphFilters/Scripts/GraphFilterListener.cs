@@ -20,6 +20,8 @@ namespace Assets.Modules.SurfaceGraphFilters
         private readonly List<FilterRenderer> _filters = new List<FilterRenderer>();
         private readonly List<RemoteFilter> _remoteFilters = new List<RemoteFilter>();
 
+        public event Action OnFilterUpdate;
+
         private void OnEnable()
         {
             _surface = UnityUtility.FindParent<Surface>(this);
@@ -99,6 +101,13 @@ namespace Assets.Modules.SurfaceGraphFilters
 
                     _filters.Add(filter);
                     filter.Id = rFilter.id;
+
+                    _remoteFilters.Add(rFilter);
+
+                    if (OnFilterUpdate != null)
+                    {
+                        OnFilterUpdate();
+                    }
                 }
                 else
                 {
@@ -214,6 +223,16 @@ namespace Assets.Modules.SurfaceGraphFilters
                     UpdateGradientLimits(rFilter.origin, rFilter.boundDimensions);
                 }
             }
+
+            if (OnFilterUpdate != null)
+            {
+                OnFilterUpdate();
+            }
+        }
+
+        public IEnumerable<RemoteFilter> GetFilters()
+        {
+            return _remoteFilters;
         }
 
 
