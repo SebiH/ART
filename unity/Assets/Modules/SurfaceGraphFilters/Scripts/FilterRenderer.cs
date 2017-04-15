@@ -1,6 +1,5 @@
 using Assets.Modules.Graphs;
 using System;
-using System.Threading;
 using TriangleNet.Geometry;
 using TriangleNet.Meshing;
 using UnityEngine;
@@ -40,6 +39,35 @@ namespace Assets.Modules.SurfaceGraphFilters
             }
         }
 
+        private float _minGradient = 0;
+        public float MinGradient
+        {
+            get { return _minGradient; }
+            set
+            {
+                if (_minGradient != value)
+                {
+                    _minGradient = value;
+                    _needsUpdate = true;
+                }
+            }
+        }
+
+
+        private float _maxGradient = 1;
+        public float MaxGradient
+        {
+            get { return _maxGradient; }
+            set
+            {
+                if (_maxGradient != value)
+                {
+                    _maxGradient = value;
+                    _needsUpdate = true;
+                }
+            }
+        }
+
 
         private float[] _path = null;
         public float[] Path
@@ -63,7 +91,6 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         private bool _useGradient = false;
         private bool _needsUpdate;
-        private Thread _updateThread = null;
 
 
         private void OnEnable()
@@ -79,15 +106,15 @@ namespace Assets.Modules.SurfaceGraphFilters
         }
 
 
-        private void Update()
+        private void LateUpdate()
         {
             if (_needsUpdate && _graph != null && _graph.DimX != null && _graph.DimY != null)
             {
                 _needsUpdate = false;
 
-                if (_path.Length < 6)
+                if (_path == null || _path.Length < 6)
                 {
-                    Debug.Log("Not enough points to render filter: " + _path.Length);
+                    Debug.Log("Not enough points to render filter");
                     return;
                 }
 
@@ -192,17 +219,16 @@ namespace Assets.Modules.SurfaceGraphFilters
             var generatedMesh = polygon.Triangulate(options, quality);
 
             // quick hack: gradient cannot expand outside of graph bounds [-0.5, 0.5]
-            double min, max;
-
+            float min, max;
             if (GradientAxis == 'x')
             {
-                min = Math.Max(generatedMesh.Bounds.Left, -0.5);
-                max = Math.Min(generatedMesh.Bounds.Right, 0.5);
+                min = dimX.Scale(MinGradient);
+                max = dimX.Scale(MaxGradient);
             }
             else
             {
-                min = Math.Max(generatedMesh.Bounds.Left, -0.5);
-                max = Math.Min(generatedMesh.Bounds.Right, 0.5);
+                min = dimY.Scale(MinGradient);
+                max = dimY.Scale(MaxGradient);
             }
 
             var range = max - min;

@@ -129,7 +129,7 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         private void UpdateFilter(RemoteFilter rFilter, FilterRenderer filter)
         {
-            var matchingFilter = _remoteFilters.RemoveAll(rf => rf.id == rFilter.id);
+            _remoteFilters.RemoveAll(rf => rf.id == rFilter.id);
             _remoteFilters.Add(rFilter);
 
             var color = new Color(1, 1, 1, 1);
@@ -142,10 +142,15 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
             }
 
-            if (rFilter.type == RemoteFilter.Type.Metric && filter.Gradients == null)
+            if (rFilter.type == RemoteFilter.Type.Metric)
             {
-                filter.Gradients = ConvertGradient(rFilter.gradient);
-                filter.GradientAxis = rFilter.boundDimensions == "x" ? 'x' : 'y';
+                if (rFilter.gradient != null && filter.Gradients == null)
+                {
+                    filter.Gradients = ConvertGradient(rFilter.gradient);
+                    filter.GradientAxis = rFilter.boundDimensions == "x" ? 'x' : 'y';
+                }
+
+                UpdateGradientLimits(rFilter.origin, rFilter.boundDimensions);
             }
             else
             {
@@ -153,6 +158,37 @@ namespace Assets.Modules.SurfaceGraphFilters
             }
 
             filter.Path = rFilter.path;
+        }
+
+        private void UpdateGradientLimits(int origin, string axis)
+        {
+            // Gradients are based on all similar filters for one graph
+            // If, for example, a graph has one metric filter both sides,
+            // the gradient will span between both filters.
+            // If the graph has only one filter, this filter will use
+            // the whole gradient
+            var similarFilters = _remoteFilters.FindAll(f =>
+                f.origin == origin &&
+                f.type == RemoteFilter.Type.Metric &&
+                f.boundDimensions == axis &&
+                f.range != null
+            );
+
+            if (similarFilters.Count > 0)
+            {
+                var min = similarFilters.Min(f => f.range[0]);
+                var max = similarFilters.Max(f => f.range[1]);
+                // similarFilters includes rFilter
+                foreach (var sf in similarFilters)
+                {
+                    var goSf = _filters.FirstOrDefault(f => f.Id == sf.id);
+                    if (goSf)
+                    {
+                        goSf.MinGradient = min;
+                        goSf.MaxGradient = max;
+                    }
+                }
+            }
         }
 
         private FilterRenderer.GradientStop[] ConvertGradient(RemoteFilter.GradientStop[] gradients)
@@ -173,6 +209,10 @@ namespace Assets.Modules.SurfaceGraphFilters
             if (rFilter != null)
             {
                 _remoteFilters.Remove(rFilter);
+                if (rFilter.type == RemoteFilter.Type.Metric)
+                {
+                    UpdateGradientLimits(rFilter.origin, rFilter.boundDimensions);
+                }
             }
         }
 
