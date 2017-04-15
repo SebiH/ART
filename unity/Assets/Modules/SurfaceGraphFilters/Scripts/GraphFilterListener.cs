@@ -152,16 +152,18 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
             }
 
+            var axis = rFilter.boundDimensions == "x" ? 'x' : 'y';
+
             if (needsPathUpdate)
             {
                 if (rFilter.gradient == null) { filter.SetColor(color); }
-                else { filter.SetGradient(ConvertGradient(rFilter.gradient)); }
+                else { filter.SetGradient(ConvertGradient(rFilter.gradient), axis); }
                 filter.RenderPath(rFilter.path);
             }
             else if (needsColorUpdate)
             {
                 if (rFilter.gradient == null) { filter.UpdateColor(color); }
-                else { filter.UpdateGradient(ConvertGradient(rFilter.gradient)); }
+                else { filter.UpdateGradient(ConvertGradient(rFilter.gradient), axis); }
             }
         }
 

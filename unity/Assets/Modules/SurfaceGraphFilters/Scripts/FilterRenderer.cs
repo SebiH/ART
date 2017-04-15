@@ -18,6 +18,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         private float[] _path = null;
         private Color32 _color = new Color32(255, 255, 255, 255);
         private bool _useGradients = false;
+        private char _gradientAxis = 'x'; // 'x' | 'y'
         private GradientStop[] _gradients;
 
         public struct GradientStop
@@ -73,8 +74,9 @@ namespace Assets.Modules.SurfaceGraphFilters
             _color = color;
         }
 
-        public void SetGradient(GradientStop[] gradients)
+        public void SetGradient(GradientStop[] gradients, char axis)
         {
+            _gradientAxis = axis;
             _useGradients = true;
             _gradients = gradients.OrderBy(g => g.Stop).ToArray();
         }
@@ -85,9 +87,9 @@ namespace Assets.Modules.SurfaceGraphFilters
             RegeneratePath();
         }
 
-        public void UpdateGradient(GradientStop[] gradients)
+        public void UpdateGradient(GradientStop[] gradients, char axis)
         {
-            SetGradient(gradients);
+            SetGradient(gradients, axis);
             RegeneratePath();
         }
 
@@ -199,12 +201,24 @@ namespace Assets.Modules.SurfaceGraphFilters
             polygon.Add(new Contour(polyVertices));
 
             var options = new ConstraintOptions { Convex = false, ConformingDelaunay = false };
-            var quality = new QualityOptions { };
+            // restrict maximumarea to allow proper vertex-colouring of gradients
+            var quality = new QualityOptions { MaximumArea = 0.005 };
             var generatedMesh = polygon.Triangulate(options, quality);
 
             // quick hack: gradient cannot expand outside of graph bounds [-0.5, 0.5]
-            double min = Math.Max(generatedMesh.Bounds.Left, -0.5);
-            double max = Math.Min(generatedMesh.Bounds.Right, 0.5);
+            double min, max;
+
+            if (_gradientAxis == 'x')
+            {
+                min = Math.Max(generatedMesh.Bounds.Left, -0.5);
+                max = Math.Min(generatedMesh.Bounds.Right, 0.5);
+            }
+            else
+            {
+                min = Math.Max(generatedMesh.Bounds.Left, -0.5);
+                max = Math.Min(generatedMesh.Bounds.Right, 0.5);
+            }
+
             var range = max - min;
 
             // convert triangulated mesh into unity mesh
@@ -225,9 +239,18 @@ namespace Assets.Modules.SurfaceGraphFilters
                 vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
                 vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
 
-                colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
-                colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
-                colors[counter + 2] = GetGradient((vectors[2].x - min) / range);
+                if (_gradientAxis == 'x')
+                {
+                    colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
+                    colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
+                    colors[counter + 2] = GetGradient((vectors[2].x - min) / range);
+                }
+                else
+                {
+                    colors[counter + 0] = GetGradient((vectors[0].y - min) / range);
+                    colors[counter + 1] = GetGradient((vectors[1].y - min) / range);
+                    colors[counter + 2] = GetGradient((vectors[2].y - min) / range);
+                }
 
                 counter += 3;
             }
