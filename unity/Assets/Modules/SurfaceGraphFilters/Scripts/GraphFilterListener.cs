@@ -135,7 +135,7 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             if (matchingFilter != null)
             {
-                needsPathUpdate = (matchingFilter.path.Length != rFilter.path.Length) || rFilter.isOverview;
+                needsPathUpdate = (matchingFilter.path.Length != rFilter.path.Length) || rFilter.path.Length < 50;
                 needsColorUpdate = (matchingFilter.color != rFilter.color);
                 _remoteFilters.Remove(matchingFilter);
             }
@@ -143,7 +143,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             _remoteFilters.Add(rFilter);
 
             var color = new Color(1, 1, 1, 1);
-            if (rFilter.color != null)
+            if (!String.IsNullOrEmpty(rFilter.color))
             {
                 var colorSuccess = ColorUtility.TryParseHtmlString(rFilter.color, out color);
                 if (!colorSuccess)

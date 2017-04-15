@@ -113,8 +113,15 @@ namespace Assets.Modules.Graphs
             Offset = _graph.IsSelected ? OFFSET_SELECTED : OFFSET_NORMAL;
             Height = _graph.IsPickedUp ? HEIGHT_PICKEDUP : HEIGHT_NORMAL;
 
-            var rotY = _graph.IsSelected ? 0 : 90;
             var rotZ = _graph.IsFlipped ? 90 : 0;
+
+            var rotY = 0;
+            if (_graph.IsFlipped)
+                rotY = _graph.IsSelected ? 180 : -90;
+            else
+                rotY = _graph.IsSelected ? 0 : 90;
+
+
             var targetRotation = Quaternion.Euler(0, rotY, rotZ);
             if (_rotationAnimation.End != targetRotation)
             {

@@ -5,17 +5,38 @@ namespace Assets.Modules.SurfaceGraphFilters
     [Serializable]
     public class RemoteFilter
     {
+        // Must match interactivedisplay/client/app/services/FilterProvider.service
+        [Serializable]
+        public enum Type
+        {
+            Categorical = 0,
+            Metric = 1,
+            Detail = 2
+        }
+
+        public Type type = Type.Detail;
+
+        /*
+         *  (Base) Filter
+         */
         public int id = -1;
-        public int origin;
-        public string color;
-        public bool isOverview;
-
-        public int type;
+        public int origin = -1;
+        public string boundDimensions = "";
+        public bool isUserGenerated = true;
         public float[] path;
-        public int category;
-        public float[] range;
 
+        /*
+         *  Category Filter
+         */
+        public int category = -1;
+        public string color = "";
+
+        /*
+         *  Metric Filter
+         */
+        public float[] range = null;
         public GradientStop[] gradient = null;
+
 
         [Serializable]
         public struct GradientStop

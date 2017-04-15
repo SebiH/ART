@@ -138,13 +138,6 @@ namespace Assets.Modules.SurfaceGraphFilters
             var dimX = _graph.DimX;
             var dimY = _graph.DimY;
 
-            if (_graph.IsFlipped)
-            {
-                var temp = dimX;
-                dimX = dimY;
-                dimY = temp;
-            }
-
             for (var i = 0; i < path.Length / 2; i++)
             {
                 polyVertices[i] = new Vertex(dimX.Scale(path[i * 2]), dimY.Scale(path[i * 2 + 1]));
@@ -166,28 +159,14 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             foreach (var triangle in generatedMesh.Triangles)
             {
-
                 var vectors = triangle.vertices;
-                if (_graph.IsFlipped)
-                {
-                    triangles[counter + 0] = counter + 0;
-                    triangles[counter + 1] = counter + 1;
-                    triangles[counter + 2] = counter + 2;
+                triangles[counter + 0] = counter + 0;
+                triangles[counter + 1] = counter + 2;
+                triangles[counter + 2] = counter + 1;
 
-                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].y), Convert.ToSingle(vectors[0].x), 0);
-                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), 0);
-                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), 0);
-                }
-                else
-                {
-                    triangles[counter + 0] = counter + 0;
-                    triangles[counter + 1] = counter + 2;
-                    triangles[counter + 2] = counter + 1;
-
-                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
-                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
-                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
-                }
+                vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
+                vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
+                vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
 
                 colors[counter + 0] = _color;
                 colors[counter + 1] = _color;
@@ -201,7 +180,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.colors32 = colors;
-            //mesh.RecalculateBounds();
+            mesh.RecalculateBounds();
         }
         
         private void RenderGradientPath(float[] path)
@@ -210,13 +189,6 @@ namespace Assets.Modules.SurfaceGraphFilters
             var polyVertices = new Vertex[path.Length / 2];
             var dimX = _graph.DimX;
             var dimY = _graph.DimY;
-
-            if (_graph.IsFlipped)
-            {
-                var temp = dimX;
-                dimX = dimY;
-                dimY = temp;
-            }
 
             for (var i = 0; i < path.Length / 2; i++)
             {
@@ -231,17 +203,8 @@ namespace Assets.Modules.SurfaceGraphFilters
             var generatedMesh = polygon.Triangulate(options, quality);
 
             // quick hack: gradient cannot expand outside of graph bounds [-0.5, 0.5]
-            double min, max;
-            //if (_graph.IsFlipped)
-            //{
-            //    min = Math.Max(generatedMesh.Bounds.Top, -0.5);
-            //    max = Math.Min(generatedMesh.Bounds.Bottom, 0.5);
-            //}
-            //else
-            //{
-                min = Math.Max(generatedMesh.Bounds.Left, -0.5);
-                max = Math.Min(generatedMesh.Bounds.Right, 0.5);
-            //}
+            double min = Math.Max(generatedMesh.Bounds.Left, -0.5);
+            double max = Math.Min(generatedMesh.Bounds.Right, 0.5);
             var range = max - min;
 
             // convert triangulated mesh into unity mesh
@@ -254,34 +217,17 @@ namespace Assets.Modules.SurfaceGraphFilters
             {
                 var vectors = triangle.vertices;
 
-                if (_graph.IsFlipped)
-                {
-                    triangles[counter + 0] = counter + 0;
-                    triangles[counter + 1] = counter + 1;
-                    triangles[counter + 2] = counter + 2;
+                triangles[counter + 0] = counter + 0;
+                triangles[counter + 1] = counter + 2;
+                triangles[counter + 2] = counter + 1;
 
-                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].y), Convert.ToSingle(vectors[0].x), 0);
-                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].y), Convert.ToSingle(vectors[1].x), 0);
-                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].y), Convert.ToSingle(vectors[2].x), 0);
+                vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
+                vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
+                vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
 
-                    colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
-                    colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
-                    colors[counter + 2] = GetGradient((vectors[2].x - min) / range);
-                }
-                else
-                {
-                    triangles[counter + 0] = counter + 0;
-                    triangles[counter + 1] = counter + 2;
-                    triangles[counter + 2] = counter + 1;
-
-                    vertices[counter + 0] = new Vector3(Convert.ToSingle(vectors[0].x), Convert.ToSingle(vectors[0].y), 0);
-                    vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
-                    vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
-
-                    colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
-                    colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
-                    colors[counter + 2] = GetGradient((vectors[2].x - min) / range);
-                }
+                colors[counter + 0] = GetGradient((vectors[0].x - min) / range);
+                colors[counter + 1] = GetGradient((vectors[1].x - min) / range);
+                colors[counter + 2] = GetGradient((vectors[2].x - min) / range);
 
                 counter += 3;
             }
@@ -291,7 +237,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.colors32 = colors;
-            //mesh.RecalculateBounds();
+            mesh.RecalculateBounds();
         }
 
         private Color32 GetGradient(double position)
