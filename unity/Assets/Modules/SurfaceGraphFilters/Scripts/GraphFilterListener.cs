@@ -129,17 +129,7 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         private void UpdateFilter(RemoteFilter rFilter, FilterRenderer filter)
         {
-            var matchingFilter = _remoteFilters.FirstOrDefault(rf => rf.id == rFilter.id);
-            bool needsPathUpdate = true;
-            bool needsColorUpdate = true;
-
-            if (matchingFilter != null)
-            {
-                needsPathUpdate = (matchingFilter.path.Length != rFilter.path.Length) || rFilter.path.Length < 50;
-                needsColorUpdate = (matchingFilter.color != rFilter.color);
-                _remoteFilters.Remove(matchingFilter);
-            }
-
+            var matchingFilter = _remoteFilters.RemoveAll(rf => rf.id == rFilter.id);
             _remoteFilters.Add(rFilter);
 
             var color = new Color(1, 1, 1, 1);
@@ -152,19 +142,17 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
             }
 
-            var axis = rFilter.boundDimensions == "x" ? 'x' : 'y';
+            if (rFilter.type == RemoteFilter.Type.Metric && filter.Gradients == null)
+            {
+                filter.Gradients = ConvertGradient(rFilter.gradient);
+                filter.GradientAxis = rFilter.boundDimensions == "x" ? 'x' : 'y';
+            }
+            else
+            {
+                filter.Color = color;
+            }
 
-            if (needsPathUpdate)
-            {
-                if (rFilter.gradient == null) { filter.SetColor(color); }
-                else { filter.SetGradient(ConvertGradient(rFilter.gradient), axis); }
-                filter.RenderPath(rFilter.path);
-            }
-            else if (needsColorUpdate)
-            {
-                if (rFilter.gradient == null) { filter.UpdateColor(color); }
-                else { filter.UpdateGradient(ConvertGradient(rFilter.gradient), axis); }
-            }
+            filter.Path = rFilter.path;
         }
 
         private FilterRenderer.GradientStop[] ConvertGradient(RemoteFilter.GradientStop[] gradients)
