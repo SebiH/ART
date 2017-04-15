@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
 using System;
 using UnityEngine;
@@ -7,22 +8,16 @@ namespace Assets.Modules.Graphs
     [RequireComponent(typeof(Graph))]
     public class GraphPosition : MonoBehaviour
     {
-        // for selection, etc.
-        const float NormalAnimationSpeed = 0.6f;
-        const float QuickAnimationSpeed = 0.3f;
-        // for scrolling, smoothing out values from webapp
-        const float FastAnimationSpeed = 0.05f;
-
         const float OFFSET_SELECTED = 0.2f;
         const float OFFSET_NORMAL = 0.8f;
 
         const float HEIGHT_NORMAL = 0.5f;
         const float HEIGHT_PICKEDUP = 0.6f;
 
-        private ValueAnimation _positionAnimation = new ValueAnimation(FastAnimationSpeed);
-        private ValueAnimation _heightAnimation = new ValueAnimation(QuickAnimationSpeed);
-        private ValueAnimation _offsetAnimation = new ValueAnimation(NormalAnimationSpeed);
-        private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(NormalAnimationSpeed);
+        private ValueAnimation _positionAnimation = new ValueAnimation(Globals.FastAnimationSpeed);
+        private ValueAnimation _heightAnimation = new ValueAnimation(Globals.QuickAnimationSpeed);
+        private ValueAnimation _offsetAnimation = new ValueAnimation(Globals.NormalAnimationSpeed);
+        private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(Globals.NormalAnimationSpeed);
 
         // TODO - animate?
         public float Width { get; set; }

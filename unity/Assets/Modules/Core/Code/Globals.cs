@@ -24,5 +24,13 @@ namespace Assets.Modules.Core
         public static readonly string DefaultSurfaceName = "Surface";
 
         public const int DataPointsCount = 1000;
+
+
+        // for selection, etc.
+        public const float NormalAnimationSpeed = 0.6f;
+        public const float QuickAnimationSpeed = 0.3f;
+        // for scrolling, smoothing out values from webapp
+        public const float FastAnimationSpeed = 0.05f;
+
     }
 }
