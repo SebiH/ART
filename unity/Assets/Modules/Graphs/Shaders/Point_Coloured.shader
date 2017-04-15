@@ -228,7 +228,8 @@ Shader "Graph/Point_Coloured"
             {
                 fixed4 inputColor = input.color;
                 clip(input.color.a - 0.999);
-                return inputColor;
+				return fixed4(1, 1, 1, 1);
+                //return inputColor;
             }
 
 

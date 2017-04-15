@@ -132,7 +132,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             _remoteFilters.RemoveAll(rf => rf.id == rFilter.id);
             _remoteFilters.Add(rFilter);
 
-            var color = new Color(1, 1, 1, 1);
+            var color = new Color(3f/255f, 169f/255f, 244f/255f, 1);
             if (!String.IsNullOrEmpty(rFilter.color))
             {
                 var colorSuccess = ColorUtility.TryParseHtmlString(rFilter.color, out color);
