@@ -11,7 +11,7 @@ namespace Assets.Modules.Core
         {
             var transparentObjs = GameObject.FindGameObjectsWithTag("Transparent");
             var sortedObjs = transparentObjs.OrderBy(t => { return Mathf.Abs(Vector3.Distance(t.transform.position, TrackedCamera.transform.position)); });
-            var queueCounter = 3000;
+            var queueCounter = 4000;
 
             foreach (var obj in sortedObjs)
             {

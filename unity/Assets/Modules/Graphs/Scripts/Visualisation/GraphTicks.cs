@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,8 +6,13 @@ namespace Assets.Modules.Graphs.Visualisation
 {
     public class GraphTicks : MonoBehaviour
     {
-        public GraphLabel TickTemplate;
+        public GraphLabel TickTemplateX;
+        public GraphLabel TickTemplateY;
+
+        public bool IsXAxis = true;
+
         private readonly List<GraphLabel> _ticks = new List<GraphLabel>();
+        private Graph _graph;
 
         private Dimension _dimension;
         public Dimension SourceDimension
@@ -19,6 +25,23 @@ namespace Assets.Modules.Graphs.Visualisation
                     _dimension = value;
                     BuildTicks();
                 }
+            }
+        }
+
+        private bool _wasGraphFlipped;
+
+        private void OnEnable()
+        {
+            _graph = UnityUtility.FindParent<GraphMetaData>(this).Graph;
+            _wasGraphFlipped = _graph.IsFlipped;
+        }
+
+        private void Update()
+        {
+            if (_graph.IsFlipped != _wasGraphFlipped)
+            {
+                _wasGraphFlipped = _graph.IsFlipped;
+                BuildTicks();
             }
         }
 
@@ -48,14 +71,26 @@ namespace Assets.Modules.Graphs.Visualisation
 
         private GraphLabel SpawnTick(string name, float position)
         {
-            var tick = Instantiate(TickTemplate);
+            var template = (_graph.IsFlipped ^ IsXAxis) ? TickTemplateX : TickTemplateY;
+            var tick = Instantiate(template);
             tick.Text = name;
 
             var tickTransform = tick.transform as RectTransform;
-            tickTransform.SetParent(transform);
-            tickTransform.localPosition = new Vector3(position * 20, 0, 0) * 2;
-            tickTransform.localRotation = Quaternion.Euler(0, 0, -65);
-            tickTransform.localScale = Vector3.one;
+            tickTransform.SetParent(transform, false);
+
+            if (IsXAxis)
+            {
+                tickTransform.localPosition = new Vector3(position * 200, 0, 0);
+            }
+            else
+            {
+                tickTransform.localPosition = new Vector3(-position * 200, 0, 0);
+            }
+
+            if (IsXAxis && _graph.IsFlipped)
+            {
+                tickTransform.localRotation *= Quaternion.Euler(0, 180, 0);
+            }
 
             return tick;
         }
