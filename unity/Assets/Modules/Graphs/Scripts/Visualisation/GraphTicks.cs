@@ -88,14 +88,7 @@ namespace Assets.Modules.Graphs.Visualisation
             tick.Front.material = _sharedMaterial;
             tick.Back.material = _sharedMaterial;
 
-            if (IsXAxis)
-            {
-                tickTransform.localPosition = new Vector3(position * 200, 0, 0);
-            }
-            else
-            {
-                tickTransform.localPosition = new Vector3(-position * 200, 0, 0);
-            }
+            tickTransform.localPosition = new Vector3(position * 200, 0, 0);
 
             if (IsXAxis && _graph.IsFlipped)
             {
