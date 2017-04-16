@@ -10,7 +10,7 @@ Shader "GUI/3D Text Shader" {
 
 		Lighting Off
 		Cull Off
-		ZWrite Off
+		ZWrite On
 		Fog { Mode Off }
 
 		Blend SrcAlpha OneMinusSrcAlpha

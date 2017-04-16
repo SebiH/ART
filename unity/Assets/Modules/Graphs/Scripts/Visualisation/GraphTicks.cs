@@ -9,6 +9,10 @@ namespace Assets.Modules.Graphs.Visualisation
         public GraphLabel TickTemplateX;
         public GraphLabel TickTemplateY;
 
+        public Renderer RenderQueueSource;
+        public Material MaterialTemplate;
+        private Material _sharedMaterial;
+
         public bool IsXAxis = true;
 
         private readonly List<GraphLabel> _ticks = new List<GraphLabel>();
@@ -34,6 +38,7 @@ namespace Assets.Modules.Graphs.Visualisation
         {
             _graph = UnityUtility.FindParent<GraphMetaData>(this).Graph;
             _wasGraphFlipped = _graph.IsFlipped;
+            _sharedMaterial = Instantiate(MaterialTemplate);
         }
 
         private void Update()
@@ -43,6 +48,8 @@ namespace Assets.Modules.Graphs.Visualisation
                 _wasGraphFlipped = _graph.IsFlipped;
                 BuildTicks();
             }
+
+            _sharedMaterial.renderQueue = RenderQueueSource.material.renderQueue;
         }
 
         private void BuildTicks()
@@ -77,6 +84,9 @@ namespace Assets.Modules.Graphs.Visualisation
 
             var tickTransform = tick.transform as RectTransform;
             tickTransform.SetParent(transform, false);
+
+            tick.Front.material = _sharedMaterial;
+            tick.Back.material = _sharedMaterial;
 
             if (IsXAxis)
             {
