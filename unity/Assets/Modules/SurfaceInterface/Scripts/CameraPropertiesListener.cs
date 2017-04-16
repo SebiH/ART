@@ -2,6 +2,7 @@ using Assets.Modules.Surfaces;
 using Assets.Modules.Vision;
 using Assets.Modules.Vision.CameraSources;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.SurfaceInterface
@@ -25,12 +26,35 @@ namespace Assets.Modules.SurfaceInterface
 
             if (LeftEye) { _originalLeftEyePosition = LeftEye.localPosition; }
             if (RightEye) { _originalRightEyePosition = RightEye.localPosition; }
+
+#if UNITY_EDITOR
+            StartCoroutine(SendSettings());
+#endif
         }
 
         private void OnDisable()
         {
             RemoteSurfaceConnection.OnCommandReceived -= OnAction;
         }
+
+#if UNITY_EDITOR
+        private IEnumerator SendSettings()
+        {
+            while (enabled)
+            {
+                var settings = new OvrSettings
+                {
+                    Gain = _camera.Gain,
+                    Exposure = _camera.Exposure,
+                    BLC = _camera.BLC
+                };
+
+                RemoteSurfaceConnection.SendCommand("surface", "debug-camera-properties", JsonUtility.ToJson(settings));
+
+                yield return new WaitForSecondsRealtime(1f);
+            }
+        }
+#endif
 
 
         private void OnAction(string cmd, string payload)

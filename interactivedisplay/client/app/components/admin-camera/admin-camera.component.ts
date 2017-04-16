@@ -14,14 +14,22 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
     private gap: number = 0;
 
     private camerasActive: boolean = true;
+    private remotePropListener: any;
 
     constructor(private socketio: SocketIO) {}
 
     ngOnInit() {
+        this.remotePropListener = (jProps) => {
+            var props = JSON.parse(jProps);
+            this.gain = props.Gain;
+            this.exposure = props.Exposure;
+            this.blc = props.BLC;
+        };
+        this.socketio.on('debug-camera-properties', this.remotePropListener);
     }
 
     ngOnDestroy() {
-
+        this.socketio.off('debug-camera-properties', this.remotePropListener);
     }
 
     private setGain(val: number) {
