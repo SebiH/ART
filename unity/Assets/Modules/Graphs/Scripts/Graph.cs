@@ -8,11 +8,14 @@ namespace Assets.Modules.Graphs
     {
         public int Id { get; set; }
         public Color Color { get; set; }
-        public bool IsColored { get; set; }
         public bool IsSelected { get; set; }
         public bool IsFlipped { get; set; }
         public bool IsNewlyCreated { get; set; }
         public bool IsPickedUp { get; set; }
+        public bool UseColorX { get; set; }
+        public bool UseColorY { get; set; }
+
+        public bool IsColored { get { return UseColorX || UseColorY; } }
 
         public event Action OnDataChange;
 

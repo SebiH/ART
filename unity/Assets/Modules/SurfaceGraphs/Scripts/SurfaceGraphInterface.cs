@@ -105,7 +105,8 @@ namespace Assets.Modules.SurfaceGraphs
 
         private void UpdateGraph(GraphMetaData g, RemoteGraph remoteGraph)
         {
-            g.Graph.IsColored = remoteGraph.isColored;
+            g.Graph.UseColorX = remoteGraph.useColorX;
+            g.Graph.UseColorY = remoteGraph.useColorY;
             g.Graph.IsSelected = remoteGraph.isSelected;
             g.Graph.IsFlipped = remoteGraph.isFlipped;
             g.Graph.IsPickedUp = remoteGraph.isPickedUp;
