@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 namespace Assets.Modules.SurfaceGraphFilters
 {
-    [RequireComponent(typeof(Image))]
     public class FilterIconToggle : MonoBehaviour
     {
         private GraphFilterListener _filterListener;
@@ -30,9 +29,13 @@ namespace Assets.Modules.SurfaceGraphFilters
             _colorAnimation.Init(new Color32(255, 255, 255, 0));
 
             // Duplicate material because material is somehow shared between UI elements??
-            var filterIcon = GetComponent<Image>();
+            var filterIcon = GetComponentInChildren<Image>();
             _material = Instantiate(filterIcon.material);
-            filterIcon.material = _material;
+
+            foreach (var icon in GetComponentsInChildren<Image>())
+            {
+                filterIcon.material = _material;
+            }
         }
 
         private void OnDestroy()
