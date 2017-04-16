@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { DataProvider } from '../../services/index';
+import { DataProvider, GlobalFilterProvider } from '../../services/index';
 import { ChartDimension } from '../../models/index';
 
 import * as _ from 'lodash';
@@ -17,7 +17,10 @@ export class AdminDataComponent implements OnInit {
     private viewIndex: number = -1;
     private selectedIndex: number = -1;
 
-    constructor(private dataProvider: DataProvider, private changeDetector: ChangeDetectorRef) { }
+    constructor(
+        private dataProvider: DataProvider,
+        private globalFilterProvider: GlobalFilterProvider,
+        private changeDetector: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.dataProvider.getDimensions()
@@ -74,11 +77,14 @@ export class AdminDataComponent implements OnInit {
     }
 
     private selectData(index: number): void {
-        if (this.selectedIndex == index) {
+        if (this.selectedIndex == index || index < 0) {
             this.selectedIndex = -1;
+            this.globalFilterProvider.adminUpdateGlobalFilter();
         } else {
             this.selectedIndex = index;
+            this.globalFilterProvider.adminFilterHack(this.selectedIndex);
         }
+
         this.changeDetector.detectChanges();
     }
 

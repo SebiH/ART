@@ -25,7 +25,7 @@
         <tbody *ngIf="viewIndex > -1">
             <tr [ngClass]="{ selected: selectedIndex == viewIndex }">
                 <th>
-                    <button (click)="selectData(datum.id)"> Select </button>
+                    <button (click)="selectData(viewIndex)"> Select </button>
                     <button (click)="viewData(-1)"> Close </button>
                 </th>
                 <th> {{ data[viewIndex].id }} </th>

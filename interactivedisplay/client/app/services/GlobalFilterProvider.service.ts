@@ -195,4 +195,25 @@ export class GlobalFilterProvider {
 
         this.socketio.sendMessage('globalfilter', { globalfilter: syncFilter });
     }
+
+
+    // quick workaround for selecting data indices via admin panel
+    public adminFilterHack(index: number): void {
+        let syncFilter = [];
+
+        for (let data of this.globalFilter) {
+            let isFiltered = data.id != index;
+            syncFilter.push({
+                id: data.id,
+                f: isFiltered ? 1 : 0,
+                c: isFiltered ? "#FFFFFF" : "#F44336"
+            });
+        }
+
+        this.socketio.sendMessage('globalfilter', { globalfilter: syncFilter });
+    }
+
+    public adminUpdateGlobalFilter(): void {
+        this.updateGlobalFilter();
+    }
 }
