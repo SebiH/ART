@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Modules.Core
 {
@@ -44,13 +45,26 @@ namespace Assets.Modules.Core
                 renderQueue = _target.GetMaterial().renderQueue;
             }
 
+            var adjQueue = renderQueue + Offset;
+
             if (_target && _target.GetMaterial() != null)
             {
-                _target.GetMaterial().renderQueue = renderQueue + Offset;
+                _target.GetMaterial().renderQueue = adjQueue;
             }
             else
             {
-                Debug.LogWarning("Cannot copy renderqueue - no target!");
+                if (GetComponent<Image>() != null)
+                {
+                    GetComponent<Image>().material.renderQueue = adjQueue;
+                }
+                else if (GetComponent<Text>() != null)
+                {
+                    GetComponent<Text>().material.renderQueue = adjQueue;
+                }
+                else
+                {
+                    Debug.LogWarning("Cannot copy renderqueue - no target!");
+                }
             }
         }
     }
