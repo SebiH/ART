@@ -15,6 +15,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         private Image _filterIcon;
 
         private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(Globals.NormalAnimationSpeed);
+        private ColorAnimation _colorAnimation = new ColorAnimation(Globals.NormalAnimationSpeed);
 
         private void Start()
         {
@@ -26,6 +27,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             OnFilterUpdate();
 
             _rotationAnimation.Init(Quaternion.identity);
+            _colorAnimation.Init(new Color32(255, 255, 255, 255));
         }
 
         private void OnDestroy()
@@ -42,6 +44,17 @@ namespace Assets.Modules.SurfaceGraphFilters
             }
 
             transform.localRotation = _rotationAnimation.CurrentValue;
+
+
+
+            var targetColor = _graph.IsColored ? new Color32(139, 195, 74, 255) : new Color32(255, 255, 255, 255);
+
+            if (_colorAnimation.End.r != targetColor.r || _colorAnimation.End.g != targetColor.g || _colorAnimation.End.b != targetColor.b)
+            {
+                _colorAnimation.Restart(targetColor);
+            }
+
+            _filterIcon.color = _colorAnimation.CurrentValue;
         }
 
         private void OnFilterUpdate()
