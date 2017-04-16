@@ -60,7 +60,7 @@ Shader "Graph/Line_Transparent"
             {
                 g2f o;
 				// reduce lineWidth based on alpha
-                float lineWidth = _lineWidth * max(IN[0].color.a, 0.2);
+                float lineWidth = _lineWidth * max(IN[0].color.a, 0.1);
 				float3 widthY = float3(0, lineWidth, 0);
 				float3 widthX = float3(lineWidth, 0, 0);
 
@@ -195,6 +195,7 @@ Shader "Graph/Line_Transparent"
             {
                 fixed4 inputColor = input.color;
                 clip((1 - input.color.a) - 0.001);
+				inputColor *= 0.85;
                 return inputColor;
             }
 

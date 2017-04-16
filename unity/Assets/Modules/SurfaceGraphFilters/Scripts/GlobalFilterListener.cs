@@ -9,7 +9,7 @@ namespace Assets.Modules.SurfaceGraphFilters
 {
     public class GlobalFilterListener : MonoBehaviour
     {
-        const byte TRANSPARENCY_FILTERED = 40;
+        const byte TRANSPARENCY_FILTERED = 30;
         const byte TRANSPARENCY_NORMAL = 255;
 
         private Surface _surface;
