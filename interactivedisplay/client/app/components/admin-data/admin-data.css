@@ -7,8 +7,9 @@
 button {
     border-radius: 0;
     width: 100px;
+    background: white;
 }
 
-tr.selected {
-    background: #8BC34A;
+tr.selected button {
+    background: #F44336;
 }

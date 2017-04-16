@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DataProvider, GlobalFilterProvider } from '../../services/index';
 import { ChartDimension } from '../../models/index';
 
@@ -10,12 +10,15 @@ import * as _ from 'lodash';
     styleUrls: ['./app/components/admin-data/admin-data.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AdminDataComponent implements OnInit {
+export class AdminDataComponent implements OnInit, OnDestroy {
 
     private dimensions: string[] = [];
     private data: any[] = [];
+    private selectedData: any[] = [];
     private viewIndex: number = -1;
     private selectedIndex: number = -1;
+
+    private isActive: boolean = true;
 
     constructor(
         private dataProvider: DataProvider,
@@ -31,7 +34,25 @@ export class AdminDataComponent implements OnInit {
                     this.initDimension(dim);
                 }
                 this.changeDetector.detectChanges();
+                this.globalFilterProvider.adminUpdateGlobalFilter();
             });
+
+        this.globalFilterProvider.onUpdate()
+            .takeWhile(() => this.isActive)
+            .subscribe((filter) => {
+                this.selectedData = [];
+                for (let fd of filter) {
+                    if (fd.f == 0) {
+                        this.data[fd.id].color = fd.c;
+                        this.selectedData.push(this.data[fd.id]);
+                    }
+                }
+                this.changeDetector.detectChanges();
+            });
+    }
+
+    ngOnDestroy() {
+        this.isActive = false;
     }
 
     private initDimension(dim: string): void {

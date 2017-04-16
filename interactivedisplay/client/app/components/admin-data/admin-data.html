@@ -10,7 +10,9 @@
             </tr>
         </thead>
         <tbody *ngIf="viewIndex == -1">
-            <tr *ngFor="let datum of data" [ngClass]="{ selected: selectedIndex == datum.id }">
+            <tr *ngFor="let datum of selectedData"
+                [ngClass]="{ selected: selectedIndex == datum.id }"
+                [style.background]="datum.color">
                 <th>
                     <button (click)="selectData(datum.id)"> Select </button>
                     <button (click)="viewData(datum.id)"> View </button>

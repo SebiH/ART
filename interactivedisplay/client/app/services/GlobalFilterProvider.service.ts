@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject, Observable, Subscription } from 'rxjs/Rx';
 import { Graph, Filter, CategoryFilter, MetricFilter, ChartDimension } from '../models/index';
 import { SocketIO } from './SocketIO.service';
 import { FilterProvider } from './FilterProvider.service';
@@ -23,6 +23,8 @@ export class GlobalFilterProvider {
     private filters: Filter[] = [];
     private filterSubscriptions: Subscription[] = [];
     private graphs: Graph[] = [];
+
+    private updateSubject: Subject<any[]> = new Subject<any[]>();
 
     constructor(
         private filterProvider: FilterProvider,
@@ -49,6 +51,9 @@ export class GlobalFilterProvider {
             });
     }
 
+    public onUpdate(): Observable<any[]> {
+        return this.updateSubject.asObservable();
+    }
 
     private resubscribe(filters: Filter[]) {
         for (let sub of this.filterSubscriptions) {
@@ -194,6 +199,7 @@ export class GlobalFilterProvider {
         }
 
         this.socketio.sendMessage('globalfilter', { globalfilter: syncFilter });
+        this.updateSubject.next(syncFilter);
     }
 
 
