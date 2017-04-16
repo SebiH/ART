@@ -12,7 +12,8 @@ namespace Assets.Modules.SurfaceGraphFilters
     {
         private GraphFilterListener _filterListener;
         private Graph _graph;
-        private Image _filterIcon;
+        private Material _material;
+        private bool _isEnabled = false;
 
         private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(Globals.NormalAnimationSpeed);
         private ColorAnimation _colorAnimation = new ColorAnimation(Globals.NormalAnimationSpeed);
@@ -22,12 +23,16 @@ namespace Assets.Modules.SurfaceGraphFilters
             _graph = UnityUtility.FindParent<Graph>(this);
             _filterListener = UnityUtility.FindParent<GraphFilterListener>(this);
             _filterListener.OnFilterUpdate += OnFilterUpdate;
-            _filterIcon = GetComponent<Image>();
 
             OnFilterUpdate();
 
             _rotationAnimation.Init(Quaternion.identity);
-            _colorAnimation.Init(new Color32(255, 255, 255, 255));
+            _colorAnimation.Init(new Color32(255, 255, 255, 0));
+
+            // Duplicate material because material is somehow shared between UI elements??
+            var filterIcon = GetComponent<Image>();
+            _material = Instantiate(filterIcon.material);
+            filterIcon.material = _material;
         }
 
         private void OnDestroy()
@@ -45,22 +50,21 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             transform.localRotation = _rotationAnimation.CurrentValue;
 
+            var targetColor = _graph.IsColored ? Globals.FilterActiveColor : new Color32(255, 255, 255, 255);
+            targetColor.a = (byte)(_isEnabled ? 255 : 0);
 
-
-            var targetColor = _graph.IsColored ? new Color32(139, 195, 74, 255) : new Color32(255, 255, 255, 255);
-
-            if (_colorAnimation.End.r != targetColor.r || _colorAnimation.End.g != targetColor.g || _colorAnimation.End.b != targetColor.b)
+            if (_colorAnimation.End.r != targetColor.r || _colorAnimation.End.g != targetColor.g || _colorAnimation.End.b != targetColor.b || _colorAnimation.End.a != targetColor.a)
             {
                 _colorAnimation.Restart(targetColor);
             }
 
-            _filterIcon.color = _colorAnimation.CurrentValue;
+            _material.color = _colorAnimation.CurrentValue;
         }
 
         private void OnFilterUpdate()
         {
             var filters = _filterListener.GetFilters();
-            _filterIcon.enabled = filters.Any(f => f.origin == _graph.Id);
+            _isEnabled = filters.Any(f => f.origin == _graph.Id);
         }
     }
 }

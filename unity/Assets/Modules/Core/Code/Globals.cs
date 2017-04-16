@@ -32,5 +32,8 @@ namespace Assets.Modules.Core
         // for scrolling, smoothing out values from webapp
         public const float FastAnimationSpeed = 0.05f;
 
+
+        public static readonly Color32 FilterActiveColor = new Color32(139, 195, 74, 255);
+
     }
 }
