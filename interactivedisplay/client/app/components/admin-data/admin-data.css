@@ -1,0 +1,14 @@
+.table-container {
+    overflow-x: scroll;
+    width: 100%;
+    position: relative;
+}
+
+button {
+    border-radius: 0;
+    width: 100px;
+}
+
+tr.selected {
+    background: #8BC34A;
+}

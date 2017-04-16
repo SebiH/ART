@@ -1,0 +1,39 @@
+<div class="table-container">
+    <table class="u-full-width">
+        <thead>
+            <tr>
+                <th> </th>
+                <th> ID </th>
+                <th *ngFor="let dim of dimensions">
+                    {{ dim }}
+                </th>
+            </tr>
+        </thead>
+        <tbody *ngIf="viewIndex == -1">
+            <tr *ngFor="let datum of data" [ngClass]="{ selected: selectedIndex == datum.id }">
+                <th>
+                    <button (click)="selectData(datum.id)"> Select </button>
+                    <button (click)="viewData(datum.id)"> View </button>
+                </th>
+                <th> {{ datum?.id }} </th>
+                <th *ngFor="let dim of dimensions">
+                    {{ datum[dim]?.value }}
+                    <span *ngIf="datum[dim]?.name">({{datum[dim].name}})</span>
+                </th>
+            </tr>
+
+        <tbody *ngIf="viewIndex > -1">
+            <tr [ngClass]="{ selected: selectedIndex == viewIndex }">
+                <th>
+                    <button (click)="selectData(datum.id)"> Select </button>
+                    <button (click)="viewData(-1)"> Close </button>
+                </th>
+                <th> {{ data[viewIndex].id }} </th>
+                <th *ngFor="let dim of dimensions">
+                    {{ data[viewIndex][dim]?.value }}
+                    <span *ngIf="data[viewIndex][dim]?.name">({{data[viewIndex][dim].name}})</span>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+</div>

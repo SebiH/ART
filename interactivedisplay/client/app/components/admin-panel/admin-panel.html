@@ -35,6 +35,9 @@
         <admin-camera></admin-camera>
     </div>
 
+    <div class="container" *ngIf="activeTab === 'Data'">
+        <admin-data></admin-data>
+    </div>
 
     <div class="container" *ngIf="activeTab === 'Actions'">
         <div class="buttons row">
@@ -55,7 +58,7 @@
         </div>
 
         <hr/>
-        
+
         <div class="buttons">
             <button class="button-primary four columns"
                 (click)="resetCalibration()">

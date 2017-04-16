@@ -15,6 +15,7 @@ import { routing } from './routes';
     Components.AdminCalibrationComponent,
     Components.AdminCameraComponent,
     Components.AdminChangeMonitorComponent,
+    Components.AdminDataComponent,
     Components.AdminPanelComponent,
     Components.AppComponent,
     Components.CategoryOverviewChartComponent,
