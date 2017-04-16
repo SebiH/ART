@@ -6,6 +6,7 @@ namespace Assets.Modules.Core
     public class CanvasCopyRenderQueue : MonoBehaviour
     {
         public Renderer Source;
+        public int Offset = 0;
         private CanvasRenderer _alternateSource;
         private CanvasRenderer _target;
 
@@ -45,7 +46,7 @@ namespace Assets.Modules.Core
 
             if (_target && _target.GetMaterial() != null)
             {
-                _target.GetMaterial().renderQueue = renderQueue;
+                _target.GetMaterial().renderQueue = renderQueue + Offset;
             }
             else
             {
