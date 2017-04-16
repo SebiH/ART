@@ -14,14 +14,26 @@ namespace Assets.Modules.Vision
         private DirectXOutput _output;
 
 
-        void OnEnable()
+        private void OnEnable()
         {
             VisionManager.Instance.CameraSourceChanged += Init;
             Init(VisionManager.Instance.ActiveCamera);
         }
 
-        void Init(CameraSource cam)
+        private void OnDisable()
         {
+            VisionManager.Instance.CameraSourceChanged -= Init;
+            ProcessingPipeline.RemoveOutput(_output);
+        }
+
+
+        private void Init(CameraSource cam)
+        {
+            if (cam == null)
+            {
+                return;
+            }
+
             // TODO: might depend on module..
             var imageWidth = cam.SourceWidth;
             var imageHeight = cam.SourceHeight;
@@ -60,12 +72,6 @@ namespace Assets.Modules.Vision
                 }
             }
 
-        }
-
-        void OnDisable()
-        {
-            VisionManager.Instance.CameraSourceChanged -= Init;
-            ProcessingPipeline.RemoveOutput(_output);
         }
 
         // taken from OvrVision Pro
