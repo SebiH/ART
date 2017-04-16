@@ -10,7 +10,7 @@ Shader "Graph/Line_Transparent"
     {
         Tags {"Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparent"}
 
-        Cull Off
+        Cull Back
 		ZWrite On
         Blend SrcAlpha OneMinusSrcAlpha 
 
