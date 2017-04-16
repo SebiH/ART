@@ -1,11 +1,12 @@
 using Assets.Modules.Surfaces;
+using Assets.Modules.Vision;
 using Assets.Modules.Vision.CameraSources;
 using System;
 using UnityEngine;
 
 namespace Assets.Modules.SurfaceInterface
 {
-    [RequireComponent(typeof(OvrvisionCameraSource))]
+    [RequireComponent(typeof(OvrvisionCameraSource), typeof(SaveOvrSettings), typeof(AutoLoadOvrSettings))]
     public class CameraPropertiesListener : MonoBehaviour
     {
         private OvrvisionCameraSource _camera;
@@ -54,6 +55,16 @@ namespace Assets.Modules.SurfaceInterface
                 var status = bool.Parse(payload.Replace("\"", ""));
                 if (LeftEye) { LeftEye.gameObject.GetComponent<Renderer>().enabled = status; }
                 if (RightEye) { RightEye.GetComponent<Renderer>().enabled = status; }
+            }
+
+            if (cmd == "save-camera-settings")
+            {
+                GetComponent<SaveOvrSettings>().Save();
+            }
+
+            if (cmd == "load-camera-settings")
+            {
+                GetComponent<AutoLoadOvrSettings>().LoadSettings();
             }
         }
 

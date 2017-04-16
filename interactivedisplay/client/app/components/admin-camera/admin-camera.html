@@ -35,15 +35,28 @@
     <br/>
 
     <div class="row">
-    <button class="six columns toggle-button"
-            [ngClass]="{ toggled: camerasActive }"
-            (click)="setCamerasActive(true)">
-        Activate Cameras
-    </button>
+        <button class="six columns toggle-button"
+                [ngClass]="{ toggled: camerasActive }"
+                (click)="setCamerasActive(true)">
+            Activate Cameras
+        </button>
 
-    <button class="six columns toggle-button"
-            [ngClass]="{ toggled: !camerasActive }"
-            (click)="setCamerasActive(false)">
-        Deactivate Cameras
-    </button>
+        <button class="six columns toggle-button"
+                [ngClass]="{ toggled: !camerasActive }"
+                (click)="setCamerasActive(false)">
+            Deactivate Cameras
+        </button>
+    </div>
+
+    <br/>
+
+    <div class="row">
+        <button class="six columns" (click)="saveCameraSettings()">
+            Save current settings
+        </button>
+
+        <button class="six columns" (click)="loadCameraSettings()">
+            Load settings
+        </button>
+    </div>
 </div>

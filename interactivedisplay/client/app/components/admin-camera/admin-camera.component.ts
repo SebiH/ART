@@ -58,4 +58,13 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
             this.socketio.sendMessage('camera-active', this.camerasActive);
         }
     }
+
+
+    private saveCameraSettings(): void {
+        this.socketio.sendMessage('save-camera-settings', {});
+    }
+
+    private loadCameraSettings(): void {
+        this.socketio.sendMessage('load-camera-settings', {});
+    }
 }
