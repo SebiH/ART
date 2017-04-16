@@ -14,9 +14,13 @@ namespace Assets.Modules.Core
         {
             if (GetComponent<CanvasRenderer>())
             {
-                var mat = GetComponent<CanvasRenderer>().GetMaterial();
+                var canvasRenderer = GetComponent<CanvasRenderer>();
+                var mat = canvasRenderer.GetMaterial();
                 if (mat)
                 {
+                    // material is shared between gui instances...
+                    mat = Instantiate(mat);
+                    canvasRenderer.SetMaterial(mat, 0);
                     _targets.Add(mat);
                 }
             }
