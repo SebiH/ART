@@ -10,7 +10,7 @@ namespace Assets.Modules.SurfaceGraphFilters.Scripts
     public class FilterTextColour : MonoBehaviour
     {
         private Graph _graph;
-        private Material _material;
+        private GraphLabel _label;
         private ColorAnimation _colorAnimation = new ColorAnimation(Globals.NormalAnimationSpeed);
 
         public bool IsXAxis = true;
@@ -19,12 +19,7 @@ namespace Assets.Modules.SurfaceGraphFilters.Scripts
         {
             _graph = UnityUtility.FindParent<Graph>(this);
             _colorAnimation.Init(new Color32(255, 255, 255, 255));
-
-            // Duplicate material because material is somehow shared between UI elements??
-            var label = GetComponent<GraphLabel>();
-            _material = Instantiate(label.Front.material);
-            label.Front.material = _material;
-            label.Back.material = _material;
+            _label = GetComponent<GraphLabel>();
         }
 
         private void Update()
@@ -37,7 +32,8 @@ namespace Assets.Modules.SurfaceGraphFilters.Scripts
                 _colorAnimation.Restart(targetColor);
             }
 
-            _material.color = _colorAnimation.CurrentValue;
+            _label.Front.material.color = _colorAnimation.CurrentValue;
+            _label.Back.material.color = _colorAnimation.CurrentValue;
         }
     }
 }

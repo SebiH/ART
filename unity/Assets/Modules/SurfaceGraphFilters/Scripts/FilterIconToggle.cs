@@ -11,7 +11,6 @@ namespace Assets.Modules.SurfaceGraphFilters
     {
         private GraphFilterListener _filterListener;
         private Graph _graph;
-        private Material _material;
         private bool _isEnabled = false;
 
         private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(Globals.NormalAnimationSpeed);
@@ -27,15 +26,6 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             _rotationAnimation.Init(Quaternion.identity);
             _colorAnimation.Init(new Color32(255, 255, 255, 0));
-
-            // Duplicate material because material is somehow shared between UI elements??
-            var filterIcon = GetComponentInChildren<Image>();
-            _material = Instantiate(filterIcon.material);
-
-            foreach (var icon in GetComponentsInChildren<Image>())
-            {
-                filterIcon.material = _material;
-            }
         }
 
         private void OnDestroy()
@@ -61,7 +51,10 @@ namespace Assets.Modules.SurfaceGraphFilters
                 _colorAnimation.Restart(targetColor);
             }
 
-            _material.color = _colorAnimation.CurrentValue;
+            foreach (var icon in GetComponentsInChildren<Image>())
+            {
+                icon.material.color = _colorAnimation.CurrentValue;
+            }
         }
 
         private void OnFilterUpdate()
