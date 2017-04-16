@@ -67,7 +67,7 @@ Shader "Graph/Point_Transparent"
                 g2f o;
 
                 v2g p = IN[0];
-                float _pointWidth = 0.005 * max(p.color.a, 0.6);
+                _pointWidth = _pointWidth * max(p.color.a, 0.4);
                 float offset = p.uv2.x - 0.001 * (1 - p.color.a);
 
                 float zOffsets[2] = { _zOffset, -_zOffset };
@@ -232,7 +232,8 @@ Shader "Graph/Point_Transparent"
             {
                 fixed4 inputColor = input.color;
                 clip((1 - input.color.a) - 0.001);
-                return inputColor;
+				return float4(1, 1, 1, inputColor.a);
+                //return inputColor;
             }
 
 

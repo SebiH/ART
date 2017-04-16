@@ -65,7 +65,6 @@ Shader "Graph/Point_Coloured"
                 g2f o;
 
                 v2g p = IN[0];
-                float _pointWidth = 0.005;
                 float offset = p.uv2.x;
 
                 float zOffsets[2] = { _zOffset, -_zOffset };
