@@ -14,6 +14,7 @@ namespace Assets.Modules.Graphs.Visualisation
         {
             _graph = UnityUtility.FindParent<Graph>(this);
             _image = GetComponent<Image>();
+            _image.material = Instantiate(_image.material);
         }
 
         private void Update()
