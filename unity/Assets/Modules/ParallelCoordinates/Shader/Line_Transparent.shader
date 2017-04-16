@@ -55,43 +55,139 @@ Shader "Graph/Line_Transparent"
                 return output;
             }
 
-            [maxvertexcount(6)]
+            [maxvertexcount(24)]
             void geo(line v2g IN[2], inout TriangleStream<g2f> tristream)
             {
                 g2f o;
-                float3 lineWidth = float3(0, _lineWidth * max(IN[0].color.a, 0.2), 0);
+				// reduce lineWidth based on alpha
+                float lineWidth = _lineWidth * max(IN[0].color.a, 0.2);
+				float3 widthY = float3(0, lineWidth, 0);
+				float3 widthX = float3(lineWidth, 0, 0);
 
                 v2g start = IN[0];
                 v2g end = IN[1];
 
-                o.position = UnityObjectToClipPos(start.vertex + lineWidth);
-                o.color = start.color;
-                tristream.Append(o);
+				// left
+				o.position = UnityObjectToClipPos(start.vertex + widthY + widthX);
+				o.color = start.color;
+				tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(end.vertex + lineWidth);
-                o.color = end.color;
-                tristream.Append(o);
+				o.position = UnityObjectToClipPos(end.vertex + widthY + widthX);
+				o.color = end.color;
+				tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(start.vertex - lineWidth);
-                o.color = start.color;
-                tristream.Append(o);
+				o.position = UnityObjectToClipPos(start.vertex - widthY + widthX);
+				o.color = start.color;
+				tristream.Append(o);
 
-                tristream.RestartStrip();
+				tristream.RestartStrip();
 
 
-                o.position = UnityObjectToClipPos(start.vertex - lineWidth);
-                o.color = start.color;
-                tristream.Append(o);
+				o.position = UnityObjectToClipPos(start.vertex - widthY + widthX);
+				o.color = start.color;
+				tristream.Append(o);
 
-                o.position = UnityObjectToClipPos(end.vertex + lineWidth);
-                o.color = end.color;
-                tristream.Append(o);
-                
-                o.position = UnityObjectToClipPos(end.vertex - lineWidth);
-                o.color = end.color;
-                tristream.Append(o);
+				o.position = UnityObjectToClipPos(end.vertex + widthY + widthX);
+				o.color = end.color;
+				tristream.Append(o);
 
-                tristream.RestartStrip();
+				o.position = UnityObjectToClipPos(end.vertex - widthY + widthX);
+				o.color = end.color;
+				tristream.Append(o);
+
+				tristream.RestartStrip();
+
+
+				// right
+				o.position = UnityObjectToClipPos(end.vertex + widthY - widthX);
+				o.color = end.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(start.vertex + widthY - widthX);
+				o.color = start.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(start.vertex - widthY - widthX);
+				o.color = start.color;
+				tristream.Append(o);
+
+				tristream.RestartStrip();
+
+
+				o.position = UnityObjectToClipPos(end.vertex + widthY - widthX);
+				o.color = end.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(start.vertex - widthY - widthX);
+				o.color = start.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(end.vertex - widthY - widthX);
+				o.color = end.color;
+				tristream.Append(o);
+
+				tristream.RestartStrip();
+
+				// bottom
+				o.position = UnityObjectToClipPos(end.vertex + widthX + widthY);
+				o.color = end.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(start.vertex + widthX + widthY);
+				o.color = start.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(start.vertex - widthX + widthY);
+				o.color = start.color;
+				tristream.Append(o);
+
+				tristream.RestartStrip();
+
+
+				o.position = UnityObjectToClipPos(end.vertex + widthX + widthY);
+				o.color = end.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(start.vertex - widthX + widthY);
+				o.color = start.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(end.vertex - widthX + widthY);
+				o.color = end.color;
+				tristream.Append(o);
+
+				tristream.RestartStrip();
+
+
+				// top
+				o.position = UnityObjectToClipPos(start.vertex + widthX - widthY);
+				o.color = start.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(end.vertex + widthX - widthY);
+				o.color = end.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(start.vertex - widthX - widthY);
+				o.color = start.color;
+				tristream.Append(o);
+
+				tristream.RestartStrip();
+
+
+				o.position = UnityObjectToClipPos(start.vertex - widthX - widthY);
+				o.color = start.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(end.vertex + widthX - widthY);
+				o.color = end.color;
+				tristream.Append(o);
+
+				o.position = UnityObjectToClipPos(end.vertex - widthX - widthY);
+				o.color = end.color;
+				tristream.Append(o);
+
+				tristream.RestartStrip();
             }
 
 
