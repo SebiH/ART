@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
 {
-    [RequireComponent(typeof(SkinnedMeshLineRenderer))]
+    [RequireComponent(typeof(SkinnedMeshLineRenderer), typeof(SkinnedMeshRenderer))]
     public class ParallelCoordinatesVisualisation : MonoBehaviour
     {
         const float LINE_ANIMATION_LENGTH = 0.5f;
@@ -27,6 +27,8 @@ namespace Assets.Modules.ParallelCoordinates
 
         public GraphTracker LeftTracker;
         public GraphTracker RightTracker;
+
+        #region Properties
 
         private Vec2ArrayAnimation _leftAnimation = new Vec2ArrayAnimation(LINE_ANIMATION_LENGTH);
         private bool _hasLeftData = false;
@@ -94,7 +96,10 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
+        #endregion
+
         private SkinnedMeshLineRenderer _lineRenderer;
+        private SkinnedMeshRenderer _skinnedRenderer;
 
         private void OnEnable()
         {
@@ -104,6 +109,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             _lineRenderer = GetComponent<SkinnedMeshLineRenderer>();
+            _skinnedRenderer = GetComponent<SkinnedMeshRenderer>();
             _rightAnimation.Update += SetRightData;
             _leftAnimation.Update += SetLeftData;
         }
@@ -120,6 +126,25 @@ namespace Assets.Modules.ParallelCoordinates
                 _rightGraph.Graph.OnDataChange -= OnRightDataChange;
             }
         }
+
+        private void Update()
+        {
+            transform.position = (LeftTracker.transform.position + RightTracker.transform.position) / 2;
+            if (Left && Right)
+            {
+                var leftMats = Left.Visualisation.BasePlane.materials;
+                var renderQueueLeft = leftMats[leftMats.Length - 1].renderQueue;
+
+                var rightMats = Right.Visualisation.BasePlane.materials;
+                var renderQueueRight = rightMats[rightMats.Length - 1].renderQueue;
+
+                var lineRenderQueue = Mathf.Max(renderQueueLeft, renderQueueRight);
+                _skinnedRenderer.materials[_skinnedRenderer.materials.Length - 1].renderQueue = lineRenderQueue + 1;
+            }
+        }
+
+
+        #region Mesh generation / manipulation
 
         private void OnLeftDataChange()
         {
@@ -236,10 +261,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
+        #endregion
 
-        private void Update()
-        {
-            transform.position = (LeftTracker.transform.position + RightTracker.transform.position) / 2;
-        }
     }
 }

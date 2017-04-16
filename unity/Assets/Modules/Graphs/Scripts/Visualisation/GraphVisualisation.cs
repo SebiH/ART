@@ -12,6 +12,7 @@ namespace Assets.Modules.Graphs.Visualisation
         public GraphTicks TicksX;
         public GraphTicks TicksY;
         public GraphDataField DataField;
+        public MeshRenderer BasePlane;
 
         private void OnEnable()
         {
