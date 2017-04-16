@@ -62,12 +62,15 @@ export class SqlConnection {
     public constructor(private mapping: SqlColumnMapping[]) {}
 
     public connect(config: any) {
-
         if (this.status.isConnected()) {
             console.error('Cannot connect to sql server: Already connected');
             return;
         }
 
+        this.startConnection(config);
+    }
+
+    private startConnection(config: any) {
         this.sqlConnection = new sql.Connection(config);
 
         this.sqlConnection.on('connect', (error) => {
@@ -79,6 +82,13 @@ export class SqlConnection {
                 console.log('Established connection to SQL Server @ ' + config.server);
                 this.status.set(ConnectionState.Connected);
             }
+        });
+
+        this.sqlConnection.on('error', (error) => {
+            console.error('SqlConnection error, trying to reconnect:');
+            console.error(error);
+            this.status.set(ConnectionState.Offline);
+            this.startConnection(config);
         });
     }
 
