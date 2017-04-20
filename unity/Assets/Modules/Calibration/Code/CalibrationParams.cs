@@ -24,6 +24,11 @@ namespace Assets.Modules.Calibration
             set { CalculateOffset(value); }
         }
 
+        public static Quaternion GetCalibratedRotation(Quaternion rot)
+        {
+            return RotationOffset * rot;
+        }
+
         public static bool HasStableRotation
         {
             get { return _avgRotSamples >= STABLE_SAMPLE_COUNT; }
@@ -73,6 +78,11 @@ namespace Assets.Modules.Calibration
         {
             get { return _positionOffset; }
             set { CalculateOffset(value); }
+        }
+
+        public static Vector3 GetCalibratedPosition(Vector3 pos, Quaternion rot)
+        {
+            return pos + rot * PositionOffset;
         }
 
         public static bool HasStablePosition
