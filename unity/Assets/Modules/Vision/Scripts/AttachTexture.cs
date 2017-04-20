@@ -38,7 +38,6 @@ namespace Assets.Modules.Vision
             var imageWidth = cam.SourceWidth;
             var imageHeight = cam.SourceHeight;
 
-
             TextureFormat txFormat = (cam.SourceChannels == 4) ? TextureFormat.BGRA32 : TextureFormat.RGB24;
 
             var camTexture = new Texture2D(imageWidth, imageHeight, txFormat, false);
@@ -56,10 +55,6 @@ namespace Assets.Modules.Vision
 
                 if (ovrCam != null)
                 {
-                    var IMAGE_ZOFFSET = 0.02f;
-                    float xOffset = (Eye == DirectXOutput.Eye.Left) ? -0.032f : ovrCam.GetHMDRightGap().x - 0.040f;
-                    transform.localPosition = new Vector3(xOffset, 0, ovrCam.GetFocalPoint() + IMAGE_ZOFFSET);
-
                     var aspectW = (float)imageWidth / GetImageBaseHeight(ovrCam.CamQuality);
                     var aspectH = (float)imageHeight / GetImageBaseHeight(ovrCam.CamQuality);
                     transform.localScale = new Vector3(aspectW, -aspectH, 1.0f);
@@ -68,7 +63,6 @@ namespace Assets.Modules.Vision
                 {
                     var aspectRatio = new Vector2((float)(imageWidth) / (float)(imageHeight), -1);
                     transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
-                    transform.localPosition = new Vector3(0, 0, 0.35f);
                 }
             }
 

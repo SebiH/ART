@@ -26,10 +26,14 @@
 
     <div class="row">
         <span class="two columns">Camera Gap Offset</span>
-        <span class="two columns">{{gap * 100}}cm</span>
+        <span class="one columns">{{gap}}cm</span>
+        <button class="one column toggle-button" (click)="toggleGapAutoAdjust()" style="padding: 0;" [ngClass]="{ toggled: gapAutoAdjust }">
+            Auto
+        </button>
         <input #gapInput class="eight columns" type="range"
             (input)="setGap(gapInput.value)"
-            min="-750" max="750" value="{{gap * 100 * 100}}">
+            [disabled]="gapAutoAdjust"
+            min="-1000" max="1000" value="{{gap * 100 * 100}}">
     </div>
 
     <br/>

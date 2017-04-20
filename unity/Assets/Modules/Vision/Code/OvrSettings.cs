@@ -8,5 +8,8 @@ namespace Assets.Modules.Vision
         public int Gain;
         public int Exposure;
         public int BLC;
+
+        public float CameraGap;
+        public bool GapAutoAdjust;
     }
 }

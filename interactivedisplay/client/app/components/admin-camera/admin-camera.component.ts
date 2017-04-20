@@ -12,6 +12,7 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
     private exposure: number = 8600;
     private blc: number = 0;
     private gap: number = 0;
+    private gapAutoAdjust: boolean = true;
 
     private camerasActive: boolean = true;
     private remotePropListener: any;
@@ -24,6 +25,8 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
             this.gain = props.Gain;
             this.exposure = props.Exposure;
             this.blc = props.BLC;
+            this.gap = props.CameraGap;
+            this.gapAutoAdjust = props.GapAutoAdjust;
         };
         this.socketio.on('debug-camera-properties', this.remotePropListener);
     }
@@ -47,17 +50,25 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
         this.setCamera();
     }
 
+    private toggleGapAutoAdjust() {
+        this.gapAutoAdjust = !this.gapAutoAdjust;
+        console.log(this.gapAutoAdjust);
+        this.setCamera();
+    }
+
     private setCamera() {
         this.socketio.sendMessage('camera-properties', {
             gain: this.gain,
             exposure: this.exposure,
-            blc: this.blc
+            blc: this.blc,
+            cameraGap: this.gap,
+            gapAutoAdjust: this.gapAutoAdjust
         })
     }
 
     private setGap(val: number) {
         this.gap = val / (100 * 100);
-        this.socketio.sendMessage('camera-gap', this.gap);
+        this.setCamera();
     }
 
     private setCamerasActive(val: boolean) {

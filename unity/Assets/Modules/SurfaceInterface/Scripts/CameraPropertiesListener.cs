@@ -12,20 +12,15 @@ namespace Assets.Modules.SurfaceInterface
     {
         private OvrvisionCameraSource _camera;
 
-        public Transform LeftEye;
-        private Vector3 _originalLeftEyePosition;
-
-        public Transform RightEye;
-        private Vector3 _originalRightEyePosition;
+        public Renderer LeftEye;
+        public Renderer RightEye;
+        public CameraGap GapController;
 
 
         private void OnEnable()
         {
             RemoteSurfaceConnection.OnCommandReceived += OnAction;
             _camera = GetComponent<OvrvisionCameraSource>();
-
-            if (LeftEye) { _originalLeftEyePosition = LeftEye.localPosition; }
-            if (RightEye) { _originalRightEyePosition = RightEye.localPosition; }
 
 #if UNITY_EDITOR
             StartCoroutine(SendSettings());
@@ -46,7 +41,9 @@ namespace Assets.Modules.SurfaceInterface
                 {
                     Gain = _camera.Gain,
                     Exposure = _camera.Exposure,
-                    BLC = _camera.BLC
+                    BLC = _camera.BLC,
+                    CameraGap = GapController.Gap,
+                    GapAutoAdjust = GapController.AutoAdjust
                 };
 
                 RemoteSurfaceConnection.SendCommand("surface", "debug-camera-properties", JsonUtility.ToJson(settings));
@@ -65,20 +62,16 @@ namespace Assets.Modules.SurfaceInterface
                 _camera.Gain = props.gain;
                 _camera.Exposure = props.exposure;
                 _camera.BLC = props.blc;
-            }
 
-            if (cmd == "camera-gap")
-            {
-                var offset = float.Parse(payload.Replace("\"", ""));
-                if (LeftEye) { LeftEye.localPosition = _originalLeftEyePosition + new Vector3(offset, 0, 0); }
-                if (RightEye) { RightEye.localPosition = _originalRightEyePosition + new Vector3(-offset, 0, 0); }
+                GapController.Gap = props.cameraGap;
+                GapController.AutoAdjust = props.gapAutoAdjust;
             }
 
             if (cmd == "camera-active")
             {
                 var status = bool.Parse(payload.Replace("\"", ""));
-                if (LeftEye) { LeftEye.gameObject.GetComponent<Renderer>().enabled = status; }
-                if (RightEye) { RightEye.GetComponent<Renderer>().enabled = status; }
+                LeftEye.enabled = status;
+                RightEye.enabled = status;
             }
 
             if (cmd == "save-camera-settings")
@@ -99,6 +92,8 @@ namespace Assets.Modules.SurfaceInterface
             public int gain;
             public int exposure;
             public int blc;
+            public float cameraGap;
+            public bool gapAutoAdjust;
         }
     }
 }
