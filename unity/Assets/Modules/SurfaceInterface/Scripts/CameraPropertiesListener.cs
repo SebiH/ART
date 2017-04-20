@@ -11,16 +11,17 @@ namespace Assets.Modules.SurfaceInterface
     public class CameraPropertiesListener : MonoBehaviour
     {
         private OvrvisionCameraSource _camera;
+        private CameraGap _gapController;
 
         public Renderer LeftEye;
         public Renderer RightEye;
-        public CameraGap GapController;
 
 
         private void OnEnable()
         {
             RemoteSurfaceConnection.OnCommandReceived += OnAction;
             _camera = GetComponent<OvrvisionCameraSource>();
+            _gapController = GetComponent<CameraGap>();
 
 #if UNITY_EDITOR
             StartCoroutine(SendSettings());
@@ -42,8 +43,8 @@ namespace Assets.Modules.SurfaceInterface
                     Gain = _camera.Gain,
                     Exposure = _camera.Exposure,
                     BLC = _camera.BLC,
-                    CameraGap = GapController.Gap,
-                    GapAutoAdjust = GapController.AutoAdjust
+                    CameraGap = _gapController.Gap,
+                    GapAutoAdjust = _gapController.AutoAdjust
                 };
 
                 RemoteSurfaceConnection.SendCommand("surface", "debug-camera-properties", JsonUtility.ToJson(settings));
@@ -63,8 +64,8 @@ namespace Assets.Modules.SurfaceInterface
                 _camera.Exposure = props.exposure;
                 _camera.BLC = props.blc;
 
-                GapController.Gap = props.cameraGap;
-                GapController.AutoAdjust = props.gapAutoAdjust;
+                _gapController.Gap = props.cameraGap;
+                _gapController.AutoAdjust = props.gapAutoAdjust;
             }
 
             if (cmd == "camera-active")

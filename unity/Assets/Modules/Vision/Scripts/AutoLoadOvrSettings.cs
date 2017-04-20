@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Vision
 {
-    [RequireComponent(typeof(OvrvisionCameraSource))]
+    [RequireComponent(typeof(OvrvisionCameraSource), typeof(CameraGap))]
     public class AutoLoadOvrSettings : MonoBehaviour
     {
         private void OnEnable()
@@ -32,6 +32,10 @@ namespace Assets.Modules.Vision
                 ovrCamera.Gain = settings.Gain;
                 ovrCamera.Exposure = settings.Exposure;
                 ovrCamera.BLC = settings.BLC;
+
+                var camGap = GetComponent<CameraGap>();
+                camGap.Gap = settings.CameraGap;
+                camGap.AutoAdjust = settings.GapAutoAdjust;
 
                 Debug.Log("Successfully loaded ovr camera parameters");
             }
