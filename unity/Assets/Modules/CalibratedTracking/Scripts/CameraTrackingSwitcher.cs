@@ -9,27 +9,47 @@ namespace Assets.Modules.CalibratedTracking
         public DelayedVrCamTracker VrTracker { get; private set; }
         public OptitrackCamTracker OptitrackTracker { get; private set; }
 
+        public float SwitchTransitionSpeed = 0.2f;
+
         public bool TrackPosition = true;
         public bool TrackRotation = true;
 
         public enum TrackingMode { Optitrack, ArMarker, TransitionToArMarker, TransitionToOptitrack };
-        public TrackingMode CurrentMode { get; private set; }
+        public TrackingMode CurrentMode = TrackingMode.Optitrack;
 
-        private VectorAnimation _positionAnimation = new VectorAnimation(0.2f);
-        private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(0.2f);
+        private VectorAnimation _positionAnimation;
+        private QuaternionAnimation _rotationAnimation;
 
         public CameraTrackingSwitcher()
         {
             MarkerTracker = new ArMarkerCamTracker();
             VrTracker = new DelayedVrCamTracker();
             OptitrackTracker = new OptitrackCamTracker();
+            CurrentMode = TrackingMode.Optitrack;
+
+            _positionAnimation = new VectorAnimation(SwitchTransitionSpeed);
+            _rotationAnimation = new QuaternionAnimation(SwitchTransitionSpeed);
+
+            _positionAnimation.Finished += AnimationFinished;
+            _rotationAnimation.Finished += AnimationFinished;
         }
 
-        private void Update()
+        private void OnEnable()
+        {
+            _positionAnimation.AnimationSpeed = SwitchTransitionSpeed;
+            _rotationAnimation.AnimationSpeed = SwitchTransitionSpeed;
+        }
+
+        private void LateUpdate()
         {
             MarkerTracker.PreparePose();
             VrTracker.PreparePose();
             OptitrackTracker.PreparePose();
+
+#if UNITY_EDITOR
+            _positionAnimation.AnimationSpeed = SwitchTransitionSpeed;
+            _rotationAnimation.AnimationSpeed = SwitchTransitionSpeed;
+#endif
 
             if (MarkerTracker.HasPose())
             {
@@ -43,38 +63,63 @@ namespace Assets.Modules.CalibratedTracking
 
         private void UseArMarkers()
         {
-            // TODO
+            var pos = MarkerTracker.GetPosition();
+            var rot = MarkerTracker.GetRotation();
+
             switch (CurrentMode)
             {
                 case TrackingMode.Optitrack:
+                    CurrentMode = TrackingMode.TransitionToArMarker;
+                    StartAnimations(pos, rot);
+                    ApplyTransform(_positionAnimation.CurrentValue, _rotationAnimation.CurrentValue);
                     break;
+
                 case TrackingMode.ArMarker:
+                    ApplyTransform(pos, rot);
                     break;
+
                 case TrackingMode.TransitionToArMarker:
+                    AdjustAnimations(pos, rot);
+                    ApplyTransform(_positionAnimation.CurrentValue, _rotationAnimation.CurrentValue);
                     break;
+
                 case TrackingMode.TransitionToOptitrack:
+                    CurrentMode = TrackingMode.TransitionToArMarker;
+                    RestartAnimations(pos, rot);
+                    ApplyTransform(_positionAnimation.CurrentValue, _rotationAnimation.CurrentValue);
                     break;
             }
 
-            ApplyTransform(MarkerTracker.GetPosition(), MarkerTracker.GetRotation());
         }
 
         private void UseOptitrack()
         {
-            // TODO
+            var pos = OptitrackTracker.GetPosition();
+            var rot = OptitrackTracker.GetRotation();
+
             switch (CurrentMode)
             {
                 case TrackingMode.Optitrack:
+                    ApplyTransform(pos, rot);
                     break;
+
                 case TrackingMode.ArMarker:
+                    CurrentMode = TrackingMode.TransitionToOptitrack;
+                    StartAnimations(pos, rot);
+                    ApplyTransform(_positionAnimation.CurrentValue, _rotationAnimation.CurrentValue);
                     break;
+
                 case TrackingMode.TransitionToArMarker:
+                    CurrentMode = TrackingMode.TransitionToOptitrack;
+                    RestartAnimations(pos, rot);
+                    ApplyTransform(_positionAnimation.CurrentValue, _rotationAnimation.CurrentValue);
                     break;
+
                 case TrackingMode.TransitionToOptitrack:
+                    AdjustAnimations(pos, rot);
+                    ApplyTransform(_positionAnimation.CurrentValue, _rotationAnimation.CurrentValue);
                     break;
             }
-
-            ApplyTransform(OptitrackTracker.GetPosition(), VrTracker.GetRotation());
         }
 
         private void ApplyTransform(Vector3 pos, Quaternion rot)
@@ -85,5 +130,30 @@ namespace Assets.Modules.CalibratedTracking
                 transform.rotation = rot;
         }
 
+        private void StartAnimations(Vector3 targetPosition, Quaternion targetRotation)
+        {
+            _positionAnimation.Start(transform.position, targetPosition);
+            _rotationAnimation.Start(transform.rotation, targetRotation);
+        }
+
+        private void RestartAnimations(Vector3 targetPosition, Quaternion targetRotation)
+        {
+            _positionAnimation.Restart(transform.position, targetPosition);
+            _rotationAnimation.Restart(transform.rotation, targetRotation);
+        }
+
+        private void AdjustAnimations(Vector3 targetPosition, Quaternion targetRotation)
+        {
+            _positionAnimation.Adjust(targetPosition);
+            _rotationAnimation.Adjust(targetRotation);
+        }
+
+        private void AnimationFinished()
+        {
+            if (CurrentMode == TrackingMode.TransitionToArMarker)
+                CurrentMode = TrackingMode.ArMarker;
+            else if (CurrentMode == TrackingMode.TransitionToOptitrack)
+                CurrentMode = TrackingMode.Optitrack;
+        }
     }
 }

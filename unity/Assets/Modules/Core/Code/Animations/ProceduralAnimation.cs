@@ -63,6 +63,14 @@ namespace Assets.Modules.Core.Animations
             }
         }
 
+
+        public void Adjust(T adjustedEnd)
+        {
+            // TODO: adjust start, time to avoid possible jumps if
+            // adjusted value is greatly different than previous value
+            _end = adjustedEnd;
+        }
+
         public void Stop()
         {
             // stops the animation routine the next time it's running,
