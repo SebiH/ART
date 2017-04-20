@@ -37,10 +37,14 @@ export class DetailFilter extends Filter {
 
         let indices: number[] = [];
         let boundingRect = Utils.buildBoundingRect(this.path);
-        for (let i = 0; i < dimX.data.length; i++) {
-            let d = new Point(dimX.data[i].value, dimY.data[i].value);
-            if (d.isInPolygonOf(this.path, boundingRect)) {
-                indices.push(i);
+
+        // crashes edge otherwise??
+        if (dimX && dimX.data && dimY && dimY.data) {
+            for (let i = 0; i < dimX.data.length; i++) {
+                let d = new Point(dimX.data[i].value, dimY.data[i].value);
+                if (d.isInPolygonOf(this.path, boundingRect)) {
+                    indices.push(i);
+                }
             }
         }
 
