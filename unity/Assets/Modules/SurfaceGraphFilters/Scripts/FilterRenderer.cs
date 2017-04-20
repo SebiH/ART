@@ -96,7 +96,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         private void OnEnable()
         {
             _filter = GetComponent<MeshFilter>();
-            GetComponent<MeshRenderer>().material.SetFloat("_randomOffset", UnityEngine.Random.value / 1000f);
+            GetComponent<MeshRenderer>().material.SetFloat("_randomOffset", UnityEngine.Random.value / 1000f + 0.0001f);
         }
 
         public void Init(GraphMetaData gm)
