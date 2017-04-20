@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets.Modules.Graphs
 {
@@ -21,11 +22,28 @@ namespace Assets.Modules.Graphs
             var ticks = new List<Mapping>();
             var format = (_range <= 10) ? "{0:0.0}" : "{0:0}";
 
+            var minTick = PossibleTicks.Min();
+            var maxTick = PossibleTicks.Max();
+
+            foreach (var tick in PossibleTicks)
+            {
+                if (tick < DomainMin && tick > minTick)
+                {
+                    minTick = tick;
+                }
+
+                if (tick > DomainMax && tick < maxTick)
+                {
+                    maxTick = tick;
+                }
+            }
+
+
             for (var i = 0; i < PossibleTicks.Length; i++)
             {
                 var tickNum = PossibleTicks[i];
 
-                if (DomainMin <= tickNum && tickNum <= DomainMax)
+                if (minTick <= tickNum && tickNum <= maxTick)
                 {
                     var name = "";
                     if (IsTimeBased)
