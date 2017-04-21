@@ -90,6 +90,7 @@ void ArToolkitCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>
 
 double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename, const std::vector<std::vector<cv::Point2f>> &image_points, const cv::Size &image_size)
 {
+	// calculate opencv calibration
 	std::vector<std::vector<cv::Point3f>> object_points(1);
 	for (int y = 0; y < corners_num_y; y++)
 	{
@@ -113,6 +114,28 @@ double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename,
 		throw std::exception("Invalid calibration");
 	}
 	
+
+	// convert & save as ArToolkit calibration
+	ARParam param;
+	float intr[3][4];
+	float dist[4];
+
+	for (int j = 0; j < 3; j++)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			intr[j][i] = ((float*)(camera_matrix.data + camera_matrix.step*j))[i];
+		}
+		intr[j][3] = 0.0f;
+	}
+	for (int i = 0; i < 4; i++) {
+		dist[i] = ((float*)(dist_coeffs.data))[i];
+	}
+	ConvParam(intr, dist, image_size.width, image_size.height, &param); //COVHI10434 ignored.
+	arParamDisp(&param);
+	SaveParam(&param, filename);
+
+	// return calibration quality (totalAvgError)
 	std::vector<float> reproj_errs;
 	return computeReprojectionErrors(object_points, image_points, rvecs, tvecs, camera_matrix, dist_coeffs, reproj_errs);
 }
@@ -194,117 +217,6 @@ double ArToolkitCalibrator::computeReprojectionErrors(const std::vector<std::vec
 *
 */
 
-void ArToolkitCalibrator::ArToolkitCalibration(const std::string &filename, const int xsize, const int ysize, const std::vector<cv::Point2f> &cornerSet)
-{
-	ARParam         param;
-	CvMat          *objectPoints;
-	CvMat          *imagePoints;
-	CvMat          *pointCounts;
-	CvMat          *intrinsics;
-	CvMat          *distortionCoeff;
-	CvMat          *rotationVectors;
-	CvMat          *translationVectors;
-	CvMat          *rotationVector;
-	CvMat          *rotationMatrix;
-	float           intr[3][4];
-	float           dist[4];
-	ARdouble        trans[3][4];
-	ARdouble        cx, cy, cz, hx, hy, h, sx, sy, ox, oy, err;
-	int             i, j, k, l;
-
-	objectPoints = cvCreateMat(calib_image_count * corners_num_x * corners_num_y, 3, CV_32FC1);
-	imagePoints = cvCreateMat(calib_image_count * corners_num_x * corners_num_y, 2, CV_32FC1);
-	pointCounts = cvCreateMat(calib_image_count, 1, CV_32SC1);
-	intrinsics = cvCreateMat(3, 3, CV_32FC1);
-	distortionCoeff = cvCreateMat(1, 4, CV_32FC1);
-	//rotationVectors = cvCreateMat(calib_image_count, 3, CV_32FC1);
-	//translationVectors = cvCreateMat(calib_image_count, 3, CV_32FC1);
-	rotationVectors = cvCreateMat(calib_image_count, 1, CV_32FC3);
-	translationVectors = cvCreateMat(calib_image_count, 1, CV_32FC3);
-	rotationVector = cvCreateMat(1, 3, CV_32FC1);
-	rotationMatrix = cvCreateMat(3, 3, CV_32FC1);
-
-	l = 0;
-	for (k = 0; k < calib_image_count; k++) {
-		for (i = 0; i < corners_num_x; i++) {
-			for (j = 0; j < corners_num_y; j++) {
-				((float*)(objectPoints->data.ptr + objectPoints->step*l))[0] = pattern_width*i;
-				((float*)(objectPoints->data.ptr + objectPoints->step*l))[1] = pattern_width*j;
-				((float*)(objectPoints->data.ptr + objectPoints->step*l))[2] = 0.0f;
-
-				((float*)(imagePoints->data.ptr + imagePoints->step*l))[0] = cornerSet[l].x;
-				((float*)(imagePoints->data.ptr + imagePoints->step*l))[1] = cornerSet[l].y;
-
-				l++;
-			}
-		}
-		((int*)(pointCounts->data.ptr))[k] = corners_num_x*corners_num_y;
-	}
-
-	cvCalibrateCamera2(objectPoints, imagePoints, pointCounts, cvSize(xsize, ysize), intrinsics, distortionCoeff, rotationVectors, translationVectors, 0);
-
-	for (j = 0; j < 3; j++) {
-		for (i = 0; i < 3; i++) {
-			intr[j][i] = ((float*)(intrinsics->data.ptr + intrinsics->step*j))[i];
-		}
-		intr[j][3] = 0.0f;
-	}
-	for (i = 0; i < 4; i++) {
-		dist[i] = ((float*)(distortionCoeff->data.ptr))[i];
-	}
-	ConvParam(intr, dist, xsize, ysize, &param); //COVHI10434 ignored.
-	arParamDisp(&param);
-
-	l = 0;
-	for (k = 0; k < calib_image_count; k++) {
-		for (i = 0; i < 3; i++) {
-			((float*)(rotationVector->data.ptr))[i] = ((float*)(rotationVectors->data.ptr + rotationVectors->step*k))[i];
-		}
-		cvRodrigues2(rotationVector, rotationMatrix);
-		for (j = 0; j < 3; j++) {
-			for (i = 0; i < 3; i++) {
-				trans[j][i] = ((float*)(rotationMatrix->data.ptr + rotationMatrix->step*j))[i];
-			}
-			trans[j][3] = ((float*)(translationVectors->data.ptr + translationVectors->step*k))[j];
-		}
-		//arParamDispExt(trans);
-
-		err = 0.0;
-		for (i = 0; i < corners_num_x; i++) {
-			for (j = 0; j < corners_num_y; j++) {
-				cx = trans[0][0] * pattern_width*i + trans[0][1] * pattern_width*j + trans[0][3];
-				cy = trans[1][0] * pattern_width*i + trans[1][1] * pattern_width*j + trans[1][3];
-				cz = trans[2][0] * pattern_width*i + trans[2][1] * pattern_width*j + trans[2][3];
-				hx = param.mat[0][0] * cx + param.mat[0][1] * cy + param.mat[0][2] * cz + param.mat[0][3];
-				hy = param.mat[1][0] * cx + param.mat[1][1] * cy + param.mat[1][2] * cz + param.mat[1][3];
-				h = param.mat[2][0] * cx + param.mat[2][1] * cy + param.mat[2][2] * cz + param.mat[2][3];
-				if (h == 0.0) continue;
-				sx = hx / h;
-				sy = hy / h;
-				arParamIdeal2Observ(param.dist_factor, sx, sy, &ox, &oy, param.dist_function_version);
-				sx = ((float*)(imagePoints->data.ptr + imagePoints->step*l))[0];
-				sy = ((float*)(imagePoints->data.ptr + imagePoints->step*l))[1];
-				err += (ox - sx)*(ox - sx) + (oy - sy)*(oy - sy);
-				l++;
-			}
-		}
-		err = sqrt(err / (corners_num_x*corners_num_y));
-		ARLOG("Err[%2d]: %f[pixel]\n", k + 1, err);
-	}
-	SaveParam(&param, filename);
-
-	cvReleaseMat(&objectPoints);
-	cvReleaseMat(&imagePoints);
-	cvReleaseMat(&pointCounts);
-	cvReleaseMat(&intrinsics);
-	cvReleaseMat(&distortionCoeff);
-	cvReleaseMat(&rotationVectors);
-	cvReleaseMat(&translationVectors);
-	cvReleaseMat(&rotationVector);
-	cvReleaseMat(&rotationMatrix);
-}
-
-
 void ArToolkitCalibrator::ConvParam(float intr[3][4], float dist[4], int xsize, int ysize, ARParam *param)
 {
 	ARdouble   s;
@@ -341,48 +253,12 @@ void ArToolkitCalibrator::ConvParam(float intr[3][4], float dist[4], int xsize, 
 
 void ArToolkitCalibrator::SaveParam(ARParam *param, const std::string &filename)
 {
-	char *name = NULL, *cwd = NULL;
-	size_t len;
-	int nameOK;
-
-	//arMalloc(name, char, MAXPATHLEN);
-	//arMalloc(cwd, char, MAXPATHLEN);
-	//if (!_getcwd(cwd, MAXPATHLEN)) ARLOGe("Unable to read current working directory.\n");
-
-	nameOK = 0;
-	//ARLOG("Filename[%s]: ", SAVE_FILENAME);
-	//if (fgets(name, MAXPATHLEN, stdin) != NULL) {
-
-		// Trim whitespace from end of name.
-		len = strlen(name);
-		while (len > 0 && (name[len - 1] == '\r' || name[len - 1] == '\n' || name[len - 1] == '\t' || name[len - 1] == ' ')) {
-			len--;
-			name[len] = '\0';
-		}
-
-		if (len > 0) {
-			nameOK = 1;
-			if (arParamSave(name, 1, param) < 0) {
-				ARLOG("Parameter write error!!\n");
-			}
-			else {
-				ARLOG("Saved parameter file '%s/%s'.\n", cwd, name);
-			}
-		}
-	//}
-
-	// Try and save with a default name.
-	if (!nameOK) {
-		if (arParamSave(filename.c_str(), 1, param) < 0) {
-			ARLOG("Parameter write error!!\n");
-		}
-		else {
-			ARLOG("Saved parameter file '%s/%s'.\n", cwd, filename);
-		}
+	if (arParamSave(filename.c_str(), 1, param) < 0) {
+		ARLOG("Parameter write error!!\n");
 	}
-
-	free(name);
-	free(cwd);
+	else {
+		ARLOG("Saved parameter file '%s/%s'.\n", filename);
+	}
 }
 
 
