@@ -106,7 +106,7 @@ double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename,
 	std::vector<cv::Mat> rvecs;
 	std::vector<cv::Mat> tvecs;
 
-	auto rms = cv::calibrateCamera(object_points, image_points, image_size, camera_matrix, dist_coeffs, rvecs, tvecs, CV_CALIB_FIX_K4 | CV_CALIB_FIX_K5);
+	auto rms = cv::calibrateCamera(object_points, image_points, image_size, camera_matrix, dist_coeffs, rvecs, tvecs, 0);
 	bool ok = cv::checkRange(camera_matrix) && cv::checkRange(dist_coeffs);
 
 	if (!ok)
@@ -124,12 +124,14 @@ double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename,
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			intr[j][i] = ((float*)(camera_matrix.data + camera_matrix.step*j))[i];
+			intr[j][i] = camera_matrix.at<double>(j, i);
 		}
 		intr[j][3] = 0.0f;
 	}
-	for (int i = 0; i < 4; i++) {
-		dist[i] = ((float*)(dist_coeffs.data))[i];
+	for (int i = 0; i < 4; i++)
+	{
+		//dist[i] = ((float*)(dist_coeffs.data))[i];
+		dist[i] = dist_coeffs.at<double>(i);
 	}
 	ConvParam(intr, dist, image_size.width, image_size.height, &param); //COVHI10434 ignored.
 	arParamDisp(&param);
