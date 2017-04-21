@@ -7,18 +7,12 @@ using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
-    public class ArToolkitListener : MonoBehaviour
+    public class ArToolkitListener : ArMarkerTracker
     {
-        public static ArToolkitListener Instance;
-
         public Pipeline ArToolkitPipeline;
-
-        public delegate void NewPoseHandler(MarkerPose pose);
-        public event NewPoseHandler NewPoseDetected;
 
         [Range(0, 1)]
         public float MinConfidence = 0.5f;
-        public float MarkerSize = 0.5f;
 
         private ArToolkitProcessor _artkProcessor;
         private JsonOutput _artkOutput;
@@ -31,8 +25,9 @@ namespace Assets.Modules.Tracking
             _currentOutput = Queue.Synchronized(new Queue());
         }
 
-        void OnEnable()
+        protected override void OnEnable()
         {
+            ArMarkerTracker.Instance = this;
             Instance = this;
 
             _artkProcessor = new ArToolkitProcessor();
@@ -91,13 +86,6 @@ namespace Assets.Modules.Tracking
                 // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
                 MinConfidence = _artkProcessor.MinConfidence;
             }
-
-            if (MarkerSize != _artkProcessor.MarkerSize)
-            {
-                _artkProcessor.MarkerSize = MarkerSize;
-                // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
-                MarkerSize = _artkProcessor.MarkerSize;
-            }
         }
 
 
@@ -126,22 +114,25 @@ namespace Assets.Modules.Tracking
             transformMatrix.m32 = 0;
             transformMatrix.m33 = 1;
 
-            if (NewPoseDetected != null)
-            {
-                var pos = transformMatrix.GetPosition();
-                pos.y = -pos.y;
-                var rot = transformMatrix.GetRotation();
-                rot = rot * _rotationAdjustment;
+            var pos = transformMatrix.GetPosition();
+            pos.y = -pos.y;
+            var rot = transformMatrix.GetRotation();
+            rot = rot * _rotationAdjustment;
 
-                NewPoseDetected(new MarkerPose
-                {
-                    Id = marker.id,
-                    Confidence = marker.confidence,
-                    Position = pos,
-                    Rotation = rot
-                });
-            }
+            OnNewPoseDetected(new MarkerPose
+            {
+                Id = marker.id,
+                Confidence = marker.confidence,
+                Position = pos,
+                Rotation = rot
+            });
         }
+
+        protected override void UpdateMarkerSize(float size)
+        {
+        _artkProcessor.MarkerSize = size;
+        }
+
 
 
 
