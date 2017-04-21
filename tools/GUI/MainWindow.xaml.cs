@@ -1,5 +1,6 @@
 using GUI.InteractiveSurface;
 using GUI.Optitrack;
+using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -59,7 +60,17 @@ namespace GUI
                 int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
                 int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
                 //int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.29, ""use_tracker"": false } ");
-                int processor = ImageProcessing.AddArToolkitProcessor(pipeline, @"{ ""config"": { ""calibration_left"": ""C:/code/calib_left.dat"", ""calibration_right"": ""C:/code/calib_right.dat""   }, ""markers"": [  ] }");
+                var currDir = Directory.GetCurrentDirectory();
+                var dataDir = Path.Combine(currDir, "../../../../data/");
+
+                dynamic config = new JObject();
+                config.calibration_left = Path.Combine(dataDir, "calib_ovrvision_left.dat");
+                config.calibration_right = Path.Combine(dataDir, "calib_ovrvision_right.dat");
+
+                dynamic arToolkitConfig = new JObject();
+                arToolkitConfig.config = config;
+
+                int processor = ImageProcessing.AddArToolkitProcessor(pipeline, arToolkitConfig.ToString());
 
                 char keyPressed;
                 int counter = 0;
