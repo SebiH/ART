@@ -19,7 +19,6 @@ OpenCvOutput::~OpenCvOutput()
 
 void OpenCvOutput::Write(const FrameData *result) noexcept
 {
-	// TODO: get cv type from framedata...?
 	cv::Mat merged(cv::Size(result->size.width * 2, result->size.height), result->size.CvType());
 
 	cv::Mat leftSrc(cv::Size(result->size.width, result->size.height), result->size.CvType(), result->buffer_left.get());
