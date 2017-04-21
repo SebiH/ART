@@ -4,7 +4,7 @@ namespace Assets.Modules.Tracking
 {
     public class ArToolkitTrackedObject : MonoBehaviour
     {
-        public string TrackedMarkerName;
+        public int TrackedMarkerId;
 
         void OnEnable()
         {
@@ -18,7 +18,7 @@ namespace Assets.Modules.Tracking
 
         void OnNewPose(MarkerPose pose)
         {
-            if (pose.Name == TrackedMarkerName)
+            if (pose.Id == TrackedMarkerId)
             {
                 transform.position = pose.Position;
                 transform.rotation = pose.Rotation;
