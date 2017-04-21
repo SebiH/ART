@@ -1,5 +1,7 @@
 #include "ArToolkitProcessor.h"
 
+#include <stdio.h>
+#include <iostream>
 #include <vector>
 #include <opencv2/imgproc.hpp>
 #include <AR/param.h>
@@ -9,6 +11,10 @@
 
 using namespace ImageProcessing;
 using json = nlohmann::json;
+
+/*
+ *	Generate markers via http://www.artoolworks.com/support/applications/marker/
+ */
 
 ArToolkitProcessor::ArToolkitProcessor(std::string config)
 	: initialized_size_(-1, -1, -1)
@@ -125,6 +131,7 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info)
 {
+	return json{};
 	ARdouble transform_matrix[3][4];
 	const Marker marker = GetMarker(info);
 	arGetTransMatSquare(ar_3d_handle_l_, &info, marker.size, transform_matrix);
@@ -168,6 +175,7 @@ void ArToolkitProcessor::DrawMarker(const ARMarkerInfo &marker, const FrameSize 
 {
 	cv::Mat img = cv::Mat(cv::Size(size.width, size.height), size.CvType(), buffer);
 	cv::circle(img, cv::Point(marker.pos[0], marker.pos[1]), 5, cv::Scalar(0, 0, 255, 255), 1);
+	cv::putText(img, std::to_string(marker.id), cv::Point(marker.pos[0] + 10, marker.pos[1] + 10), CV_FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255, 255));
 
 	for (int j = 0; j < 4; j++)
 	{
@@ -217,6 +225,22 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 	arPattAttach(ar_handle_l_, ar_pattern_handle_);
 	arPattAttach(ar_handle_r_, ar_pattern_handle_);
 
+	int pattern_error = 0;
+	AR_MATRIX_CODE_TYPE matrixType = AR_MATRIX_CODE_4x4_BCH_13_9_3;
+	pattern_error -= arSetMatrixCodeType(ar_handle_l_, matrixType);
+	pattern_error -= arSetPatternDetectionMode(ar_handle_l_, AR_MATRIX_CODE_DETECTION);
+	pattern_error -= arSetMatrixCodeType(ar_handle_r_, matrixType);
+	pattern_error -= arSetPatternDetectionMode(ar_handle_r_, AR_MATRIX_CODE_DETECTION);
+	pattern_error -= arSetBorderSize(ar_handle_l_, 0.25f); // Default = 0.25f
+	pattern_error -= arSetBorderSize(ar_handle_r_, 0.25f); // Default = 0.25f
+
+	if (pattern_error < 0)
+	{
+		DebugLog("Error setting matrix type");
+		throw std::exception("Error - See log.");
+	}
+
+
 	AR_PIXEL_FORMAT format;
 
 	if (depth == 1) { format = AR_PIXEL_FORMAT_MONO; } // TODO: might not be correct?
@@ -240,47 +264,37 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 	// Markers setup.
 
 	//newMarkers("C:/code/resources/markers.dat", gARPattHandle, &markersSquare, &markersSquareCount, &gARPattDetectionMode);
-	for (auto &marker : markers_)
-	{
-		if (marker.initialized)
-		{
-			arPattFree(ar_pattern_handle_, marker.pattern_id);
-		}
+	//for (auto &marker : markers_)
+	//{
+	//	if (marker.initialized)
+	//	{
+	//		arPattFree(ar_pattern_handle_, marker.pattern_id);
+	//	}
 
-		marker.pattern_id = arPattLoad(ar_pattern_handle_, marker.pattern_path.c_str());
+	//	marker.pattern_id = arPattLoad(ar_pattern_handle_, marker.pattern_path.c_str());
 
-		if (marker.pattern_id < 0)
-		{
-			throw std::exception((std::string("Unable to load marker pattern ") + marker.pattern_path).c_str());
-		}
+	//	if (marker.pattern_id < 0)
+	//	{
+	//		throw std::exception((std::string("Unable to load marker pattern ") + marker.pattern_path).c_str());
+	//	}
 
-		marker.initialized = true;
-	}
+	//	marker.initialized = true;
+	//}
 	
 
 	//
 	// Other ARToolKit setup.
 	//
 
-	arSetMarkerExtractionMode(ar_handle_l_, AR_USE_TRACKING_HISTORY_V2);
-	arSetMarkerExtractionMode(ar_handle_r_, AR_USE_TRACKING_HISTORY_V2);
+	int extraction_error = 0;
+	extraction_error -= arSetMarkerExtractionMode(ar_handle_l_, AR_USE_TRACKING_HISTORY_V2);
+	extraction_error -= arSetMarkerExtractionMode(ar_handle_r_, AR_USE_TRACKING_HISTORY_V2);
 
-	// Set the pattern detection mode (template (pictorial) vs. matrix (barcode) based on
-	// the marker types as defined in the marker config. file.
-	arSetPatternDetectionMode(ar_handle_l_, AR_TEMPLATE_MATCHING_COLOR);
-	arSetPatternDetectionMode(ar_handle_r_, AR_TEMPLATE_MATCHING_COLOR);
-	// or: AR_MATRIX_CODE_DETECTION AR_TEMPLATE_MATCHING_COLOR_AND_MATRIX
-
-	// Other application-wide marker options. Once set, these apply to all markers in use in the application.
-	// If you are using standard ARToolKit picture (template) markers, leave commented to use the defaults.
-	// If you are usign a different marker design (see http://www.artoolworks.com/support/app/marker.php )
-	// then uncomment and edit as instructed by the marker design application.
-	//arSetLabelingMode(gARHandleL, AR_LABELING_BLACK_REGION); // Default = AR_LABELING_BLACK_REGION
-	//arSetLabelingMode(gARHandleR, AR_LABELING_BLACK_REGION); // Default = AR_LABELING_BLACK_REGION
-	//arSetBorderSize(gARHandleL, 0.25f); // Default = 0.25f
-	//arSetBorderSize(gARHandleR, 0.25f); // Default = 0.25f
-	//arSetMatrixCodeType(gARHandleL, AR_MATRIX_CODE_3x3); // Default = AR_MATRIX_CODE_3x3
-	//arSetMatrixCodeType(gARHandleR, AR_MATRIX_CODE_3x3); // Default = AR_MATRIX_CODE_3x3
+	if (extraction_error < 0)
+	{
+		DebugLog("Error setting marker extraction mode");
+		throw std::exception("Error - See log.");
+	}
 }
 
 bool ArToolkitProcessor::SetupCamera(const std::string filename, const int sizeX, const int sizeY, ARParamLT ** cparamLT_p)
@@ -336,26 +350,26 @@ void ArToolkitProcessor::Cleanup()
 
 void ArToolkitProcessor::SetupMarker(json &json_marker)
 {
-	Marker marker;
+	//Marker marker;
 
-	marker.pattern_path = json_marker["pattern_path"].get<std::string>();
-	marker.size = json_marker["size"].get<double>();
-	marker.type = json_marker["type"].get<std::string>();
-	marker.name = json_marker["name"].get<std::string>();
+	//marker.pattern_path = json_marker["pattern_path"].get<std::string>();
+	//marker.size = json_marker["size"].get<double>();
+	//marker.type = json_marker["type"].get<std::string>();
+	//marker.name = json_marker["name"].get<std::string>();
 
-	if (json_marker.count("filter") > 0)
-	{
-		marker.filter = true; 
-		marker.filter_cutoff_freq = json_marker["filter"].get<double>();
-		marker.filter_sample_rate = AR_FILTER_TRANS_MAT_SAMPLE_RATE_DEFAULT;
-		marker.ftmi = arFilterTransMatInit(marker.filter_sample_rate, marker.filter_cutoff_freq);
-	}
-	else
-	{
-		marker.filter = false;
-	}
+	//if (json_marker.count("filter") > 0)
+	//{
+	//	marker.filter = true; 
+	//	marker.filter_cutoff_freq = json_marker["filter"].get<double>();
+	//	marker.filter_sample_rate = AR_FILTER_TRANS_MAT_SAMPLE_RATE_DEFAULT;
+	//	marker.ftmi = arFilterTransMatInit(marker.filter_sample_rate, marker.filter_cutoff_freq);
+	//}
+	//else
+	//{
+	//	marker.filter = false;
+	//}
 
-	markers_.push_back(marker);
+	//markers_.push_back(marker);
 }
 
 
