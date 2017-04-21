@@ -147,13 +147,22 @@ static void mainLoop(void)
 
 	// Copy the luma-only image into the backing for calibImage.
 	//memcpy(imageLumaCopy, buff->buffLuma, xsize*ysize);
-	cv::Mat src = cv::Mat(ysize, xsize, CV_8UC4);
-	cv::Mat gray = cv::Mat(ysize, xsize, CV_8UC1);
-	src.data = buff;
-	cv::cvtColor(src, gray, CV_BGRA2GRAY);
-	gray.copyTo(src);
+	//cv::Mat src = cv::Mat(ysize, xsize, CV_8UC4);
+	//cv::Mat gray = cv::Mat(ysize, xsize, CV_8UC1);
+	CvMat          *src;
+	CvMat          *gray;
+	src = cvCreateMat(ysize, xsize, CV_8UC4);
+	gray = cvCreateMat(ysize, xsize, CV_8UC1);
 
-	memcpy(imageLumaCopy, src.data, xsize*ysize);
+	//src.data = buff;
+	memcpy(src->data.ptr, buff, xsize * ysize * 4);
+	cvCvtColor(src, gray, CV_BGRA2GRAY);
+
+	//cv::cvtColor(src, gray, CV_BGRA2GRAY);
+	//gray.copyTo(src);
+	//cvCopy(gray, src);
+
+	memcpy(imageLumaCopy, gray->data.ptr, xsize*ysize);
 
 	cornerFlag = cvFindChessboardCorners(calibImage, cvSize(chessboardCornerNumY, chessboardCornerNumX),
 		corners, &cornerCount, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS);
@@ -196,7 +205,7 @@ static void init(int argc, char *argv[])
 	int             i;
 	int             gotTwoPartOption;
 	int             screenWidth, screenHeight, screenMargin, quality;
-	OVR::Camprop	camProp = OVR::Camprop::OV_CAMHD_FULL;
+	OVR::Camprop	camProp = OVR::Camprop::OV_CAMVR_FULL;
 
 	chessboardCornerNumX = 0;
 	chessboardCornerNumY = 0;

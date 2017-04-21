@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 
 namespace Assets.Modules.Vision.Processors
@@ -18,29 +19,14 @@ namespace Assets.Modules.Vision.Processors
         public void Register(int pipelineId)
         {
             _registeredPipelineId = pipelineId;
-            _id = ImageProcessing.AddArToolkitProcessor(pipelineId, @"
-                {
-                    ""config"": {
-                        ""calibration_left"": ""C:/code/resources/calib_ovrvision_left.dat"",
-                        ""calibration_right"": ""C:/code/resources/calib_ovrvision_right.dat""
-                    },
-                    ""markers"": [
-                        {
-                            ""size"": 0.056,
-                            ""name"": ""kanji"",
-                            ""pattern_path"": ""C:/code/resources/kanji.patt"",
-                            ""type"": ""SINGLE"",
-                            ""filter"": 5.0
-                        },
-                        {
-                            ""size"": 0.026,
-                            ""name"": ""hiro"",
-                            ""pattern_path"": ""C:/code/resources/hiro.patt"",
-                            ""type"": ""SINGLE"",
-                            ""filter"": 5.0
-                        }
-                    ]
-                }");
+            var globalDataPath = Path.Combine(Application.dataPath, "../../data");
+            var config = new ArToolkitInitialSettings
+            {
+                calibration_left = Path.Combine(globalDataPath, "calib_ovrvision_left.dat"),
+                calibration_right = Path.Combine(globalDataPath, "calib_ovrvision_right.dat")
+            };
+
+            _id = ImageProcessing.AddArToolkitProcessor(pipelineId, JsonUtility.ToJson(config));
 
             ImageProcessing.GetProcessorProperties(_registeredPipelineId, _id, GetPropertyCallback);
         }
@@ -52,18 +38,26 @@ namespace Assets.Modules.Vision.Processors
         private struct ArToolkitSettings
         {
             public float min_confidence;
+            public float marker_size;
         }
 
         private ArToolkitSettings _currentSettings;
         public float MinConfidence
         {
-            get
-            {
-                return _currentSettings.min_confidence;
-            }
+            get { return _currentSettings.min_confidence; }
             set
             {
                 _currentSettings.min_confidence = value;
+                UpdateProperties();
+            }
+        }
+
+        public float MarkerSize
+        {
+            get { return _currentSettings.marker_size; }
+            set
+            {
+                _currentSettings.marker_size = value;
                 UpdateProperties();
             }
         }
@@ -82,5 +76,13 @@ namespace Assets.Modules.Vision.Processors
         }
 
         #endregion
+
+
+        [Serializable]
+        private struct ArToolkitInitialSettings
+        {
+            public string calibration_left;
+            public string calibration_right;
+        }
     }
 }

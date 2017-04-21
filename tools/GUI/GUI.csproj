@@ -63,6 +63,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ArToolkitCalibrationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="InteractiveSurface\InteractiveSurfaceMainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -74,6 +78,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ArToolkitCalibrationWindow.xaml.cs">
+      <DependentUpon>ArToolkitCalibrationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageProcessing.cs" />
     <Compile Include="InteractiveSurface\InteractiveSurfaceMainWindow.xaml.cs">

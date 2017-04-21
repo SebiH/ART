@@ -12,25 +12,6 @@ namespace ImageProcessing
 	class ArToolkitProcessor : public Processor
 	{
 	private:
-		struct Marker
-		{
-			bool initialized = false;
-
-			double size;
-			std::string pattern_path;
-			std::string type;
-			bool filter;
-
-			int pattern_id;
-			std::string name;
-			double filter_cutoff_freq;
-			double filter_sample_rate;
-
-			ARFilterTransMatInfo *ftmi;
-		};
-		std::vector<Marker> markers_;
-
-	private:
 		FrameSize initialized_size_;
 		bool is_first_initialization_ = true;
 
@@ -48,26 +29,17 @@ namespace ImageProcessing
 
 		// get/settable properties
 		double min_confidence_ = 0.5;
+		double marker_size_ = 0.5;
 
 	public:
 		/*
 		 * Configuration example:
 
 		{
-			"config": {
-				"calibration_left": "absolute/path/to/calib/file",
-				"calibration_right": "absolute/path/to/calib/file"
-			},
-			"markers": [
-				{
-					"size": 0.026, // in m! 2.6cm => 0.026
-					"name": "myMarker",
-					"pattern_path": "absolute/path/to/file.patt",
-					"type": "SINGLE", // SINGLE, MULTI (unsupported), NFT (unsupported)
-					"filter": 5.0 // cuttoff frequency for pose estimation (?) (optional)
-				},
-				{ .. other markers .. }
-			]
+			"calibration_left": "absolute/path/to/calib/file", // only in constructor
+			"calibration_right": "absolute/path/to/calib/file", // only in constructor
+			"min_confidence": 0.5,
+			"marker_size": 0.5
 		}
 
 		 */
@@ -81,11 +53,9 @@ namespace ImageProcessing
 	private:
 		void Initialize(const int sizeX, const int sizeY, const int depth);
 		bool SetupCamera(const std::string filename, const int sizeX, const int sizeY, ARParamLT **cparamLT_p);
-		void SetupMarker(nlohmann::json &json_marker);
 		void Cleanup();
 
 		nlohmann::json ProcessMarkerInfo(ARMarkerInfo &info);
 		void DrawMarker(const ARMarkerInfo &info, const FrameSize &size, unsigned char *buffer);
-		const Marker GetMarker(const ARMarkerInfo &info) const;
 	};
 }

@@ -2,54 +2,14 @@ using Assets.Modules.Vision;
 using Assets.Modules.Vision.Outputs;
 using Assets.Modules.Vision.Processors;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
-    public class ArToolkitListener : MonoBehaviour
+    public class ArToolkitListener : ArMarkerTracker
     {
-        #region JSON Message Content
-        [Serializable]
-        private struct PoseMatrix
-        {
-            public float m00, m01, m02, m03;
-            public float m10, m11, m12, m13;
-            public float m20, m21, m22, m23;
-        }
-
-        [Serializable]
-        private struct Corners
-        {
-            public double[] topleft;
-            public double[] topright;
-            public double[] bottomleft;
-            public double[] bottomright;
-        }
-
-        [Serializable]
-        private struct MarkerInfo
-        {
-            public int id;
-            public string name;
-            public double[] pos;
-            public Corners corners;
-            public PoseMatrix transform_matrix;
-        }
-
-        [Serializable]
-        private struct ArToolkitOutput
-        {
-            public MarkerInfo[] markers_left;
-            public MarkerInfo[] markers_right;
-        }
-        #endregion
-
-        public static ArToolkitListener Instance;
-
         public Pipeline ArToolkitPipeline;
-
-        public delegate void NewPoseHandler(MarkerPose pose);
-        public event NewPoseHandler NewPoseDetected;
 
         [Range(0, 1)]
         public float MinConfidence = 0.5f;
@@ -57,11 +17,17 @@ namespace Assets.Modules.Tracking
         private ArToolkitProcessor _artkProcessor;
         private JsonOutput _artkOutput;
 
-        private bool _hasNewOutput = false;
-        private ArToolkitOutput _currentOutput;
+        private Queue _currentOutput;
+        private readonly Quaternion _rotationAdjustment = Quaternion.Euler(90, 0, 0);
 
-        void OnEnable()
+        public ArToolkitListener()
         {
+            _currentOutput = Queue.Synchronized(new Queue());
+        }
+
+        protected override void OnEnable()
+        {
+            ArMarkerTracker.Instance = this;
             Instance = this;
 
             _artkProcessor = new ArToolkitProcessor();
@@ -81,8 +47,7 @@ namespace Assets.Modules.Tracking
         {
             try
             {
-                _currentOutput = JsonUtility.FromJson<ArToolkitOutput>(json_msg);
-                _hasNewOutput = true;
+                _currentOutput.Enqueue(JsonUtility.FromJson<ArToolkitOutput>(json_msg));
             }
             catch
             {
@@ -94,10 +59,14 @@ namespace Assets.Modules.Tracking
 
         void Update()
         {
-            if (_hasNewOutput)
+            if (_currentOutput.Count > 0)
             {
-                _hasNewOutput = false;
-                var output = _currentOutput;
+                // only fetch latest output
+                ArToolkitOutput output = (ArToolkitOutput)_currentOutput.Dequeue();
+                while (_currentOutput.Count > 0)
+                {
+                    output = (ArToolkitOutput)_currentOutput.Dequeue();
+                }
 
                 foreach (var marker in output.markers_left)
                 {
@@ -117,8 +86,6 @@ namespace Assets.Modules.Tracking
                 // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
                 MinConfidence = _artkProcessor.MinConfidence;
             }
-
-
         }
 
 
@@ -147,16 +114,62 @@ namespace Assets.Modules.Tracking
             transformMatrix.m32 = 0;
             transformMatrix.m33 = 1;
 
-            if (NewPoseDetected != null)
+            var pos = transformMatrix.GetPosition();
+            pos.y = -pos.y;
+            var rot = transformMatrix.GetRotation();
+            rot = rot * _rotationAdjustment;
+
+            OnNewPoseDetected(new MarkerPose
             {
-                NewPoseDetected(new MarkerPose
-                {
-                    Id = marker.id,
-                    Name = marker.name,
-                    Position = transformMatrix.GetPosition(),
-                    Rotation = transformMatrix.GetRotation()
-                });
-            }
+                Id = marker.id,
+                Confidence = marker.confidence,
+                Position = pos,
+                Rotation = rot
+            });
         }
+
+        protected override void UpdateMarkerSize(float size)
+        {
+        _artkProcessor.MarkerSize = size;
+        }
+
+
+
+
+        #region JSON Message Content
+        [Serializable]
+        private struct PoseMatrix
+        {
+            public float m00, m01, m02, m03;
+            public float m10, m11, m12, m13;
+            public float m20, m21, m22, m23;
+        }
+
+        [Serializable]
+        private struct Corners
+        {
+            public double[] topleft;
+            public double[] topright;
+            public double[] bottomleft;
+            public double[] bottomright;
+        }
+
+        [Serializable]
+        private struct MarkerInfo
+        {
+            public int id;
+            public double confidence;
+            public double[] pos;
+            public Corners corners;
+            public PoseMatrix transform_matrix;
+        }
+
+        [Serializable]
+        private struct ArToolkitOutput
+        {
+            public MarkerInfo[] markers_left;
+            public MarkerInfo[] markers_right;
+        }
+        #endregion
     }
 }

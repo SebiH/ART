@@ -99,6 +99,9 @@
     <ClCompile Include="src\aruco_calibration\aruco_calibration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tools\ArToolkitCalibrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h">
@@ -186,6 +189,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\aruco_calibration\aruco_calibration_board_a4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tools\ArToolkitCalibrator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

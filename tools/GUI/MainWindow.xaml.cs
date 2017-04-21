@@ -47,6 +47,10 @@ namespace GUI
                 {
                     ImageProcessing.SetOpenCVCamera();
                 }
+                else if (camera == "Dummy")
+                {
+                    ImageProcessing.SetDummyCamera("C:/code/img/4.png");
+                }
 
                 ImageProcessing.StartImageProcessing();
 
@@ -55,7 +59,15 @@ namespace GUI
                 int pipeline = ImageProcessing.CreatePipeline();
                 int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
                 int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
-                int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.29, ""use_tracker"": true } ");
+                //int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.29, ""use_tracker"": false } ");
+                var currDir = Directory.GetCurrentDirectory();
+                var dataDir = Path.Combine(currDir, "../../../../data/");
+
+                dynamic config = new JObject();
+                config.calibration_left = Path.Combine(dataDir, "calib_ovrvision_left.dat");
+                config.calibration_right = Path.Combine(dataDir, "calib_ovrvision_right.dat");
+
+                int processor = ImageProcessing.AddArToolkitProcessor(pipeline, config.ToString());
 
                 char keyPressed;
                 int counter = 0;
@@ -92,6 +104,11 @@ namespace GUI
                     }
                 }
             });
+        }
+
+        private void ArToolkitCalibrationClick(object sender, RoutedEventArgs e)
+        {
+            new ArToolkitCalibrationWindow().Show();
         }
 
         private void GenerateArucoMarker(object sender, RoutedEventArgs e)

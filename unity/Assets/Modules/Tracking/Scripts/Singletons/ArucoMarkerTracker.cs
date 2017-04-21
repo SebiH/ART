@@ -163,6 +163,7 @@ namespace Assets.Modules.Tracking
             return new MarkerPose
             {
                 Id = pose.id,
+                Confidence = 1,
                 Position = pose.position.ToUnityVec3() + posOffset,
                 //Rotation = pose.rotation.ToUnityQuaternion() * rotOffset
                 Rotation = Quaternion.Euler(rotation)

@@ -13,7 +13,7 @@ export class Marker {
     }
 
     public get src(): string {
-        return './markers/artoolkitplusbch_' + Utils.padLeft('' + this.id, 5) + '.png';
+        return './markers/' + Utils.padLeft('' + this.id, 3) + '.png';
     }
 
     private _position: Point = new Point(0, 0);

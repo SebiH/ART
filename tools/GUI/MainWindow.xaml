@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="525">
+        Title="MainWindow" Height="450" Width="525">
     <Grid>
         <StackPanel Margin="20">
             <ComboBox x:Name="CameraSelectionBox">
@@ -29,6 +29,10 @@
             <ComboBox x:Name="ArucoDictionaries" />
             <Button Click="GenerateArucoMarker">Generate Aruco Markers</Button>
             <Button Click="GenerateArucoMarkerMapClick">Generate Aruco Marker Map</Button>
+
+            <Separator Margin="20"/>
+
+            <Button Click="ArToolkitCalibrationClick">ArToolkit Calibration</Button>
 
             <Separator Margin="20"/>
 
