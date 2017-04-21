@@ -54,6 +54,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             foreach (var icon in GetComponentsInChildren<Image>())
             {
                 icon.material.color = _colorAnimation.CurrentValue;
+                icon.enabled = _colorAnimation.CurrentValue.a > 0;
             }
         }
 
