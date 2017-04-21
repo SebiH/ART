@@ -67,10 +67,7 @@ namespace GUI
                 config.calibration_left = Path.Combine(dataDir, "calib_ovrvision_left.dat");
                 config.calibration_right = Path.Combine(dataDir, "calib_ovrvision_right.dat");
 
-                dynamic arToolkitConfig = new JObject();
-                arToolkitConfig.config = config;
-
-                int processor = ImageProcessing.AddArToolkitProcessor(pipeline, arToolkitConfig.ToString());
+                int processor = ImageProcessing.AddArToolkitProcessor(pipeline, config.ToString());
 
                 char keyPressed;
                 int counter = 0;

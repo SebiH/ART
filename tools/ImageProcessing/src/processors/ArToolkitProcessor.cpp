@@ -21,13 +21,10 @@ ArToolkitProcessor::ArToolkitProcessor(std::string config)
 {
 	auto json_config = json::parse(config);
 
-	calib_path_left_ = json_config["config"]["calibration_left"].get<std::string>();
-	calib_path_right_ = json_config["config"]["calibration_right"].get<std::string>();
+	calib_path_left_ = json_config["calibration_left"].get<std::string>();
+	calib_path_right_ = json_config["calibration_right"].get<std::string>();
 
-	for (auto &json_marker : json_config["markers"])
-	{
-		SetupMarker(json_marker);
-	}
+	SetProperties(json_config);
 }
 
 ArToolkitProcessor::~ArToolkitProcessor()
@@ -131,18 +128,15 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info)
 {
-	return json{};
 	ARdouble transform_matrix[3][4];
-	const Marker marker = GetMarker(info);
-	arGetTransMatSquare(ar_3d_handle_l_, &info, marker.size, transform_matrix);
+	arGetTransMatSquare(ar_3d_handle_l_, &info, marker_size_, transform_matrix);
 
 	return json{
 		{ "id", info.id },
-		{ "name", marker.name },
+		{ "confidence", info.cf },
 		{ "pos", { info.pos[0], info.pos[1] }},
 		{ "corners",
 			{
-				// TODO: no idea if description is correct or even consistent!
 				{"topleft", { info.vertex[0][0], info.vertex[0][1] } },
 				{"topright", { info.vertex[1][0], info.vertex[1][1] } },
 				{"bottomleft", { info.vertex[2][0], info.vertex[2][1] } },
@@ -260,26 +254,6 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 		DebugLog("Error creating 3D handle.");
 		throw std::exception("Error - See log.");
 	}
-
-	// Markers setup.
-
-	//newMarkers("C:/code/resources/markers.dat", gARPattHandle, &markersSquare, &markersSquareCount, &gARPattDetectionMode);
-	//for (auto &marker : markers_)
-	//{
-	//	if (marker.initialized)
-	//	{
-	//		arPattFree(ar_pattern_handle_, marker.pattern_id);
-	//	}
-
-	//	marker.pattern_id = arPattLoad(ar_pattern_handle_, marker.pattern_path.c_str());
-
-	//	if (marker.pattern_id < 0)
-	//	{
-	//		throw std::exception((std::string("Unable to load marker pattern ") + marker.pattern_path).c_str());
-	//	}
-
-	//	marker.initialized = true;
-	//}
 	
 
 	//
@@ -323,19 +297,6 @@ bool ArToolkitProcessor::SetupCamera(const std::string filename, const int sizeX
 
 void ArToolkitProcessor::Cleanup()
 {
-	for (auto &marker : markers_)
-	{
-		if (marker.initialized)
-		{
-			arPattFree(ar_pattern_handle_, marker.pattern_id);
-		}
-
-		if (marker.filter)
-		{
-			arFilterTransMatFinal(marker.ftmi);
-		}
-	}
-
 	arPattDetach(ar_handle_l_);
 	arPattDetach(ar_handle_r_);
 	arPattDeleteHandle(ar_pattern_handle_);
@@ -348,35 +309,11 @@ void ArToolkitProcessor::Cleanup()
 }
 
 
-void ArToolkitProcessor::SetupMarker(json &json_marker)
-{
-	//Marker marker;
-
-	//marker.pattern_path = json_marker["pattern_path"].get<std::string>();
-	//marker.size = json_marker["size"].get<double>();
-	//marker.type = json_marker["type"].get<std::string>();
-	//marker.name = json_marker["name"].get<std::string>();
-
-	//if (json_marker.count("filter") > 0)
-	//{
-	//	marker.filter = true; 
-	//	marker.filter_cutoff_freq = json_marker["filter"].get<double>();
-	//	marker.filter_sample_rate = AR_FILTER_TRANS_MAT_SAMPLE_RATE_DEFAULT;
-	//	marker.ftmi = arFilterTransMatInit(marker.filter_sample_rate, marker.filter_cutoff_freq);
-	//}
-	//else
-	//{
-	//	marker.filter = false;
-	//}
-
-	//markers_.push_back(marker);
-}
-
-
 nlohmann::json ArToolkitProcessor::GetProperties()
 {
 	return json{
-		{ "min_confidence", min_confidence_ }
+		{ "min_confidence", min_confidence_ },
+		{ "marker_size", marker_size_ }
 	};
 }
 
@@ -388,17 +325,9 @@ void ArToolkitProcessor::SetProperties(const nlohmann::json &config)
 	{
 		min_confidence_ = config["min_confidence"].get<double>();
 	}
-}
 
-const ArToolkitProcessor::Marker ArToolkitProcessor::GetMarker(const ARMarkerInfo &info) const
-{
-	for (auto &marker : markers_)
+	if (config.count("marker_size"))
 	{
-		if (marker.pattern_id == info.id)
-		{
-			return marker;
-		}
+		marker_size_ = config["marker_size"].get<double>();
 	}
-
-	throw std::exception("Unregistered marker");
 }
