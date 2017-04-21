@@ -1,3 +1,4 @@
+using System.IO;
 using System.Windows;
 
 namespace GUI
@@ -17,8 +18,9 @@ namespace GUI
             int calibImages = int.Parse(ImageCountBox.Text);
             double patternWidth = double.Parse(PatternWidthBox.Text);
             double screenSizeMargin = double.Parse(ScreenSizeMarginBox.Text);
+            var filename = FilenameBox.Text;
 
-            ImageProcessing.PerformArToolkitCalibration("test", cornersX, cornersY, calibImages, patternWidth, screenSizeMargin);
+            ImageProcessing.PerformArToolkitCalibration(Path.Combine(Directory.GetCurrentDirectory(), filename), cornersX, cornersY, calibImages, patternWidth, screenSizeMargin);
         }
     }
 }

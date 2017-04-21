@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
-        Title="ArToolkitCalibration" Height="350" Width="300">
+        Title="ArToolkitCalibration" Height="380" Width="300">
     <Grid Margin="10">
         <StackPanel>
             <Label>Corner count X</Label>
@@ -22,6 +22,9 @@
 
             <Label>Screen Size Margin</Label>
             <TextBox x:Name="ScreenSizeMarginBox">0.1</TextBox>
+
+            <Label>Filename (relative to app dir)</Label>
+            <TextBox x:Name="FilenameBox">calib_ovrvision</TextBox>
 
             <Separator Margin="10"></Separator>
             <Button Click="Calibrate_Click"> Calibrate</Button>
