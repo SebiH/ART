@@ -231,8 +231,8 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 	pattern_error -= arSetPatternDetectionMode(ar_handle_l_, AR_MATRIX_CODE_DETECTION);
 	pattern_error -= arSetMatrixCodeType(ar_handle_r_, matrixType);
 	pattern_error -= arSetPatternDetectionMode(ar_handle_r_, AR_MATRIX_CODE_DETECTION);
-	pattern_error -= arSetBorderSize(ar_handle_l_, 0.25f); // Default = 0.25f
-	pattern_error -= arSetBorderSize(ar_handle_r_, 0.25f); // Default = 0.25f
+	pattern_error -= arSetBorderSize(ar_handle_l_, 0.1f); // Default = 0.25f
+	pattern_error -= arSetBorderSize(ar_handle_r_, 0.1f); // Default = 0.25f
 
 	if (pattern_error < 0)
 	{
