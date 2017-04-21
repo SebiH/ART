@@ -1,0 +1,30 @@
+<Window x:Class="GUI.ArToolkitCalibrationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GUI"
+        mc:Ignorable="d"
+        Title="ArToolkitCalibration" Height="350" Width="300">
+    <Grid Margin="10">
+        <StackPanel>
+            <Label>Corner count X</Label>
+            <TextBox x:Name="CornersXBox">7</TextBox>
+
+            <Label>Corner count Y</Label>
+            <TextBox x:Name="CornersYBox">5</TextBox>
+
+            <Label>No of calibration images</Label>
+            <TextBox x:Name="ImageCountBox">10</TextBox>
+
+            <Label>Pattern Width (mm?)</Label>
+            <TextBox x:Name="PatternWidthBox">24.0</TextBox>
+
+            <Label>Screen Size Margin</Label>
+            <TextBox x:Name="ScreenSizeMarginBox">0.1</TextBox>
+
+            <Separator Margin="10"></Separator>
+            <Button Click="Calibrate_Click"> Calibrate</Button>
+        </StackPanel>
+    </Grid>
+</Window>

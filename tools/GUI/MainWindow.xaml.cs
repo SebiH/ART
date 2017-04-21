@@ -1,6 +1,5 @@
 using GUI.InteractiveSurface;
 using GUI.Optitrack;
-using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -47,6 +46,10 @@ namespace GUI
                 {
                     ImageProcessing.SetOpenCVCamera();
                 }
+                else if (camera == "Dummy")
+                {
+                    ImageProcessing.SetDummyCamera("C:/code/img/4.png");
+                }
 
                 ImageProcessing.StartImageProcessing();
 
@@ -55,7 +58,8 @@ namespace GUI
                 int pipeline = ImageProcessing.CreatePipeline();
                 int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
                 int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
-                int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.29, ""use_tracker"": true } ");
+                //int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.29, ""use_tracker"": false } ");
+                int processor = ImageProcessing.AddArToolkitProcessor(pipeline, @"{ ""config"": { ""calibration_left"": ""C:/code/calib_left.dat"", ""calibration_right"": ""C:/code/calib_right.dat""   }, ""markers"": [  ] }");
 
                 char keyPressed;
                 int counter = 0;
@@ -92,6 +96,11 @@ namespace GUI
                     }
                 }
             });
+        }
+
+        private void ArToolkitCalibrationClick(object sender, RoutedEventArgs e)
+        {
+            new ArToolkitCalibrationWindow().Show();
         }
 
         private void GenerateArucoMarker(object sender, RoutedEventArgs e)
