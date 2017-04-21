@@ -19,8 +19,10 @@ namespace GUI
             double patternWidth = double.Parse(PatternWidthBox.Text);
             double screenSizeMargin = double.Parse(ScreenSizeMarginBox.Text);
             var filename = FilenameBox.Text;
+            var currDir = Directory.GetCurrentDirectory();
+            var dataDir = Path.Combine(currDir, "../../../../data/");
 
-            ImageProcessing.PerformArToolkitCalibration(Path.Combine(Directory.GetCurrentDirectory(), filename), cornersX, cornersY, calibImages, patternWidth, screenSizeMargin);
+            ImageProcessing.PerformArToolkitCalibration(Path.Combine(dataDir, filename), cornersX, cornersY, calibImages, patternWidth, screenSizeMargin);
         }
     }
 }
