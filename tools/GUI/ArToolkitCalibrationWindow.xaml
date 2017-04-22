@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
-        Title="ArToolkitCalibration" Height="380" Width="300">
+        Title="ArToolkitCalibration" Height="560" Width="300">
     <Grid Margin="10">
         <StackPanel>
             <Label>Corner count X</Label>
@@ -27,7 +27,21 @@
             <TextBox x:Name="FilenameBox">calib_ovrvision</TextBox>
 
             <Separator Margin="10"></Separator>
-            <Button Click="Calibrate_Click"> Calibrate</Button>
+            <Button Click="Calibrate_Click"> Calibrate </Button>
+
+            <Separator Margin="10"></Separator>
+
+            <Label>Calibration file left (relative to data dir)</Label>
+            <TextBox x:Name="CalibLeftBox">calib_ovrvision_left.dat</TextBox>
+
+            <Label>Calibration file right (relative to data dir)</Label>
+            <TextBox x:Name="CalibRightBox">calib_ovrvision_right.dat</TextBox>
+
+            <Label>Steroe calibration save file (relative to data dir)</Label>
+            <TextBox x:Name="StereoFileBox">ovrvision_transL2R.dat</TextBox>
+
+            <Separator Margin="10"></Separator>
+            <Button Click="Calibrate_Click"> Stereo Calibrate </Button>
         </StackPanel>
     </Grid>
 </Window>
