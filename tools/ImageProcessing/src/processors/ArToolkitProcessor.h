@@ -23,6 +23,12 @@ namespace ImageProcessing
 		std::vector<MarkerFilter> filters_r_;
 
 	private:
+		// hardcoded config
+		const int MAX_MARKER_ID = 512;
+		const AR_MATRIX_CODE_TYPE MARKER_TYPE = AR_MATRIX_CODE_4x4_BCH_13_9_3;
+		const double MARKER_BORDER_SIZE = 0.1;
+
+	private:
 		FrameSize initialized_size_;
 		bool is_first_initialization_ = true;
 

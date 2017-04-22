@@ -73,14 +73,10 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 		{ "markers_right", json::array() }
 	};
 
-	for (auto &filter : filters_l_)
+	for (int i = 0; i < MAX_MARKER_ID; i++)
 	{
-		filter.missed_frames++;
-	}
-
-	for (auto &filter : filters_r_)
-	{
-		filter.missed_frames++;
+		filters_l_[i].missed_frames++;
+		filters_r_[i].missed_frames++;
 	}
 
 	for (auto i = 0; i < marker_num_l; i++)
@@ -89,7 +85,7 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 		{
 			auto info = marker_info_l[i];
 
-			if (info.cf > min_confidence_)
+			if (info.cf > min_confidence_ && 0 <= info.id && info.id < MAX_MARKER_ID)
 			{
 				auto pose = ProcessMarkerInfo(info, filters_l_[info.id]);
 				DrawMarker(info, frame->size, frame->buffer_left.get());
@@ -111,7 +107,7 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 		try
 		{
-			if (info.cf > min_confidence_)
+			if (info.cf > min_confidence_ && 0 <= info.id && info.id < MAX_MARKER_ID)
 			{
 				auto pose = ProcessMarkerInfo(info, filters_r_[info.id]);
 				DrawMarker(info, frame->size, frame->buffer_right.get());
@@ -150,7 +146,7 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilte
 
 	return json{
 		{ "id", info.id },
-		{ "confidence", info.cf },
+		{ "confidence", info.cfMatrix },
 		{ "pos", { info.pos[0], info.pos[1] }},
 		{ "corners",
 			{
@@ -221,13 +217,12 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 
 
 	int pattern_error = 0;
-	AR_MATRIX_CODE_TYPE matrixType = AR_MATRIX_CODE_4x4_BCH_13_9_3;
-	pattern_error -= arSetMatrixCodeType(ar_handle_l_, matrixType);
+	pattern_error -= arSetMatrixCodeType(ar_handle_l_, MARKER_TYPE);
 	pattern_error -= arSetPatternDetectionMode(ar_handle_l_, AR_MATRIX_CODE_DETECTION);
-	pattern_error -= arSetMatrixCodeType(ar_handle_r_, matrixType);
+	pattern_error -= arSetMatrixCodeType(ar_handle_r_, MARKER_TYPE);
 	pattern_error -= arSetPatternDetectionMode(ar_handle_r_, AR_MATRIX_CODE_DETECTION);
-	pattern_error -= arSetBorderSize(ar_handle_l_, 0.1f); // Default = 0.25f
-	pattern_error -= arSetBorderSize(ar_handle_r_, 0.1f); // Default = 0.25f
+	pattern_error -= arSetBorderSize(ar_handle_l_, MARKER_BORDER_SIZE); // Default = 0.25f
+	pattern_error -= arSetBorderSize(ar_handle_r_, MARKER_BORDER_SIZE); // Default = 0.25f
 
 	if (pattern_error < 0)
 	{
@@ -235,8 +230,7 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 		throw std::exception("Error - See log.");
 	}
 
-	const int MAX_MARKERS = 512;
-	for (int i = 0; i < MAX_MARKERS; i++)
+	for (int i = 0; i < MAX_MARKER_ID; i++)
 	{
 		MarkerFilter mf;
 		mf.id = i;
