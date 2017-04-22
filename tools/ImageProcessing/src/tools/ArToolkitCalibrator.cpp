@@ -259,7 +259,7 @@ void ArToolkitCalibrator::SaveParam(ARParam *param, const std::string &filename)
 		ARLOG("Parameter write error!!\n");
 	}
 	else {
-		ARLOG("Saved parameter file '%s/%s'.\n", filename);
+		ARLOG("Saved parameter file '%s'.\n", filename);
 	}
 }
 

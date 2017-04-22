@@ -161,7 +161,7 @@ static void init(int argc, char *argv[])
 	char               cparaRDefault[] = "../share/artoolkit-utils/Data/cparaR.dat";
 
 	int quality;
-	OVR::Camprop camProp = OVR::Camprop::OV_CAMHD_FULL;
+	OVR::Camprop camProp = OVR::Camprop::OV_CAMVR_FULL;
 
 	ARParam            wparam;
 	ARGViewport        viewport;
