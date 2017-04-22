@@ -138,6 +138,9 @@ namespace GUI
         [DllImport("ImageProcessing")]
         public static extern void PerformArToolkitCalibration(string save_filename, int corners_num_x, int corners_num_y, int calib_image_count, double pattern_width, double screen_size_margin);
 
+        [DllImport("ImageProcessing")]
+        public static extern void PerformArToolkitStereoCalibration(string save_filename, int corners_num_x, int corners_num_y, int calib_image_count, double pattern_width, double screen_size_margin, string calibration_left, string calibration_right);
+
         #endregion
     }
 }
