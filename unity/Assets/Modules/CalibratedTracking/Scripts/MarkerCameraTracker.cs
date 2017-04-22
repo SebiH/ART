@@ -7,6 +7,8 @@ namespace Assets.Modules.CalibratedTracking
     {
         // in seconds
         public float CutoffTime = 0.6f;
+        public bool UseAverage = true;
+        public float AverageWeight = 0.5f;
 
         public bool TrackPosition = false;
         public bool TrackRotation = false;
@@ -19,6 +21,8 @@ namespace Assets.Modules.CalibratedTracking
 
             var arMarkerTracker = _camTracker.MarkerTracker;
             CutoffTime = arMarkerTracker.CutoffTime;
+            UseAverage = arMarkerTracker.UseAverages;
+            AverageWeight = arMarkerTracker.AverageWeight;
         }
 
 #if UNITY_EDITOR
@@ -26,6 +30,8 @@ namespace Assets.Modules.CalibratedTracking
         {
             var arMarkerTracker = _camTracker.MarkerTracker;
             arMarkerTracker.CutoffTime = CutoffTime;
+            arMarkerTracker.UseAverages = UseAverage;
+            arMarkerTracker.AverageWeight = AverageWeight;
 
             if (TrackPosition)
                 transform.position = arMarkerTracker.GetPosition();
