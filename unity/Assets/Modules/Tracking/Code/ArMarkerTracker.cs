@@ -27,6 +27,7 @@ namespace Assets.Modules.Tracking
         }
 
         protected abstract void UpdateMarkerSize(float size);
+        public abstract float GetMinConfidence();
 
         protected virtual void OnEnable()
         {

@@ -144,6 +144,11 @@ namespace Assets.Modules.Tracking
             _artkProcessor.MarkerSize = size;
         }
 
+        public override float GetMinConfidence()
+        {
+            return MinConfidence;
+        }
+
 
 
 
@@ -169,7 +174,7 @@ namespace Assets.Modules.Tracking
         private struct MarkerInfo
         {
             public int id;
-            public double confidence;
+            public float confidence;
             public double[] pos;
             public Corners corners;
             public PoseMatrix transform_matrix;

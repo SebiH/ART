@@ -7,6 +7,7 @@ namespace Assets.Modules.Calibration
     {
         public int Id = -1;
         public float LastChangeTime { get; private set; }
+        public float Confidence { get; private set; }
 
         private Vector2 _position = Vector2.zero;
         public Vector2 Position
@@ -79,6 +80,7 @@ namespace Assets.Modules.Calibration
                 DetectedCameraPosition = transform.position + transform.rotation * cam.GetPosition();
                 DetectedCameraRotation = transform.rotation * cam.GetRotation();
                 CameraDetectionTime = Time.unscaledTime;
+                Confidence = (float)pose.Confidence;
             }
         }
 
@@ -95,7 +97,8 @@ namespace Assets.Modules.Calibration
             var bl = transform.position + (transform.rotation * new Vector3(-Size / 2, 0, -Size / 2));
             var br = transform.position + (transform.rotation * new Vector3(Size / 2, 0, -Size / 2));
 
-            Gizmos.color = Color.red;
+            var minConfidence = ArMarkerTracker.Instance.GetMinConfidence();
+            Gizmos.color = Color.Lerp(Color.red, Color.green, (Confidence - minConfidence) / (1.0f - minConfidence));
             Gizmos.DrawLine(tl, bl);
             Gizmos.DrawLine(bl, br);
             Gizmos.DrawLine(br, tr);

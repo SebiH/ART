@@ -169,5 +169,10 @@ namespace Assets.Modules.Tracking
                 Rotation = Quaternion.Euler(rotation)
             };
         }
+
+        public override float GetMinConfidence()
+        {
+            return 0;
+        }
     }
 }
