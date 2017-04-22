@@ -58,11 +58,13 @@ namespace Assets.Modules.Vision
                     var aspectW = (float)imageWidth / GetImageBaseHeight(ovrCam.CamQuality);
                     var aspectH = (float)imageHeight / GetImageBaseHeight(ovrCam.CamQuality);
                     transform.localScale = new Vector3(aspectW, -aspectH, 1.0f);
+                    transform.localPosition = new Vector3(0, 0, ovrCam.GetFocalPoint() + 0.02f);
                 }
                 else
                 {
                     var aspectRatio = new Vector2((float)(imageWidth) / (float)(imageHeight), -1);
                     transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
+                    transform.localPosition = new Vector3(0, 0, 0.035f);
                 }
             }
 
