@@ -5,9 +5,6 @@
 #include <vector>
 #include <opencv2/opencv.hpp>
 #include <AR/ar.h>
-#include <AR/icpCore.h>
-#include <AR/icpCalib.h>
-#include <AR/icp.h>
 
 #include "cameras/CameraSourceInterface.h"
 
@@ -24,13 +21,6 @@ namespace ImageProcessing
 		double screen_size_margin = 0.1;
 		std::string calibration_file_left;
 		std::string calibration_file_right;
-
-	private:
-		CvPoint2D32f *cornersL;
-		CvPoint2D32f *cornersR;
-		ICPCalibDataT *calibData;
-		ICP3DCoordT *worldCoord;
-
 
 	public:
 		ArToolkitStereoCalibrator();

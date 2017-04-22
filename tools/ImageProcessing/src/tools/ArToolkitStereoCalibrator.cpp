@@ -1,6 +1,9 @@
 #include "ArToolkitStereoCalibrator.h"
 
 #include <vector>
+#include <AR/icpCore.h>
+#include <AR/icpCalib.h>
+#include <AR/icp.h>
 #include <opencv2/highgui.hpp>
 #include <opencv2/calib3d.hpp>
 
@@ -97,9 +100,10 @@ void ArToolkitStereoCalibrator::Calibrate(const std::shared_ptr<CameraSourceInte
 	arParamChangeSize(&wparam, frame_size.width, frame_size.height, &paramR);
 	arParamDisp(&paramR);
 
+
 	// artoolkit initialisation??
-	arMalloc(cornersL, CvPoint2D32f, corners_num_x * corners_num_y);
-	arMalloc(cornersR, CvPoint2D32f, corners_num_x * corners_num_y);
+	ICPCalibDataT *calibData;
+	ICP3DCoordT *worldCoord;
 	arMalloc(worldCoord, ICP3DCoordT, corners_num_x * corners_num_y);
 	for (int i = 0; i < corners_num_x; i++)
 	{
@@ -166,13 +170,13 @@ void ArToolkitStereoCalibrator::Calibrate(const std::shared_ptr<CameraSourceInte
 		{
 			cv::cornerSubPix(img_left_gray, corners_left, cv::Size(5, 5), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_ITER, 100, 0.1));
 			for (int i = 0; i < corners_num_x*corners_num_y; i++) {
-				arParamObserv2Ideal(paramL.dist_factor, (double)cornersL[i].x, (double)cornersL[i].y,
+				arParamObserv2Ideal(paramL.dist_factor, (double)corners_left[i].x, (double)corners_left[i].y,
 					&calibData[capturedImageNum].screenCoordL[i].x, &calibData[capturedImageNum].screenCoordL[i].y, paramL.dist_function_version);
 			}
 
 			cv::cornerSubPix(img_right_gray, corners_right, cv::Size(5, 5), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_ITER, 100, 0.1));
 			for (int i = 0; i < corners_num_x*corners_num_y; i++) {
-				arParamObserv2Ideal(paramR.dist_factor, (double)cornersR[i].x, (double)cornersR[i].y,
+				arParamObserv2Ideal(paramR.dist_factor, (double)corners_right[i].x, (double)corners_right[i].y,
 					&calibData[capturedImageNum].screenCoordR[i].x, &calibData[capturedImageNum].screenCoordR[i].y, paramR.dist_function_version);
 			}
 

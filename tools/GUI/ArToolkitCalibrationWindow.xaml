@@ -41,7 +41,7 @@
             <TextBox x:Name="StereoFileBox">ovrvision_transL2R.dat</TextBox>
 
             <Separator Margin="10"></Separator>
-            <Button Click="Calibrate_Click"> Stereo Calibrate </Button>
+            <Button Click="StereoCalibrate_Click"> Stereo Calibrate </Button>
         </StackPanel>
     </Grid>
 </Window>
