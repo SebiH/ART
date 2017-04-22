@@ -11,7 +11,7 @@
 
 using namespace ImageProcessing;
 
-ArTookitStereoCalibrator::ArTookitStereoCalibrator()
+ArToolkitStereoCalibrator::ArToolkitStereoCalibrator()
 {
 }
 
@@ -61,7 +61,7 @@ ArTookitStereoCalibrator::ArTookitStereoCalibrator()
  */
 
 
-void ArTookitStereoCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>& camera, const std::string & filename)
+void ArToolkitStereoCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>& camera, const std::string & filename)
 {
 	if (!camera->IsOpen())
 	{
@@ -259,7 +259,7 @@ done:
 	camera->Close();
 }
 
-void ArTookitStereoCalibrator::CopyImage(ARUint8 * p1, ARUint8 * p2, int size, int pixFormat)
+void ArToolkitStereoCalibrator::CopyImage(ARUint8 * p1, ARUint8 * p2, int size, int pixFormat)
 {
 	int    i, j;
 
@@ -303,7 +303,7 @@ void ArTookitStereoCalibrator::CopyImage(ARUint8 * p1, ARUint8 * p2, int size, i
 	}
 }
 
-void ImageProcessing::ArTookitStereoCalibrator::SaveParam(ARdouble transL2R[3][4], const std::string &filename)
+void ImageProcessing::ArToolkitStereoCalibrator::SaveParam(ARdouble transL2R[3][4], const std::string &filename)
 {
 	if (arParamSaveExt(filename.c_str(), transL2R) < 0) {
 		ARLOG("Parameter write error!!\n");

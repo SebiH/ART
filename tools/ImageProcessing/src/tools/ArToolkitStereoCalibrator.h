@@ -14,7 +14,7 @@
 
 namespace ImageProcessing
 {
-	class ArTookitStereoCalibrator
+	class ArToolkitStereoCalibrator
 	{
 	public:
 		int corners_num_x = 7;
@@ -33,7 +33,7 @@ namespace ImageProcessing
 
 
 	public:
-		ArTookitStereoCalibrator();
+		ArToolkitStereoCalibrator();
 		void Calibrate(const std::shared_ptr<CameraSourceInterface> &camera, const std::string &filename);
 
 	private:
