@@ -1,9 +1,8 @@
 #pragma once
 
+#include <string>
 #include <AR/ar.h>
 #include <json/json.hpp>
-#include <memory>
-#include <string>
 #include "processors/Processor.h"
 #include "frames/FrameSize.h"
 
@@ -12,13 +11,43 @@ namespace ImageProcessing
 	class ArToolkitStereoProcessor : public Processor
 	{
 	private:
-		std::unique_ptr<ARParamLT> param_lookup_table_;
-		std::unique_ptr<ARPattHandle> ar_patt_handle_;
-		std::unique_ptr<AR3DHandle> ar_3d_handle_;
-		std::unique_ptr<ARHandle> ar_handle_;
+		FrameSize initialized_size_;
+		bool is_first_initialization_ = true;
+
+		std::string calib_path_left_;
+		std::string calib_path_right_;
+		std::string stereo_calib_path_;
+
+		ARParamLT *c_param_lt_l_ = nullptr;
+		ARParamLT *c_param_lt_r_ = nullptr;
+		ARHandle *ar_handle_l_ = nullptr;
+		ARHandle *ar_handle_r_ = nullptr;
+
+		AR3DHandle *ar_3d_handle_l_ = nullptr;
+		AR3DHandle *ar_3d_handle_r_ = nullptr;
+
+		AR3DStereoHandle *ar_3d_stereo_handle_ = nullptr;
+		ARdouble trans_l2r_[3][4];
+
+
+		// get/settable properties
+		double min_confidence_ = 0.5;
+		double marker_size_ = 0.5;
 
 
 	public:
+		/*
+		* Configuration example:
+
+		{
+			"calibration_left": "absolute/path/to/calib/file", // only in constructor
+			"calibration_right": "absolute/path/to/calib/file", // only in constructor
+			"calibration_stereo": "absolute/path/to/calib/file", // only in constructor
+			"min_confidence": 0.5,
+			"marker_size": 0.5
+		}
+
+		*/
 		ArToolkitStereoProcessor(std::string config);
 		virtual ~ArToolkitStereoProcessor();
 		virtual std::shared_ptr<const FrameData> Process(const std::shared_ptr<const FrameData> &frame) override;
@@ -27,6 +56,11 @@ namespace ImageProcessing
 		virtual void SetProperties(const nlohmann::json &config) override;
 
 	private:
-		void Initialise(std::string parameter_filename, int width, int height, int depth);
+		void Initialize(const int sizeX, const int sizeY, const int depth);
+		bool SetupCamera(const std::string filename, const int sizeX, const int sizeY, ARParamLT **cparamLT_p);
+		void Cleanup();
+
+		nlohmann::json ProcessMarkerInfo(ARMarkerInfo &info);
+		void DrawMarker(const ARMarkerInfo &info, const FrameSize &size, unsigned char *buffer);
 	};
 }
