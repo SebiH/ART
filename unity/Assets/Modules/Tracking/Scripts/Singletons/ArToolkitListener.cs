@@ -13,6 +13,10 @@ namespace Assets.Modules.Tracking
 
         [Range(0, 1)]
         public float MinConfidence = 0.5f;
+        public bool UseFilters = true;
+        // for filter
+        [Range(0, 1000)]
+        public int MaxMissedFrames = 180;
 
         private ArToolkitProcessor _artkProcessor;
         private JsonOutput _artkOutput;
@@ -86,6 +90,13 @@ namespace Assets.Modules.Tracking
                 // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
                 MinConfidence = _artkProcessor.MinConfidence;
             }
+
+            if (UseFilters != _artkProcessor.UseFilters)
+            {
+                _artkProcessor.UseFilters = UseFilters;
+                // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
+                UseFilters = _artkProcessor.UseFilters;
+            }
         }
 
 
@@ -130,7 +141,7 @@ namespace Assets.Modules.Tracking
 
         protected override void UpdateMarkerSize(float size)
         {
-        _artkProcessor.MarkerSize = size;
+            _artkProcessor.MarkerSize = size;
         }
 
 

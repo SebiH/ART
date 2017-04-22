@@ -39,6 +39,8 @@ namespace Assets.Modules.Vision.Processors
         {
             public float min_confidence;
             public float marker_size;
+            public bool use_filters;
+            public int max_missed_frames;
         }
 
         private ArToolkitSettings _currentSettings;
@@ -58,6 +60,26 @@ namespace Assets.Modules.Vision.Processors
             set
             {
                 _currentSettings.marker_size = value;
+                UpdateProperties();
+            }
+        }
+
+        public bool UseFilters
+        {
+            get { return _currentSettings.use_filters; }
+            set
+            {
+                _currentSettings.use_filters = value;
+                UpdateProperties();
+            }
+        }
+
+        public int MaxMissedFrames
+        {
+            get { return _currentSettings.max_missed_frames; }
+            set
+            {
+                _currentSettings.max_missed_frames = value;
                 UpdateProperties();
             }
         }
