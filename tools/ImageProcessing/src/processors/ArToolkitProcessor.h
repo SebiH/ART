@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 #include <AR/ar.h>
 #include <AR/arFilterTransMat.h>
@@ -11,6 +12,16 @@ namespace ImageProcessing
 {
 	class ArToolkitProcessor : public Processor
 	{
+	private:
+		struct MarkerFilter {
+			int id = -1;
+			ARFilterTransMatInfo *trans = nullptr;
+			int missed_frames = 0;
+		};
+
+		std::vector<MarkerFilter> filters_l_;
+		std::vector<MarkerFilter> filters_r_;
+
 	private:
 		FrameSize initialized_size_;
 		bool is_first_initialization_ = true;
@@ -29,6 +40,8 @@ namespace ImageProcessing
 		// get/settable properties
 		double min_confidence_ = 0.5;
 		double marker_size_ = 0.5;
+		bool use_filters_ = true;
+		int max_missed_frames_ = 180;
 
 	public:
 		/*
@@ -38,7 +51,9 @@ namespace ImageProcessing
 			"calibration_left": "absolute/path/to/calib/file", // only in constructor
 			"calibration_right": "absolute/path/to/calib/file", // only in constructor
 			"min_confidence": 0.5,
-			"marker_size": 0.5
+			"marker_size": 0.5,
+			"use_filters": true,
+			"max_missed_frames": 10
 		}
 
 		 */
@@ -54,7 +69,7 @@ namespace ImageProcessing
 		bool SetupCamera(const std::string filename, const int sizeX, const int sizeY, ARParamLT **cparamLT_p);
 		void Cleanup();
 
-		nlohmann::json ProcessMarkerInfo(ARMarkerInfo &info);
+		nlohmann::json ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilter &filter);
 		void DrawMarker(const ARMarkerInfo &info, const FrameSize &size, unsigned char *buffer);
 	};
 }

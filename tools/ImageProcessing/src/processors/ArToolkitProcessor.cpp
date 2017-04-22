@@ -73,6 +73,16 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 		{ "markers_right", json::array() }
 	};
 
+	for (auto &filter : filters_l_)
+	{
+		filter.missed_frames++;
+	}
+
+	for (auto &filter : filters_r_)
+	{
+		filter.missed_frames++;
+	}
+
 	for (auto i = 0; i < marker_num_l; i++)
 	{
 		try
@@ -81,10 +91,11 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 			if (info.cf > min_confidence_)
 			{
-				auto pose = ProcessMarkerInfo(info);
+				auto pose = ProcessMarkerInfo(info, filters_l_[info.id]);
 				DrawMarker(info, frame->size, frame->buffer_left.get());
 				payload["markers_left"].push_back(pose);
 				marker_detected = true;
+				filters_l_[info.id].missed_frames = 0;
 			}
 		}
 		catch (const std::exception &e)
@@ -102,10 +113,11 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 		{
 			if (info.cf > min_confidence_)
 			{
-				auto pose = ProcessMarkerInfo(info);
+				auto pose = ProcessMarkerInfo(info, filters_r_[info.id]);
 				DrawMarker(info, frame->size, frame->buffer_right.get());
 				payload["markers_right"].push_back(pose);
 				marker_detected = true;
+				filters_r_[info.id].missed_frames = 0;
 			}
 		}
 		catch (const std::exception &e)
@@ -126,10 +138,15 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 }
 
 
-json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info)
+json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilter &filter)
 {
 	ARdouble transform_matrix[3][4];
 	arGetTransMatSquare(ar_3d_handle_l_, &info, marker_size_, transform_matrix);
+
+	if (use_filters_)
+	{
+		arFilterTransMat(filter.trans, transform_matrix, filter.missed_frames >= max_missed_frames_ ? 1 : 0);
+	}
 
 	return json{
 		{ "id", info.id },
@@ -218,6 +235,16 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 		throw std::exception("Error - See log.");
 	}
 
+	const int MAX_MARKERS = 512;
+	for (int i = 0; i < MAX_MARKERS; i++)
+	{
+		MarkerFilter mf;
+		mf.id = i;
+		mf.trans = arFilterTransMatInit(90, 15);
+		filters_l_.push_back(mf);
+		filters_r_.push_back(mf);
+	}
+
 
 	AR_PIXEL_FORMAT format;
 
@@ -296,7 +323,9 @@ nlohmann::json ArToolkitProcessor::GetProperties()
 {
 	return json{
 		{ "min_confidence", min_confidence_ },
-		{ "marker_size", marker_size_ }
+		{ "marker_size", marker_size_ },
+		{ "use_filters", use_filters_ },
+		{ "max_missed_frames", max_missed_frames_ }
 	};
 }
 
@@ -312,5 +341,15 @@ void ArToolkitProcessor::SetProperties(const nlohmann::json &config)
 	if (config.count("marker_size"))
 	{
 		marker_size_ = config["marker_size"].get<double>();
+	}
+
+	if (config.count("use_filters"))
+	{
+		use_filters_ = config["use_filters"].get<bool>();
+	}
+
+	if (config.count("max_missed_frames"))
+	{
+		use_filters_ = config["max_missed_frames"].get<bool>();
 	}
 }
