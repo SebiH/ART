@@ -194,19 +194,6 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 		throw std::exception("Unable to setup right camera");
 	}
 
-	if (ar_pattern_handle_ != nullptr)
-	{
-		// already initialized this part
-		return;
-	}
-
-	ar_pattern_handle_ = arPattCreateHandle();
-	if (!ar_pattern_handle_)
-	{
-		DebugLog("Error creating pattern handle.");
-		throw std::exception("Error - See log.");
-	}
-
 	ar_handle_l_ = arCreateHandle(c_param_lt_l_);
 	ar_handle_r_ = arCreateHandle(c_param_lt_r_);
 	if (!ar_handle_l_ || !ar_handle_r_)
@@ -215,9 +202,6 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 		throw std::exception("Error - See log.");
 	}
 
-
-	arPattAttach(ar_handle_l_, ar_pattern_handle_);
-	arPattAttach(ar_handle_r_, ar_pattern_handle_);
 
 	int pattern_error = 0;
 	AR_MATRIX_CODE_TYPE matrixType = AR_MATRIX_CODE_4x4_BCH_13_9_3;
@@ -299,7 +283,6 @@ void ArToolkitProcessor::Cleanup()
 {
 	arPattDetach(ar_handle_l_);
 	arPattDetach(ar_handle_r_);
-	arPattDeleteHandle(ar_pattern_handle_);
 	ar3DDeleteHandle(&ar_3d_handle_l_);
 	ar3DDeleteHandle(&ar_3d_handle_r_);
 	arDeleteHandle(ar_handle_l_);

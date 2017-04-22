@@ -18,7 +18,6 @@ namespace ImageProcessing
 		std::string calib_path_left_;
 		std::string calib_path_right_;
 
-		ARPattHandle *ar_pattern_handle_ = nullptr;
 		ARParamLT *c_param_lt_l_ = nullptr;
 		ARParamLT *c_param_lt_r_ = nullptr;
 		ARHandle *ar_handle_l_ = nullptr;
