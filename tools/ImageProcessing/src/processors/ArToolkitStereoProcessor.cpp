@@ -50,6 +50,11 @@ std::shared_ptr<const FrameData> ArToolkitStereoProcessor::Process(const std::sh
 		return frame;
 	}
 
+	for (int i = 0; i < MAX_MARKER_ID; i++)
+	{
+		filters_[i].missed_frames++;
+	}
+
 	// Get detected markers
 	auto marker_info_l = arGetMarker(ar_handle_l_);
 	auto marker_info_r = arGetMarker(ar_handle_r_);
@@ -133,11 +138,13 @@ json ArToolkitStereoProcessor::ProcessMarkerInfo(ARMarkerInfo &marker_l, ARMarke
 	auto match_error = arGetStereoMatchingErrorSquare(ar_3d_stereo_handle_, &marker_l, &marker_r);
 	double trans_error = arGetTransMatSquareStereo(ar_3d_stereo_handle_, &marker_l, &marker_r, marker_size_, transform_matrix);
 
-	const auto filter = filters_[marker_l.id];
+	auto filter = filters_[marker_l.id];
 	if (use_filters_)
 	{
 		arFilterTransMat(filter.ftmi, transform_matrix, filter.missed_frames >= max_missed_frames_ ? 1 : 0);
 	}
+
+	filter.missed_frames = 0;
 
 	ARdouble mat[16];
 	// mm (artoolkit) -> m (unity)
