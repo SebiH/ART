@@ -160,7 +160,7 @@ void ArToolkitStereoCalibrator::Calibrate(const std::shared_ptr<CameraSourceInte
 		}
 
 		// show preview
-		cv::putText(img_left, std::to_string(capturedImageNum) + std::string("/") + std::to_string(calib_image_count), cv::Point(50, 50), cv::FONT_HERSHEY_COMPLEX, 1.0, cv::Scalar(0, 0, 0, 1));
+		cv::putText(img_left, std::to_string(capturedImageNum) + std::string("/") + std::to_string(calib_image_count), cv::Point(50, 50), cv::FONT_HERSHEY_COMPLEX, 1.0, cv::Scalar(255, 0, 0, 255));
 		auto fd = std::make_shared<FrameData>(frame_counter++, buffer_left, buffer_right, frame_size);
 		output.RegisterResult(fd);
 		output.WriteResult();
