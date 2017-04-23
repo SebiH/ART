@@ -129,12 +129,9 @@ static void arglCameraViewRH(const ARdouble para[3][4], ARdouble m_modelview[16]
 
 json ArToolkitStereoProcessor::ProcessMarkerInfo(ARMarkerInfo &marker_l, ARMarkerInfo &marker_r)
 {
-	auto err = arGetStereoMatchingErrorSquare(ar_3d_stereo_handle_, &marker_l, &marker_r);
-	DebugLog(std::string("Stereo Matching Error Square for id ") + std::to_string(marker_l.id) + std::string(": ") + std::to_string(err));
-
 	ARdouble transform_matrix[3][4];
-	err = arGetTransMatSquareStereo(ar_3d_stereo_handle_, &marker_l, &marker_r, marker_size_, transform_matrix);
-	DebugLog(std::string("TransformationMatrix Error for id ") + std::to_string(marker_l.id) + std::string(": ") + std::to_string(err));
+	auto match_error = arGetStereoMatchingErrorSquare(ar_3d_stereo_handle_, &marker_l, &marker_r);
+	double trans_error = arGetTransMatSquareStereo(ar_3d_stereo_handle_, &marker_l, &marker_r, marker_size_, transform_matrix);
 
 	const auto filter = filters_[marker_l.id];
 	if (use_filters_)
@@ -150,6 +147,8 @@ json ArToolkitStereoProcessor::ProcessMarkerInfo(ARMarkerInfo &marker_l, ARMarke
 	return json{
 		{ "id", marker_l.id },
 		{ "confidence", std::min(marker_l.cfMatrix, marker_r.cfMatrix) },
+		{ "match_error", match_error },
+		{ "trans_error", trans_error },
 		{ "transformation_matrix",{
 			mat[0], mat[1], mat[2], mat[3],
 			mat[4], mat[5], mat[6], mat[7],

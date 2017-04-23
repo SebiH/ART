@@ -175,6 +175,8 @@ namespace Assets.Modules.Tracking
         {
             public int id;
             public float confidence;
+            public float match_error;
+            public float trans_error;
             public float[] transformation_matrix;
         }
 
