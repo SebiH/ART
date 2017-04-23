@@ -12,6 +12,7 @@ ArToolkitStereoProcessor::ArToolkitStereoProcessor(std::string config)
 
 	calib_path_left_ = json_config["calibration_left"].get<std::string>();
 	calib_path_right_ = json_config["calibration_right"].get<std::string>();
+	calib_path_stereo_ = json_config["calibration_stereo"].get<std::string>();
 
 	SetProperties(json_config);
 }
@@ -73,76 +74,87 @@ std::shared_ptr<const FrameData> ArToolkitStereoProcessor::Process(const std::sh
 		}
 	}
 
-	for (const auto &stereo_marker : stereo_markers)
-	{
-		auto marker_l = std::get<0>(stereo_marker);
-		auto marker_r = std::get<1>(stereo_marker);
-		auto err = arGetStereoMatchingErrorSquare(ar_3d_stereo_handle_, &marker_l, &marker_r);
-		DebugLog(std::string("Stereo Matching Error Square for id ") + std::to_string(marker_l.id) + std::string(": ") + std::to_string(err));
-
-		err = arGetTransMatSquareStereo(ar_3d_stereo_handle_, &marker_l, &marker_r, marker_size_, trans_l2r_);
-	}
-
-	bool marker_detected = false;
+	bool marker_detected = stereo_markers.size() > 0;
 	json payload{
 		{ "markers", json::array() },
 	};
 
-	for (auto i = 0; i < marker_num_l; i++)
-	{
-		try
-		{
-			auto info = marker_info_l[i];
 
-			if (info.cf > min_confidence_)
-			{
-				auto pose = ProcessMarkerInfo(info);
-				DrawMarker(info, frame->size, frame->buffer_left.get());
-				payload["markers_left"].push_back(pose);
-				marker_detected = true;
-			}
-		}
-		catch (const std::exception &e)
-		{
-			DebugLog(std::string("Failed to process marker: ") + e.what());
-		}
+	for (const auto &stereo_marker : stereo_markers)
+	{
+		auto marker_l = std::get<0>(stereo_marker);
+		auto marker_r = std::get<1>(stereo_marker);
+		auto pose = ProcessMarkerInfo(marker_l, marker_r);
+		DrawMarker(marker_l, frame->size, frame->buffer_left.get());
+		DrawMarker(marker_r, frame->size, frame->buffer_right.get());
+		payload["markers"].push_back(pose);
+	}
+
+	if (marker_detected)
+	{
+		return std::make_shared<const JsonFrameData>(frame.get(), payload);
+	}
+	else
+	{
+		return frame;
+	}
+}
+
+// taken from ARToolkit
+static void arglCameraViewRH(const ARdouble para[3][4], ARdouble m_modelview[16], const ARdouble scale)
+{
+	m_modelview[0 + 0 * 4] = para[0][0]; // R1C1
+	m_modelview[0 + 1 * 4] = para[0][1]; // R1C2
+	m_modelview[0 + 2 * 4] = para[0][2];
+	m_modelview[0 + 3 * 4] = para[0][3];
+	m_modelview[1 + 0 * 4] = -para[1][0]; // R2
+	m_modelview[1 + 1 * 4] = -para[1][1];
+	m_modelview[1 + 2 * 4] = -para[1][2];
+	m_modelview[1 + 3 * 4] = -para[1][3];
+	m_modelview[2 + 0 * 4] = -para[2][0]; // R3
+	m_modelview[2 + 1 * 4] = -para[2][1];
+	m_modelview[2 + 2 * 4] = -para[2][2];
+	m_modelview[2 + 3 * 4] = -para[2][3];
+	m_modelview[3 + 0 * 4] = 0.0;
+	m_modelview[3 + 1 * 4] = 0.0;
+	m_modelview[3 + 2 * 4] = 0.0;
+	m_modelview[3 + 3 * 4] = 1.0;
+	if (scale != 0.0) {
+		m_modelview[12] *= scale;
+		m_modelview[13] *= scale;
+		m_modelview[14] *= scale;
 	}
 }
 
 
-json ArToolkitStereoProcessor::ProcessMarkerInfo(ARMarkerInfo & info)
+json ArToolkitStereoProcessor::ProcessMarkerInfo(ARMarkerInfo &marker_l, ARMarkerInfo &marker_r)
 {
+	auto err = arGetStereoMatchingErrorSquare(ar_3d_stereo_handle_, &marker_l, &marker_r);
+	DebugLog(std::string("Stereo Matching Error Square for id ") + std::to_string(marker_l.id) + std::string(": ") + std::to_string(err));
+
 	ARdouble transform_matrix[3][4];
-	arGetTransMatSquare(ar_3d_handle_l_, &info, marker_size_, transform_matrix);
+	err = arGetTransMatSquareStereo(ar_3d_stereo_handle_, &marker_l, &marker_r, marker_size_, transform_matrix);
+	DebugLog(std::string("TransformationMatrix Error for id ") + std::to_string(marker_l.id) + std::string(": ") + std::to_string(err));
+
+	const auto filter = filters_[marker_l.id];
+	if (use_filters_)
+	{
+		arFilterTransMat(filter.ftmi, transform_matrix, filter.missed_frames >= max_missed_frames_ ? 1 : 0);
+	}
+
+	ARdouble mat[16];
+	// mm (artoolkit) -> m (unity)
+	const double scale = 0.001;
+	arglCameraViewRH(transform_matrix, mat, scale);
 
 	return json{
-		{ "id", info.id },
-		{ "confidence", info.cf },
-		{ "pos", { info.pos[0], info.pos[1] }},
-		{ "corners",
-			{
-				{"topleft", { info.vertex[0][0], info.vertex[0][1] } },
-				{"topright", { info.vertex[1][0], info.vertex[1][1] } },
-				{"bottomleft", { info.vertex[2][0], info.vertex[2][1] } },
-				{"bottomright", { info.vertex[3][0], info.vertex[3][1] } },
-			}
-		},
-		{ "transform_matrix", {
-				{"m00", transform_matrix[0][0]},
-				{"m01", transform_matrix[0][1]},
-				{"m02", transform_matrix[0][2]},
-				{"m03", transform_matrix[0][3]},
-
-				{"m10", transform_matrix[1][0]},
-				{"m11", transform_matrix[1][1]},
-				{"m12", transform_matrix[1][2]},
-				{"m13", transform_matrix[1][3]},
-
-				{"m20", transform_matrix[2][0]},
-				{"m21", transform_matrix[2][1]},
-				{"m22", transform_matrix[2][2]},
-				{"m23", transform_matrix[2][3]}
-			}
+		{ "id", marker_l.id },
+		{ "confidence", std::min(marker_l.cfMatrix, marker_r.cfMatrix) },
+		{ "transformation_matrix",{
+			mat[0], mat[1], mat[2], mat[3],
+			mat[4], mat[5], mat[6], mat[7],
+			mat[8], mat[9], mat[10], mat[11],
+			mat[12], mat[13], mat[14], mat[15] }
 		}
 	};
 }
@@ -186,13 +198,20 @@ void ArToolkitStereoProcessor::Initialize(const int sizeX, const int sizeY, cons
 
 
 	int pattern_error = 0;
-	AR_MATRIX_CODE_TYPE matrixType = AR_MATRIX_CODE_4x4_BCH_13_9_3;
-	pattern_error -= arSetMatrixCodeType(ar_handle_l_, matrixType);
+	pattern_error -= arSetMatrixCodeType(ar_handle_l_, MARKER_TYPE);
 	pattern_error -= arSetPatternDetectionMode(ar_handle_l_, AR_MATRIX_CODE_DETECTION);
-	pattern_error -= arSetMatrixCodeType(ar_handle_r_, matrixType);
+	pattern_error -= arSetMatrixCodeType(ar_handle_r_, MARKER_TYPE);
 	pattern_error -= arSetPatternDetectionMode(ar_handle_r_, AR_MATRIX_CODE_DETECTION);
-	pattern_error -= arSetBorderSize(ar_handle_l_, 0.1f); // Default = 0.25f
-	pattern_error -= arSetBorderSize(ar_handle_r_, 0.1f); // Default = 0.25f
+	pattern_error -= arSetBorderSize(ar_handle_l_, MARKER_BORDER_SIZE); // Default = 0.25f
+	pattern_error -= arSetBorderSize(ar_handle_r_, MARKER_BORDER_SIZE); // Default = 0.25f
+
+	for (int i = 0; i < MAX_MARKER_ID; i++)
+	{
+		MarkerFilter mf;
+		mf.id = i;
+		mf.ftmi = arFilterTransMatInit(90, 15);
+		filters_.push_back(mf);
+	}
 
 	if (pattern_error < 0)
 	{
@@ -222,7 +241,7 @@ void ArToolkitStereoProcessor::Initialize(const int sizeX, const int sizeY, cons
 	}
 
 	// Stereo handle
-	if (arParamLoadExt(stereo_calib_path_.c_str(), trans_l2r_) < 0)
+	if (arParamLoadExt(calib_path_stereo_.c_str(), trans_l2r_) < 0)
 	{
 		DebugLog("Error loading stereo calibration");
 		throw std::exception("Error - See log.");

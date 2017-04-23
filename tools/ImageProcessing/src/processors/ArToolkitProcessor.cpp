@@ -167,7 +167,7 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilte
 
 	if (use_filters_)
 	{
-		arFilterTransMat(filter.trans, transform_matrix, filter.missed_frames >= max_missed_frames_ ? 1 : 0);
+		arFilterTransMat(filter.ftmi, transform_matrix, filter.missed_frames >= max_missed_frames_ ? 1 : 0);
 	}
 
 	ARdouble mat[16];
@@ -245,7 +245,7 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 	{
 		MarkerFilter mf;
 		mf.id = i;
-		mf.trans = arFilterTransMatInit(90, 15);
+		mf.ftmi = arFilterTransMatInit(90, 15);
 		filters_l_.push_back(mf);
 		filters_r_.push_back(mf);
 	}

@@ -15,7 +15,7 @@ namespace ImageProcessing
 	private:
 		struct MarkerFilter {
 			int id = -1;
-			ARFilterTransMatInfo *trans = nullptr;
+			ARFilterTransMatInfo *ftmi = nullptr;
 			int missed_frames = 0;
 		};
 
