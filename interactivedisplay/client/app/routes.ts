@@ -2,6 +2,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {
     AdminPanelComponent,
     AppComponent,
+    MarkerTestComponent,
     MenuComponent,
     MeasurementComponent,
     SurfaceComponent
@@ -23,6 +24,10 @@ const routes: Routes = [
     {
         path: 'graph',
         component: SurfaceComponent
+    },
+    {
+        path: 'markers',
+        component: MarkerTestComponent
     },
     {
         path: '',

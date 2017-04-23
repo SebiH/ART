@@ -16,5 +16,6 @@ export * from './graph-overview-chart/graph-overview-chart';
 export * from './graph-section/graph-section';
 export * from './marker/marker.component';
 export * from './measurement/measurement';
+export * from './marker-test/marker-test.component';
 export * from './menu/menu';
 export * from './surface/surface.component';
