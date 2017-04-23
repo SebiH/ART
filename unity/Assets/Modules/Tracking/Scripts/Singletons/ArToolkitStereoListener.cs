@@ -24,6 +24,9 @@ namespace Assets.Modules.Tracking
         private Queue _currentOutput;
         private readonly Quaternion _rotationAdjustment = Quaternion.Euler(90, 0, 0);
 
+        public float MinMatchError = 0;
+        public float MinTransformationError = 0;
+
         public ArToolkitStereoListener()
         {
             _currentOutput = Queue.Synchronized(new Queue());
@@ -72,6 +75,9 @@ namespace Assets.Modules.Tracking
                     output = (ArToolkitOutput)_currentOutput.Dequeue();
                 }
 
+                MinTransformationError = float.MaxValue;
+                MinMatchError = float.MaxValue;
+
                 foreach (var marker in output.markers)
                 {
                     ProcessMarker(marker);
@@ -104,6 +110,9 @@ namespace Assets.Modules.Tracking
         {
             Matrix4x4 matrixRaw = MatrixFromFloatArray(marker.transformation_matrix);
             var transformMatrix = LHMatrixFromRHMatrix(matrixRaw);
+
+            MinMatchError = Mathf.Min(marker.match_error, MinMatchError);
+            MinTransformationError = Mathf.Min(marker.trans_error, MinTransformationError);
 
             OnNewPoseDetected(new MarkerPose
             {
@@ -176,6 +185,8 @@ namespace Assets.Modules.Tracking
             public int id;
             public float confidence;
             public float[] transformation_matrix;
+            public float match_error;
+            public float trans_error;
         }
 
         [Serializable]
