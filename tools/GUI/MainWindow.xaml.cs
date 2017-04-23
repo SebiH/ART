@@ -66,8 +66,10 @@ namespace GUI
                 dynamic config = new JObject();
                 config.calibration_left = Path.Combine(dataDir, "calib_ovrvision_left.dat");
                 config.calibration_right = Path.Combine(dataDir, "calib_ovrvision_right.dat");
+                config.calibration_stereo = Path.Combine(dataDir, "ovrvision_transL2R.dat");
+                config.marker_size = 24.0;
 
-                int processor = ImageProcessing.AddArToolkitProcessor(pipeline, config.ToString());
+                int processor = ImageProcessing.AddArToolkitStereoProcessor(pipeline, config.ToString());
 
                 char keyPressed;
                 int counter = 0;
