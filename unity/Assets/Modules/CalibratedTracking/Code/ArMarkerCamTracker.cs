@@ -34,6 +34,7 @@ namespace Assets.Modules.CalibratedTracking
             // weighted average - by marker confidence
             float x = 0, y = 0, z = 0;
             float qx = 0, qy = 0, qz = 0, qw = 0;
+            float totalConfidence = 0;
 
             foreach (var pose in poses)
             {
@@ -42,23 +43,21 @@ namespace Assets.Modules.CalibratedTracking
                 y += conf * pose.DetectedCameraPosition.y;
                 z += conf * pose.DetectedCameraPosition.z;
 
-                qx += conf * pose.DetectedCameraRotation.x;
-                qy += conf * pose.DetectedCameraRotation.y;
-                qz += conf * pose.DetectedCameraRotation.z;
-                qw += conf * pose.DetectedCameraRotation.w;
+                qx += pose.DetectedCameraRotation.x;
+                qy += pose.DetectedCameraRotation.y;
+                qz += pose.DetectedCameraRotation.z;
+                qw += pose.DetectedCameraRotation.w;
+
+                totalConfidence += conf;
             }
 
             float k = 1.0f / Mathf.Sqrt(qx * qx + qy * qy + qz * qz + qw * qw);
             var rot = new Quaternion(qx * k, qy * k, qz * k, qw * k);
-            var pos = new Vector3(x, y, z) / poses.Count();
+            var pos = new Vector3(x, y, z) / totalConfidence;
 
             if (UseAverages && hadPose)
             {
-                qx = (AverageWeight * _rotation.x + (1 - AverageWeight) * rot.x);
-                qy = (AverageWeight * _rotation.y + (1 - AverageWeight) * rot.y);
-                qz = (AverageWeight * _rotation.z + (1 - AverageWeight) * rot.z);
-                qw = (AverageWeight * _rotation.w + (1 - AverageWeight) * rot.w);
-                _rotation = new Quaternion(qx, qy, qz, qw);
+                _rotation = Quaternion.Slerp(_rotation, rot, AverageWeight);
                 _position = AverageWeight * _position + (1 - AverageWeight) * pos;
             }
             else
