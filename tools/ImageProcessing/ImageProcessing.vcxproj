@@ -126,6 +126,7 @@
     <ClCompile Include="src\tools\FisheyeCalibrator.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
     <ClCompile Include="src\utils\Quaternion.cpp" />
+    <ClCompile Include="src\tools\StandardCalibrator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\aruco_calibration\aruco_calibration_board_a4.h" />
@@ -161,6 +162,7 @@
     <ClInclude Include="src\utils\Quaternion.h" />
     <ClInclude Include="src\utils\UID.h" />
     <ClInclude Include="src\utils\UIDGenerator.h" />
+    <ClInclude Include="src\tools\StandardCalibrator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Modules.def" />
