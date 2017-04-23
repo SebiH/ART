@@ -171,7 +171,9 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilte
 	}
 
 	ARdouble mat[16];
-	arglCameraViewRH(transform_matrix, mat, 1);
+	// mm (artoolkit) -> m (unity)
+	const double scale = 0.001;
+	arglCameraViewRH(transform_matrix, mat, scale);
 
 	return json{
 		{ "id", info.id },

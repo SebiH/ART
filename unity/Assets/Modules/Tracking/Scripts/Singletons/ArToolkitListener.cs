@@ -159,7 +159,8 @@ namespace Assets.Modules.Tracking
 
         protected override void UpdateMarkerSize(float size)
         {
-            _artkProcessor.MarkerSize = size;
+            // artoolkit uses mm, size is given in cm
+            _artkProcessor.MarkerSize = size * 1000;
         }
 
         public override float GetMinConfidence()
