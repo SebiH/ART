@@ -108,6 +108,9 @@
     <ClCompile Include="src\tools\ArToolkitStereoCalibrator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tools\FisheyeCalibrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h">
@@ -204,6 +207,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\tools\ArToolkitStereoCalibrator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tools\FisheyeCalibrator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
