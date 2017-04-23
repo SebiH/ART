@@ -31,7 +31,7 @@ namespace Assets.Modules.Calibration
             marker.Size = _markerSize;
             marker.transform.parent = transform;
             marker.transform.localPosition = Vector3.zero;
-            marker.transform.localRotation = Quaternion.identity;
+            marker.transform.localRotation = Quaternion.Euler(90, 0, 0);
             marker.transform.localScale = Vector3.one;
             marker.name = "Marker_" + id;
 

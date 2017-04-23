@@ -92,10 +92,10 @@ namespace Assets.Modules.Calibration
             Gizmos.DrawWireSphere(transform.position, 0.001f);
 
             // Draw marker contour
-            var tl = transform.position + (transform.rotation * new Vector3(-Size / 2, 0, Size / 2));
-            var tr = transform.position + (transform.rotation * new Vector3(Size / 2, 0, Size / 2));
-            var bl = transform.position + (transform.rotation * new Vector3(-Size / 2, 0, -Size / 2));
-            var br = transform.position + (transform.rotation * new Vector3(Size / 2, 0, -Size / 2));
+            var tl = transform.position + (transform.rotation * new Vector3(-Size / 2, Size / 2, 0));
+            var tr = transform.position + (transform.rotation * new Vector3(Size / 2, Size / 2, 0));
+            var bl = transform.position + (transform.rotation * new Vector3(-Size / 2, -Size / 2, 0));
+            var br = transform.position + (transform.rotation * new Vector3(Size / 2, -Size / 2, 0));
 
             var minConfidence = ArMarkerTracker.Instance.GetMinConfidence();
             Gizmos.color = Color.Lerp(Color.red, Color.green, (Confidence - minConfidence) / (1.0f - minConfidence));

@@ -134,6 +134,32 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 }
 
 
+// taken from ARToolkit
+static void arglCameraViewRH(const ARdouble para[3][4], ARdouble m_modelview[16], const ARdouble scale)
+{
+	m_modelview[0 + 0 * 4] = para[0][0]; // R1C1
+	m_modelview[0 + 1 * 4] = para[0][1]; // R1C2
+	m_modelview[0 + 2 * 4] = para[0][2];
+	m_modelview[0 + 3 * 4] = para[0][3];
+	m_modelview[1 + 0 * 4] = -para[1][0]; // R2
+	m_modelview[1 + 1 * 4] = -para[1][1];
+	m_modelview[1 + 2 * 4] = -para[1][2];
+	m_modelview[1 + 3 * 4] = -para[1][3];
+	m_modelview[2 + 0 * 4] = -para[2][0]; // R3
+	m_modelview[2 + 1 * 4] = -para[2][1];
+	m_modelview[2 + 2 * 4] = -para[2][2];
+	m_modelview[2 + 3 * 4] = -para[2][3];
+	m_modelview[3 + 0 * 4] = 0.0;
+	m_modelview[3 + 1 * 4] = 0.0;
+	m_modelview[3 + 2 * 4] = 0.0;
+	m_modelview[3 + 3 * 4] = 1.0;
+	if (scale != 0.0) {
+		m_modelview[12] *= scale;
+		m_modelview[13] *= scale;
+		m_modelview[14] *= scale;
+	}
+}
+
 json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilter &filter)
 {
 	ARdouble transform_matrix[3][4];
@@ -143,6 +169,9 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilte
 	{
 		arFilterTransMat(filter.trans, transform_matrix, filter.missed_frames >= max_missed_frames_ ? 1 : 0);
 	}
+
+	ARdouble mat[16];
+	arglCameraViewRH(transform_matrix, mat, 1);
 
 	return json{
 		{ "id", info.id },
@@ -172,7 +201,8 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilte
 				{"m22", transform_matrix[2][2]},
 				{"m23", transform_matrix[2][3]}
 			}
-		}
+		},
+		{ "mat", { mat[0], mat[1], mat[2], mat[3], mat[4], mat[5], mat[6], mat[7], mat[8], mat[9], mat[10], mat[11], mat[12], mat[13], mat[14], mat[15] } }
 	};
 }
 
