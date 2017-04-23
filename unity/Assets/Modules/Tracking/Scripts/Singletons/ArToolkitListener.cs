@@ -102,43 +102,15 @@ namespace Assets.Modules.Tracking
 
         private void ProcessMarker(MarkerInfo marker)
         {
-            Matrix4x4 matrixRaw = MatrixFromFloatArray(marker.mat);
+            Matrix4x4 matrixRaw = MatrixFromFloatArray(marker.transformation_matrix);
             var transformMatrix = LHMatrixFromRHMatrix(matrixRaw);
-            //var pose = marker.transform_matrix;
-            //var transformMatrix = new Matrix4x4();
-
-            //// convert rhs to lhs
-            //transformMatrix.m00 = pose.m00;
-            //transformMatrix.m01 = pose.m01;
-            //transformMatrix.m02 = -pose.m02;
-            //transformMatrix.m03 = pose.m03;
-
-            //transformMatrix.m10 = pose.m10;
-            //transformMatrix.m11 = pose.m11;
-            //transformMatrix.m12 = -pose.m12;
-            //transformMatrix.m13 = pose.m13;
-
-            //transformMatrix.m20 = -pose.m20;
-            //transformMatrix.m21 = -pose.m21;
-            //transformMatrix.m22 = pose.m22;
-            //transformMatrix.m23 = -pose.m23;
-
-            //transformMatrix.m30 = 0;
-            //transformMatrix.m31 = 0;
-            //transformMatrix.m32 = -0;
-            //transformMatrix.m33 = 1;
-
-            var pos = transformMatrix.GetPosition();
-            //pos.y = -pos.y;
-            var rot = transformMatrix.GetRotation();
-            //rot = rot * _rotationAdjustment;
 
             OnNewPoseDetected(new MarkerPose
             {
                 Id = marker.id,
                 Confidence = marker.confidence,
-                Position = pos,
-                Rotation = rot
+                Position = transformMatrix.GetPosition(),
+                Rotation = transformMatrix.GetRotation()
             });
         }
 
@@ -196,35 +168,13 @@ namespace Assets.Modules.Tracking
         }
 
 
-
-
         #region JSON Message Content
-        [Serializable]
-        private struct PoseMatrix
-        {
-            public float m00, m01, m02, m03;
-            public float m10, m11, m12, m13;
-            public float m20, m21, m22, m23;
-        }
-
-        [Serializable]
-        private struct Corners
-        {
-            public double[] topleft;
-            public double[] topright;
-            public double[] bottomleft;
-            public double[] bottomright;
-        }
-
         [Serializable]
         private struct MarkerInfo
         {
             public int id;
             public float confidence;
-            public double[] pos;
-            public Corners corners;
-            public PoseMatrix transform_matrix;
-            public float[] mat;
+            public float[] transformation_matrix;
         }
 
         [Serializable]

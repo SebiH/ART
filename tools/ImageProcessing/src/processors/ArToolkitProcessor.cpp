@@ -176,33 +176,12 @@ json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilte
 	return json{
 		{ "id", info.id },
 		{ "confidence", info.cfMatrix },
-		{ "pos", { info.pos[0], info.pos[1] }},
-		{ "corners",
-			{
-				{"topleft", { info.vertex[0][0], info.vertex[0][1] } },
-				{"topright", { info.vertex[1][0], info.vertex[1][1] } },
-				{"bottomleft", { info.vertex[2][0], info.vertex[2][1] } },
-				{"bottomright", { info.vertex[3][0], info.vertex[3][1] } },
-			}
-		},
-		{ "transform_matrix", {
-				{"m00", transform_matrix[0][0]},
-				{"m01", transform_matrix[0][1]},
-				{"m02", transform_matrix[0][2]},
-				{"m03", transform_matrix[0][3]},
-
-				{"m10", transform_matrix[1][0]},
-				{"m11", transform_matrix[1][1]},
-				{"m12", transform_matrix[1][2]},
-				{"m13", transform_matrix[1][3]},
-
-				{"m20", transform_matrix[2][0]},
-				{"m21", transform_matrix[2][1]},
-				{"m22", transform_matrix[2][2]},
-				{"m23", transform_matrix[2][3]}
-			}
-		},
-		{ "mat", { mat[0], mat[1], mat[2], mat[3], mat[4], mat[5], mat[6], mat[7], mat[8], mat[9], mat[10], mat[11], mat[12], mat[13], mat[14], mat[15] } }
+		{ "transformation_matrix", {
+			mat[0], mat[1], mat[2], mat[3],
+			mat[4], mat[5], mat[6], mat[7],
+			mat[8], mat[9], mat[10], mat[11],
+			mat[12], mat[13], mat[14], mat[15] }
+		}
 	};
 }
 
