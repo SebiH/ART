@@ -314,7 +314,9 @@ json ArToolkitStereoProcessor::GetProperties()
 {
 	return json{
 		{ "min_confidence", min_confidence_ },
-		{ "marker_size", marker_size_ }
+		{ "marker_size", marker_size_ },
+		{ "use_filters", use_filters_ },
+		{ "max_missed_frames", max_missed_frames_ }
 	};
 }
 
@@ -328,5 +330,15 @@ void ArToolkitStereoProcessor::SetProperties(const json & config)
 	if (config.count("marker_size"))
 	{
 		marker_size_ = config["marker_size"].get<double>();
+	}
+
+	if (config.count("use_filters"))
+	{
+		use_filters_ = config["use_filters"].get<bool>();
+	}
+
+	if (config.count("max_missed_frames"))
+	{
+		use_filters_ = config["max_missed_frames"].get<int>();
 	}
 }
