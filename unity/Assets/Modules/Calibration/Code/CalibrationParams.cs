@@ -5,7 +5,8 @@ namespace Assets.Modules.Calibration
     public static class CalibrationParams
     {
         private static readonly int STABLE_SAMPLE_COUNT = 100;
-        private static readonly float AVG_WEIGHT = 0.95f;
+        private static readonly float AVG_POS_WEIGHT = 0.95f;
+        private static readonly float AVG_ROT_WEIGHT = 0.3f;
 
         public static void Reset()
         {
@@ -56,13 +57,7 @@ namespace Assets.Modules.Calibration
             }
             else
             {
-                // use decaying moving average to discard old values over time
-                float x = (AVG_WEIGHT * _rotationOffset.x + (1 - AVG_WEIGHT) * currentValue.x);
-                float y = (AVG_WEIGHT * _rotationOffset.y + (1 - AVG_WEIGHT) * currentValue.y);
-                float z = (AVG_WEIGHT * _rotationOffset.z + (1 - AVG_WEIGHT) * currentValue.z);
-                float w = (AVG_WEIGHT * _rotationOffset.w + (1 - AVG_WEIGHT) * currentValue.w);
-
-                _rotationOffset = new Quaternion(x, y, z, w);
+                _rotationOffset = Quaternion.Slerp(_rotationOffset, currentValue, AVG_ROT_WEIGHT);
             }
 
             LastCalibrationTime = Time.unscaledTime;
@@ -113,9 +108,9 @@ namespace Assets.Modules.Calibration
             else
             {
                 // use decaying moving average to discard old values over time
-                float x = (AVG_WEIGHT * _positionOffset.x + (1 - AVG_WEIGHT) * currentValue.x);
-                float y = (AVG_WEIGHT * _positionOffset.y + (1 - AVG_WEIGHT) * currentValue.y);
-                float z = (AVG_WEIGHT * _positionOffset.z + (1 - AVG_WEIGHT) * currentValue.z);
+                float x = (AVG_POS_WEIGHT * _positionOffset.x + (1 - AVG_POS_WEIGHT) * currentValue.x);
+                float y = (AVG_POS_WEIGHT * _positionOffset.y + (1 - AVG_POS_WEIGHT) * currentValue.y);
+                float z = (AVG_POS_WEIGHT * _positionOffset.z + (1 - AVG_POS_WEIGHT) * currentValue.z);
 
                 _positionOffset = new Vector3(x, y, z);
             }
