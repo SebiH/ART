@@ -3,9 +3,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Tracking
 {
-    //[CustomEditor(typeof(ArToolkitListener))]
-    [CustomEditor(typeof(ArToolkitStereoListener))]
-    //[CustomEditor(typeof(ArucoMarkerTracker))]
+    [CustomEditor(typeof(ArMarkerTracker), true)]
     public class ArMarkerTrackerEditor : Editor
     {
         private string _arMarkerSize = "10";
