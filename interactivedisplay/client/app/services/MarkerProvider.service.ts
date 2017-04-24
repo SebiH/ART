@@ -1,13 +1,13 @@
 import { Injectable, HostListener, OnInit } from '@angular/core';
 import { SocketIO } from './SocketIO.service';
-import { Marker } from '../models/index';
+import { Marker, MARKER_COUNT } from '../models/index';
 
 import * as _ from 'lodash';
 
 @Injectable()
 export class MarkerProvider {
     private markers: Marker[] = [];
-    private idCounter: number = 0;
+    private isMarkerUsed: boolean[] = [];
 
     private delayedMarkerUpdate: Function;
     private markerUpdateQueue: {[id: number]: any} = {};
@@ -17,6 +17,10 @@ export class MarkerProvider {
         window['markers'] = this.markers;
         this.delayedMarkerUpdate = _.debounce(this.updateMarkers, 0);
         this.socketio.sendMessage('marker-clear', null);
+
+        for (let i = 0; i < MARKER_COUNT; i++) {
+            this.isMarkerUsed.push(false);
+        }
     }
 
     public getMarkers(): Marker[] {
@@ -24,7 +28,7 @@ export class MarkerProvider {
     }
 
     public createMarker(): Marker {
-        let marker: Marker = new Marker(this.idCounter++);
+        let marker: Marker = new Marker(this.getFreeMarkerId());
         this.markers.push(marker);
         this.socketio.sendMessage('+marker', marker.toJson());
         marker.onChange
@@ -34,9 +38,12 @@ export class MarkerProvider {
     }
 
     public destroyMarker(marker: Marker) {
-        _.pull(this.markers, marker);
-        delete this.markerUpdateQueue[marker.id];
-        this.socketio.sendMessage('-marker', marker.id);
+        if (marker != null) {
+            _.pull(this.markers, marker);
+            delete this.markerUpdateQueue[marker.id];
+            this.socketio.sendMessage('-marker', marker.id);
+            this.isMarkerUsed[marker.id] = false;
+        }
     }
 
     private queueMarkerUpdate(marker: Marker) {
@@ -53,6 +60,20 @@ export class MarkerProvider {
             });
             this.markerUpdateQueue = {};
         }
+    }
+
+    private getFreeMarkerId(): number {
+        let id = 0;
+        while (id < this.isMarkerUsed.length) {
+            if (!this.isMarkerUsed[id]) {
+                this.isMarkerUsed[id] = true;
+                return id;
+            }
+
+            id++;
+        }
+
+        return -1;
     }
 }
 

@@ -5,6 +5,7 @@ import { Point } from './point';
 import * as _ from 'lodash';
 
 export const MARKER_SIZE_PX = 250;
+export const MARKER_COUNT = 512;
 
 export class Marker {
     private _id: number;
