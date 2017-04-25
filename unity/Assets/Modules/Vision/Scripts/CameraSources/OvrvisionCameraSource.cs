@@ -44,6 +44,8 @@ namespace Assets.Modules.Vision.CameraSources
             public int WhiteBalanceR;
             public int WhiteBalanceG;
             public int WhiteBalanceB;
+            public bool AutoContrast;
+            public double AutoContrastClipHistPercent;
         }
 
         private OvrSettings _sourceSettings;
@@ -67,6 +69,10 @@ namespace Assets.Modules.Vision.CameraSources
 
         [Range(0, 4095)]
         public int WhiteBalanceB = 1738;
+
+        public bool AutoContrast = true;
+        [Range(0.0f, 1.0f)]
+        public double AutoContrastClipHistPercent = 0;
 
         public float GetFocalPoint()
         {
@@ -146,6 +152,18 @@ namespace Assets.Modules.Vision.CameraSources
                 hasPropertyChanged = true;
             }
 
+            if (AutoContrast != _sourceSettings.AutoContrast)
+            {
+                _sourceSettings.AutoContrast = AutoContrast;
+                hasPropertyChanged = true;
+            }
+
+            if (AutoContrastClipHistPercent != _sourceSettings.AutoContrastClipHistPercent)
+            {
+                _sourceSettings.AutoContrastClipHistPercent = AutoContrastClipHistPercent;
+                hasPropertyChanged = true;
+            }
+
             if (hasPropertyChanged)
             {
                 // apply settings
@@ -163,6 +181,8 @@ namespace Assets.Modules.Vision.CameraSources
                 WhiteBalanceR = _sourceSettings.WhiteBalanceR;
                 WhiteBalanceG = _sourceSettings.WhiteBalanceG;
                 WhiteBalanceB = _sourceSettings.WhiteBalanceB;
+                AutoContrast = _sourceSettings.AutoContrast;
+                AutoContrastClipHistPercent = _sourceSettings.AutoContrastClipHistPercent;
             }
         }
 

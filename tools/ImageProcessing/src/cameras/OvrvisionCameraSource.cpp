@@ -1,6 +1,89 @@
 #include "cameras/OvrvisionCameraSource.h"
 
+#include <opencv2/opencv.hpp>
+
 using namespace ImageProcessing;
+
+/**
+ * Source: http://answers.unity3d.com/questions/303757/how-do-i-create-a-texture2d-via-script-that-bypass.html
+ *  \brief Automatic brightness and contrast optimization with optional histogram clipping
+ *  \param [in]src Input image GRAY or BGR or BGRA
+ *  \param [out]dst Destination image
+ *  \param clipHistPercent cut wings of histogram at given percent tipical=>1, 0=>Disabled
+ *  \note In case of BGRA image, we won't touch the transparency
+ */
+static void BrightnessAndContrastAuto(const cv::Mat &src, cv::Mat &dst, float clipHistPercent = 0)
+{
+
+	CV_Assert(clipHistPercent >= 0);
+	CV_Assert((src.type() == CV_8UC1) || (src.type() == CV_8UC3) || (src.type() == CV_8UC4));
+
+	int histSize = 256;
+	float alpha, beta;
+	double minGray = 0, maxGray = 0;
+
+	//to calculate grayscale histogram
+	cv::Mat gray;
+	if (src.type() == CV_8UC1) gray = src;
+	else if (src.type() == CV_8UC3) cvtColor(src, gray, CV_BGR2GRAY);
+	else if (src.type() == CV_8UC4) cvtColor(src, gray, CV_BGRA2GRAY);
+	if (clipHistPercent == 0)
+	{
+		// keep full available range
+		cv::minMaxLoc(gray, &minGray, &maxGray);
+	}
+	else
+	{
+		cv::Mat hist; //the grayscale histogram
+
+		float range[] = { 0, 256 };
+		const float* histRange = { range };
+		bool uniform = true;
+		bool accumulate = false;
+		calcHist(&gray, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate);
+
+		// calculate cumulative distribution from the histogram
+		std::vector<float> accumulator(histSize);
+		accumulator[0] = hist.at<float>(0);
+		for (int i = 1; i < histSize; i++)
+		{
+			accumulator[i] = accumulator[i - 1] + hist.at<float>(i);
+		}
+
+		// locate points that cuts at required value
+		float max = accumulator.back();
+		clipHistPercent *= (max / 100.0); //make percent as absolute
+		clipHistPercent /= 2.0; // left and right wings
+								// locate left cut
+		minGray = 0;
+		while (accumulator[minGray] < clipHistPercent)
+			minGray++;
+
+		// locate right cut
+		maxGray = histSize - 1;
+		while (accumulator[maxGray] >= (max - clipHistPercent))
+			maxGray--;
+	}
+
+	// current range
+	float inputRange = maxGray - minGray;
+
+	alpha = (histSize - 1) / inputRange;   // alpha expands current range to histsize range
+	beta = -minGray * alpha;             // beta shifts current range so that minGray will go to 0
+
+										 // Apply brightness and contrast normalization
+										 // convertTo operates with saurate_cast
+	src.convertTo(dst, -1, alpha, beta);
+
+	// restore alpha channel from source 
+	//if (dst.type() == CV_8UC4)
+	//{
+	//	int from_to[] = { 3, 3 };
+	//	cv::mixChannels(&src, 4, &dst, 1, from_to, 1);
+	//}
+	return;
+}
+
 
 OvrvisionCameraSource::OvrvisionCameraSource(OVR::Camprop quality, OVR::Camqt process_mode)
 	: ovr_camera_(std::make_unique<OVR::OvrvisionPro>()),
@@ -39,6 +122,22 @@ void OvrvisionCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char
 	{
 		ovr_camera_->GetCamImageBGRA(left_buffer, OVR::Cameye::OV_CAMEYE_LEFT);
 		ovr_camera_->GetCamImageBGRA(right_buffer, OVR::Cameye::OV_CAMEYE_RIGHT);
+
+		if (use_auto_contrast_)
+		{
+			auto width = GetFrameWidth();
+			auto height = GetFrameHeight();
+
+			cv::Mat left(cv::Size(width, height), CV_8UC4, left_buffer);
+			cv::Mat left_auto(cv::Size(width, height), CV_8UC4);
+			BrightnessAndContrastAuto(left, left_auto, auto_contrast_clip_percent);
+			std::memcpy(left_buffer, left_auto.data, width * height * 4);
+
+			cv::Mat right(cv::Size(width, height), CV_8UC4, right_buffer);
+			cv::Mat right_auto(cv::Size(width, height), CV_8UC4);
+			BrightnessAndContrastAuto(right, right_auto, auto_contrast_clip_percent);
+			std::memcpy(right_buffer, right_auto.data, width * height * 4);
+		}
 	}
 }
 
@@ -146,6 +245,16 @@ void OvrvisionCameraSource::SetProperties(const nlohmann::json &json_config)
 		auto whitebalance = json_config["WhiteBalanceB"].get<int>();
 		ovr_camera_->SetCameraWhiteBalanceB(whitebalance);
 	}
+
+	if (json_config.count("AutoContrast") != 0)
+	{
+		use_auto_contrast_ = json_config["AutoContrast"].get<bool>();
+	}
+
+	if (json_config.count("AutoContrastClipHistPercent") != 0)
+	{
+		auto_contrast_clip_percent = json_config["AutoContrastClipHistPercent"].get<double>();
+	}
 }
 
 nlohmann::json OvrvisionCameraSource::GetProperties() const
@@ -161,7 +270,9 @@ nlohmann::json OvrvisionCameraSource::GetProperties() const
 			{ "AutoWhiteBalance", ovr_camera_->GetCameraWhiteBalanceAuto() },
 			{ "WhiteBalanceR", ovr_camera_->GetCameraWhiteBalanceR() },
 			{ "WhiteBalanceG", ovr_camera_->GetCameraWhiteBalanceG() },
-			{ "WhiteBalanceB", ovr_camera_->GetCameraWhiteBalanceB() }
+			{ "WhiteBalanceB", ovr_camera_->GetCameraWhiteBalanceB() },
+			{ "AutoContrast", use_auto_contrast_ },
+			{ "AutoContrastClipHistPercent", auto_contrast_clip_percent },
 		};
 	}
 	else

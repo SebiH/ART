@@ -15,6 +15,9 @@ namespace ImageProcessing
 		OVR::Camprop quality_;
 		OVR::Camqt process_mode_;
 
+		bool use_auto_contrast_ = true;
+		double auto_contrast_clip_percent = 0;
+
 	public:
 		OvrvisionCameraSource(OVR::Camprop quality, OVR::Camqt process_mode);
 		~OvrvisionCameraSource();
