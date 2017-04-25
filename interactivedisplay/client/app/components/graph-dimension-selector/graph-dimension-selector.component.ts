@@ -1,4 +1,5 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { DataProvider } from '../../services/index';
 import { Graph, ChartDimension } from '../../models/index';
@@ -10,14 +11,15 @@ const HORIZONTAL_ITEM_SIZE = 350;
 @Component({
     selector: 'graph-dimension-selector',
     templateUrl: './app/components/graph-dimension-selector/graph-dimension-selector.html',
-    styleUrls: [ './app/components/graph-dimension-selector/graph-dimension-selector.css' ]
+    styleUrls: [ './app/components/graph-dimension-selector/graph-dimension-selector.css' ],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy {
     @Input() axis: 'x' | 'y';
     @Input() graph: Graph;
     @Input() size: number = 1000;
 
-    private dimensions: string[];
+    private dimensions: string[] = [];
     private offset: number = 0;
     private maxOffset: number = 0;
     private hasTouchDown: boolean = false;
@@ -37,7 +39,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
         'opacity': 1
     };
 
-    constructor(private dataProvider: DataProvider) {}
+    constructor(private dataProvider: DataProvider, private changeDetector: ChangeDetectorRef) {}
 
     ngAfterViewInit() {
         this.dataProvider.getDimensions()
@@ -53,6 +55,9 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
                 }
 
                 this.scrollToCurrent();
+                this.changeDetector.markForCheck();
+                // needs to update twice for some reason
+                setTimeout(() => this.changeDetector.markForCheck());
             });
 
         this.graph.onUpdate
@@ -71,6 +76,8 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
                 'margin': BORDER_SIZE + 'px 0'
             };
         }
+
+        this.changeDetector.markForCheck();
     }
 
     ngOnDestroy() {
@@ -103,6 +110,8 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
                 this.applyDimension(dim, 'y');
             }
         }
+
+        this.changeDetector.markForCheck();
     }
 
     private applyDimension(dim: string, axis: 'x' | 'y') {
@@ -114,6 +123,8 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
                 } else {
                     this.graph.dimY = data;
                 }
+
+                this.changeDetector.markForCheck();
             })
     }
 
@@ -162,6 +173,8 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
         } else {
             this.triangleAfterStyle.opacity = 1;
         }
+
+        this.changeDetector.markForCheck();
     }
 
 

@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Observer } from 'rxjs/Observer';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
@@ -9,6 +10,7 @@ import * as _ from 'lodash';
     selector: 'graph-list',
     templateUrl: './app/components/graph-list/graph-list.html',
     styleUrls: ['./app/components/graph-list/graph-list.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GraphListComponent implements OnInit, OnDestroy {
 
@@ -39,14 +41,15 @@ export class GraphListComponent implements OnInit, OnDestroy {
         this.listStyle['-webkit-transform'] = transform;
         this.listStyle['-ms-transform'] = transform;
         this.listStyle.transform = transform;
+        this.changeDetector.markForCheck();
     }
 
-    constructor(private graphProvider: GraphProvider) {}
+    constructor(private graphProvider: GraphProvider, private changeDetector: ChangeDetectorRef) {}
 
     ngOnInit() {
         this.graphProvider.getGraphs()
             .takeWhile(() => this.isActive)
-            .subscribe(graphs => { 
+            .subscribe(graphs => {
                 this.graphs = graphs;
                 this.applyScrollOffsetLimits();
             });
@@ -78,7 +81,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
                 offset += g.width;
             }
         }
-        
+
         return offset;
     }
 
