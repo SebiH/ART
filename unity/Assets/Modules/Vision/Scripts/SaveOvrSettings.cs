@@ -17,6 +17,8 @@ namespace Assets.Modules.Vision
                 Exposure = ovrCamera.Exposure,
                 BLC = ovrCamera.BLC,
                 CameraGap = camGap.Gap,
+                AutoContrast = ovrCamera.AutoContrast,
+                AutoContrastClipPercent = ovrCamera.AutoContrastClipHistPercent,
                 GapAutoAdjust = camGap.AutoAdjust
             };
 

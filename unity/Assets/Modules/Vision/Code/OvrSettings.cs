@@ -9,6 +9,9 @@ namespace Assets.Modules.Vision
         public int Exposure;
         public int BLC;
 
+        public bool AutoContrast;
+        public double AutoContrastClipPercent;
+
         public float CameraGap;
         public bool GapAutoAdjust;
     }
