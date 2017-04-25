@@ -49,6 +49,10 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
         this.sendCameraProps();
     }
 
+    private setExposurePerSec(val: number) {
+        this.socketio.sendMessage('camera-expps', val);
+    }
+
     private setBlc(val: number) {
         this.blc = val;
         this.sendCameraProps();

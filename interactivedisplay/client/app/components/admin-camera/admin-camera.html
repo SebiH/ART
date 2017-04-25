@@ -51,6 +51,23 @@
     <br/>
 
     <div class="row">
+        <button class="three columns" (click)="setExposurePerSec(60)">
+            1/60
+        </button>
+        <button class="three columns" (click)="setExposurePerSec(120)">
+            1/120
+        </button>
+        <button class="three columns" (click)="setExposurePerSec(180)">
+            1/180
+        </button>
+        <button class="three columns" (click)="setExposurePerSec(240)">
+            1/240
+        </button>
+    </div>
+
+    <br/>
+
+    <div class="row">
         <button class="six columns toggle-button"
                 [ngClass]="{ toggled: camerasActive }"
                 (click)="setCamerasActive(true)">

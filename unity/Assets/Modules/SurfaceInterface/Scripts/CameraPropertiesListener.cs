@@ -72,6 +72,19 @@ namespace Assets.Modules.SurfaceInterface
                 _gapController.AutoAdjust = props.gapAutoAdjust;
             }
 
+            if (cmd == "camera-expps")
+            {
+                try
+                {
+                    var exposurePerSecond = float.Parse(payload.Replace("\"", ""));
+                    _camera.ExposurePerSec = exposurePerSecond;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Could not set exposure per sec: " + e.Message);
+                }
+            }
+
             if (cmd == "camera-active")
             {
                 var status = bool.Parse(payload.Replace("\"", ""));

@@ -48,6 +48,12 @@ namespace Assets.Modules.Vision.CameraSources
             public double AutoContrastClipHistPercent;
         }
 
+        [Serializable]
+        private struct OvrExposurePerSecondHelper
+        {
+            public float ExposurePerSec;
+        }
+
         private OvrSettings _sourceSettings;
 
         [Range(1, 47)]
@@ -73,6 +79,19 @@ namespace Assets.Modules.Vision.CameraSources
         public bool AutoContrast = true;
         [Range(0.0f, 1.0f)]
         public double AutoContrastClipHistPercent = 0;
+
+        public float ExposurePerSec
+        {
+            set
+            {
+                var helper = new OvrExposurePerSecondHelper { ExposurePerSec = value };
+                ImageProcessing.SetCamJsonProperties(JsonUtility.ToJson(helper));
+
+                ImageProcessing.GetCamJsonProperties(GetPropertyCallback);
+                ReloadSettings();
+            }
+        }
+
 
         public float GetFocalPoint()
         {
@@ -169,21 +188,25 @@ namespace Assets.Modules.Vision.CameraSources
                 // apply settings
                 var newConfig = JsonUtility.ToJson(_sourceSettings);
                 ImageProcessing.SetCamJsonProperties(newConfig);
-
-                // load new settings
-                ImageProcessing.GetCamJsonProperties(GetPropertyCallback);
-
-                // make sure settings are synced, in case a value was out of range
-                Gain = _sourceSettings.Gain;
-                Exposure = _sourceSettings.Exposure;
-                BLC = _sourceSettings.BLC;
-                AutoWhiteBalance = _sourceSettings.AutoWhiteBalance;
-                WhiteBalanceR = _sourceSettings.WhiteBalanceR;
-                WhiteBalanceG = _sourceSettings.WhiteBalanceG;
-                WhiteBalanceB = _sourceSettings.WhiteBalanceB;
-                AutoContrast = _sourceSettings.AutoContrast;
-                AutoContrastClipHistPercent = _sourceSettings.AutoContrastClipHistPercent;
+                ReloadSettings();
             }
+        }
+
+        private void ReloadSettings()
+        {
+            // load new settings
+            ImageProcessing.GetCamJsonProperties(GetPropertyCallback);
+
+            // make sure settings are synced, in case a value was out of range
+            Gain = _sourceSettings.Gain;
+            Exposure = _sourceSettings.Exposure;
+            BLC = _sourceSettings.BLC;
+            AutoWhiteBalance = _sourceSettings.AutoWhiteBalance;
+            WhiteBalanceR = _sourceSettings.WhiteBalanceR;
+            WhiteBalanceG = _sourceSettings.WhiteBalanceG;
+            WhiteBalanceB = _sourceSettings.WhiteBalanceB;
+            AutoContrast = _sourceSettings.AutoContrast;
+            AutoContrastClipHistPercent = _sourceSettings.AutoContrastClipHistPercent;
         }
 
         private void GetPropertyCallback(string json_properties_str)

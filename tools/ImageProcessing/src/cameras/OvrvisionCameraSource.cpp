@@ -255,6 +255,12 @@ void OvrvisionCameraSource::SetProperties(const nlohmann::json &json_config)
 	{
 		auto_contrast_clip_percent = json_config["AutoContrastClipHistPercent"].get<double>();
 	}
+
+	if (json_config.count("ExposurePerSec") != 0)
+	{
+		auto exposure_per_sec = json_config["ExposurePerSec"].get<float>();
+		ovr_camera_->SetCameraExposurePerSec(exposure_per_sec);
+	}
 }
 
 nlohmann::json OvrvisionCameraSource::GetProperties() const

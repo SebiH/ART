@@ -17,7 +17,7 @@ namespace Assets.Modules.Vision
         private IEnumerator LoadStartup()
         {
             // wait until camera is initialized
-            yield return new WaitForSeconds(5f);
+            yield return new WaitForSeconds(1f);
             LoadSettings();
         }
 
