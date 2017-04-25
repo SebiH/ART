@@ -11,6 +11,8 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
     private gain: number = 1;
     private exposure: number = 8600;
     private blc: number = 0;
+    private autoContrast: boolean = true;
+    private contrastClipping: number = 0;
     private gap: number = 0;
     private gapAutoAdjust: boolean = true;
 
@@ -25,6 +27,8 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
             this.gain = props.Gain;
             this.exposure = props.Exposure;
             this.blc = props.BLC;
+            this.autoContrast = props.AutoContrast;
+            this.contrastClipping = props.AutoContrastClipPercent;
             this.gap = props.CameraGap;
             this.gapAutoAdjust = props.GapAutoAdjust;
         };
@@ -37,30 +41,41 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
 
     private setGain(val: number) {
         this.gain = val;
-        this.setCamera();
+        this.sendCameraProps();
     }
 
     private setExposure(val: number) {
         this.exposure = val;
-        this.setCamera();
+        this.sendCameraProps();
     }
 
     private setBlc(val: number) {
         this.blc = val;
-        this.setCamera();
+        this.sendCameraProps();
+    }
+
+    private toggleAutoContrast() {
+        this.autoContrast = !this.autoContrast;
+        this.sendCameraProps();
+    }
+
+    private setContrastClipping(val: number) {
+        this.contrastClipping = val / 100;
+        this.sendCameraProps();
     }
 
     private toggleGapAutoAdjust() {
         this.gapAutoAdjust = !this.gapAutoAdjust;
-        console.log(this.gapAutoAdjust);
-        this.setCamera();
+        this.sendCameraProps();
     }
 
-    private setCamera() {
+    private sendCameraProps() {
         this.socketio.sendMessage('camera-properties', {
             gain: this.gain,
             exposure: this.exposure,
             blc: this.blc,
+            autoContrast: this.autoContrast,
+            autoContrastClipPercent: this.contrastClipping,
             cameraGap: this.gap,
             gapAutoAdjust: this.gapAutoAdjust
         })
@@ -68,7 +83,7 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
 
     private setGap(val: number) {
         this.gap = val / (100 * 100);
-        this.setCamera();
+        this.sendCameraProps();
     }
 
     private setCamerasActive(val: boolean) {

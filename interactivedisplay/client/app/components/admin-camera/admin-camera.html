@@ -22,6 +22,18 @@
             min="0" max="1023" steps="1" value="{{blc}}">
     </div>
 
+    <div class="row">
+        <span class="two columns">Auto contrast</span>
+        <span class="one columns">{{contrastClipping}}% clipping</span>
+        <button class="one column toggle-button" (click)="toggleAutoContrast()" style="padding: 0;" [ngClass]="{ toggled: autoContrast }">
+            On/Off
+        </button>
+        <input #contrastInput class="eight columns" type="range"
+            (input)="setContrastClipping(contrastInput.value)"
+            [disabled]="!autoContrast"
+            min="0" max="100" value="{{contrastClipping*100}}">
+    </div>
+
     <br/>
 
     <div class="row">
