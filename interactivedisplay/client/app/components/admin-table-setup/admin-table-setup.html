@@ -1,27 +1,61 @@
+<hr/>
+
 <div class="buttons row">
-    <select name="corners" class="four columns" #cornerSelection>
-        <option value="0">Top Left</option>
-        <option value="1">Top Right</option>
-        <option value="2">Bottom Right</option>
-        <option value="3">Bottom Left</option>
-    </select>
-    <button class="button-primary four columns" (click)="setCorner(cornerSelection.value)">
-        Set Corner
+    <button class="four columns button-primary" (click)="calibrateCorner()" [disabled]="isCalibrating">
+        Calibrate Corner
     </button>
-    <button class="button-primary four columns" (click)="setSurface()">
-        Set Surface
+
+    <button class="two columns toggle-button small-button" (click)="corner = 0" [ngClass]="{ toggled: corner == 0 }">
+        Top Left
     </button>
+    <button class="two columns toggle-button small-button" (click)="corner = 1" [ngClass]="{ toggled: corner == 1 }">
+        Top Right
+    </button>
+    <button class="two columns toggle-button small-button" (click)="corner = 2" [ngClass]="{ toggled: corner == 2 }">
+        Bottom Right
+    </button>
+    <button class="two columns toggle-button small-button" (click)="corner = 3" [ngClass]="{ toggled: corner == 3 }">
+        Bottom Left
+    </button>
+</div>
+
+<div class="row centered">
+    <div class="four columns">
+        <span *ngIf="!isCalibrating"> Idle </span>
+        <span *ngIf="isCalibrating"> Calibrating ... {{ calibrationStatus * 100 }}% </span>
+    </div>
+    <div class="two columns">
+        <span *ngIf="!cornersCalibrated[0]" class="fa fa-times"></span>
+        <span *ngIf="cornersCalibrated[0]" class="fa fa-check"></span>
+    </div>
+    <div class="two columns">
+        <span *ngIf="!cornersCalibrated[1]" class="fa fa-times"></span>
+        <span *ngIf="cornersCalibrated[1]" class="fa fa-check"></span>
+    </div>
+    <div class="two columns">
+        <span *ngIf="!cornersCalibrated[2]" class="fa fa-times"></span>
+        <span *ngIf="cornersCalibrated[2]" class="fa fa-check"></span>
+    </div>
+    <div class="two columns">
+        <span *ngIf="!cornersCalibrated[3]" class="fa fa-times"></span>
+        <span *ngIf="cornersCalibrated[3]" class="fa fa-check"></span>
+    </div>
 </div>
 
 <hr/>
 
-<div class="buttons">
-    <button class="button-primary four columns"
-        (click)="resetCalibration()">
-        Reset Calibration
+<div class="buttons row">
+    <button class="button-primary four columns" (click)="setSurface()">
+        Set Surface
     </button>
     <button class="button-primary four columns"
         (click)="saveSurfaces()">
         Save Surfaces
     </button>
+
+    <button class="button-primary four columns"
+        (click)="resetCalibration()">
+        Reset Calibration
+    </button>
 </div>
+

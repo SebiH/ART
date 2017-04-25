@@ -9,6 +9,7 @@ namespace Assets.Modules.Tracking
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
+            Repaint();
             var script = target as OptitrackCalibrateDisplay;
 
             if (!script.IsCalibrating)
