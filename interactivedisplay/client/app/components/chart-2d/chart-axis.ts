@@ -56,9 +56,9 @@ export class ChartAxis extends ChartElement {
             let dy = parseFloat(text.attr("dy")) + (axis == 'x' ? 0.5 : 0);
             let dx = axis == 'x' ? 0 : -1;
             let tspan = text.text(null).append("tspan")
-                .attr("x", 0)
+                .attr("x", dx + "em")
                 .attr("y", y)
-                .attr("dx", dx + "em")
+                .attr("dx", 0)
                 .attr("dy", dy + "em");
 
             while (word = words.pop()) {
@@ -69,10 +69,10 @@ export class ChartAxis extends ChartElement {
                     tspan.text(line.join(" "));
                     line = [word];
                     tspan = text.append("tspan")
-                        .attr("x", 0)
+                        .attr("x", dx + "em")
                         .attr("y", y)
                         .attr("dy", ++lineNumber * lineHeight + dy + "em")
-                        .attr("dx", dx + "em")
+                        .attr("dx", 0)
                         .text(word);
                 }
             }
