@@ -1,7 +1,7 @@
 .section-root {
     height: 100%;
     position: relative;
-    transition: width 0.4s linear;
+    transition: width 0.5s linear;
 }
 
 .graph-section {
@@ -81,7 +81,7 @@ button .icon {
     width: 300px;
     height: 1350px;
     border: 1px solid black;
-    transition: width 0.4s linear;
+    transition: width 0.5s linear;
 }
 
 .chart-container.selected {
