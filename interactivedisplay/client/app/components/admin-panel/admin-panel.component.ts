@@ -17,20 +17,4 @@ export class AdminPanelComponent {
         // quick hack to disable global css for main app
         document.getElementsByTagName('html')[0].style.overflow = "auto";
     }
-
-    private setCorner(corner: number) {
-        this.socketio.sendMessage('admin-cmd-set-corner', corner);
-    }
-
-    private setSurface() {
-        this.socketio.sendMessage('admin-cmd-set-surface', null);
-    }
-
-    private resetCalibration() {
-        this.socketio.sendMessage('admin-cmd-reset-calibration', null);
-    }
-
-    private saveSurfaces() {
-        this.socketio.sendMessage('admin-cmd-save-surfaces', null);
-    }
 }
