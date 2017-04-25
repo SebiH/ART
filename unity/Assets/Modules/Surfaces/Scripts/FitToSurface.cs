@@ -15,7 +15,7 @@ namespace Assets.Modules.Surfaces
 
         private void Update()
         {
-            transform.localScale = _surface.Scale;
+            transform.localScale = new Vector3(_surface.Scale.x, transform.localScale.y, _surface.Scale.z);
             transform.localPosition = _surface.Scale / 2 + Offset;
         }
     }
