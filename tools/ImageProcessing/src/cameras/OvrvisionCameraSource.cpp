@@ -271,11 +271,14 @@ void OvrvisionCameraSource::BrightnessAndContrastAuto(cv::Mat &left, cv::Mat &ri
 	float alpha_r, beta_r;
 	CalculateHistogram(alpha_r, beta_r, right, clip_hist_percent);
 
+	const double AVG_WEIGHT = 0.95;
 	float alpha = std::min(alpha_l, alpha_r);
+	avg_alpha = (avg_alpha * AVG_WEIGHT) + (alpha * (1 - AVG_WEIGHT));
 	float beta = std::min(beta_l, beta_r);
+	beta = (avg_beta * AVG_WEIGHT) + (beta * (1 - AVG_WEIGHT));
 
 	// Apply brightness and contrast normalization
 	// convertTo operates with saurate_cast
-	left.convertTo(left, -1, alpha, beta);
-	right.convertTo(right, -1, alpha, beta);
+	left.convertTo(left, -1, avg_alpha, avg_beta);
+	right.convertTo(right, -1, avg_alpha, avg_beta);
 }
