@@ -21,7 +21,7 @@ export class MarkerTestComponent implements OnInit, OnDestroy
         document.getElementsByTagName('html')[0].style.overflow = "auto";
 
         for (let i = 0; i < 512; i++) {
-            this.markers.push(this.markerProvider.createMarker());
+            this.markers.push(this.markerProvider.createMarker(-1));
         }
     }
 

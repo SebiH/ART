@@ -9,5 +9,6 @@ namespace Assets.Modules.SurfaceInterface
         public float posX = 0;
         public float posY = 0;
         public float size = 250;
+        public int origin = -1;
     }
 }

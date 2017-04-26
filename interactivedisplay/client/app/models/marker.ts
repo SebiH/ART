@@ -29,13 +29,19 @@ export class Marker {
         }
     }
 
+    private _origin : number;
+    public get origin() : number {
+        return this._origin;
+    }
+
     private changeSubscription: Subject<any> = new Subject<any>();
     public get onChange(): Observable<any> {
         return this.changeSubscription.asObservable();
     }
 
-    public constructor(id: number) {
+    public constructor(id: number, origin: number) {
         this._id = id;
+        this._origin = origin;
     }
 
 
@@ -44,8 +50,9 @@ export class Marker {
             id: this._id,
             posX: this._position.x,
             posY: this._position.y,
-            size: MARKER_SIZE_PX
-        }
+            size: MARKER_SIZE_PX,
+            origin: this._origin
+        };
     }
 
     private raiseChangeEvent() {

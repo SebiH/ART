@@ -31,7 +31,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         for (let i = 0; i < NUM_MARKERS; i++) {
-            this.markers.push(this.markerProvider.createMarker());
+            this.markers.push(this.markerProvider.createMarker(this.graph.id));
         }
 
         Observable.timer(0, 10)

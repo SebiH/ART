@@ -27,8 +27,8 @@ export class MarkerProvider {
         return this.markers;
     }
 
-    public createMarker(): Marker {
-        let marker: Marker = new Marker(this.getFreeMarkerId());
+    public createMarker(origin: number): Marker {
+        let marker: Marker = new Marker(this.getFreeMarkerId(), origin);
         this.markers.push(marker);
         this.socketio.sendMessage('+marker', marker.toJson());
         marker.onChange
