@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SocketIO } from '../../services/index';
+import { SocketIO, InteractionSettings } from '../../services/index';
 
 @Component({
     selector: 'admin-panel',
@@ -16,5 +16,6 @@ export class AdminPanelComponent {
 
         // quick hack to disable global css for main app
         document.getElementsByTagName('html')[0].style.overflow = "auto";
+        InteractionSettings.CatchInteractionOnBody = false;
     }
 }

@@ -13,6 +13,10 @@ const MAX_PRESS_TIME = 300; // in ms
 const MAX_PRESS_DISTANCE = 5; // in pixel
 const FORBIDDEN_ELEMENTS = [ 'button', 'option', 'select' ];
 
+export var InteractionSettings = {
+    CatchInteractionOnBody: true
+};
+
 @Injectable()
 export class InteractionManager {
 
@@ -21,8 +25,10 @@ export class InteractionManager {
     // constructor(private logger: Logger) {
     constructor(private ngZone: NgZone) {
 
-        // in case 'touchup/move' etc ends up on unregistered elements
-        this.subscribeElementListeners(document.body);
+        if (InteractionSettings.CatchInteractionOnBody) {
+            // in case 'touchup/move' etc ends up on unregistered elements
+            this.subscribeElementListeners(document.body);
+        }
     }
 
 
@@ -317,7 +323,7 @@ export class InteractionManager {
                 ev.stopPropagation();
                 this.onTouchEnd(ev);
             }
-            
+
             this.ngZone.run(() => {});
         }
 
