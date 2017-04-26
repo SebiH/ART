@@ -12,6 +12,8 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
     private exposure: number = 8600;
     private blc: number = 0;
     private autoContrast: boolean = true;
+    private autoContrastAutoGain: boolean = true;
+    private autoContrastMax: number = 9;
     private contrastClipping: number = 0;
     private gap: number = 0;
     private gapAutoAdjust: boolean = true;
@@ -28,7 +30,9 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
             this.exposure = props.Exposure;
             this.blc = props.BLC;
             this.autoContrast = props.AutoContrast;
+            this.autoContrastAutoGain = props.AutoContrastAutoGain;
             this.contrastClipping = props.AutoContrastClipPercent;
+            this.autoContrastMax = props.AutoContrastMax;
             this.gap = props.CameraGap;
             this.gapAutoAdjust = props.GapAutoAdjust;
         };
@@ -63,8 +67,18 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
         this.sendCameraProps();
     }
 
+    private toggleAutoContrastAutoGain() {
+        this.autoContrastAutoGain = !this.autoContrastAutoGain;
+        this.sendCameraProps();
+    }
+
     private setContrastClipping(val: number) {
         this.contrastClipping = val / 100;
+        this.sendCameraProps();
+    }
+
+    private setAutoContrastMax(val: number) {
+        this.autoContrastMax = val;
         this.sendCameraProps();
     }
 
@@ -79,7 +93,9 @@ export class AdminCameraComponent implements OnInit, OnDestroy {
             exposure: this.exposure,
             blc: this.blc,
             autoContrast: this.autoContrast,
+            autoContrastAutoGain: this.autoContrastAutoGain,
             autoContrastClipPercent: this.contrastClipping,
+            autoContrastMax: this.autoContrastMax,
             cameraGap: this.gap,
             gapAutoAdjust: this.gapAutoAdjust
         })

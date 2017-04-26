@@ -9,3 +9,7 @@
 .toggle-button.toggled {
     background: #8BC34A;
 }
+
+button:disabled {
+    background: #9E9E9E !important;
+}

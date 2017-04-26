@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace Assets.Modules.Vision.CameraSources
@@ -45,7 +46,9 @@ namespace Assets.Modules.Vision.CameraSources
             public int WhiteBalanceG;
             public int WhiteBalanceB;
             public bool AutoContrast;
-            public double AutoContrastClipHistPercent;
+            public float AutoContrastClipHistPercent;
+            public bool AutoContrastAutoGain;
+            public float AutoContrastMax;
         }
 
         [Serializable]
@@ -77,8 +80,11 @@ namespace Assets.Modules.Vision.CameraSources
         public int WhiteBalanceB = 1738;
 
         public bool AutoContrast = true;
+        public bool AutoContrastAutoGain = true;
         [Range(0.0f, 1.0f)]
-        public double AutoContrastClipHistPercent = 0;
+        public float AutoContrastClipHistPercent = 0;
+        [Range(1.0f, 20.0f)]
+        public float AutoContrastMax = 0;
 
         public float ExposurePerSec
         {
@@ -112,7 +118,24 @@ namespace Assets.Modules.Vision.CameraSources
             UpdateCameraProperties(true);
         }
 
-        protected void Update()
+#if UNITY_EDITOR
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+            StartCoroutine(FetchPropertiesPeriodically());
+        }
+
+        private IEnumerator FetchPropertiesPeriodically()
+        {
+            while (isActiveAndEnabled)
+            {
+                yield return new WaitForSeconds(0.3f);
+                ReloadSettings();
+            }
+        }
+#endif
+
+        private void Update()
         {
             bool hasModeChanged = (_prevCamMode != CamMode);
             bool hasQualityChanged = (_prevCamQuality != CamQuality);
@@ -177,9 +200,21 @@ namespace Assets.Modules.Vision.CameraSources
                 hasPropertyChanged = true;
             }
 
+            if (AutoContrastAutoGain != _sourceSettings.AutoContrastAutoGain)
+            {
+                _sourceSettings.AutoContrastAutoGain = AutoContrastAutoGain;
+                hasPropertyChanged = true;
+            }
+
             if (AutoContrastClipHistPercent != _sourceSettings.AutoContrastClipHistPercent)
             {
                 _sourceSettings.AutoContrastClipHistPercent = AutoContrastClipHistPercent;
+                hasPropertyChanged = true;
+            }
+
+            if (AutoContrastMax != _sourceSettings.AutoContrastMax)
+            {
+                _sourceSettings.AutoContrastMax = AutoContrastMax;
                 hasPropertyChanged = true;
             }
 
@@ -206,7 +241,9 @@ namespace Assets.Modules.Vision.CameraSources
             WhiteBalanceG = _sourceSettings.WhiteBalanceG;
             WhiteBalanceB = _sourceSettings.WhiteBalanceB;
             AutoContrast = _sourceSettings.AutoContrast;
+            AutoContrastAutoGain = _sourceSettings.AutoContrastAutoGain;
             AutoContrastClipHistPercent = _sourceSettings.AutoContrastClipHistPercent;
+            AutoContrastMax = _sourceSettings.AutoContrastMax;
         }
 
         private void GetPropertyCallback(string json_properties_str)

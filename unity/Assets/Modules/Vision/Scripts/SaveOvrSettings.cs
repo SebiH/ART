@@ -19,6 +19,8 @@ namespace Assets.Modules.Vision
                 CameraGap = camGap.Gap,
                 AutoContrast = ovrCamera.AutoContrast,
                 AutoContrastClipPercent = ovrCamera.AutoContrastClipHistPercent,
+                AutoContrastAutoGain = ovrCamera.AutoContrastAutoGain,
+                AutoContrastMax = ovrCamera.AutoContrastMax,
                 GapAutoAdjust = camGap.AutoAdjust
             };
 

@@ -22,19 +22,38 @@
             min="0" max="1023" steps="1" value="{{blc}}">
     </div>
 
+    <hr/>
+
     <div class="row">
-        <span class="two columns">Auto contrast</span>
-        <span class="one columns">{{contrastClipping}}% clipping</span>
-        <button class="one column toggle-button" (click)="toggleAutoContrast()" style="padding: 0;" [ngClass]="{ toggled: autoContrast }">
-            On/Off
-        </button>
+    </div>
+
+    <div class="row">
+        <span class="two columns">Auto contrast clipping</span>
+        <span class="two columns">{{contrastClipping}}% clipping</span>
         <input #contrastInput class="eight columns" type="range"
             (input)="setContrastClipping(contrastInput.value)"
             [disabled]="!autoContrast"
             min="0" max="100" value="{{contrastClipping*100}}">
     </div>
+    <div class="row">
+        <span class="two columns">Auto contrast max</span>
+        <span class="two columns">{{autoContrastMax}}</span>
+        <input #contrastMaxInput class="eight columns" type="range"
+            (input)="setAutoContrastMax(contrastMaxInput.value / 100)"
+            [disabled]="!autoContrast"
+            min="100" max="2000" value="{{autoContrastMax * 100}}">
+    </div>
 
-    <br/>
+    <div class="row">
+        <button class="six columns toggle-button" (click)="toggleAutoContrast()" [ngClass]="{ toggled: autoContrast }">
+            AutoContrast On/Off
+        </button>
+        <button class="six columns toggle-button" (click)="toggleAutoContrastAutoGain()" [ngClass]="{ toggled: autoContrastAutoGain }" [disabled]="!autoContrast">
+            AutoGain On/Off
+        </button>
+    </div>
+
+    <hr/>
 
     <div class="row">
         <span class="two columns">Camera Gap Offset</span>
@@ -48,7 +67,11 @@
             min="-1000" max="1000" value="{{gap * 100 * 100}}">
     </div>
 
-    <br/>
+    <hr/>
+
+    <div class="row">
+        Exposure per second:
+    </div>
 
     <div class="row">
         <button class="three columns" (click)="setExposurePerSec(60)">
@@ -65,7 +88,7 @@
         </button>
     </div>
 
-    <br/>
+    <hr/>
 
     <div class="row">
         <button class="six columns toggle-button"
@@ -81,7 +104,7 @@
         </button>
     </div>
 
-    <br/>
+    <hr/>
 
     <div class="row">
         <button class="six columns" (click)="saveCameraSettings()">

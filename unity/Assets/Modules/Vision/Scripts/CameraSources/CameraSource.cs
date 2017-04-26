@@ -7,7 +7,7 @@ namespace Assets.Modules.Vision.CameraSources
     {
         protected bool _isRunning = false;
 
-        public virtual void OnEnable()
+        protected virtual void OnEnable()
         {
             if (!_isRunning)
             {
@@ -28,7 +28,7 @@ namespace Assets.Modules.Vision.CameraSources
 
         public abstract void InitCamera();
 
-        public virtual void OnDisable()
+        protected virtual void OnDisable()
         {
             if (VisionManager.Instance.ActiveCamera == this)
             {

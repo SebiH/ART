@@ -45,7 +45,9 @@ namespace Assets.Modules.SurfaceInterface
                     BLC = _camera.BLC,
                     CameraGap = _gapController.Gap,
                     AutoContrast = _camera.AutoContrast,
+                    AutoContrastAutoGain = _camera.AutoContrastAutoGain,
                     AutoContrastClipPercent = _camera.AutoContrastClipHistPercent,
+                    AutoContrastMax = _camera.AutoContrastMax,
                     GapAutoAdjust = _gapController.AutoAdjust
                 };
 
@@ -66,7 +68,9 @@ namespace Assets.Modules.SurfaceInterface
                 _camera.Exposure = props.exposure;
                 _camera.BLC = props.blc;
                 _camera.AutoContrast = props.autoContrast;
+                _camera.AutoContrastAutoGain = props.autoContrastAutoGain;
                 _camera.AutoContrastClipHistPercent = props.autoContrastClipPercent;
+                _camera.AutoContrastMax = props.autoContrastMax;
 
                 _gapController.Gap = props.cameraGap;
                 _gapController.AutoAdjust = props.gapAutoAdjust;
@@ -112,7 +116,9 @@ namespace Assets.Modules.SurfaceInterface
             public int blc;
             public float cameraGap;
             public bool autoContrast;
-            public double autoContrastClipPercent;
+            public bool autoContrastAutoGain;
+            public float autoContrastClipPercent;
+            public float autoContrastMax;
             public bool gapAutoAdjust;
         }
     }

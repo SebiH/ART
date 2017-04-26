@@ -33,7 +33,9 @@ namespace Assets.Modules.Vision
                 ovrCamera.Exposure = settings.Exposure;
                 ovrCamera.BLC = settings.BLC;
                 ovrCamera.AutoContrast = settings.AutoContrast;
+                ovrCamera.AutoContrastAutoGain = settings.AutoContrastAutoGain;
                 ovrCamera.AutoContrastClipHistPercent = settings.AutoContrastClipPercent;
+                ovrCamera.AutoContrastMax = settings.AutoContrastMax;
 
                 var camGap = GetComponent<CameraGap>();
                 camGap.Gap = settings.CameraGap;
