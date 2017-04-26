@@ -3,6 +3,7 @@
 #include <memory>
 #include <mutex>
 #include <ovrvision/ovrvision_pro.h>
+#include <opencv2/opencv.hpp>
 #include "cameras/CameraSourceInterface.h"
 
 namespace ImageProcessing
@@ -39,5 +40,8 @@ namespace ImageProcessing
 
 		virtual nlohmann::json GetProperties() const override;
 		virtual void SetProperties(const nlohmann::json &json_config) override;
+
+	private:
+		void BrightnessAndContrastAuto(cv::Mat &left, cv::Mat &right, float clipHistPercent = 0);
 	};
 }
