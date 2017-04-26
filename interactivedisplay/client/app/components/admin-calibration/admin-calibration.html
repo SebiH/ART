@@ -15,20 +15,20 @@
 
 <br/>
 
-<h1>PositionOffset:</h1> 
+<h1>PositionOffset:</h1>
 <h1>{{packet?.posOffsetX}}</h1>
 <h1>{{packet?.posOffsetY}}</h1>
 <h1>{{packet?.posOffsetZ}}</h1>
 
 <br/>
 
-<h1>RotationOffset:</h1> 
+<h1>RotationOffset:</h1>
 <h1>{{packet?.rotOffsetX}}</h1>
 <h1>{{packet?.rotOffsetY}}</h1>
 <h1>{{packet?.rotOffsetZ}}</h1>
 <h1>{{packet?.rotOffsetW}}</h1>
 
 <div class="row">
-    <div class="six columns" #rotationOffset></div>
-    <div class="six columns" #positionOffset></div>
+    <div class="six columns" #rotationOffset moveable (moveUpdate)="moveRotation($event)"></div>
+    <div class="six columns" #positionOffset moveable (moveUpdate)="movePosition($event)"></div>
 </div>

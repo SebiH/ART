@@ -8,6 +8,7 @@ export class VecVisualisation {
     private renderer: THREE.WebGLRenderer;
     private scene: THREE.Scene;
     private camera: THREE.Camera;
+    private cameraPos = {x:0.425, y:0.595};
 
     private positionIndicator: THREE.Geometry;
     private positionBox: THREE.Mesh;
@@ -20,7 +21,6 @@ export class VecVisualisation {
 
         let aspectRatio = width / height;
         this.camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, 10000);
-        this.camera.position.set(7, 40, 12);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         this.scene = new THREE.Scene();
@@ -30,7 +30,8 @@ export class VecVisualisation {
         this.initAxes();
         this.initVector();
         this.initCube();
-        this.renderer.render(this.scene, this.camera)
+
+        this.turnCamera();
     }
 
     public destroy(): void {
@@ -118,5 +119,23 @@ export class VecVisualisation {
         let meshMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
         this.positionBox = new THREE.Mesh(new THREE.CubeGeometry(1, 1, 1), meshMaterial);
         this.scene.add(this.positionBox);
+    }
+
+
+    public handlePointerMove(deltaX: number, deltaY: number) {
+        this.cameraPos.x -= deltaX / 200;
+        this.cameraPos.y += deltaY / 200;
+        this.cameraPos.y = Math.min(this.cameraPos.y, 3.1415/2);
+        this.cameraPos.y = Math.max(this.cameraPos.y, -3.1415/2);
+        this.turnCamera();
+    }
+
+
+    private turnCamera() {
+        this.camera.position.x = Math.sin(this.cameraPos.x) * 20 * Math.cos(this.cameraPos.y);
+        this.camera.position.z = Math.cos(this.cameraPos.x) * 20 * Math.cos(this.cameraPos.y);
+        this.camera.position.y = Math.sin(this.cameraPos.y) * 20;
+        this.camera.lookAt(new THREE.Vector3(0,0,0));
+        this.renderer.render(this.scene, this.camera)
     }
 }

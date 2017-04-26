@@ -53,5 +53,12 @@ export class AdminCalibrationComponent implements OnInit, OnDestroy {
         this.quatVis.setQuat(packet.rotOffsetX, packet.rotOffsetY,
             packet.rotOffsetZ, packet.rotOffsetW);
     }
-}
 
+    private moveRotation(event: any) {
+        this.quatVis.handlePointerMove(-event.deltaX, -event.deltaY);
+    }
+
+    private movePosition(event: any) {
+        this.vecVis.handlePointerMove(-event.deltaX, -event.deltaY);
+    }
+}

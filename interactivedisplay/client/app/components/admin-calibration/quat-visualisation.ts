@@ -9,6 +9,7 @@ export class QuatVisualisation {
     private renderer: THREE.WebGLRenderer;
     private scene: THREE.Scene;
     private camera: THREE.Camera;
+    private cameraPos = {x:0.425, y:0.595};
 
     public constructor(element: ElementRef, width: number, height: number) {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -18,7 +19,6 @@ export class QuatVisualisation {
 
         let aspectRatio = width / height;
         this.camera = new THREE.PerspectiveCamera(45, aspectRatio, 1, 10000);
-        this.camera.position.set(700, 900, 120);
         this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         this.scene = new THREE.Scene();
@@ -28,6 +28,8 @@ export class QuatVisualisation {
         this.initAxes();
         this.initVector();
         this.renderer.render(this.scene, this.camera)
+
+        this.turnCamera();
     }
 
     public destroy(): void {
@@ -113,4 +115,21 @@ export class QuatVisualisation {
         this.scene.add(vectorObject);
     }
 
+
+    public handlePointerMove(deltaX: number, deltaY: number) {
+        this.cameraPos.x -= deltaX / 200;
+        this.cameraPos.y += deltaY / 200;
+        this.cameraPos.y = Math.min(this.cameraPos.y, 3.1415/2);
+        this.cameraPos.y = Math.max(this.cameraPos.y, -3.1415/2);
+        this.turnCamera();
+    }
+
+
+    private turnCamera() {
+        this.camera.position.x = Math.sin(this.cameraPos.x) * 1000 * Math.cos(this.cameraPos.y);
+        this.camera.position.z = Math.cos(this.cameraPos.x) * 1000 * Math.cos(this.cameraPos.y);
+        this.camera.position.y = Math.sin(this.cameraPos.y) * 1000;
+        this.camera.lookAt(new THREE.Vector3(0,0,0));
+        this.renderer.render(this.scene, this.camera)
+    }
 }
