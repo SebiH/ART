@@ -17,7 +17,10 @@ namespace ImageProcessing
 		OVR::Camqt process_mode_;
 
 		bool use_auto_contrast_ = true;
-		double auto_contrast_clip_percent = 0;
+		bool auto_contrast_auto_gain_ = true;
+		float auto_contrast_clip_percent_ = 0;
+		float auto_contrast_max_ = 7;
+
 		float avg_alpha = 0;
 		float avg_beta = 0;
 

@@ -48,7 +48,7 @@ void OvrvisionCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char
 
 			cv::Mat left(cv::Size(width, height), CV_8UC4, left_buffer);
 			cv::Mat right(cv::Size(width, height), CV_8UC4, right_buffer);
-			BrightnessAndContrastAuto(left, right, auto_contrast_clip_percent);
+			BrightnessAndContrastAuto(left, right, auto_contrast_clip_percent_);
 		}
 	}
 }
@@ -165,7 +165,17 @@ void OvrvisionCameraSource::SetProperties(const nlohmann::json &json_config)
 
 	if (json_config.count("AutoContrastClipHistPercent") != 0)
 	{
-		auto_contrast_clip_percent = json_config["AutoContrastClipHistPercent"].get<double>();
+		auto_contrast_clip_percent_ = json_config["AutoContrastClipHistPercent"].get<float>();
+	}
+
+	if (json_config.count("AutoContrastAutoGain") != 0)
+	{
+		auto_contrast_auto_gain_ = json_config["AutoContrastAutoGain"].get<bool>();
+	}
+
+	if (json_config.count("AutoContrastMax") != 0)
+	{
+		auto_contrast_max_ = json_config["AutoContrastMax"].get<float>();
 	}
 
 	if (json_config.count("ExposurePerSec") != 0)
@@ -190,7 +200,9 @@ nlohmann::json OvrvisionCameraSource::GetProperties() const
 			{ "WhiteBalanceG", ovr_camera_->GetCameraWhiteBalanceG() },
 			{ "WhiteBalanceB", ovr_camera_->GetCameraWhiteBalanceB() },
 			{ "AutoContrast", use_auto_contrast_ },
-			{ "AutoContrastClipHistPercent", auto_contrast_clip_percent },
+			{ "AutoContrastAutoGain", auto_contrast_auto_gain_ },
+			{ "AutoContrastClipHistPercent", auto_contrast_clip_percent_ },
+			{ "AutoContrastMax", auto_contrast_max_ },
 		};
 	}
 	else
@@ -272,10 +284,33 @@ void OvrvisionCameraSource::BrightnessAndContrastAuto(cv::Mat &left, cv::Mat &ri
 	CalculateHistogram(alpha_r, beta_r, right, clip_hist_percent);
 
 	const double AVG_WEIGHT = 0.95;
-	float alpha = std::min(alpha_l, alpha_r);
-	avg_alpha = (avg_alpha * AVG_WEIGHT) + (alpha * (1 - AVG_WEIGHT));
-	float beta = std::min(beta_l, beta_r);
+	float alpha = std::min(std::min(alpha_l, alpha_r), auto_contrast_max_);
+	alpha = (avg_alpha * AVG_WEIGHT) + (alpha * (1 - AVG_WEIGHT));
+	float beta = std::min(std::min(beta_l, beta_r), auto_contrast_max_);
 	beta = (avg_beta * AVG_WEIGHT) + (beta * (1 - AVG_WEIGHT));
+
+	if (auto_contrast_auto_gain_)
+	{
+		auto current_gain = ovr_camera_->GetCameraGain();
+		if (alpha > 2.5 && current_gain < 47)
+		{
+			ovr_camera_->SetCameraGain(current_gain + 1);
+		}
+		else if (alpha < 1.5 && current_gain > 1)
+		{
+			ovr_camera_->SetCameraGain(current_gain - 1);
+		}
+		else
+		{
+			avg_alpha = alpha;
+			avg_beta = beta;
+		}
+	}
+	else
+	{
+		avg_alpha = alpha;
+		avg_beta = beta;
+	}
 
 	// Apply brightness and contrast normalization
 	// convertTo operates with saurate_cast
