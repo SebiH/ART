@@ -1,7 +1,7 @@
 import { ElementRef } from '@angular/core';
 import * as THREE from 'three';
 
-const AXIS_LENGTH = 10;
+const AXIS_LENGTH = 5;
 
 export class VecVisualisation {
 
@@ -116,8 +116,8 @@ export class VecVisualisation {
     }
 
     private initCube() {
-        let meshMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
-        this.positionBox = new THREE.Mesh(new THREE.CubeGeometry(1, 1, 1), meshMaterial);
+        let meshMaterial = new THREE.MeshBasicMaterial({ color: 0xFF0000 });
+        this.positionBox = new THREE.Mesh(new THREE.CubeGeometry(0.1, 0.1, 0.1), meshMaterial);
         this.scene.add(this.positionBox);
     }
 
@@ -132,9 +132,9 @@ export class VecVisualisation {
 
 
     private turnCamera() {
-        this.camera.position.x = Math.sin(this.cameraPos.x) * 20 * Math.cos(this.cameraPos.y);
-        this.camera.position.z = Math.cos(this.cameraPos.x) * 20 * Math.cos(this.cameraPos.y);
-        this.camera.position.y = Math.sin(this.cameraPos.y) * 20;
+        this.camera.position.x = Math.sin(this.cameraPos.x) * 4 * Math.cos(this.cameraPos.y);
+        this.camera.position.z = Math.cos(this.cameraPos.x) * 4 * Math.cos(this.cameraPos.y);
+        this.camera.position.y = Math.sin(this.cameraPos.y) * 4;
         this.camera.lookAt(new THREE.Vector3(0,0,0));
         this.renderer.render(this.scene, this.camera)
     }
