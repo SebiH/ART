@@ -10,6 +10,13 @@ export class QuatVisualisation {
     private scene: THREE.Scene;
     private camera: THREE.Camera;
     private cameraPos = {x:0.425, y:0.595};
+    // private rotationAxis = new THREE.Vector3(0,1,0);
+    // private vectorQuaternion = new THREE.Quaternion();
+    private meshTraceObject = new THREE.Mesh();
+    private lineTraceObject = new THREE.Line();
+    private vectorObject = new THREE.Line();
+
+
 
     public constructor(element: ElementRef, width: number, height: number) {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -37,6 +44,46 @@ export class QuatVisualisation {
     }
 
     public setQuat(x: number, y: number, z: number, w: number): void {
+        // var theta = Math.acos(this.vectorQuaternion.w) * 2;
+        // var sin = Math.sin(theta/2);
+        // if (sin >= 0.01 || sin <= -0.01) {
+        //     this.rotationAxis.x = this.vectorQuaternion.x / sin;
+        //     this.rotationAxis.y = this.vectorQuaternion.y / sin;
+        //     this.rotationAxis.z = this.vectorQuaternion.z / sin;
+        //     this.rotationAxis.normalize();
+        // }
+        let vectorQuaternion = new THREE.Quaternion(x, y, z, w);
+        vectorQuaternion.normalize();
+
+        this.vectorObject.quaternion.w = vectorQuaternion.w;
+        this.vectorObject.quaternion.x = vectorQuaternion.x;
+        this.vectorObject.quaternion.y = vectorQuaternion.y;
+        this.vectorObject.quaternion.z = vectorQuaternion.z;
+
+        for (var i=1; i<= TRACE_SEGMENTS + 1; i++) {
+            var currentQuat = new THREE.Quaternion().slerp(vectorQuaternion, (i-1) / TRACE_SEGMENTS);
+            var currentVector = new THREE.Vector3(AXIS_LENGTH, 0, 0);
+            currentVector.applyQuaternion(currentQuat);
+            this.meshTraceObject.geometry.vertices[i].x = currentVector.x;
+            this.meshTraceObject.geometry.vertices[i].y = currentVector.y;
+            this.meshTraceObject.geometry.vertices[i].z = currentVector.z;
+            this.lineTraceObject.geometry.vertices[i-1].x = currentVector.x;
+            this.lineTraceObject.geometry.vertices[i-1].y = currentVector.y;
+            this.lineTraceObject.geometry.vertices[i-1].z = currentVector.z;
+        }
+        this.meshTraceObject.geometry.verticesNeedUpdate = true;
+        this.lineTraceObject.geometry.verticesNeedUpdate = true;
+
+        // var rotAxisVec = new THREE.Vector3().copy(rotationAxis).multiplyScalar(AXIS_LENGTH);
+        // this.rotationAxisObject.geometry.vertices[0].x = -rotAxisVec.x;
+        // this.rotationAxisObject.geometry.vertices[0].y = -rotAxisVec.y;
+        // this.rotationAxisObject.geometry.vertices[0].z = -rotAxisVec.z;
+        // this.rotationAxisObject.geometry.vertices[1].x = rotAxisVec.x;
+        // this.rotationAxisObject.geometry.vertices[1].y = rotAxisVec.y;
+        // this.rotationAxisObject.geometry.vertices[1].z = rotAxisVec.z;
+        // this.rotationAxisObject.geometry.verticesNeedUpdate = true;
+
+        this.renderer.render(this.scene, this.camera)
     }
 
 
@@ -111,8 +158,30 @@ export class QuatVisualisation {
         vectorStandardBack.applyQuaternion(vectorQuaternion);
         vectorGeom.vertices.push(vectorStandard);
         vectorGeom.vertices.push(vectorStandardBack);
-        let vectorObject = new THREE.Line(vectorGeom, vectorMat);
-        this.scene.add(vectorObject);
+        this.vectorObject = new THREE.Line(vectorGeom, vectorMat);
+        this.scene.add(this.vectorObject);
+
+
+        var meshTraceMat = new THREE.MeshBasicMaterial({color: 0x0066cc, side:THREE.DoubleSide, transparent: true, opacity: 0.05,});
+        var lineTraceMat = new THREE.LineBasicMaterial({color: 0x0066cc});
+        var meshTraceGeom = new THREE.Geometry();
+        var lineTraceGeom = new THREE.Geometry();
+        meshTraceGeom.vertices.push(new THREE.Vector3(0,0,0));
+        for (var i=0; i<= TRACE_SEGMENTS; i++) {
+            var currentQuat = new THREE.Quaternion().slerp(vectorQuaternion, i / TRACE_SEGMENTS);
+            var currentVector = new THREE.Vector3(AXIS_LENGTH, 0, 0);
+            currentVector.applyQuaternion(currentQuat);
+            meshTraceGeom.vertices.push(currentVector);
+            lineTraceGeom.vertices.push(currentVector);
+        }
+        for (var i=0; i <= TRACE_SEGMENTS; i++) {
+            meshTraceGeom.faces.push(new THREE.Face3(0, i, i+1));
+        }
+
+        this.meshTraceObject = new THREE.Mesh(meshTraceGeom, meshTraceMat);
+        this.lineTraceObject = new THREE.Line(lineTraceGeom, lineTraceMat);
+        this.scene.add(this.meshTraceObject);
+        this.scene.add(this.lineTraceObject);
     }
 
 
