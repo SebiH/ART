@@ -20,22 +20,16 @@ export class GraphListItemComponent implements OnChanges {
     }
 
     private getGraphStyle() {
-        let transform = 'translate3d(' + this.graph.posOffset + 'px, 0, 0)';
         let style = {
-            '-webkit-transform': transform,
-            '-ms-transform': transform,
-            transform: transform
+            left: this.graph.posOffset + 'px'
         };
 
         return style;
     }
 
     private getListItemStyle() {
-        let transform = 'translate3d(' + this.offset + 'px, 0, 0)';
         let style = {
-            '-webkit-transform': transform,
-            '-ms-transform': transform,
-            transform: transform,
+            left: this.offset + 'px',
             width: this.graph.width,
             'z-index': this.graph.listIndex + (this.graph.isPickedUp ? 100 : 0)
         };

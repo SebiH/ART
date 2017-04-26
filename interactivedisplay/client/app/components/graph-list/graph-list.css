@@ -12,11 +12,6 @@
 .list {
     position: relative;
 
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-
     height: 100%;
     box-sizing: border-box;
 
