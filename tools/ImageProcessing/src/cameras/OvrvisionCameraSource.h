@@ -21,8 +21,8 @@ namespace ImageProcessing
 		float auto_contrast_clip_percent_ = 0;
 		float auto_contrast_max_ = 7;
 
-		float avg_alpha = 0;
-		float avg_beta = 0;
+		float avg_alpha = 1;
+		float avg_beta = 1;
 
 	public:
 		OvrvisionCameraSource(OVR::Camprop quality, OVR::Camqt process_mode);
