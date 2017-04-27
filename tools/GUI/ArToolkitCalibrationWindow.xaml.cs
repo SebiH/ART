@@ -12,7 +12,7 @@ namespace GUI
 
         private void StandardCalibrate_Click(object sender, RoutedEventArgs e)
         {
-            ImageProcessing.SetOvrCamera(3, 0);
+            ImageProcessing.SetOvrCamera(3, 1);
             int cornersX = int.Parse(CornersXBox.Text);
             int cornersY = int.Parse(CornersYBox.Text);
             int calibImages = int.Parse(ImageCountBox.Text);
@@ -27,7 +27,7 @@ namespace GUI
 
         private void Calibrate_Click(object sender, RoutedEventArgs e)
         {
-            ImageProcessing.SetOvrCamera(3, 0);
+            ImageProcessing.SetOvrCamera(3, 1);
             int cornersX = int.Parse(CornersXBox.Text);
             int cornersY = int.Parse(CornersYBox.Text);
             int calibImages = int.Parse(ImageCountBox.Text);
@@ -42,7 +42,7 @@ namespace GUI
 
         private void StereoCalibrate_Click(object sender, RoutedEventArgs e)
         {
-            ImageProcessing.SetOvrCamera(3, 0);
+            ImageProcessing.SetOvrCamera(3, 1);
             int cornersX = int.Parse(CornersXBox.Text);
             int cornersY = int.Parse(CornersYBox.Text);
             int calibImages = int.Parse(ImageCountBox.Text);

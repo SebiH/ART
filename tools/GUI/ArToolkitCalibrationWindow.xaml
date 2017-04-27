@@ -27,7 +27,7 @@
             <TextBox x:Name="FilenameBox">calib_ovrvision</TextBox>
 
             <Separator Margin="10"></Separator>
-            <Button Click="Calibrate_Click"> Calibrate OpenCV </Button>
+            <Button Click="StandardCalibrate_Click"> Calibrate OpenCV </Button>
             <Separator Margin="10"></Separator>
             <Button Click="Calibrate_Click"> Calibrate ArToolkit </Button>
 
