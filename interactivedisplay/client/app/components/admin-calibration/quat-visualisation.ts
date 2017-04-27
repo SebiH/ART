@@ -60,19 +60,23 @@ export class QuatVisualisation {
         this.vectorObject.quaternion.y = vectorQuaternion.y;
         this.vectorObject.quaternion.z = vectorQuaternion.z;
 
+        let meshTraceGeometry = <THREE.Geometry>this.meshTraceObject.geometry;
+        let lineTraceGeometry = <THREE.Geometry>this.lineTraceObject.geometry;
+
         for (var i=1; i<= TRACE_SEGMENTS + 1; i++) {
             var currentQuat = new THREE.Quaternion().slerp(vectorQuaternion, (i-1) / TRACE_SEGMENTS);
             var currentVector = new THREE.Vector3(AXIS_LENGTH, 0, 0);
             currentVector.applyQuaternion(currentQuat);
-            this.meshTraceObject.geometry.vertices[i].x = currentVector.x;
-            this.meshTraceObject.geometry.vertices[i].y = currentVector.y;
-            this.meshTraceObject.geometry.vertices[i].z = currentVector.z;
-            this.lineTraceObject.geometry.vertices[i-1].x = currentVector.x;
-            this.lineTraceObject.geometry.vertices[i-1].y = currentVector.y;
-            this.lineTraceObject.geometry.vertices[i-1].z = currentVector.z;
+            meshTraceGeometry.vertices[i].x = currentVector.x;
+            meshTraceGeometry.vertices[i].y = currentVector.y;
+            meshTraceGeometry.vertices[i].z = currentVector.z;
+
+            lineTraceGeometry.vertices[i-1].x = currentVector.x;
+            lineTraceGeometry.vertices[i-1].y = currentVector.y;
+            lineTraceGeometry.vertices[i-1].z = currentVector.z;
         }
-        this.meshTraceObject.geometry.verticesNeedUpdate = true;
-        this.lineTraceObject.geometry.verticesNeedUpdate = true;
+        meshTraceGeometry.verticesNeedUpdate = true;
+        lineTraceGeometry.verticesNeedUpdate = true;
 
         // var rotAxisVec = new THREE.Vector3().copy(rotationAxis).multiplyScalar(AXIS_LENGTH);
         // this.rotationAxisObject.geometry.vertices[0].x = -rotAxisVec.x;

@@ -263,50 +263,6 @@ done:
 	camera->Close();
 }
 
-void ArToolkitStereoCalibrator::CopyImage(ARUint8 * p1, ARUint8 * p2, int size, int pixFormat)
-{
-	int    i, j;
-
-	if (pixFormat == AR_PIXEL_FORMAT_RGB || pixFormat == AR_PIXEL_FORMAT_BGR) {
-		for (i = 0; i < size; i++) {
-			j = *(p1 + 0) + *(p1 + 1) + *(p1 + 2);
-			*(p2++) = j / 3;
-			p1 += 3;
-		}
-	}
-	if (pixFormat == AR_PIXEL_FORMAT_RGBA || pixFormat == AR_PIXEL_FORMAT_BGRA) {
-		for (i = 0; i < size; i++) {
-			j = *(p1 + 0) + *(p1 + 1) + *(p1 + 2);
-			*(p2++) = j / 3;
-			p1 += 4;
-		}
-	}
-	if (pixFormat == AR_PIXEL_FORMAT_ABGR || pixFormat == AR_PIXEL_FORMAT_ARGB) {
-		for (i = 0; i < size; i++) {
-			j = *(p1 + 1) + *(p1 + 2) + *(p1 + 3);
-			*(p2++) = j / 3;
-			p1 += 4;
-		}
-	}
-	if (pixFormat == AR_PIXEL_FORMAT_MONO || pixFormat == AR_PIXEL_FORMAT_420v || pixFormat == AR_PIXEL_FORMAT_420f) {
-		for (i = 0; i < size; i++) {
-			*(p2++) = *(p1++);
-		}
-	}
-	if (pixFormat == AR_PIXEL_FORMAT_2vuy) {
-		for (i = 0; i < size; i++) {
-			*(p2++) = *(p1 + 1);
-			p1 += 2;
-		}
-	}
-	if (pixFormat == AR_PIXEL_FORMAT_yuvs) {
-		for (i = 0; i < size; i++) {
-			*(p2++) = *(p1);
-			p1 += 2;
-		}
-	}
-}
-
 void ImageProcessing::ArToolkitStereoCalibrator::SaveParam(ARdouble transL2R[3][4], const std::string &filename)
 {
 	if (arParamSaveExt(filename.c_str(), transL2R) < 0) {

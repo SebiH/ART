@@ -27,8 +27,6 @@ namespace ImageProcessing
 		void Calibrate(const std::shared_ptr<CameraSourceInterface> &camera, const std::string &filename);
 
 	private:
-		void CopyImage(ARUint8 *p1, ARUint8 *p2, int size, int pixFormat);
 		void SaveParam(ARdouble transL2R[3][4], const std::string &filename);
-
 	};
 }

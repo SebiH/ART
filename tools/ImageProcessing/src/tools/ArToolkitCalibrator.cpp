@@ -7,6 +7,7 @@
 #include "frames/FrameData.h"
 #include "frames/FrameSize.h"
 #include "outputs/OpenCvOutput.h"
+#include "utils/Logger.h"
 
 using namespace ImageProcessing;
 
@@ -107,6 +108,7 @@ double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename,
 	std::vector<cv::Mat> tvecs;
 
 	auto rms = cv::calibrateCamera(object_points, image_points, image_size, camera_matrix, dist_coeffs, rvecs, tvecs, 0);
+	DebugLog(std::string("Calibrated camera with error ") + std::to_string(rms));
 	bool ok = cv::checkRange(camera_matrix) && cv::checkRange(dist_coeffs);
 
 	if (!ok)
@@ -124,14 +126,14 @@ double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename,
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			intr[j][i] = camera_matrix.at<double>(j, i);
+			intr[j][i] = (float)(camera_matrix.at<double>(j, i));
 		}
 		intr[j][3] = 0.0f;
 	}
 	for (int i = 0; i < 4; i++)
 	{
 		//dist[i] = ((float*)(dist_coeffs.data))[i];
-		dist[i] = dist_coeffs.at<double>(i);
+		dist[i] = (float)(dist_coeffs.at<double>(i));
 	}
 	ConvParam(intr, dist, image_size.width, image_size.height, &param); //COVHI10434 ignored.
 	arParamDisp(&param);
@@ -256,10 +258,10 @@ void ArToolkitCalibrator::ConvParam(float intr[3][4], float dist[4], int xsize, 
 void ArToolkitCalibrator::SaveParam(ARParam *param, const std::string &filename)
 {
 	if (arParamSave(filename.c_str(), 1, param) < 0) {
-		ARLOG("Parameter write error!!\n");
+		DebugLog("Parameter write error!!");
 	}
 	else {
-		ARLOG("Saved parameter file '%s'.\n", filename);
+		DebugLog(std::string("Saved parameter file ") + std::string(filename));
 	}
 }
 

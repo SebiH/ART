@@ -22,7 +22,6 @@ namespace Assets.Modules.Tracking
         private JsonOutput _artkOutput;
 
         private Queue _currentOutput;
-        private readonly Quaternion _rotationAdjustment = Quaternion.Euler(90, 0, 0);
 
         public float MinMatchError = 0;
         public float MinTransformationError = 0;
