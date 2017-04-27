@@ -103,6 +103,9 @@ namespace Assets.Modules.Vision
         public static extern int AddArucoMapProcessor(int pipeline_id, string json_config);
 
         [DllImport("ImageProcessing")]
+        public static extern int AddUndistortProcessor(int pipeline_id, string json_config);
+
+        [DllImport("ImageProcessing")]
         public static extern int RemoveProcessor(int pipeline_id, int processor_id);
 
         public delegate void ProcessorPropertyCallback(string json_properties);

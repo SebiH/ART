@@ -8,6 +8,7 @@
 #include "processors/ArToolkitStereoProcessor.h"
 #include "processors/ArucoProcessor.h"
 #include "processors/ArucoMapProcessor.h"
+#include "processors/UndistortProcessor.h"
 #include "utils/Logger.h"
 
 using namespace ImageProcessing;
@@ -77,6 +78,25 @@ extern "C" UNITY_INTERFACE_EXPORT int AddArucoMapProcessor(const int pipeline_id
 	catch (const std::exception &e)
 	{
 		DebugLog(std::string("Unable to add ArucoMapProcessor: ") + e.what());
+	}
+
+	return -1;
+}
+
+
+extern "C" UNITY_INTERFACE_EXPORT int AddUndistortProcessor(const int pipeline_id, const char *json_config)
+{
+	try
+	{
+		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
+		auto config = nlohmann::json::parse(std::string(json_config));
+		std::shared_ptr<Processor> undistort_processor = std::make_shared<UndistortProcessor>(config);
+		pipeline->AddProcessor(undistort_processor);
+		return undistort_processor->Id();
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to add UndistortProcessor: ") + e.what());
 	}
 
 	return -1;
