@@ -355,6 +355,6 @@ void ArToolkitProcessor::SetProperties(const nlohmann::json &config)
 
 	if (config.count("max_missed_frames"))
 	{
-		use_filters_ = config["max_missed_frames"].get<int>();
+		max_missed_frames_ = config["max_missed_frames"].get<int>();
 	}
 }

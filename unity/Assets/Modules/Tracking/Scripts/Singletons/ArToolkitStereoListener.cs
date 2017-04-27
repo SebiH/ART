@@ -102,6 +102,13 @@ namespace Assets.Modules.Tracking
                 // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
                 UseFilters = _artkProcessor.UseFilters;
             }
+
+            if (MaxMissedFrames != _artkProcessor.MaxMissedFrames)
+            {
+                _artkProcessor.MaxMissedFrames = MaxMissedFrames;
+                // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
+                MaxMissedFrames = _artkProcessor.MaxMissedFrames;
+            }
         }
 
 

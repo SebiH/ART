@@ -66,6 +66,7 @@ namespace Assets.Modules.Calibration
             if (HasDetectedCamera && (Time.unscaledTime - CameraDetectionTime) > 0.5f)
             {
                 HasDetectedCamera = false;
+                Confidence = 0;
             }
         }
 
@@ -98,7 +99,7 @@ namespace Assets.Modules.Calibration
             var br = transform.position + (transform.rotation * new Vector3(Size / 2, -Size / 2, 0));
 
             var minConfidence = ArMarkerTracker.Instance.GetMinConfidence();
-            Gizmos.color = Color.Lerp(Color.red, Color.green, (Confidence - minConfidence) / (1.0f - minConfidence));
+            Gizmos.color = Color.Lerp(Color.red, Color.green, Mathf.Max(0, (Confidence - minConfidence) / (1.0f - minConfidence)));
             Gizmos.DrawLine(tl, bl);
             Gizmos.DrawLine(bl, br);
             Gizmos.DrawLine(br, tr);
