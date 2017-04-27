@@ -62,7 +62,7 @@ void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>&
 		}
 
 		// show preview
-		cv::putText(img_left, std::to_string(calibrated_corners_left.size()) + std::string("/") + std::to_string(calib_image_count), cv::Point(50, 50), cv::FONT_HERSHEY_COMPLEX, 1.0, cv::Scalar(0, 0, 0, 1));
+		cv::putText(img_left, std::to_string(calibrated_corners_left.size()) + std::string("/") + std::to_string(calib_image_count), cv::Point(50, 50), cv::FONT_HERSHEY_COMPLEX, 1.0, cv::Scalar(255, 0, 0, 255));
 		auto fd = std::make_shared<FrameData>(frame_counter++, buffer_left, buffer_right, frame_size);
 		output.RegisterResult(fd);
 		output.WriteResult();
@@ -83,6 +83,10 @@ void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>&
 	StereoCameraCalibration(filename, calibrated_corners_left, calibrated_corners_right, mat_size);
 	cv::destroyWindow(window_name);
 
+	//cv::Mat map1_l;
+	//cv::Mat map2_l;
+	//cv::initUndistortRectifyMap(camera_matrix_l_, dist_coeffs_l_, cv::Mat(), cv::Mat(), mat_size, CV_32FC1, map1_l, map2_l);
+
 	//while (true)
 	//{
 	//	camera->PrepareNextFrame();
@@ -91,17 +95,18 @@ void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>&
 
 	//	cv::Mat img_left(mat_size, frame_size.CvType(), buffer_left.get());
 	//	cv::Mat img_left_undistorted;
-	//	cv::undistort(img_left, img_left_undistorted, camera_matrix_l_, dist_coeffs_l_);
+	//	//cv::undistort(img_left, img_left_undistorted, camera_matrix_l_, dist_coeffs_l_);
+	//	cv::remap(img_left, img_left_undistorted, map1_l, map2_l, cv::INTER_LINEAR);
 	//	imshow("left", img_left);
 	//	imshow("left_undistorted", img_left_undistorted);
 
 	//	cv::Mat img_right(mat_size, frame_size.CvType(), buffer_right.get());
 	//	cv::Mat img_right_undistorted;
-	//	cv::undistort(img_right, img_right_undistorted, camera_matrix_r_, dist_coeffs_r_);
+	//cv::undistort(img_right, img_right_undistorted, camera_matrix_r_, dist_coeffs_r_);
 	//	imshow("right", img_right);
 	//	imshow("right_undistorted", img_right_undistorted);
 
-	//	int key = cv::waitKey(50);
+	//	int key = cv::waitKey(1);
 	//	if (key == 'x')
 	//	{
 	//		exit(0);
