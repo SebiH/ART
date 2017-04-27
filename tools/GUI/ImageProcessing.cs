@@ -136,6 +136,9 @@ namespace GUI
         public static extern void GenerateMarkerMap(string json_config_str);
 
         [DllImport("ImageProcessing")]
+        public static extern void PerformStandardCalibration(string save_filename, int corners_num_x, int corners_num_y, int calib_image_count, double pattern_width, double screen_size_margin);
+
+        [DllImport("ImageProcessing")]
         public static extern void PerformArToolkitCalibration(string save_filename, int corners_num_x, int corners_num_y, int calib_image_count, double pattern_width, double screen_size_margin);
 
         [DllImport("ImageProcessing")]

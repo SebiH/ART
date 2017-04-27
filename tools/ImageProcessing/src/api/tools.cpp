@@ -7,6 +7,7 @@
 #include "cameras/ActiveCamera.h"
 #include "tools/ArToolkitCalibrator.h"
 #include "tools/ArToolkitStereoCalibrator.h"
+#include "tools/StandardCalibrator.h"
 #include "tools/ArucoTools.h"
 #include "utils/Logger.h"
 
@@ -55,6 +56,28 @@ extern "C" UNITY_INTERFACE_EXPORT void GenerateMarkerMap(const char* json_config
 		DebugLog(e.what());
 	}
 }
+
+extern "C" UNITY_INTERFACE_EXPORT void PerformStandardCalibration(const char* save_filename, int corners_num_x, int corners_num_y, int calib_image_count, double pattern_width, double screen_size_margin)
+{
+	try
+	{
+		auto cam = ActiveCamera::Instance()->GetSource();
+
+		auto calibrator = StandardCalibrator();
+		calibrator.corners_num_x = corners_num_x;
+		calibrator.corners_num_y = corners_num_y;
+		calibrator.calib_image_count = calib_image_count;
+		calibrator.pattern_width = pattern_width;
+		calibrator.screen_size_margin = screen_size_margin;
+
+		calibrator.Calibrate(cam, std::string(save_filename));
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(e.what());
+	}
+}
+
 
 extern "C" UNITY_INTERFACE_EXPORT void PerformArToolkitCalibration(const char* save_filename, int corners_num_x, int corners_num_y, int calib_image_count, double pattern_width, double screen_size_margin)
 {

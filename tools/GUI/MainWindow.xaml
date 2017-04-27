@@ -32,7 +32,7 @@
 
             <Separator Margin="20"/>
 
-            <Button Click="ArToolkitCalibrationClick">ArToolkit Calibration</Button>
+            <Button Click="ArToolkitCalibrationClick">Camera Calibration</Button>
 
             <Separator Margin="20"/>
 
