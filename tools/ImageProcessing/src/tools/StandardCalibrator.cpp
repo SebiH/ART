@@ -205,15 +205,15 @@ void StandardCalibrator::StereoCameraCalibration(const std::string & filename, c
 	//cv::Mat fundamental_matrix;
 	//cv::stereoCalibrate(object_points, image_points_l, image_points_r, camera_matrix_l_, dist_coeffs_l_, camera_matrix_r_, dist_coeffs_r_, image_size, rvecs, tvecs, essential_matrix, fundamental_matrix);
 
-	cv::FileStorage fs_i_l(filename + "standard_left_intrinsic.dat", cv::FileStorage::WRITE);
-	cv::FileStorage fs_d_l(filename + "standard_left_distcoeffs.dat", cv::FileStorage::WRITE);
-	fs_i_l << camera_matrix_l_;
-	fs_d_l << dist_coeffs_l_;
+	cv::FileStorage fs_i_l(filename + "_standard_left_intrinsic.yaml", cv::FileStorage::WRITE);
+	cv::FileStorage fs_d_l(filename + "_standard_left_distcoeffs.yaml", cv::FileStorage::WRITE);
+	fs_i_l << "standard_left_intrinsic" << camera_matrix_l_;
+	fs_d_l << "standard_left_distcoeffs" << dist_coeffs_l_;
 
-	cv::FileStorage fs_i_r(filename + "standard_right_intrinsic.dat", cv::FileStorage::WRITE);
-	cv::FileStorage fs_d_r(filename + "standard_right_distcoeffs.dat", cv::FileStorage::WRITE);
-	fs_i_r << camera_matrix_r_;
-	fs_d_r << dist_coeffs_r_;
+	cv::FileStorage fs_i_r(filename + "_standard_right_intrinsic.yaml", cv::FileStorage::WRITE);
+	cv::FileStorage fs_d_r(filename + "_standard_right_distcoeffs.yaml", cv::FileStorage::WRITE);
+	fs_i_r << "standard_right_intrinsic" << camera_matrix_r_;
+	fs_d_r << "standard_right_distcoeffs" << dist_coeffs_r_;
 }
 
 
