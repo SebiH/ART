@@ -167,7 +167,6 @@ void StandardCalibrator::SingleCameraCalibration(const std::string &filename, co
 	std::vector<float> reproj_errs;
 }
 
-// see: https://github.com/sourishg/fisheye-stereo-calibration/blob/master/calibrate.cpp
 void StandardCalibrator::StereoCameraCalibration(const std::string & filename, const std::vector<std::vector<cv::Point2f>>& image_points_l, const std::vector<std::vector<cv::Point2f>>& image_points_r, const cv::Size & image_size)
 {
 	std::vector<std::vector<cv::Point3f>> object_points;
@@ -196,6 +195,20 @@ void StandardCalibrator::StereoCameraCalibration(const std::string & filename, c
 	camera_matrix_r_.at<float>(0, 0) = 1;
 	camera_matrix_r_.at<float>(1, 1) = 1;
 	cv::calibrateCamera(object_points, image_points_r, image_size, camera_matrix_r_, dist_coeffs_r_, rvecs, tvecs);
+
+	//cv::Mat essential_matrix;
+	//cv::Mat fundamental_matrix;
+	//cv::stereoCalibrate(object_points, image_points_l, image_points_r, camera_matrix_l_, dist_coeffs_l_, camera_matrix_r_, dist_coeffs_r_, image_size, rvecs, tvecs, essential_matrix, fundamental_matrix);
+
+	cv::FileStorage fs_i_l(filename + "standard_left_intrinsic.dat", cv::FileStorage::WRITE);
+	cv::FileStorage fs_d_l(filename + "standard_left_distcoeffs.dat", cv::FileStorage::WRITE);
+	fs_i_l << camera_matrix_l_;
+	fs_d_l << dist_coeffs_l_;
+
+	cv::FileStorage fs_i_r(filename + "standard_right_intrinsic.dat", cv::FileStorage::WRITE);
+	cv::FileStorage fs_d_r(filename + "standard_right_distcoeffs.dat", cv::FileStorage::WRITE);
+	fs_i_r << camera_matrix_r_;
+	fs_d_r << dist_coeffs_r_;
 }
 
 
