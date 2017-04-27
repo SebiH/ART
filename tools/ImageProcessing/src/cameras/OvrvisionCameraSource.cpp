@@ -110,6 +110,12 @@ float OvrvisionCameraSource::GetFocalLength() const
 
 void OvrvisionCameraSource::SetProperties(const nlohmann::json &json_config)
 {
+	if (json_config.count("Mode") != 0)
+	{
+		auto mode = json_config["Mode"].get<int>();
+		process_mode_ = static_cast<OVR::Camqt>(mode);
+	}
+
 	if (json_config.count("Exposure") != 0)
 	{
 		auto exposure = json_config["Exposure"].get<int>();
@@ -190,6 +196,7 @@ nlohmann::json OvrvisionCameraSource::GetProperties() const
 	if (IsOpen())
 	{
 		return nlohmann::json{
+			{ "Mode", static_cast<int>(process_mode_) },
 			{ "HMDRightGap", { ovr_camera_->GetHMDRightGap(0), ovr_camera_->GetHMDRightGap(1), ovr_camera_->GetHMDRightGap(2) } },
 			{ "FocalPoint", ovr_camera_->GetCamFocalPoint() },
 			{ "Exposure", ovr_camera_->GetCameraExposure() },

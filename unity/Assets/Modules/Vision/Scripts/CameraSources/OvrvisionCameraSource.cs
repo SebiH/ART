@@ -29,13 +29,13 @@ namespace Assets.Modules.Vision.CameraSources
         public Quality CamQuality = Quality.Q1280x960x45;
 
 
-        private ProcessingMode _prevCamMode;
         public ProcessingMode CamMode = ProcessingMode.DemosaicRemap; 
 
 
         [Serializable]
         private struct OvrSettings
         {
+            public int Mode;
             public float[] HMDRightGap;
             public float FocalPoint;
             public int Exposure;
@@ -112,35 +112,16 @@ namespace Assets.Modules.Vision.CameraSources
         public override void InitCamera()
         {
             _prevCamQuality = CamQuality;
-            _prevCamMode = CamMode;
             ImageProcessing.SetOvrCamera((int)CamQuality, (int)CamMode);
 
             UpdateCameraProperties(true);
         }
 
-#if UNITY_EDITOR
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            StartCoroutine(FetchPropertiesPeriodically());
-        }
-
-        private IEnumerator FetchPropertiesPeriodically()
-        {
-            while (isActiveAndEnabled)
-            {
-                yield return new WaitForSeconds(0.3f);
-                ReloadSettings();
-            }
-        }
-#endif
-
         private void Update()
         {
-            bool hasModeChanged = (_prevCamMode != CamMode);
             bool hasQualityChanged = (_prevCamQuality != CamQuality);
 
-            if (hasModeChanged || hasQualityChanged)
+            if (hasQualityChanged)
             {
                 InitCamera();
             }
@@ -151,6 +132,11 @@ namespace Assets.Modules.Vision.CameraSources
         private void UpdateCameraProperties(bool force = false)
         {
             bool hasPropertyChanged = force;
+            if ((int)CamMode != _sourceSettings.Mode)
+            {
+                _sourceSettings.Mode = (int)CamMode;
+                hasPropertyChanged = true;
+            }
 
             if (Exposure != _sourceSettings.Exposure)
             {
@@ -233,6 +219,7 @@ namespace Assets.Modules.Vision.CameraSources
             ImageProcessing.GetCamJsonProperties(GetPropertyCallback);
 
             // make sure settings are synced, in case a value was out of range
+            CamMode = (ProcessingMode)_sourceSettings.Mode;
             Gain = _sourceSettings.Gain;
             Exposure = _sourceSettings.Exposure;
             BLC = _sourceSettings.BLC;
