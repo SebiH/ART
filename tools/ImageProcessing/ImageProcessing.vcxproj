@@ -118,6 +118,7 @@
     <ClCompile Include="src\processors\ArucoMapProcessor.cpp" />
     <ClCompile Include="src\processors\ArucoProcessor.cpp" />
     <ClCompile Include="src\processors\Stereo3DProcessor.cpp" />
+    <ClCompile Include="src\processors\UndistortProcessor.cpp" />
     <ClCompile Include="src\processors\_stereo_detection.cpp" />
     <ClCompile Include="src\pipelines\ThreadedPipeline.cpp" />
     <ClCompile Include="src\tools\ArToolkitCalibrator.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="src\processors\Processor.h" />
     <ClInclude Include="src\api\unity_plugin.h" />
     <ClInclude Include="src\processors\Stereo3dProcessor.h" />
+    <ClInclude Include="src\processors\UndistortProcessor.h" />
     <ClInclude Include="src\tools\ArToolkitCalibrator.h" />
     <ClInclude Include="src\tools\ArToolkitStereoCalibrator.h" />
     <ClInclude Include="src\tools\ArucoTools.h" />
