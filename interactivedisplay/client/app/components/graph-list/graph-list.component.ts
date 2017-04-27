@@ -95,12 +95,15 @@ export class GraphListComponent implements OnInit, OnDestroy {
 
     private handleMoveUpdate(event: any): void {
         if (this.selectedGraph === null) {
+            let prevScrollOffset = this.scrollOffset;
             this.scrollOffset += event.deltaX;
-            this.lastMovement = event.deltaX;
+            this.applyScrollOffsetLimits();
+            let scrollOffsetDelta = this.scrollOffset - prevScrollOffset;
+            this.lastMovement = scrollOffsetDelta;
 
             for (let graph of this.graphs) {
                 if (graph.isPickedUp) {
-                    graph.posOffset += event.deltaX;
+                    graph.posOffset += scrollOffsetDelta;
                 }
             }
         }
@@ -134,7 +137,16 @@ export class GraphListComponent implements OnInit, OnDestroy {
         }
 
         this.hasInertia = true;
+        let prevScrollOffset = this.scrollOffset;
         this.scrollOffset += force;
+        this.applyScrollOffsetLimits();
+        let scrollOffsetDelta = this.scrollOffset - prevScrollOffset;
+
+        for (let graph of this.graphs) {
+            if (graph.isPickedUp) {
+                graph.posOffset += scrollOffsetDelta;
+            }
+        }
 
         setTimeout(() => this.applyInertia(force * 0.95), 10);
     }
