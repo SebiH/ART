@@ -95,7 +95,7 @@ namespace Assets.Modules.CalibratedTracking
         private void UseOptitrack()
         {
             var pos = OptitrackTracker.GetPosition();
-            var rot = OptitrackTracker.GetRotation();
+            var rot = VrTracker.GetRotation();
 
             switch (CurrentMode)
             {
