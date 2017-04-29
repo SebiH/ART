@@ -24,7 +24,7 @@ export interface CategoricalSqlMapping {
     dbColumn: string;
     name: string;
     converter: (d: any) => number;
-    filterDbValues: boolean;
+    limitValues?: number[];
 
     values: ValueMapping[];
 }
@@ -38,7 +38,6 @@ export interface MetricSqlMapping {
 
     // quick hack to trigger time-based restrictions in sql
     dbTime?: boolean;
-    filterDbValues: boolean;
     isTimeBased: boolean;
     timeFormat?: string;
 

@@ -127,17 +127,24 @@ export class SqlConnection {
 
         for (let map of this.mapping) {
 
-            if (!map.filterDbValues) {
-                continue;
-            }
-
             if (map.type == DataRepresentation.Categorical) {
+
                 let filter = map.dbColumn + ' IN (';
-                for (let i = 0; i < map.values.length; i++) {
-                    if (i > 0) {
-                        filter += ',';
+
+                if (map.limitValues) {
+                    for (let i = 0; i < map.limitValues.length; i++) {
+                        if (i > 0) {
+                            filter += ',';
+                        }
+                        filter += '' + map.limitValues[i];
                     }
-                    filter += '' + map.values[i].dbValue;
+                } else {
+                    for (let i = 0; i < map.values.length; i++) {
+                        if (i > 0) {
+                            filter += ',';
+                        }
+                        filter += '' + map.values[i].dbValue;
+                    }
                 }
 
                 filter += ')';
