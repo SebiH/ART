@@ -43,12 +43,17 @@ void OvrvisionCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char
 
 		if (use_auto_contrast_)
 		{
+			ovr_camera_->GrayscaleHalf(autocontrast_gray_left_.get(), autocontrast_gray_right_.get());
+
 			auto width = GetFrameWidth();
 			auto height = GetFrameHeight();
 
-			cv::Mat left(cv::Size(width, height), CV_8UC4, left_buffer);
-			cv::Mat right(cv::Size(width, height), CV_8UC4, right_buffer);
-			BrightnessAndContrastAuto(left, right, auto_contrast_clip_percent_);
+			cv::Mat gray_left(cv::Size(width / 2, height / 2), CV_8UC1, autocontrast_gray_left_.get());
+			cv::Mat gray_right(cv::Size(width / 2, height / 2), CV_8UC1, autocontrast_gray_right_.get());
+
+			cv::Mat col_left(cv::Size(width, height), CV_8UC4, left_buffer);
+			cv::Mat col_right(cv::Size(width, height), CV_8UC4, right_buffer);
+			BrightnessAndContrastAuto(gray_left, col_left, gray_right, col_right, auto_contrast_clip_percent_);
 		}
 	}
 }
@@ -67,6 +72,10 @@ void OvrvisionCameraSource::Open()
 		{
 			throw std::exception("Could not open OVRvision camera");
 		}
+
+		auto buff_size_gray = GetFrameWidth() * GetFrameHeight() / 2; // gray uses one channel @ half size
+		autocontrast_gray_left_ = std::unique_ptr<unsigned char[]>(new unsigned char[buff_size_gray]);
+		autocontrast_gray_right_ = std::unique_ptr<unsigned char[]>(new unsigned char[buff_size_gray]);
 	}
 }
 
@@ -220,14 +229,12 @@ nlohmann::json OvrvisionCameraSource::GetProperties() const
 
 
 // Adapted from: http://answers.opencv.org/question/75510/how-to-make-auto-adjustmentsbrightness-and-contrast-for-image-android-opencv-image-correction/
-static void CalculateHistogram(float &alpha, float &beta, cv::Mat src, float clipHistPercent)
+static void CalculateHistogram(float &alpha, float &beta, const cv::Mat &gray, float clipHistPercent)
 {
 	int histSize = 256;
 	double minGray = 0, maxGray = 0;
 
 	//to calculate grayscale histogram
-	cv::Mat gray;
-	cv::cvtColor(src, gray, CV_BGRA2GRAY);
 	if (clipHistPercent == 0)
 	{
 		// keep full available range
@@ -281,14 +288,14 @@ static void CalculateHistogram(float &alpha, float &beta, cv::Mat src, float cli
  *  \param clipHistPercent cut wings of histogram at given percent tipical=>1, 0=>Disabled
  *  \note In case of BGRA image, we won't touch the transparency
  */
-void OvrvisionCameraSource::BrightnessAndContrastAuto(cv::Mat &left, cv::Mat &right, float clip_hist_percent)
+void OvrvisionCameraSource::BrightnessAndContrastAuto(const cv::Mat &gray_left, cv::Mat &col_left, const cv::Mat &gray_right, cv::Mat &col_right, const float clip_hist_percent)
 {
 	CV_Assert(clip_hist_percent >= 0);
 
 	float alpha_l, beta_l;
-	CalculateHistogram(alpha_l, beta_l, left, clip_hist_percent);
+	CalculateHistogram(alpha_l, beta_l, gray_left, clip_hist_percent);
 	float alpha_r, beta_r;
-	CalculateHistogram(alpha_r, beta_r, right, clip_hist_percent);
+	CalculateHistogram(alpha_r, beta_r, gray_right, clip_hist_percent);
 
 	const double AVG_WEIGHT = 0.95;
 	float alpha = std::min(std::min(alpha_l, alpha_r), auto_contrast_max_);
@@ -321,6 +328,6 @@ void OvrvisionCameraSource::BrightnessAndContrastAuto(cv::Mat &left, cv::Mat &ri
 
 	// Apply brightness and contrast normalization
 	// convertTo operates with saurate_cast
-	left.convertTo(left, -1, avg_alpha, avg_beta);
-	right.convertTo(right, -1, avg_alpha, avg_beta);
+	col_left.convertTo(col_left, -1, avg_alpha, avg_beta);
+	col_right.convertTo(col_right, -1, avg_alpha, avg_beta);
 }

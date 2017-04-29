@@ -16,6 +16,7 @@ namespace ImageProcessing
 		OVR::Camprop quality_;
 		OVR::Camqt process_mode_;
 
+		std::unique_ptr<unsigned char[]> autocontrast_gray_left_, autocontrast_gray_right_;
 		bool use_auto_contrast_ = true;
 		bool auto_contrast_auto_gain_ = true;
 		float auto_contrast_clip_percent_ = 0;
@@ -47,6 +48,6 @@ namespace ImageProcessing
 		virtual void SetProperties(const nlohmann::json &json_config) override;
 
 	private:
-		void BrightnessAndContrastAuto(cv::Mat &left, cv::Mat &right, float clipHistPercent = 0);
+		void BrightnessAndContrastAuto(const cv::Mat &gray_left, cv::Mat &col_left, const cv::Mat &gray_right, cv::Mat &col_right, const float clip_hist_percent = 0);
 	};
 }

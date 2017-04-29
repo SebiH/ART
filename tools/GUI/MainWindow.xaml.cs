@@ -73,11 +73,20 @@ namespace GUI
 
                 char keyPressed;
                 int counter = 0;
+                bool useAutoContrast = true;
 
                 while (true)
                 {
                     ImageProcessing.ManualUpdate();
                     keyPressed = (char)ImageProcessing.OpenCvWaitKey(5);
+
+                    if (keyPressed == 'c')
+                    {
+                        dynamic camConfig = new JObject();
+                        useAutoContrast = !useAutoContrast;
+                        camConfig.AutoContrast = useAutoContrast;
+                        ImageProcessing.SetCamJsonProperties(camConfig.ToString());
+                    }
 
                     if (keyPressed == 's')
                     {
