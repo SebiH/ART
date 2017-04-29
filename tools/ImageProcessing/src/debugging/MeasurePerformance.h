@@ -3,7 +3,7 @@
 #if ENABLE_PERFORMANCE_DEBUGGING 
 
 #include <chrono>
-#include "UnityUtils.h"
+#include "utils/Logger.h"
 
 #define PERF_MEASURE(TIMEPOINT_NAME) \
 	std::chrono::time_point<std::chrono::high_resolution_clock> __##TIMEPOINT_NAME = std::chrono::high_resolution_clock::now();

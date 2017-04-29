@@ -1,5 +1,7 @@
 #include "cameras/OvrvisionCameraSource.h"
 
+
+#include "debugging/MeasurePerformance.h"
 using namespace ImageProcessing;
 
 
@@ -41,20 +43,29 @@ void OvrvisionCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char
 		ovr_camera_->GetCamImageBGRA(left_buffer, OVR::Cameye::OV_CAMEYE_LEFT);
 		ovr_camera_->GetCamImageBGRA(right_buffer, OVR::Cameye::OV_CAMEYE_RIGHT);
 
+		PERF_MEASURE(contrast_start)
 		if (use_auto_contrast_)
 		{
-			ovr_camera_->GrayscaleHalf(autocontrast_gray_left_.get(), autocontrast_gray_right_.get());
+			ovr_camera_->GrayscaleEighth(autocontrast_gray_left_.get(), autocontrast_gray_right_.get());
 
 			auto width = GetFrameWidth();
 			auto height = GetFrameHeight();
 
-			cv::Mat gray_left(cv::Size(width / 2, height / 2), CV_8UC1, autocontrast_gray_left_.get());
-			cv::Mat gray_right(cv::Size(width / 2, height / 2), CV_8UC1, autocontrast_gray_right_.get());
+			cv::Mat gray_left(cv::Size(width / 8, height / 8), CV_8UC1, autocontrast_gray_left_.get());
+			cv::Mat gray_right(cv::Size(width / 8, height / 8), CV_8UC1, autocontrast_gray_right_.get());
 
 			cv::Mat col_left(cv::Size(width, height), CV_8UC4, left_buffer);
 			cv::Mat col_right(cv::Size(width, height), CV_8UC4, right_buffer);
+
+			//cv::Mat gray_left(cv::Size(width, height), CV_8UC1);
+			//cv::cvtColor(col_left, gray_left, CV_BGRA2GRAY);
+			//cv::Mat gray_right(cv::Size(width, height), CV_8UC1);
+			//cv::cvtColor(col_right, gray_right, CV_BGRA2GRAY);
+
 			BrightnessAndContrastAuto(gray_left, col_left, gray_right, col_right, auto_contrast_clip_percent_);
 		}
+		PERF_MEASURE(contrast_end)
+		PERF_OUTPUT("auto contrast: ", contrast_start, contrast_end)
 	}
 }
 
@@ -73,7 +84,7 @@ void OvrvisionCameraSource::Open()
 			throw std::exception("Could not open OVRvision camera");
 		}
 
-		auto buff_size_gray = GetFrameWidth() * GetFrameHeight() / 2; // gray uses one channel @ half size
+		auto buff_size_gray = GetFrameWidth() * GetFrameHeight() / 8; // gray uses one channel @ eight size
 		autocontrast_gray_left_ = std::unique_ptr<unsigned char[]>(new unsigned char[buff_size_gray]);
 		autocontrast_gray_right_ = std::unique_ptr<unsigned char[]>(new unsigned char[buff_size_gray]);
 	}
@@ -292,11 +303,14 @@ void OvrvisionCameraSource::BrightnessAndContrastAuto(const cv::Mat &gray_left, 
 {
 	CV_Assert(clip_hist_percent >= 0);
 
+	PERF_MEASURE(histogram_start)
 	float alpha_l, beta_l;
 	CalculateHistogram(alpha_l, beta_l, gray_left, clip_hist_percent);
 	float alpha_r, beta_r;
 	CalculateHistogram(alpha_r, beta_r, gray_right, clip_hist_percent);
+	PERF_MEASURE(histogram_end)
 
+	PERF_MEASURE(autogain_start)
 	const double AVG_WEIGHT = 0.95;
 	float alpha = std::min(std::min(alpha_l, alpha_r), auto_contrast_max_);
 	alpha = (avg_alpha * AVG_WEIGHT) + (alpha * (1 - AVG_WEIGHT));
@@ -325,9 +339,16 @@ void OvrvisionCameraSource::BrightnessAndContrastAuto(const cv::Mat &gray_left, 
 		avg_alpha = alpha;
 		avg_beta = beta;
 	}
+	PERF_MEASURE(autogain_end)
 
+	PERF_MEASURE(convert_start)
 	// Apply brightness and contrast normalization
 	// convertTo operates with saurate_cast
 	col_left.convertTo(col_left, -1, avg_alpha, avg_beta);
 	col_right.convertTo(col_right, -1, avg_alpha, avg_beta);
+	PERF_MEASURE(convert_end)
+
+	PERF_OUTPUT("histogram: ", histogram_start, histogram_end)
+	PERF_OUTPUT("autogain: ", autogain_start, autogain_end)
+	PERF_OUTPUT("convert: ", convert_start, convert_end)
 }

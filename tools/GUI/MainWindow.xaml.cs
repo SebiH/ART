@@ -58,7 +58,7 @@ namespace GUI
 
                 int pipeline = ImageProcessing.CreatePipeline();
                 int output = ImageProcessing.AddOpenCvOutput(pipeline, "Test");
-                int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
+                //int output2 = ImageProcessing.AddJsonOutput(pipeline, JsonMsg);
                 //int processor = ImageProcessing.AddArucoProcessor(pipeline, @" { ""marker_size_m"": 0.29, ""use_tracker"": false } ");
                 var currDir = Directory.GetCurrentDirectory();
                 var dataDir = Path.Combine(currDir, "../../../../data/");
@@ -69,7 +69,7 @@ namespace GUI
                 config.calibration_stereo = Path.Combine(dataDir, "ovrvision_transL2R.dat");
                 config.marker_size = 24.0;
 
-                int processor = ImageProcessing.AddArToolkitStereoProcessor(pipeline, config.ToString());
+                //int processor = ImageProcessing.AddArToolkitStereoProcessor(pipeline, config.ToString());
 
                 char keyPressed;
                 int counter = 0;
@@ -106,9 +106,9 @@ namespace GUI
 
                     if (keyPressed == 'q')
                     {
-                        ImageProcessing.RemoveProcessor(pipeline, processor);
+                        //ImageProcessing.RemoveProcessor(pipeline, processor);
                         ImageProcessing.RemoveOutput(pipeline, output);
-                        ImageProcessing.RemoveOutput(pipeline, output2);
+                        //ImageProcessing.RemoveOutput(pipeline, output2);
                         ImageProcessing.RemovePipeline(pipeline);
                         ImageProcessing.StopImageProcessing();
                         break;

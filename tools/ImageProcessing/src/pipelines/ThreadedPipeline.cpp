@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "debugging/MeasurePerformance.h"
 #include "cameras/ActiveCamera.h"
 #include "utils/UIDGenerator.h"
 #include "utils/Logger.h"
@@ -116,6 +117,7 @@ void ThreadedPipeline::Run()
 		//		  alternate frames instead of buffers. Might need some consideration if
 		//        Processors return/alter framedata?
 
+		PERF_MEASURE(start)
 		auto frame = CreateFrame();
 		try
 		{
@@ -130,6 +132,7 @@ void ThreadedPipeline::Run()
 		{
 			// TODO: put into try/catch, or write class similar to std::lock_guard??
 			AcquireSRWLockShared(list_lock_);
+
 			// pass frame into all processing modules
 			for (const auto &processor : processors_)
 			{
@@ -142,7 +145,9 @@ void ThreadedPipeline::Run()
 				output->RegisterResult(frame);
 			}
 
+			PERF_MEASURE(end)
 			ReleaseSRWLockShared(list_lock_);
+			PERF_OUTPUT("pipeline: ", start, end)
 		}
 
 		SwitchBuffers();
