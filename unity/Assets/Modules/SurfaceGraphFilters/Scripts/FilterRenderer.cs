@@ -92,11 +92,17 @@ namespace Assets.Modules.SurfaceGraphFilters
         private bool _useGradient = false;
         private bool _needsUpdate;
 
+        private const float Z_OFFSET_INCREMENT = 0.00001f;
+        private static float _zOffset = Z_OFFSET_INCREMENT;
 
         private void OnEnable()
         {
             _filter = GetComponent<MeshFilter>();
-            GetComponent<MeshRenderer>().material.SetFloat("_randomOffset", UnityEngine.Random.value / 1000f + 0.0001f);
+            GetComponent<MeshRenderer>().material.SetFloat("_randomOffset", _zOffset);
+
+            _zOffset += Z_OFFSET_INCREMENT;
+            if (_zOffset > 0.001f)
+                _zOffset = Z_OFFSET_INCREMENT;
         }
 
         public void Init(GraphMetaData gm)
