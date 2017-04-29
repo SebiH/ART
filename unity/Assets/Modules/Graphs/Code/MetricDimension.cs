@@ -27,12 +27,12 @@ namespace Assets.Modules.Graphs
 
             foreach (var tick in PossibleTicks)
             {
-                if (tick < DomainMin && tick > minTick)
+                if (tick <= DomainMin && tick >= minTick)
                 {
                     minTick = tick;
                 }
 
-                if (tick > DomainMax && tick < maxTick)
+                if (tick >= DomainMax && tick <= maxTick)
                 {
                     maxTick = tick;
                 }
