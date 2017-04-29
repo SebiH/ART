@@ -19,6 +19,7 @@ namespace Assets.Modules.Calibration
                 transform.localPosition = new Vector3(value.x, 0, value.y);
                 LastChangeTime = Time.unscaledTime;
                 HasDetectedCamera = false;
+                Confidence = 0;
             }
         }
 
@@ -63,7 +64,7 @@ namespace Assets.Modules.Calibration
 
         void Update()
         {
-            if (HasDetectedCamera && (Time.unscaledTime - CameraDetectionTime) > 0.5f)
+            if (HasDetectedCamera && (Time.unscaledTime - CameraDetectionTime) > 0.1f)
             {
                 HasDetectedCamera = false;
                 Confidence = 0;

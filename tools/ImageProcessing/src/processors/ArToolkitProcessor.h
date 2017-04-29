@@ -47,7 +47,7 @@ namespace ImageProcessing
 		double min_confidence_ = 0.5;
 		double marker_size_ = 0.5;
 		bool use_filters_ = true;
-		int max_missed_frames_ = 180;
+		int max_missed_frames_ = 10;
 
 	public:
 		/*

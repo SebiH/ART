@@ -15,8 +15,8 @@ namespace Assets.Modules.Tracking
         public float MinConfidence = 0.5f;
         public bool UseFilters = true;
         // for filter
-        [Range(0, 1000)]
-        public int MaxMissedFrames = 180;
+        [Range(0, 200)]
+        public int MaxMissedFrames = 10;
 
         private ArToolkitProcessor _artkProcessor;
         private JsonOutput _artkOutput;
