@@ -133,16 +133,23 @@ void ThreadedPipeline::Run()
 			// TODO: put into try/catch, or write class similar to std::lock_guard??
 			AcquireSRWLockShared(list_lock_);
 
-			// pass frame into all processing modules
-			for (const auto &processor : processors_)
+			try
 			{
-				frame = processor->Process(frame);
-			}
+				// pass frame into all processing modules
+				for (const auto &processor : processors_)
+				{
+					frame = processor->Process(frame);
+				}
 
-			// register backbuffer as result in output module
-			for (const auto &output : outputs_)
+				// register backbuffer as result in output module
+				for (const auto &output : outputs_)
+				{
+					output->RegisterResult(frame);
+				}
+			}
+			catch (const std::exception &e)
 			{
-				output->RegisterResult(frame);
+				DebugLog(e.what());
 			}
 
 			PERF_MEASURE(end)
