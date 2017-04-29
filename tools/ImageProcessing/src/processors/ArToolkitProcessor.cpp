@@ -277,8 +277,8 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 	//
 
 	int extraction_error = 0;
-	extraction_error -= arSetMarkerExtractionMode(ar_handle_l_, AR_USE_TRACKING_HISTORY_V2);
-	extraction_error -= arSetMarkerExtractionMode(ar_handle_r_, AR_USE_TRACKING_HISTORY_V2);
+	extraction_error -= arSetMarkerExtractionMode(ar_handle_l_, AR_NOUSE_TRACKING_HISTORY);
+	extraction_error -= arSetMarkerExtractionMode(ar_handle_r_, AR_NOUSE_TRACKING_HISTORY);
 
 	if (extraction_error < 0)
 	{
