@@ -161,6 +161,7 @@
     <ClInclude Include="src\tools\FisheyeCalibrator.h" />
     <ClInclude Include="src\utils\Event.h" />
     <ClInclude Include="src\utils\Logger.h" />
+    <ClInclude Include="src\utils\OpenCLKernel.h" />
     <ClInclude Include="src\utils\Quaternion.h" />
     <ClInclude Include="src\utils\UID.h" />
     <ClInclude Include="src\utils\UIDGenerator.h" />
