@@ -70,6 +70,7 @@ namespace GUI
                 config.marker_size = 24.0;
 
                 //int processor = ImageProcessing.AddArToolkitStereoProcessor(pipeline, config.ToString());
+                int processor = ImageProcessing.AddUndistortProcessor(pipeline, "{}");
 
                 char keyPressed;
                 int counter = 0;
