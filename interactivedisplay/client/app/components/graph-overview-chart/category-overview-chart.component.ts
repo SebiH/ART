@@ -140,8 +140,7 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
             }
 
             let filters = this.getActiveFilters();
-            let isColored = (this.graph.isFlipped ? this.graph.useColorY : this.graph.useColorX);
-            if (filters.length == this.dim.mappings.length && !isColored) {
+            if (filters.length == this.dim.mappings.length && !this.graph.isColored) {
                 // all categories are active -> remove all filters
                 while (filters.length > 0) {
                     this.filterProvider.removeFilter(filters.pop());

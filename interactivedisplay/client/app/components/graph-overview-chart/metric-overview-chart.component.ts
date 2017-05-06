@@ -201,8 +201,7 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
     private removeFilterReapplyColour(filter: Filter): void {
         this.filterProvider.removeFilter(filter);
 
-        let isColored = this.graph.isFlipped ? this.graph.useColorY : this.graph.useColorX;
-        if (this.getActiveFilters().length == 0 && isColored) {
+        if (this.getActiveFilters().length == 0 && this.graph.isColored) {
             let filter = this.filterProvider.createMetricFilter(this.graph);
             filter.isUserGenerated = false;
             filter.boundDimensions = this.graph.isFlipped ? 'y' : 'x';

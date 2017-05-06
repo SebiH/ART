@@ -146,17 +146,17 @@ export class GlobalFilterProvider {
                 if (filter.boundDimensions == 'x') {
                     selectedX = _.union(selectedX, filter.selectedDataIndices);
 
-                    if (graph.useColorX) {
-                        this.applyFilterColor(filter);
-                    }
+                    // if (graph.useColorX) {
+                    //     this.applyFilterColor(filter);
+                    // }
                 }
 
                 if (filter.boundDimensions == 'y') {
                     selectedY = _.union(selectedY, filter.selectedDataIndices);
 
-                    if (graph.useColorY) {
-                        this.applyFilterColor(filter);
-                    }
+                    // if (graph.useColorY) {
+                    //     this.applyFilterColor(filter);
+                    // }
                 }
 
                 if (filter.boundDimensions == 'xy') {

@@ -149,8 +149,8 @@ export class FilterProvider {
             let filters = _.filter(this.filters, f => f.origin.id == graph.id);
 
             if (filters.length == 0) {
-                let dimension = graph.useColorX ? graph.dimX : graph.dimY;
-                let axis: 'x' | 'y' = graph.useColorX ? 'x' : 'y';
+                let dimension = graph.isFlipped ? graph.dimY : graph.dimX;
+                let axis: 'x' | 'y' = graph.isFlipped ? 'y' : 'x';
                 if (dimension.isMetric) {
                     let filter = this.createMetricFilter(graph);
                     filter.isUserGenerated = false;

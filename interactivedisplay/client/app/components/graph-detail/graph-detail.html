@@ -17,16 +17,10 @@
 
     <div class="row" style="width: 100%">
         <div class="buttons">
-            <div class="colbutton top" [ngClass]="{ active: graph.isFlipped ? graph.useColorX : graph.useColorY }"
-                 touch-button (touchclick)="graph.isFlipped ? useColorX() : useColorY()">
+            <div class="colbutton top" [ngClass]="{ active: graph.isColored }"
+                 touch-button (touchclick)="toggleColor()">
                 <span>
-                    Colour <span class="fa fa-arrow-up"></span>
-                </span>
-            </div>
-            <div class="colbutton right" [ngClass]="{ active: graph.isFlipped ? graph.useColorY : graph.useColorX }"
-                 touch-button (touchclick)="graph.isFlipped ? useColorY() : useColorX()">
-                <span>
-                    Colour <span class="fa fa-arrow-right"></span>
+                    Colour
                 </span>
             </div>
         </div>

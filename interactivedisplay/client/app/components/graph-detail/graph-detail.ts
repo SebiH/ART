@@ -16,11 +16,11 @@ export class GraphDetailComponent {
 
     }
 
-    private useColorX() {
-        this.graphProvider.setColor2(this.graph, 'x');
-    }
-
-    private useColorY() {
-        this.graphProvider.setColor2(this.graph, 'y');
+    private toggleColor() {
+        if (this.graph.isColored) {
+            this.graphProvider.setColor(null);
+        } else {
+            this.graphProvider.setColor(this.graph);
+        }
     }
 }
