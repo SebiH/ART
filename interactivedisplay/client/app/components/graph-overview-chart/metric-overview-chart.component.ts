@@ -15,23 +15,7 @@ import * as _ from 'lodash';
             [dimension]="dim">
     </chart-1d>
 
-    <div class="chart-overlay"
-        touch-button
-        (touchclick)="onClick($event)"
-
-        moveable
-        (moveStart)="onMoveStart($event)"
-        (moveUpdate)="onMoveUpdate($event)"
-        (moveEnd)="onMoveEnd($event)">
-    </div>
-
-    <div class="delete-button"
-        [ngStyle]="deleteButtonStyle"
-        *ngIf="deleteButtonFilter"
-
-        touch-button
-        (touchclick)="deleteButtonClick($event)">
-        Delete
+    <div class="chart-overlay">
     </div>
 </div>
 `,
@@ -51,12 +35,12 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
     constructor(private filterProvider: FilterProvider) {}
 
     ngAfterViewInit() {
-        this.filterProvider.getFilters()
-            .takeWhile(() => this.isActive)
-            .subscribe((filters) => {
-                this.filters = filters;
-                setTimeout(() => this.draw());
-            });
+        // this.filterProvider.getFilters()
+        //     .takeWhile(() => this.isActive)
+        //     .subscribe((filters) => {
+        //         this.filters = filters;
+        //         setTimeout(() => this.draw());
+        //     });
     }
 
     ngOnDestroy() {
@@ -65,9 +49,9 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
 
     ngOnChanges(changes: SimpleChanges) {
         // let chart update first
-        if (changes['dim']) {
-            setTimeout(() => this.draw());
-        }
+        // if (changes['dim']) {
+        //     setTimeout(() => this.draw());
+        // }
     }
 
     private getActiveFilters(): MetricFilter[] {
@@ -102,13 +86,13 @@ export class MetricOverviewChartComponent implements AfterViewInit, OnDestroy, O
 
 
     private draw(): void {
-        let ranges: [number, number][] = [];
+        // let ranges: [number, number][] = [];
 
-        for (let filter of this.getActiveFilters()) {
-            ranges.push([filter.range.min, filter.range.max]);
-        }
+        // for (let filter of this.getActiveFilters()) {
+        //     ranges.push([filter.range.min, filter.range.max]);
+        // }
 
-        this.chart.setHighlightedRanges(ranges);
+        // this.chart.setHighlightedRanges(ranges);
     }
 
 
