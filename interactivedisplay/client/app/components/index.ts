@@ -7,6 +7,7 @@ export * from './admin-table-setup/admin-table-setup.component';
 export * from './app/app';
 export * from './chart-1d/chart-1d.component';
 export * from './chart-2d/chart-2d.component';
+export * from './filter-menu/filter-menu.component';
 export * from './graph-create-button/graph-create-button.component';
 export * from './graph-data-selection/graph-data-selection.component';
 export * from './graph-detail/graph-detail';
