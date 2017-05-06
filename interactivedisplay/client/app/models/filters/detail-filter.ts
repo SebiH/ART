@@ -46,6 +46,12 @@ export class DetailFilter extends Filter {
     }
 
 
+    public minX: number;
+    public maxX: number;
+    public minY: number;
+    public maxY: number;
+
+
     private delayedRecalculateIndices: Function;
 
     constructor(id: number) {
@@ -56,6 +62,18 @@ export class DetailFilter extends Filter {
     public addPathPoint(p: [number, number]): void {
         let x = Math.max(this.origin.dimX.getMinValue(), Math.min(p[0], this.origin.dimX.getMaxValue()));
         let y = Math.max(this.origin.dimY.getMinValue(), Math.min(p[1], this.origin.dimY.getMaxValue()));
+
+        if (this.path.length == 0) {
+            this.minX = x;
+            this.maxX = x;
+            this.minY = y;
+            this.maxY = y;
+        } else {
+            this.minX = Math.min(x, this.minX);
+            this.maxX = Math.max(x, this.maxX);
+            this.minY = Math.min(y, this.minY);
+            this.maxY = Math.max(y, this.maxY);
+        }
 
         this.path.push([x, y]);
         this.propagateUpdates(['path']);
@@ -107,6 +125,14 @@ export class DetailFilter extends Filter {
     public static fromJson(jFilter: any, origin: Graph): Filter {
         let filter = new DetailFilter(jFilter.id);
         filter.applyJsonProperties(jFilter, origin);
+
+        if (filter.path.length > 0) {
+            filter.minX = _.minBy(filter.path, (v) => v[0])[0];
+            filter.maxX = _.maxBy(filter.path, (v) => v[0])[0];
+            filter.minY = _.minBy(filter.path, (v) => v[1])[1];
+            filter.maxY = _.maxBy(filter.path, (v) => v[1])[1];
+        }
+
         return filter;
     }
 

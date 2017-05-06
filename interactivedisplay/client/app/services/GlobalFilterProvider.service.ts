@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, Subscription } from 'rxjs/Rx';
-import { Graph, Filter, CategoryFilter, MetricFilter, ChartDimension } from '../models/index';
+import { Graph, Filter, CategoryFilter, MetricFilter, DetailFilter, ChartDimension } from '../models/index';
 import { SocketIO } from './SocketIO.service';
 import { FilterProvider } from './FilterProvider.service';
 import { GraphProvider } from './GraphProvider.service';
@@ -63,54 +63,91 @@ export class GlobalFilterProvider {
 
         for (let filter of filters) {
             let sub = filter.onUpdate
-                .filter((changes) => changes.indexOf('selectedDataIndices') >= 0)
+                .filter((changes) => changes.indexOf('selectedDataIndices') >= 0
+                    || changes.indexOf('color') >= 0
+                    || changes.indexOf('useAxisColor') >= 0)
                 .subscribe(() => this.delayedGlobalFilterUpdate());
             this.filterSubscriptions.push(sub);
         }
     }
 
     private applyFilterColor(filter: Filter): void {
-        let categoryFilter = filter as CategoryFilter;
-        if (filter instanceof CategoryFilter) {
-            for (let index of filter.selectedDataIndices) {
-                this.globalFilter[index].color = categoryFilter.color;
+        // let categoryFilter = filter as CategoryFilter;
+        // if (filter instanceof CategoryFilter) {
+        //     for (let index of filter.selectedDataIndices) {
+        //         this.globalFilter[index].color = categoryFilter.color;
+        //     }
+        // }
+
+
+        // let metricFilter= filter as MetricFilter;
+        // if (filter instanceof MetricFilter) {
+        //     if (filter.boundDimensions == 'x') {
+        //         this.applyFilterGradient(metricFilter, metricFilter.origin.dimX);
+        //     } else {
+        //         this.applyFilterGradient(metricFilter, metricFilter.origin.dimY);
+        //     }
+        // }
+
+        let detailFilter = filter as DetailFilter;
+        if (filter instanceof DetailFilter) {
+
+            switch (filter.useAxisColor) {
+                case 'n':
+                    for (let index of filter.selectedDataIndices) {
+                        this.globalFilter[index].color = filter.color;
+                    }
+                    break;
+
+                case 'x':
+                    this.applyFilterByValue(filter, filter.origin.dimX, 'x');
+                break;
+                case 'y':
+                    this.applyFilterByValue(filter, filter.origin.dimY, 'y');
+                break;
             }
         }
+    }
 
-
-        let metricFilter= filter as MetricFilter;
-        if (filter instanceof MetricFilter) {
-            if (filter.boundDimensions == 'x') {
-                this.applyFilterGradient(metricFilter, metricFilter.origin.dimX);
-            } else {
-                this.applyFilterGradient(metricFilter, metricFilter.origin.dimY);
+    private applyFilterByValue(filter: DetailFilter, dimension: ChartDimension, axis: 'x' | 'y') {
+        if (dimension.isMetric) {
+            this.applyFilterGradient(filter, dimension, axis);
+        } else {
+            for (let index of filter.selectedDataIndices) {
+                let datum = dimension.data[index];
+                let mapping = _.find(dimension.mappings, (m) => m.value == datum.value);
+                if (mapping) {
+                    this.globalFilter[index].color = mapping.color;
+                }
             }
         }
     }
 
 
-    private applyFilterGradient(filter: MetricFilter, dimension: ChartDimension) {
+    private applyFilterGradient(filter: DetailFilter, dimension: ChartDimension, axis: 'x' | 'y') {
 
-        let minValue = filter.range.min;
-        let maxValue = filter.range.max;
+        let minValue = axis == 'x' ? filter.minX : filter.minY;
+        let maxValue = axis == 'x' ? filter.maxX : filter.maxY;
         let otherFilters = _.filter(this.filters, f => {
-            let mf = f as MetricFilter;
-            return mf &&
-                mf != filter &&
-                mf.origin.id == filter.origin.id &&
-                mf.boundDimensions == filter.boundDimensions;
+            let df = f as DetailFilter;
+            return df
+                && df != filter
+                && df.origin.id == filter.origin.id
+                && df.useAxisColor == filter.useAxisColor
+                && df.boundDimensions == filter.boundDimensions;
         });
 
         for (let f of otherFilters) {
-            minValue = Math.min(minValue, (f as MetricFilter).range.min);
-            maxValue = Math.max(maxValue, (f as MetricFilter).range.max);
+            let df = f as DetailFilter;
+            minValue = Math.min(minValue, axis == 'x' ? df.minX : df.minY);
+            maxValue = Math.max(maxValue, axis == 'x' ? df.maxX : df.maxY);
         }
 
         for (let index of filter.selectedDataIndices) {
             let data = dimension.data[index].value;
             let relData = (data - minValue) / Math.abs(maxValue - minValue);
             relData = _.clamp(relData, 0, 1);
-            this.globalFilter[index].color = Utils.getGradientColor(filter.gradient, relData);
+            this.globalFilter[index].color = Utils.getGradientColor(dimension.gradient, relData);
         }
     }
 
@@ -161,6 +198,10 @@ export class GlobalFilterProvider {
 
                 if (filter.boundDimensions == 'xy') {
                     selectedDetail = _.union(selectedDetail, filter.selectedDataIndices);
+
+                    if (graph.isColored) {
+                        this.applyFilterColor(filter);
+                    }
                 }
             }
 
