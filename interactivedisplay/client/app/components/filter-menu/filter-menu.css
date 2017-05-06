@@ -1,0 +1,17 @@
+.container {
+    width: 300px;
+    height: 200px;
+    background: white;
+    border: solid 1px black;
+    box-shadow: 5px 5px 5px 0px grey;
+}
+
+.color-selection {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+}
+
+.delete-button {
+
+}

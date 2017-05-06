@@ -2,14 +2,8 @@
     position: relative;
 }
 
-.popup {
+.menu-container {
     position: absolute;
-
-    width: 200px;
-    height: 50px;
-    background: #F44336;
-    border-color: #F44336;
-    color: white;
 
     left: 0px;
     top: 0px;

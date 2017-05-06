@@ -60,6 +60,7 @@ export class FilterProvider {
                         let filter = this.fromJson(rFilter, originGraph);
                         localFilters.push(filter);
                         this.attachListeners(filter);
+                        filter.isSelected = false;
                     } else {
                         console.warn('Could not find origin graph ' + rFilter.origin + ' for filter ' + rFilter.id)
                     }
@@ -198,6 +199,16 @@ export class FilterProvider {
         _.pull(this.filters, filter);
         filter.destroy();
         this.filterObserver.next(this.filters);
+    }
+
+    public setSelected(filter: Filter): void {
+        for (let f of this.filters) {
+            if (filter != f) {
+                f.isSelected = false;
+            }
+        }
+
+        filter.isSelected = true;
     }
 
 

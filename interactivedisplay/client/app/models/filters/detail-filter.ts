@@ -10,6 +10,42 @@ const DEFAULT_FILTER_COLOUR = "#03A9F4";
 
 export class DetailFilter extends Filter {
 
+    /*
+     *    color
+     */
+    private _color : string = DEFAULT_FILTER_COLOUR;
+
+    public get color() : string {
+        return this._color;
+    }
+
+    public set color(v : string) {
+        if (this._color != v) {
+            this._color = v;
+            this.propagateUpdates(['color']);
+        }
+    }
+
+
+    /*
+     *    Use axis color - instead of using a single color for all
+     *    indices within the filter, use predefined colors from the
+     *    from the selected axis (per category / gradient for metric)
+     */
+    private _useAxisColor : 'x' | 'y' | 'n' = 'n'; // 'x' / 'y' -> x / y axis, 'n' -> no
+
+    public get useAxisColor() : 'x' | 'y' | 'n' {
+        return this._useAxisColor;
+    }
+
+    public set useAxisColor(v: 'x' | 'y' | 'n') {
+        if (this._useAxisColor != v) {
+            this._useAxisColor = v;
+            this.propagateUpdates(['useAxisColor']);
+        }
+    }
+
+
     private delayedRecalculateIndices: Function;
 
     constructor(id: number) {
@@ -58,7 +94,14 @@ export class DetailFilter extends Filter {
 
 
     public getColor(): string {
-        return DEFAULT_FILTER_COLOUR;
+        return this.color;
+    }
+
+    public toJson(): any {
+        let jFilter = super.toJson();
+        jFilter.color = this.color;
+
+        return jFilter;
     }
 
     public static fromJson(jFilter: any, origin: Graph): Filter {
@@ -69,6 +112,7 @@ export class DetailFilter extends Filter {
 
     protected applyJsonProperties(jFilter: any, origin: Graph): void {
         super.applyJsonProperties(jFilter, origin);
+        this.color = jFilter.color;
         this.recalculateIndices();
     }
 }

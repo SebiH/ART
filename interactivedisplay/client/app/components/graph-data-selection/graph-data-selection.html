@@ -13,12 +13,11 @@
               (moveEnd)="handleTouchUp($event)">
     </chart-2d>
 
-    <div class="button popup"
-         [ngStyle]="popupStyle"
-         *ngIf="clickedFilter !== null"
-
-         touch-button
-         (touchclick)="popupClick($event)">
-        Remove
+    <div class="menu-container"
+         *ngIf="clickedFilter && clickedFilter.isSelected"
+         [ngStyle]="popupStyle">
+        <filter-menu [filter]="clickedFilter">
+        </filter-menu>
     </div>
+
 </div>

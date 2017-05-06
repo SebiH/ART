@@ -95,6 +95,20 @@ export abstract class Filter {
     }
 
 
+    /*
+     *    isSelected
+     */
+    private _isSelected : boolean = false;
+    public get isSelected() : boolean {
+        return this._isSelected;
+    }
+    public set isSelected(v : boolean) {
+        if (this._isSelected != v) {
+            this._isSelected = v;
+            this.propagateUpdates(['isSelected']);
+        }
+    }
+
     // for pseudo-deconstructor
     protected isActive: boolean = true;
 
@@ -150,6 +164,7 @@ export abstract class Filter {
             origin: this.origin.id,
             boundDimensions: this.boundDimensions,
             isUserGenerated: this.isUserGenerated,
+            isSelected: this.isSelected,
             path: unityPath
         };
     }
@@ -159,6 +174,7 @@ export abstract class Filter {
         this.attachListener(origin);
         this._boundDimensions = jFilter.boundDimensions;
         this._isUserGenerated = jFilter.isUserGenerated;
+        this._isSelected = jFilter.isSelected;
 
         this._path = [];
         for (var i = 0; i < jFilter.path.length; i += 2) {

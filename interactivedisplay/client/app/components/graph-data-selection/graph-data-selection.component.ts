@@ -8,11 +8,10 @@ import { Utils } from '../../Utils';
 
 import * as _ from 'lodash';
 
-
 @Component({
   selector: 'graph-data-selection',
   templateUrl: './app/components/graph-data-selection/graph-data-selection.html',
-  styleUrls: ['./app/components/graph-data-selection/graph-data-selection.css'],
+  styleUrls: ['./app/components/graph-data-selection/graph-data-selection.css']
 })
 export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     @Input() graph: Graph;
@@ -39,6 +38,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         this.filterProvider.getFilters()
             .takeWhile(() => this.isActive)
             .subscribe((filters) => {
+                this.clickedFilter = null;
                 this.filters = filters;
                 this.drawFilters();
             });
@@ -89,7 +89,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         this.pathContainer.clear();
 
         for (let filter of this.getActiveFilters()) {
-            let selection = new PathSelection(filter.id, this.chart, filter.getColor());
+            let selection = new PathSelection(filter.id, this.chart, filter);
             this.pathContainer.addPath(selection);
             this.drawFilter(filter, selection);
         }
@@ -169,8 +169,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private clickedFilter: Filter = null;
 
     private handleClick(event): void {
-        if (this.clickedFilter) {
-            this.getSelection(this.clickedFilter).setSelected(false);
+        if (this.clickedFilter && this.clickedFilter.isSelected) {
+            this.clickedFilter.isSelected = false;
             this.clickedFilter = null;
         } else {
 
@@ -181,7 +181,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                 let boundingRect = Utils.buildBoundingRect(filter.path);
                 if (point.isInRectangle(boundingRect)) {
                     this.clickedFilter = filter;
-                    this.getSelection(filter).setSelected(true);
+                    this.filterProvider.setSelected(filter);
                     let transform = 'translate3d(' + (event.relativePos.x - 100) + 'px,' + (event.relativePos.y - 25) + 'px,0)';
                     this.popupStyle['-webkit-transform'] = transform;
                     this.popupStyle['-ms-transform'] = transform;
@@ -191,15 +191,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             }
         }
     }
-
-
-    private popupClick() {
-        if (this.clickedFilter) {
-            this.filterProvider.removeFilter(this.clickedFilter);
-            this.clickedFilter = null;
-        }
-    }
-
 
     /*
      *    Data highlights

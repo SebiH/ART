@@ -1,0 +1,35 @@
+<div class="container">
+    <div class="color-button button"
+         touch-button
+         (touchclick)="applyColorByValue('x')">
+        By x-axis value
+    </div>
+
+    <div class="color-button button"
+         touch-button
+         (touchclick)="applyColorByValue('y')">
+        By y-axis value
+    </div>
+
+    <div class="color-selection-list">
+        <div class="color-selection"
+             *ngFor="let color of colors"
+             [style.background]="color"
+             touch-button
+             (touchclick)="applyColor(color)">
+        </div>
+    </div>
+
+    <div class="delete-button button"
+         touch-button
+         (touchclick)="deleteFilter($event)">
+        Remove
+    </div>
+
+
+    <div class="close-button button"
+         touch-button
+         (touchclick)="deselectFilter()">
+        Close
+    </div>
+</div>
