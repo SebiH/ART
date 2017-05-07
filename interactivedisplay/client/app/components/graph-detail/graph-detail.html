@@ -1,6 +1,6 @@
 <div class="root">
 
-    <div class="row">
+    <div class="row" style="z-index: 99;">
         <div class="selection">
             <graph-dimension-selector [axis]="'y'" [graph]="graph" [size]="950"></graph-dimension-selector>
         </div>
@@ -20,7 +20,7 @@
             <div class="colbutton" [ngClass]="{ active: graph.isColored }"
                  touch-button (touchclick)="toggleColor()">
                 <span>
-                    Color <span class="fa fa-paint-brush"></span>
+                    <span class="fa fa-paint-brush"></span> Color
                 </span>
             </div>
         </div>

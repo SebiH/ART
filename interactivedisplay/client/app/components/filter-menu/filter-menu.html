@@ -1,35 +1,47 @@
-<div class="container">
-    <div class="color-button button"
-         touch-button
-         (touchclick)="applyColorByValue('x')">
-        By x-axis value
-    </div>
+<div class="root">
+    <div class="container">
 
-    <div class="color-button button"
-         touch-button
-         (touchclick)="applyColorByValue('y')">
-        By y-axis value
-    </div>
+        <div class="color-selection">
+            <div class="color-button"
+                 *ngFor="let color of colors"
+                 [ngClass]="{ active: filter.color == color && filter.useAxisColor == 'n' }"
+                 [style.background]="color"
+                 touch-button
+                 (touchclick)="applyColor(color)">
+             </div>
+        </div>
 
-    <div class="color-selection-list">
-        <div class="color-selection"
-             *ngFor="let color of colors"
-             [style.background]="color"
-             touch-button
-             (touchclick)="applyColor(color)">
+        <div class="actions">
+            <div class="axis-button popup-button"
+                 [ngClass]="{ active: filter.useAxisColor == 'x' }"
+                 touch-button
+                 (touchclick)="applyColorByValue('x')">
+                <span class="fa fa-arrow-right"></span> <span class="label">By value <br/> X-Axis</span>
+            </div>
+
+            <div class="axis-button popup-button"
+                 [ngClass]="{ active: filter.useAxisColor == 'y' }"
+                 touch-button
+                 (touchclick)="applyColorByValue('y')">
+                <span class="fa fa-arrow-up"></span> <span class="label">By value <br/> Y-Axis</span>
+            </div>
+        </div>
+
+        <div class="padding"> </div>
+
+        <div class="actions">
+            <div class="delete-button popup-button"
+                 touch-button
+                 (touchclick)="deleteFilter($event)">
+                <span class="fa fa-trash"></span> <span class="label">Remove</span>
+            </div>
+
+            <div class="close-button popup-button"
+                 touch-button
+                 (touchclick)="deselectFilter()">
+                <span class="fa fa-times"></span> <span class="label">Close</span>
+            </div>
         </div>
     </div>
 
-    <div class="delete-button button"
-         touch-button
-         (touchclick)="deleteFilter($event)">
-        Remove
-    </div>
-
-
-    <div class="close-button button"
-         touch-button
-         (touchclick)="deselectFilter()">
-        Close
-    </div>
 </div>

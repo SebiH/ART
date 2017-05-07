@@ -173,7 +173,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             this.clickedFilter.isSelected = false;
             this.clickedFilter = null;
         } else {
-
             let pos = this.positionInGraph(event.relativePos);
             let point = new Point(pos[0], pos[1]);
 
@@ -182,7 +181,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                 if (point.isInRectangle(boundingRect)) {
                     this.clickedFilter = filter;
                     this.filterProvider.setSelected(filter);
-                    let transform = 'translate3d(' + (event.relativePos.x - 100) + 'px,' + (event.relativePos.y - 25) + 'px,0)';
+                    let transform = 'translate3d(' + event.relativePos.x + 'px,' + event.relativePos.y + 'px,0)';
                     this.popupStyle['-webkit-transform'] = transform;
                     this.popupStyle['-ms-transform'] = transform;
                     this.popupStyle['transform'] = transform;

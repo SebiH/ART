@@ -6,7 +6,7 @@ import { Utils } from '../../Utils';
 
 import * as _ from 'lodash';
 
-const DEFAULT_FILTER_COLOUR = "#03A9F4";
+const DEFAULT_FILTER_COLOUR = "#1E88E5";
 
 export class DetailFilter extends Filter {
 
