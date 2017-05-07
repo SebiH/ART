@@ -37,6 +37,13 @@ namespace Assets.Modules.SurfaceGraphFilters
         public float[] range = null;
         public GradientStop[] gradient = null;
 
+        /*
+         *  Detail Filter
+         */
+        //public string color = ""; already defined by category
+        public string useAxisColor = "n"; // 'x' | 'y' -> axis, 'n' => no
+
+
 
         [Serializable]
         public struct GradientStop

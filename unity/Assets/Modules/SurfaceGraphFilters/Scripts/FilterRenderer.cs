@@ -92,7 +92,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         private bool _useGradient = false;
         private bool _needsUpdate;
 
-        private const float Z_OFFSET_INCREMENT = 0.00001f;
+        private const float Z_OFFSET_INCREMENT = 0.00002f;
         private static float _zOffset = Z_OFFSET_INCREMENT;
 
         private void OnEnable()

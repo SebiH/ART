@@ -151,15 +151,12 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
             }
 
-            if (rFilter.type == RemoteFilter.Type.Metric)
+            //if (rFilter.type == RemoteFilter.Type.Metric)
+            if (rFilter.type == RemoteFilter.Type.Detail && rFilter.gradient != null)
             {
-                if (rFilter.gradient != null && filter.Gradients == null)
-                {
-                    filter.Gradients = ConvertGradient(rFilter.gradient);
-                    filter.GradientAxis = rFilter.boundDimensions == "x" ? 'x' : 'y';
-                }
-
-                UpdateGradientLimits(rFilter.origin, rFilter.boundDimensions);
+                filter.Gradients = ConvertGradient(rFilter.gradient);
+                filter.GradientAxis = rFilter.useAxisColor == "x" ? 'x' : 'y';
+                UpdateGradientLimits(rFilter.origin, rFilter.useAxisColor);
             }
             else
             {
@@ -178,8 +175,8 @@ namespace Assets.Modules.SurfaceGraphFilters
             // the whole gradient
             var similarFilters = _remoteFilters.FindAll(f =>
                 f.origin == origin &&
-                f.type == RemoteFilter.Type.Metric &&
-                f.boundDimensions == axis &&
+                f.type == RemoteFilter.Type.Detail &&
+                f.useAxisColor == axis &&
                 f.range != null
             );
 
