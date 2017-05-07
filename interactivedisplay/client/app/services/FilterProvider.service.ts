@@ -35,10 +35,6 @@ export class FilterProvider {
                 this.initFilters(graphs);
             });
 
-
-        this.graphProvider.onGraphColorChange()
-            .subscribe(graph => this.colorUpdate(graph));
-
         this.graphProvider.onGraphDeletion()
             .subscribe(graph => this.clearFilters(graph));
 
@@ -137,39 +133,6 @@ export class FilterProvider {
         this.filterUpdateQueue[filter.id] = this.getJson(filter);
         this.delayedFilterSync();
     }
-
-    private colorUpdate(graph: Graph): void {
-        let autoFilters = _.filter(this.filters, f => !f.isUserGenerated);
-
-        for (let filter of autoFilters) {
-            this.removeFilter(filter);
-        }
-
-        if (graph !== null) {
-            let filters = _.filter(this.filters, f => f.origin.id == graph.id);
-
-            if (filters.length == 0) {
-                let dimension = graph.isFlipped ? graph.dimY : graph.dimX;
-                let axis: 'x' | 'y' = graph.isFlipped ? 'y' : 'x';
-                if (dimension.isMetric) {
-                    let filter = this.createMetricFilter(graph);
-                    filter.isUserGenerated = false;
-                    filter.boundDimensions = axis;
-                    filter.gradient = dimension.gradient;
-                    filter.range = dimension.domain;
-                } else {
-                    for (let map of dimension.mappings) {
-                        let filter = this.createCategoryFilter(graph);
-                        filter.boundDimensions = axis;
-                        filter.isUserGenerated = false;
-                        filter.category = map.value;
-                        filter.color = map.color;
-                    }
-                }
-            }
-        }
-    }
-
 
 
     public createDetailFilter(origin): DetailFilter {

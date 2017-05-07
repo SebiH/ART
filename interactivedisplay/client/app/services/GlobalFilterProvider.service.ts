@@ -72,23 +72,6 @@ export class GlobalFilterProvider {
     }
 
     private applyFilterColor(filter: Filter): void {
-        // let categoryFilter = filter as CategoryFilter;
-        // if (filter instanceof CategoryFilter) {
-        //     for (let index of filter.selectedDataIndices) {
-        //         this.globalFilter[index].color = categoryFilter.color;
-        //     }
-        // }
-
-
-        // let metricFilter= filter as MetricFilter;
-        // if (filter instanceof MetricFilter) {
-        //     if (filter.boundDimensions == 'x') {
-        //         this.applyFilterGradient(metricFilter, metricFilter.origin.dimX);
-        //     } else {
-        //         this.applyFilterGradient(metricFilter, metricFilter.origin.dimY);
-        //     }
-        // }
-
         let detailFilter = filter as DetailFilter;
         if (filter instanceof DetailFilter) {
 
@@ -182,18 +165,10 @@ export class GlobalFilterProvider {
             for (let filter of filters) {
                 if (filter.boundDimensions == 'x') {
                     selectedX = _.union(selectedX, filter.selectedDataIndices);
-
-                    // if (graph.useColorX) {
-                    //     this.applyFilterColor(filter);
-                    // }
                 }
 
                 if (filter.boundDimensions == 'y') {
                     selectedY = _.union(selectedY, filter.selectedDataIndices);
-
-                    // if (graph.useColorY) {
-                    //     this.applyFilterColor(filter);
-                    // }
                 }
 
                 if (filter.boundDimensions == 'xy') {
@@ -204,6 +179,10 @@ export class GlobalFilterProvider {
                     }
                 }
             }
+
+            // no filters but graph is colored -> color all values along active axis?
+            // if (graph.isColored && filters.length == 0) {
+            // }
 
             let selectedXY: number[] = [];
 
