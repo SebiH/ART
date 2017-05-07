@@ -59,7 +59,6 @@ export class FilterMenuComponent implements OnInit, OnDestroy {
 
     private applyColorByValue(axis: 'x' | 'y'): void {
         this.filter.useAxisColor = axis;
-        this.filter.color = '#9E9E9E';
         this.changeDetector.detectChanges();
     }
 

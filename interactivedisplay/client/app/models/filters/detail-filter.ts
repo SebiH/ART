@@ -41,7 +41,10 @@ export class DetailFilter extends Filter {
     public set useAxisColor(v: 'x' | 'y' | 'n') {
         if (this._useAxisColor != v) {
             this._useAxisColor = v;
-            this.propagateUpdates(['useAxisColor']);
+            if (v == 'x' || v == 'y') {
+                this._color = '#9E9E9E';
+            }
+            this.propagateUpdates(['useAxisColor', 'color']);
         }
     }
 

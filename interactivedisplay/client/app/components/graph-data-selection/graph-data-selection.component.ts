@@ -122,13 +122,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private handleTouchDown(event): void {
         if (this.graph.dimX !== null && this.graph.dimY !== null) {
-            this.activeFilter = this.filterProvider.createDetailFilter(this.graph);
-            this.activeFilter.isUserGenerated = true;
-            this.activeFilter.boundDimensions = 'xy';
-            this.activeFilter.addPathPoint(this.positionInGraph(event.relativePos));
-            this.drawFilter(this.activeFilter, this.getSelection(this.activeFilter));
-            this.filterProvider.setSelected(null);
-            this.clickedFilter = null;
+            this.activeFilter = this.createFilter([this.positionInGraph(event.relativePos)]);
         }
     }
 
@@ -173,15 +167,44 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private clickedFilter: Filter = null;
 
     private handleClick(event): void {
-        if (this.clickedFilter && this.clickedFilter.isSelected) {
         if (this.clickedFilter != null && !this.clickedFilter.isSelected) {
             this.clickedFilter = null;
         }
+
+        let prevClickedFilter = this.clickedFilter;
+
+        let pos = this.positionInGraph(event.relativePos);
+        let clickedYAxis = event.relativePos.x <= this.margin.left;
+        let clickedXAxis = (this.height + this.margin.top) <= event.relativePos.y;
+        let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
+        let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+
+        if (dimX == null || dimY == null) {
+            return;
+        }
+
+        if (clickedXAxis && clickedYAxis) {
+            // area is always empty
+        } else if (clickedXAxis) {
+            if (dimX.isMetric) {
+                this.toggleMetricFilter(pos, 'x');
+            } else {
+                this.toggleCategoryFilter(pos, 'x');
+            }
+
+        } else if (clickedYAxis) {
+            if (dimY.isMetric) {
+                this.toggleMetricFilter(pos, 'y');
+            } else {
+                this.toggleCategoryFilter(pos, 'y');
+            }
+
+
+        } else if (this.clickedFilter && this.clickedFilter.isSelected) {
             this.filterProvider.setSelected(null);
             this.clickedFilter = null;
         }
 
-        let pos = this.positionInGraph(event.relativePos);
         let point = new Point(pos[0], pos[1]);
 
         for (let filter of this.getActiveFilters()) {
@@ -203,6 +226,165 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
                 break;
             }
         }
+    }
+
+    private toggleMetricFilter(position: [number, number], axis: 'x' | 'y') {
+        let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
+        let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+
+        let pos: number;
+        if (this.graph.isFlipped) {
+            pos = axis == 'x' ? position[1] : position[0];
+        } else {
+            pos = axis == 'x' ? position[0] : position[1];
+        }
+
+        let path: [number, number][] = null;
+
+        for (let bin of (axis == 'x' ? dimX : dimY).bins) {
+            if (bin.range) {
+                if (bin.range[0] <= pos && pos <= bin.range[1]) {
+                    if (axis == 'x') {
+                        path = [
+                            [bin.range[0], dimY.getMinValue()],
+                            [bin.range[0], dimY.getMaxValue()],
+                            [bin.range[1], dimY.getMaxValue()],
+                            [bin.range[1], dimY.getMinValue()],
+                        ];
+                    } else {
+                        path = [
+                            [dimX.getMinValue(), bin.range[0]],
+                            [dimX.getMaxValue(), bin.range[0]],
+                            [dimX.getMaxValue(), bin.range[1]],
+                            [dimX.getMinValue(), bin.range[1]],
+                        ];
+                    }
+                    break;
+                }
+            } else {
+                if (bin.value == Math.floor(pos)) {
+                    if (axis == 'x') {
+                        path = [
+                            [bin.value, dimY.getMinValue()],
+                            [bin.value, dimY.getMaxValue()],
+                            [bin.value + 0.9999, dimY.getMaxValue()],
+                            [bin.value + 0.9999, dimY.getMinValue()],
+                        ];
+                    } else {
+                        path = [
+                            [dimX.getMinValue(), bin.value],
+                            [dimX.getMaxValue(), bin.value],
+                            [dimX.getMaxValue(), bin.value + 0.9999],
+                            [dimX.getMinValue(), bin.value + 0.9999],
+                        ];
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (this.graph.isFlipped) {
+            for (let i = 0; i < path.length; i++) {
+                path[i] = [path[i][1], path[i][0]];
+            }
+        }
+
+        if (path != null) {
+            let hasSamePath = this.removeFilterWithSamePath(path);
+
+            if (!hasSamePath) {
+                let filter = this.createFilter(path);
+                filter.useAxisColor = axis;
+            }
+        }
+
+    }
+
+
+    private toggleCategoryFilter(position: [number, number], axis: 'x' | 'y') {
+        let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
+        let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+        let pos: number;
+        if (this.graph.isFlipped) {
+            pos = axis == 'x' ? position[1] : position[0];
+        } else {
+            pos = axis == 'x' ? position[0] : position[1];
+        }
+
+
+        for (let map of (axis == 'x' ? dimX : dimY).mappings) {
+            if (map.value - 0.5 <= pos && pos <= map.value + 0.5) {
+                let path: [number, number][] = [
+                    [map.value - 0.5, dimY.getMinValue()],
+                    [map.value - 0.5, dimY.getMaxValue()],
+                    [map.value + 0.5, dimY.getMaxValue()],
+                    [map.value + 0.5, dimY.getMinValue()]
+                ];
+
+                if (axis == 'y') {
+                    path = [
+                        [dimX.getMinValue(), map.value - 0.5],
+                        [dimX.getMaxValue(), map.value - 0.5],
+                        [dimX.getMaxValue(), map.value + 0.5],
+                        [dimX.getMinValue(), map.value + 0.5]
+                    ]
+                }
+
+
+                if (this.graph.isFlipped) {
+                    for (let i = 0; i < path.length; i++) {
+                        path[i] = [path[i][1], path[i][0]];
+                    }
+                }
+
+                let hasSamePath = this.removeFilterWithSamePath(path);
+
+                if (!hasSamePath) {
+                    let filter = this.createFilter(path);
+                    filter.useAxisColor = 'n';
+                    filter.color = map.color;
+                }
+                break;
+            }
+        }
+    }
+
+    private removeFilterWithSamePath(path: [number, number][]): boolean {
+        for (let filter of this.getActiveFilters()) {
+            let hasSamePath = false;
+            if (filter.path.length == path.length) {
+                hasSamePath = true;
+                for (let i = 0; i < filter.path.length; i++) {
+                    hasSamePath = hasSamePath && filter.path[i][0] == path[i][0] && filter.path[i][1] == path[i][1];
+                }
+            }
+
+            if (hasSamePath) {
+                this.filterProvider.removeFilter(filter);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    private createFilter(points: [number, number][]): DetailFilter {
+
+        let filter = this.filterProvider.createDetailFilter(this.graph);
+        filter.isUserGenerated = true;
+        filter.boundDimensions = 'xy';
+
+        for (let point of points) {
+            filter.addPathPoint(point);
+        }
+
+        this.drawFilter(filter, this.getSelection(filter));
+
+        this.filterProvider.setSelected(null);
+        this.clickedFilter = null;
+
+        return filter;
     }
 
     /*
