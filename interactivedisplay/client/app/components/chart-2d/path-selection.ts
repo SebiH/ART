@@ -70,7 +70,7 @@ export class PathSelection extends ChartElement {
             let texture = textures.paths()
                 .d('waves')
                 .heavier()
-                .thicker()
+                .lighter()
                 .stroke(this.filter.getColor());
             this.parent.chart.svgElement.call(texture);
             let textureFill = this.getAbsoluteTextureUrl(texture.url());
