@@ -89,9 +89,11 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         this.pathContainer.clear();
 
         for (let filter of this.getActiveFilters()) {
-            let selection = new PathSelection(filter.id, this.chart, filter);
-            this.pathContainer.addPath(selection);
-            this.drawFilter(filter, selection);
+            if (filter instanceof DetailFilter) {
+                let selection = new PathSelection(filter.id, this.chart, filter as DetailFilter);
+                this.pathContainer.addPath(selection);
+                this.drawFilter(filter, selection);
+            }
         }
     }
 
@@ -125,6 +127,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             this.activeFilter.boundDimensions = 'xy';
             this.activeFilter.addPathPoint(this.positionInGraph(event.relativePos));
             this.drawFilter(this.activeFilter, this.getSelection(this.activeFilter));
+            this.filterProvider.setSelected(null);
+            this.clickedFilter = null;
         }
     }
 
@@ -170,7 +174,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private handleClick(event): void {
         if (this.clickedFilter && this.clickedFilter.isSelected) {
-            this.clickedFilter.isSelected = false;
+            this.filterProvider.setSelected(null);
             this.clickedFilter = null;
         } else {
             let pos = this.positionInGraph(event.relativePos);

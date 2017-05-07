@@ -171,7 +171,9 @@ export class FilterProvider {
             }
         }
 
-        filter.isSelected = true;
+        if (filter) {
+            filter.isSelected = true;
+        }
     }
 
 

@@ -16,7 +16,7 @@ export class ChartDirective implements OnInit, OnChanges {
     @Input() height: number = 600;
     @Input() margin = { top: 50, right: 50, bottom: 100, left: 100 };
 
-    private svgElement: HtmlChartElement;
+    public svgElement: HtmlChartElement;
     private chartContainer: HtmlChartElement;
     private backgroundContainer: HtmlChartElement;
     private chartElements: ChartElement[] = []

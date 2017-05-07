@@ -24,7 +24,7 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
     @Input() height: number = 900;
     @Input() margin = { top: 50, right: 50, bottom: 100, left: 100 };
 
-    @ViewChild(ChartDirective) chart: ChartDirective;
+    @ViewChild(ChartDirective) public chart: ChartDirective;
 
     private isLoaded = false;
 
