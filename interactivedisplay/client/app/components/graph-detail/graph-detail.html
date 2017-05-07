@@ -17,10 +17,10 @@
 
     <div class="row" style="width: 100%">
         <div class="buttons">
-            <div class="colbutton top" [ngClass]="{ active: graph.isColored }"
+            <div class="colbutton" [ngClass]="{ active: graph.isColored }"
                  touch-button (touchclick)="toggleColor()">
                 <span>
-                    Colour
+                    Color <span class="fa fa-paint-brush"></span>
                 </span>
             </div>
         </div>

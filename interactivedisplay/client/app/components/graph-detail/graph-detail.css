@@ -46,4 +46,5 @@
     justify-content: center;
 
     transition: background 0.2s linear;
+    text-transform: uppercase;
 }
