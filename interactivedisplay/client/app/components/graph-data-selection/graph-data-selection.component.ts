@@ -174,6 +174,9 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     private handleClick(event): void {
         if (this.clickedFilter && this.clickedFilter.isSelected) {
+        if (this.clickedFilter != null && !this.clickedFilter.isSelected) {
+            this.clickedFilter = null;
+        }
             this.filterProvider.setSelected(null);
             this.clickedFilter = null;
         }
