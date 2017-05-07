@@ -18,7 +18,7 @@ export class ScatterplotVisualisation extends ChartElement {
     }
 
     public resize(width: number, height: number): void {
-        
+
     }
 
     public loadData(dimX: ChartDimension, dimY: ChartDimension, scaleX: any, scaleY: any): void {
@@ -43,7 +43,7 @@ export class ScatterplotVisualisation extends ChartElement {
 
 
     public clearData(): void {
-        this.dataContainer.selectAll('circle').remove();
+        this.dataContainer.selectAll('rect').remove();
         this.hasData = false;
     }
 
@@ -60,28 +60,30 @@ export class ScatterplotVisualisation extends ChartElement {
     private initValues(data: number[][]): void {
         this.dataContainer.selectAll('.point')
             .data(data)
-            .enter().append('circle')
-                .attr('cx', d => d[0])
-                .attr('cy', d => d[1])
-                .attr('r', 5)
+            .enter().append('rect')
+                .attr('x', d => d[0] - 5)
+                .attr('y', d => d[1] - 5)
+                .attr('width', 10)
+                .attr('height', 10)
                 .attr('class', 'point')
                 .attr('fill', '#000000');
     }
 
     private animateValues(data: number[][]): void {
-        this.dataContainer.selectAll('circle')
+        this.dataContainer.selectAll('rect')
             .data(data)
             .transition()
             .duration(500)
             .ease(d3.easeLinear)
-            .attr('cx', d => d[0])
-            .attr('cy', d => d[1]);
+            .attr('x', d => d[0] - 5)
+            .attr('y', d => d[1] - 5);
     }
 
     public setAttributes(attributes: any[]): void {
-        this.dataContainer.selectAll('circle')
+        this.dataContainer.selectAll('rect')
             .attr('fill', (d, i) => attributes[i].fill)
             .attr('stroke', (d, i) => attributes[i].stroke)
-            .attr('r', (d, i) => attributes[i].radius);
+            .attr('width', (d, i) => attributes[i].radius)
+            .attr('height', (d, i) => attributes[i].radius);
     }
 }
