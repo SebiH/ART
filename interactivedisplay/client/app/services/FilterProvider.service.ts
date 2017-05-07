@@ -47,6 +47,7 @@ export class FilterProvider {
             .subscribe(response => {
                 let remoteFilters = response.json().filters;
                 let localFilters: Filter[] = [];
+                this.filters = localFilters;
 
                 for (let rFilter of remoteFilters) {
                     this.idCounter = Math.max(this.idCounter, rFilter.id + 1);
@@ -62,7 +63,6 @@ export class FilterProvider {
                     }
                 }
 
-                this.filters = localFilters;
                 this.filterObserver.next(this.filters);
 
                 // for debugging
