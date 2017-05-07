@@ -175,6 +175,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             }
 
             filter.Path = rFilter.path;
+            filter.IsSelected = rFilter.isSelected;
         }
 
         private void UpdateGradientLimits(int origin, string axis)

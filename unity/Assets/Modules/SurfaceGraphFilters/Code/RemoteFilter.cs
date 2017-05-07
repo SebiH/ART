@@ -23,6 +23,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         public int origin = -1;
         public string boundDimensions = "";
         public bool isUserGenerated = true;
+        public bool isSelected = false;
         public float[] path;
 
         /*

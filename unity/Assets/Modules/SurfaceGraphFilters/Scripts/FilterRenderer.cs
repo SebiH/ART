@@ -1,3 +1,5 @@
+using Assets.Modules.Core;
+using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
 using System;
 using TriangleNet.Geometry;
@@ -10,6 +12,9 @@ namespace Assets.Modules.SurfaceGraphFilters
     public class FilterRenderer : MonoBehaviour
     {
         public int Id { get; set; }
+
+        const float SELECTED_OFFSET = -0.1f;
+        public bool IsSelected = false;
 
         private Color32 _color;
         public Color32 Color
@@ -118,6 +123,8 @@ namespace Assets.Modules.SurfaceGraphFilters
         private bool _useGradient = false;
         private bool _needsUpdate;
 
+        private ValueAnimation _selectedAnimation = new ValueAnimation(Globals.QuickAnimationSpeed);
+
         private const float Z_OFFSET_INCREMENT = 0.00002f;
         private static float _zOffset = Z_OFFSET_INCREMENT;
 
@@ -129,6 +136,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             _zOffset += Z_OFFSET_INCREMENT;
             if (_zOffset > 0.001f)
                 _zOffset = Z_OFFSET_INCREMENT;
+            _selectedAnimation.Init(transform.localPosition.z);
         }
 
         public void Init(GraphMetaData gm)
@@ -172,6 +180,16 @@ namespace Assets.Modules.SurfaceGraphFilters
                     Debug.LogError(e.Message);
                 }
             }
+
+            if (!IsSelected && _selectedAnimation.End != 0)
+            {
+                _selectedAnimation.Restart(0);
+            }
+            if (IsSelected && _selectedAnimation.End != SELECTED_OFFSET)
+            {
+                _selectedAnimation.Restart(SELECTED_OFFSET);
+            }
+            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, _selectedAnimation.CurrentValue);
         }
 
 
@@ -285,6 +303,7 @@ namespace Assets.Modules.SurfaceGraphFilters
                 var max = dim.Scale(nextCategory.Value);
                 var range = max - min;
 
+                // make qradient transitions quicker, keep 'original' color for longer
                 var percent = (float)((val - min) / range);
                 if (percent < 0.5)
                 {
