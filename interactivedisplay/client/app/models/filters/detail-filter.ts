@@ -83,6 +83,28 @@ export class DetailFilter extends Filter {
         this.delayedRecalculateIndices();
     }
 
+    public setPathPoint(index: number, p: [number, number]): void {
+        let x = Math.max(this.origin.dimX.getMinValue(), Math.min(p[0], this.origin.dimX.getMaxValue()));
+        let y = Math.max(this.origin.dimY.getMinValue(), Math.min(p[1], this.origin.dimY.getMaxValue()));
+
+        this.path[index] = [x, y];
+
+        this.minX = this.path[0][0];
+        this.maxX = this.path[0][0];
+        this.minY = this.path[0][1];
+        this.maxY = this.path[0][1];
+
+        for (let i = 0; i < this.path.length; i++) {
+            this.minX = Math.min(this.path[i][0], this.minX);
+            this.maxX = Math.max(this.path[i][0], this.maxX);
+            this.minY = Math.min(this.path[i][1], this.minY);
+            this.maxY = Math.max(this.path[i][1], this.maxY);
+        }
+
+        this.propagateUpdates(['path']);
+        this.delayedRecalculateIndices();
+    }
+
     public clearPath(): void {
         this.path = [];
     }

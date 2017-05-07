@@ -119,11 +119,66 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
      *    Filter creation
      */
     private activeFilter: DetailFilter = null;
+    private filterCreationMode: 'x' | 'y' | 'xy' = 'xy';
 
     private handleTouchDown(event): void {
-        if (this.graph.dimX !== null && this.graph.dimY !== null) {
-            this.activeFilter = this.createFilter([this.positionInGraph(event.relativePos)]);
+        if (this.graph.dimX === null && this.graph.dimY === null) {
+            return;
         }
+
+        let clickedYAxis = event.relativePos.x <= this.margin.left;
+        let clickedXAxis = (this.height + this.margin.top) <= event.relativePos.y;
+
+        let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
+        let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+        let pos = this.positionInGraph(event.relativePos);
+
+        if (clickedXAxis && clickedYAxis) {
+            /* nothing happens */
+
+        } else if (clickedXAxis) {
+            this.filterCreationMode = 'x';
+            if (this.graph.isFlipped) { pos = [pos[1], pos[0]]; }
+            let path: [number, number][] = [
+                [pos[0], dimY.getMinValue()],
+                [pos[0], dimY.getMaxValue()],
+                [pos[0], dimY.getMaxValue()],
+                [pos[0], dimY.getMinValue()]
+            ];
+
+            if (this.graph.isFlipped) {
+                path = this.flip(path);
+            }
+
+            let filter = this.createFilter(path);
+            filter.useAxisColor = 'x';
+            this.activeFilter = filter;
+
+        } else if (clickedYAxis) {
+            this.filterCreationMode = 'y';
+            if (this.graph.isFlipped) { pos = [pos[1], pos[0]]; }
+            let path: [number, number][] = [
+                [dimX.getMinValue(), pos[1]],
+                [dimX.getMaxValue(), pos[1]],
+                [dimX.getMaxValue(), pos[1]],
+                [dimX.getMinValue(), pos[1]]
+            ];
+
+            if (this.graph.isFlipped) {
+                path = this.flip(path);
+            }
+
+            let filter = this.createFilter(path);
+            filter.useAxisColor = 'y';
+            this.activeFilter = filter;
+
+        } else {
+            this.filterCreationMode = 'xy';
+            let filter = this.createFilter([pos]);
+            filter.useAxisColor = 'n';
+            this.activeFilter = filter;
+        }
+        console.log(this.filterCreationMode);
     }
 
 
@@ -132,22 +187,44 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             let filter = this.activeFilter;
             this.activeFilter.onUpdate
                 .filter(changes => changes.indexOf('selectedDataIndices') >= 0)
-                .first()
+                .take(1)
                 .subscribe(() => {
                     if (filter.selectedDataIndices.length == 0) {
                         setTimeout(() => this.filterProvider.removeFilter(filter));
                     }
                 });
 
-            this.activeFilter.addPathPoint(this.positionInGraph(event.relativePos));
-            this.drawFilter(this.activeFilter, this.getSelection(this.activeFilter));
+            this.handleTouchMove(event);
             this.activeFilter = null;
         }
     }
 
     private handleTouchMove(event): void {
         if (this.activeFilter) {
-            this.activeFilter.addPathPoint(this.positionInGraph(event.relativePos));
+            let pos = this.positionInGraph(event.relativePos);
+            let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
+            let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+
+            if (this.filterCreationMode == 'x') {
+                if (this.graph.isFlipped) {
+                    this.activeFilter.setPathPoint(2, [dimY.getMaxValue(), pos[1]]);
+                    this.activeFilter.setPathPoint(3, [dimY.getMinValue(), pos[1]]);
+                } else {
+                    this.activeFilter.setPathPoint(2, [pos[0], dimY.getMaxValue()]);
+                    this.activeFilter.setPathPoint(3, [pos[0], dimY.getMinValue()]);
+                }
+            } else if (this.filterCreationMode == 'y') {
+                if (this.graph.isFlipped) {
+                    this.activeFilter.setPathPoint(2, [pos[0], dimX.getMaxValue()]);
+                    this.activeFilter.setPathPoint(3, [pos[0], dimX.getMinValue()]);
+                } else {
+                    this.activeFilter.setPathPoint(2, [dimX.getMaxValue(), pos[1]]);
+                    this.activeFilter.setPathPoint(3, [dimX.getMinValue(), pos[1]]);
+                }
+            } else {
+                this.activeFilter.addPathPoint(pos);
+            }
+
             this.drawFilter(this.activeFilter, this.getSelection(this.activeFilter));
         }
     }
@@ -231,12 +308,9 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private toggleMetricFilter(position: [number, number], axis: 'x' | 'y') {
         let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
         let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
-
-        let pos: number;
+        let pos = axis == 'x' ? position[0] : position[1];
         if (this.graph.isFlipped) {
             pos = axis == 'x' ? position[1] : position[0];
-        } else {
-            pos = axis == 'x' ? position[0] : position[1];
         }
 
         let path: [number, number][] = null;
@@ -283,13 +357,12 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             }
         }
 
-        if (this.graph.isFlipped) {
-            for (let i = 0; i < path.length; i++) {
-                path[i] = [path[i][1], path[i][0]];
-            }
-        }
 
         if (path != null) {
+            if (this.graph.isFlipped) {
+                path = this.flip(path);
+            }
+
             let hasSamePath = this.removeFilterWithSamePath(path);
 
             if (!hasSamePath) {
@@ -304,13 +377,10 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private toggleCategoryFilter(position: [number, number], axis: 'x' | 'y') {
         let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
         let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
-        let pos: number;
+        let pos = axis == 'x' ? position[0] : position[1];
         if (this.graph.isFlipped) {
             pos = axis == 'x' ? position[1] : position[0];
-        } else {
-            pos = axis == 'x' ? position[0] : position[1];
         }
-
 
         for (let map of (axis == 'x' ? dimX : dimY).mappings) {
             if (map.value - 0.5 <= pos && pos <= map.value + 0.5) {
@@ -332,9 +402,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
 
                 if (this.graph.isFlipped) {
-                    for (let i = 0; i < path.length; i++) {
-                        path[i] = [path[i][1], path[i][0]];
-                    }
+                    path = this.flip(path);
                 }
 
                 let hasSamePath = this.removeFilterWithSamePath(path);
