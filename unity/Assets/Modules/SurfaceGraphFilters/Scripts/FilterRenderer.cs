@@ -75,8 +75,8 @@ namespace Assets.Modules.SurfaceGraphFilters
             get { return _path; }
             set
             {
-                // try to reduce drawcalls - paths below 6 vertices (12 x&y floats) do not change
-                if (_path == null || _path.Length != value.Length || value.Length < 12)
+                // try to reduce drawcalls - paths above 6 vertices (12 x&y floats) do not change
+                if (_path == null || _path.Length != value.Length || value.Length <= 12)
                 {
                     _path = value;
                     _needsUpdate = true;
