@@ -8,7 +8,7 @@ export class ChartAxis extends ChartElement {
     private width: number;
     private height: number;
 
-    public constructor(private type: 'x' | 'y',) {
+    public constructor(private type: 'x' | 'y') {
         super();
     }
 

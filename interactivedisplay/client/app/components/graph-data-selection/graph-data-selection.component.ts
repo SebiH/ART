@@ -176,21 +176,28 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         if (this.clickedFilter && this.clickedFilter.isSelected) {
             this.filterProvider.setSelected(null);
             this.clickedFilter = null;
-        } else {
-            let pos = this.positionInGraph(event.relativePos);
-            let point = new Point(pos[0], pos[1]);
+        }
 
-            for (let filter of this.getActiveFilters()) {
-                let boundingRect = Utils.buildBoundingRect(filter.path);
-                if (point.isInRectangle(boundingRect)) {
-                    this.clickedFilter = filter;
-                    this.filterProvider.setSelected(filter);
-                    let transform = 'translate3d(' + event.relativePos.x + 'px,' + event.relativePos.y + 'px,0)';
-                    this.popupStyle['-webkit-transform'] = transform;
-                    this.popupStyle['-ms-transform'] = transform;
-                    this.popupStyle['transform'] = transform;
-                    break;
-                }
+        let pos = this.positionInGraph(event.relativePos);
+        let point = new Point(pos[0], pos[1]);
+
+        for (let filter of this.getActiveFilters()) {
+            let boundingRect = null;
+            if (filter instanceof DetailFilter) {
+                let df = filter as DetailFilter;
+                boundingRect = [new Point(df.minX, df.minY), new Point(df.maxX, df.maxY)];
+            } else {
+                boundingRect = Utils.buildBoundingRect(filter.path);
+            }
+
+            if (point.isInRectangle(boundingRect) && filter != prevClickedFilter) {
+                this.clickedFilter = filter;
+                this.filterProvider.setSelected(filter);
+                let transform = 'translate3d(' + event.relativePos.x + 'px,' + event.relativePos.y + 'px,0)';
+                this.popupStyle['-webkit-transform'] = transform;
+                this.popupStyle['-ms-transform'] = transform;
+                this.popupStyle['transform'] = transform;
+                break;
             }
         }
     }
