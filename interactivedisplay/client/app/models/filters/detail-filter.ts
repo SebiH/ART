@@ -118,6 +118,7 @@ export class DetailFilter extends Filter {
     public toJson(): any {
         let jFilter = super.toJson();
         jFilter.color = this.color;
+        jFilter.useAxisColor = this.useAxisColor;
 
         return jFilter;
     }
@@ -138,7 +139,8 @@ export class DetailFilter extends Filter {
 
     protected applyJsonProperties(jFilter: any, origin: Graph): void {
         super.applyJsonProperties(jFilter, origin);
-        this.color = jFilter.color;
+        this._color = jFilter.color;
+        this._useAxisColor = jFilter.useAxisColor;
         this.recalculateIndices();
     }
 }
