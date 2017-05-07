@@ -83,7 +83,33 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
             }
         }
-        
+
+
+        private bool _useCategories = false;
+        public bool UseCategories
+        {
+            get { return _useCategories; }
+            set
+            {
+                if (_useCategories != value)
+                {
+                    _useCategories = value;
+                    _needsUpdate = true;
+                }
+            }
+        }
+
+        private Mapping[] _categories = null;
+        public Mapping[] Categories
+        {
+            get { return _categories; }
+            set
+            {
+                _useCategories = true;
+                _categories = value;
+                _needsUpdate = true;
+            }
+        }
 
 
         private MeshFilter _filter;
@@ -139,7 +165,6 @@ namespace Assets.Modules.SurfaceGraphFilters
                     else
                     {
                         RenderColorPath(_path);
-
                     }
                 }
                 catch (Exception e)
@@ -167,6 +192,9 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             var options = new ConstraintOptions { Convex = false, ConformingDelaunay = false };
             var quality = new QualityOptions { };
+            if (UseCategories)
+                quality = new QualityOptions { MaximumArea = 0.0001 };
+
             var generatedMesh = polygon.Triangulate(options, quality);
 
 
@@ -187,9 +215,24 @@ namespace Assets.Modules.SurfaceGraphFilters
                 vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
                 vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
 
-                colors[counter + 0] = _color;
-                colors[counter + 1] = _color;
-                colors[counter + 2] = _color;
+                if (_useCategories && GradientAxis == 'x')
+                {
+                    colors[counter + 0] = GetCategoryColor(vectors[0].x);
+                    colors[counter + 1] = GetCategoryColor(vectors[1].x);
+                    colors[counter + 2] = GetCategoryColor(vectors[2].x);
+                }
+                else if (_useCategories && GradientAxis == 'y')
+                {
+                    colors[counter + 0] = GetCategoryColor(vectors[0].y);
+                    colors[counter + 1] = GetCategoryColor(vectors[1].y);
+                    colors[counter + 2] = GetCategoryColor(vectors[2].y);
+                }
+                else
+                {
+                    colors[counter + 0] = _color;
+                    colors[counter + 1] = _color;
+                    colors[counter + 2] = _color;
+                }
 
                 counter += 3;
             }
@@ -202,6 +245,64 @@ namespace Assets.Modules.SurfaceGraphFilters
             mesh.RecalculateBounds();
         }
 
+
+        private Color32 GetCategoryColor(double val)
+        {
+            Mapping prevCategory = null;
+            Mapping nextCategory = null;
+            Dimension dim = GradientAxis == 'x' ? _graph.DimX : _graph.DimY;
+
+            foreach (var mapping in Categories)
+            {
+                var category = dim.Scale(mapping.Value);
+                if (val <= category && (nextCategory == null || nextCategory.Value > mapping.Value))
+                {
+                    nextCategory = mapping;
+                }
+
+                if (val >= category && (prevCategory == null || prevCategory.Value < mapping.Value))
+                {
+                    prevCategory = mapping;
+                }
+            }
+
+            if (nextCategory == null && prevCategory == null)
+            {
+                return new Color32(255, 255, 255, 255);
+            }
+            else if (nextCategory == null)
+            {
+                return prevCategory.Color;
+            }
+            else if (prevCategory == null)
+            {
+                return nextCategory.Color;
+            }
+            else
+            {
+                // lerp
+                var min = dim.Scale(prevCategory.Value);
+                var max = dim.Scale(nextCategory.Value);
+                var range = max - min;
+
+                var percent = (float)((val - min) / range);
+                if (percent < 0.5)
+                {
+                    percent /= 1.25f;
+                }
+                else
+                {
+                    percent *= 1.25f;
+                }
+
+                return Color32.Lerp(prevCategory.Color, nextCategory.Color, percent);
+                //if (Math.Abs(min - val) < Math.Abs(max - val))
+                //{
+                //    return prevCategory.Color;
+                //}
+                //return nextCategory.Color;
+            }
+        }
 
 
         private void RenderGradientPath(float[] path)
@@ -318,6 +419,23 @@ namespace Assets.Modules.SurfaceGraphFilters
             public GradientStop(float stop, string color)
             {
                 Stop = stop;
+                Color = new Color32(255, 255, 255, 255);
+                var col = new Color();
+                var colorSuccess = ColorUtility.TryParseHtmlString(color, out col);
+                if (colorSuccess)
+                {
+                    Color = col;
+                }
+            }
+        }
+
+        public class Mapping
+        {
+            public int Value;
+            public Color32 Color;
+            public Mapping(int value, string color)
+            {
+                Value = value;
                 Color = new Color32(255, 255, 255, 255);
                 var col = new Color();
                 var colorSuccess = ColorUtility.TryParseHtmlString(color, out col);

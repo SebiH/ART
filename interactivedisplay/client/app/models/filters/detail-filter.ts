@@ -120,12 +120,20 @@ export class DetailFilter extends Filter {
         jFilter.color = this.color;
         jFilter.useAxisColor = this.useAxisColor;
 
-        if (this._useAxisColor == 'x' && this.origin.dimX.isMetric) {
-            jFilter.gradient = this.origin.dimX.gradient;
-            jFilter.range = [this.minX, this.maxX];
-        } else if (this._useAxisColor == 'y' && this.origin.dimY.isMetric) {
-            jFilter.gradient = this.origin.dimY.gradient;
-            jFilter.range = [this.minY, this.maxY];
+        if (this._useAxisColor == 'x') {
+            if (this.origin.dimX.isMetric) {
+                jFilter.gradient = this.origin.dimX.gradient;
+                jFilter.range = [this.minX, this.maxX];
+            } else {
+                jFilter.mappings = this.origin.dimX.mappings;
+            }
+        } else if (this._useAxisColor == 'y') {
+            if (this.origin.dimY.isMetric) {
+                jFilter.gradient = this.origin.dimY.gradient;
+                jFilter.range = [this.minY, this.maxY];
+            } else {
+                jFilter.mappings = this.origin.dimY.mappings;
+            }
         }
 
         return jFilter;

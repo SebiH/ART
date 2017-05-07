@@ -163,6 +163,17 @@ namespace Assets.Modules.SurfaceGraphFilters
                 filter.Color = color;
             }
 
+            if (rFilter.type == RemoteFilter.Type.Detail && rFilter.mappings != null)
+            {   
+                filter.GradientAxis = rFilter.useAxisColor == "x" ? 'x' : 'y';
+                filter.UseCategories = true;
+                filter.Categories = ConvertMappings(rFilter.mappings);
+            }
+            else
+            {
+                filter.UseCategories = false;
+            }
+
             filter.Path = rFilter.path;
         }
 
@@ -200,6 +211,11 @@ namespace Assets.Modules.SurfaceGraphFilters
         private FilterRenderer.GradientStop[] ConvertGradient(RemoteFilter.GradientStop[] gradients)
         {
             return gradients.Select(g => new FilterRenderer.GradientStop(g.stop, g.color)).ToArray();
+        }
+
+        private FilterRenderer.Mapping[] ConvertMappings(RemoteFilter.Mapping[] mappings)
+        {
+            return mappings.Select(m => new FilterRenderer.Mapping(m.value, m.color)).ToArray();
         }
 
         private void RemoveFilter(int id)

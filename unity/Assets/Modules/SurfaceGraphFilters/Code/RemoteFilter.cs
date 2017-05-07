@@ -42,6 +42,7 @@ namespace Assets.Modules.SurfaceGraphFilters
          */
         //public string color = ""; already defined by category
         public string useAxisColor = "n"; // 'x' | 'y' -> axis, 'n' => no
+        public Mapping[] mappings = null;
 
 
 
@@ -49,6 +50,14 @@ namespace Assets.Modules.SurfaceGraphFilters
         public struct GradientStop
         {
             public float stop;
+            public string color;
+        }
+
+        [Serializable]
+        public struct Mapping
+        {
+            public int value;
+            public string name;
             public string color;
         }
     }
