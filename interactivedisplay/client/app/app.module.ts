@@ -22,6 +22,7 @@ import { routing } from './routes';
     Components.CategoryOverviewChartComponent,
     Components.Chart1dComponent,
     Components.Chart2dComponent,
+    Components.FilterMenuComponent,
     Components.GraphCreateButtonComponent,
     Components.GraphDataSelectionComponent,
     Components.GraphDetailComponent,

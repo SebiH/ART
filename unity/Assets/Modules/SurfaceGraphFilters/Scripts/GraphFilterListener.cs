@@ -151,22 +151,31 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
             }
 
-            if (rFilter.type == RemoteFilter.Type.Metric)
+            //if (rFilter.type == RemoteFilter.Type.Metric)
+            if (rFilter.type == RemoteFilter.Type.Detail && rFilter.gradient != null)
             {
-                if (rFilter.gradient != null && filter.Gradients == null)
-                {
-                    filter.Gradients = ConvertGradient(rFilter.gradient);
-                    filter.GradientAxis = rFilter.boundDimensions == "x" ? 'x' : 'y';
-                }
-
-                UpdateGradientLimits(rFilter.origin, rFilter.boundDimensions);
+                filter.Gradients = ConvertGradient(rFilter.gradient);
+                filter.GradientAxis = rFilter.useAxisColor == "x" ? 'x' : 'y';
+                UpdateGradientLimits(rFilter.origin, rFilter.useAxisColor);
             }
             else
             {
                 filter.Color = color;
             }
 
+            if (rFilter.type == RemoteFilter.Type.Detail && rFilter.mappings != null)
+            {   
+                filter.GradientAxis = rFilter.useAxisColor == "x" ? 'x' : 'y';
+                filter.UseCategories = true;
+                filter.Categories = ConvertMappings(rFilter.mappings);
+            }
+            else
+            {
+                filter.UseCategories = false;
+            }
+
             filter.Path = rFilter.path;
+            filter.IsSelected = rFilter.isSelected;
         }
 
         private void UpdateGradientLimits(int origin, string axis)
@@ -178,8 +187,8 @@ namespace Assets.Modules.SurfaceGraphFilters
             // the whole gradient
             var similarFilters = _remoteFilters.FindAll(f =>
                 f.origin == origin &&
-                f.type == RemoteFilter.Type.Metric &&
-                f.boundDimensions == axis &&
+                f.type == RemoteFilter.Type.Detail &&
+                f.useAxisColor == axis &&
                 f.range != null
             );
 
@@ -203,6 +212,11 @@ namespace Assets.Modules.SurfaceGraphFilters
         private FilterRenderer.GradientStop[] ConvertGradient(RemoteFilter.GradientStop[] gradients)
         {
             return gradients.Select(g => new FilterRenderer.GradientStop(g.stop, g.color)).ToArray();
+        }
+
+        private FilterRenderer.Mapping[] ConvertMappings(RemoteFilter.Mapping[] mappings)
+        {
+            return mappings.Select(m => new FilterRenderer.Mapping(m.value, m.color)).ToArray();
         }
 
         private void RemoveFilter(int id)

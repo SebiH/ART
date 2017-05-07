@@ -35,10 +35,6 @@ export class FilterProvider {
                 this.initFilters(graphs);
             });
 
-
-        this.graphProvider.onGraphColorChange()
-            .subscribe(graph => this.colorUpdate(graph));
-
         this.graphProvider.onGraphDeletion()
             .subscribe(graph => this.clearFilters(graph));
 
@@ -51,6 +47,7 @@ export class FilterProvider {
             .subscribe(response => {
                 let remoteFilters = response.json().filters;
                 let localFilters: Filter[] = [];
+                this.filters = localFilters;
 
                 for (let rFilter of remoteFilters) {
                     this.idCounter = Math.max(this.idCounter, rFilter.id + 1);
@@ -60,12 +57,12 @@ export class FilterProvider {
                         let filter = this.fromJson(rFilter, originGraph);
                         localFilters.push(filter);
                         this.attachListeners(filter);
+                        filter.isSelected = false;
                     } else {
                         console.warn('Could not find origin graph ' + rFilter.origin + ' for filter ' + rFilter.id)
                     }
                 }
 
-                this.filters = localFilters;
                 this.filterObserver.next(this.filters);
 
                 // for debugging
@@ -137,39 +134,6 @@ export class FilterProvider {
         this.delayedFilterSync();
     }
 
-    private colorUpdate(graph: Graph): void {
-        let autoFilters = _.filter(this.filters, f => !f.isUserGenerated);
-
-        for (let filter of autoFilters) {
-            this.removeFilter(filter);
-        }
-
-        if (graph !== null) {
-            let filters = _.filter(this.filters, f => f.origin.id == graph.id);
-
-            if (filters.length == 0) {
-                let dimension = graph.useColorX ? graph.dimX : graph.dimY;
-                let axis: 'x' | 'y' = graph.useColorX ? 'x' : 'y';
-                if (dimension.isMetric) {
-                    let filter = this.createMetricFilter(graph);
-                    filter.isUserGenerated = false;
-                    filter.boundDimensions = axis;
-                    filter.gradient = dimension.gradient;
-                    filter.range = dimension.domain;
-                } else {
-                    for (let map of dimension.mappings) {
-                        let filter = this.createCategoryFilter(graph);
-                        filter.boundDimensions = axis;
-                        filter.isUserGenerated = false;
-                        filter.category = map.value;
-                        filter.color = map.color;
-                    }
-                }
-            }
-        }
-    }
-
-
 
     public createDetailFilter(origin): DetailFilter {
         let filter = new DetailFilter(this.idCounter++);
@@ -198,6 +162,18 @@ export class FilterProvider {
         _.pull(this.filters, filter);
         filter.destroy();
         this.filterObserver.next(this.filters);
+    }
+
+    public setSelected(filter: Filter): void {
+        for (let f of this.filters) {
+            if (filter != f) {
+                f.isSelected = false;
+            }
+        }
+
+        if (filter) {
+            filter.isSelected = true;
+        }
     }
 
 

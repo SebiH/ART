@@ -11,9 +11,7 @@ namespace Assets.Modules.SurfaceGraphs
 
         public string color = "#FFFFFF";
 
-        public bool useColorX = false;
-        public bool useColorY = false;
-
+        public bool isColored = false;
         public bool isFlipped = false;
         public bool isNewlyCreated = false;
         public bool isPickedUp = false;

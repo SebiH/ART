@@ -23,6 +23,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         public int origin = -1;
         public string boundDimensions = "";
         public bool isUserGenerated = true;
+        public bool isSelected = false;
         public float[] path;
 
         /*
@@ -37,11 +38,27 @@ namespace Assets.Modules.SurfaceGraphFilters
         public float[] range = null;
         public GradientStop[] gradient = null;
 
+        /*
+         *  Detail Filter
+         */
+        //public string color = ""; already defined by category
+        public string useAxisColor = "n"; // 'x' | 'y' -> axis, 'n' => no
+        public Mapping[] mappings = null;
+
+
 
         [Serializable]
         public struct GradientStop
         {
             public float stop;
+            public string color;
+        }
+
+        [Serializable]
+        public struct Mapping
+        {
+            public int value;
+            public string name;
             public string color;
         }
     }

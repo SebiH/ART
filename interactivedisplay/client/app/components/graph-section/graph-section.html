@@ -31,9 +31,9 @@
                         <div class="button chart-button"
                             touch-button
                             (touchclick)="toggleColor()"
-                            [ngClass]="{ active: graph.isFlipped ? graph.useColorY : graph.useColorX }">
+                            [ngClass]="{ active: graph.isColored }">
                             <div class="text">
-                                Colour
+                                <span class="fa fa-paint-brush"></span> Color
                             </div>
                     </div>
                 </div>

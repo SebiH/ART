@@ -1,0 +1,47 @@
+<div class="root">
+    <div class="container">
+
+        <div class="color-selection">
+            <div class="color-button"
+                 *ngFor="let color of colors"
+                 [ngClass]="{ active: filter.color == color && filter.useAxisColor == 'n' }"
+                 [style.background]="color"
+                 touch-button
+                 (touchclick)="applyColor(color)">
+             </div>
+        </div>
+
+        <div class="actions">
+            <div class="axis-button popup-button"
+                 [ngClass]="{ active: filter.useAxisColor == getAxis('y') }"
+                 touch-button
+                 (touchclick)="applyColorByValue(getAxis('y'))">
+                <span class="fa fa-arrow-up"></span> <span class="label">By value <br/>Y-Axis</span>
+            </div>
+
+            <div class="axis-button popup-button"
+                 [ngClass]="{ active: filter.useAxisColor == getAxis('x') }"
+                 touch-button
+                 (touchclick)="applyColorByValue(getAxis('x'))">
+                <span class="fa fa-arrow-right"></span> <span class="label">By value <br/>X-Axis</span>
+            </div>
+        </div>
+
+        <div class="padding"> </div>
+
+        <div class="actions">
+            <div class="delete-button popup-button"
+                 touch-button
+                 (touchclick)="deleteFilter($event)">
+                <span class="fa fa-trash"></span> <span class="label">Remove</span>
+            </div>
+
+            <div class="close-button popup-button"
+                 touch-button
+                 (touchclick)="deselectFilter()">
+                <span class="fa fa-times"></span> <span class="label">Close</span>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -79,50 +79,15 @@ export class GraphProvider {
     public setColor(graph: Graph) {
         for (let g of this.graphs) {
             if (g != graph) {
-                g.useColorX = false;
-                g.useColorY = false;
+                g.isColored = false;
             }
         }
 
         if (graph) {
-            if (graph.isFlipped) {
-                graph.useColorX = false;
-                graph.useColorY = true;
-            } else {
-                graph.useColorX = true;
-                graph.useColorY = false;
-            }
+            graph.isColored = true;
         }
 
         this.graphColorChangeObserver.next(graph);
-    }
-
-    // meh
-    public setColor2(graph: Graph, axis: 'x' | 'y') {
-        for (let g of this.graphs) {
-            if (g != graph) {
-                g.useColorX = false;
-                g.useColorY = false;
-            }
-        }
-
-        if (graph) {
-            if (axis == 'x') {
-                graph.useColorX = !graph.useColorX;
-                graph.useColorY = false;
-            } else {
-                graph.useColorX = false;
-                graph.useColorY = !graph.useColorY;
-            }
-
-        }
-
-        if (graph && (graph.useColorX || graph.useColorY)) {
-            this.graphColorChangeObserver.next(graph);
-        } else {
-            this.graphColorChangeObserver.next(null);
-        }
-
     }
 
     public selectGraph(graph: Graph) {

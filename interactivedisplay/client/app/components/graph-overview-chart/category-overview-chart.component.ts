@@ -15,14 +15,7 @@ import * as _ from 'lodash';
             [dimension]="dim">
     </chart-1d>
 
-    <div class="chart-overlay"
-        touch-button
-        (touchclick)="onClick($event)"
-
-        moveable
-        (moveStart)="onMoveStart($event)"
-        (moveUpdate)="onMoveUpdate($event)"
-        (moveEnd)="onMoveEnd($event)">
+    <div class="chart-overlay">
     </div>
 </div>
 `,
@@ -43,12 +36,12 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
     constructor(private filterProvider: FilterProvider) {}
 
     ngAfterViewInit() {
-        this.filterProvider.getFilters()
-            .takeWhile(() => this.isActive)
-            .subscribe((filters) => {
-                this.filters = filters;
-                setTimeout(() => this.draw());
-            });
+        // this.filterProvider.getFilters()
+        //     .takeWhile(() => this.isActive)
+        //     .subscribe((filters) => {
+        //         this.filters = filters;
+        //         setTimeout(() => this.draw());
+        //     });
     }
 
     ngOnDestroy() {
@@ -57,10 +50,10 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
 
     ngOnChanges(changes: SimpleChanges) {
         // let chart update first
-        if (changes['dim']) {
-            this.userDeletedAllFilters = false;
-            setTimeout(() => this.draw());
-        }
+        // if (changes['dim']) {
+        //     this.userDeletedAllFilters = false;
+        //     setTimeout(() => this.draw());
+        // }
     }
 
     private getActiveFilters(): CategoryFilter[] {
@@ -76,19 +69,19 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
     }
 
     private draw() {
-        let filters = this.getActiveFilters();
+        // let filters = this.getActiveFilters();
 
-        if (filters.length === 0 && !this.userDeletedAllFilters) {
+        // if (filters.length === 0 && !this.userDeletedAllFilters) {
             for (let mapping of this.dim.mappings) {
                 this.chart.setCategoryActive(mapping.value, true);
             }
-        } else {
-            for (let mapping of this.dim.mappings) {
-                this.chart.setCategoryActive(mapping.value, !!_.find(filters, f => f.category == mapping.value));
-            }
-        }
+        // } else {
+        //     for (let mapping of this.dim.mappings) {
+        //         this.chart.setCategoryActive(mapping.value, !!_.find(filters, f => f.category == mapping.value));
+        //     }
+        // }
     }
-    
+
 
 
     private flippedCategories: number[] = [];
@@ -147,8 +140,7 @@ export class CategoryOverviewChartComponent implements AfterViewInit, OnDestroy,
             }
 
             let filters = this.getActiveFilters();
-            let isColored = (this.graph.isFlipped ? this.graph.useColorY : this.graph.useColorX);
-            if (filters.length == this.dim.mappings.length && !isColored) {
+            if (filters.length == this.dim.mappings.length && !this.graph.isColored) {
                 // all categories are active -> remove all filters
                 while (filters.length > 0) {
                     this.filterProvider.removeFilter(filters.pop());

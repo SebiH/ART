@@ -24,8 +24,7 @@ namespace Assets.Modules.SurfaceGraphFilters.Scripts
 
         private void Update()
         {
-            var isColored = IsXAxis ? _graph.UseColorX : _graph.UseColorY;
-            var targetColor = isColored ? Globals.FilterActiveColor : new Color32(255, 255, 255, 255);
+            var targetColor = _graph.IsColored ? Globals.FilterActiveColor : new Color32(255, 255, 255, 255);
 
             if (_colorAnimation.End.r != targetColor.r || _colorAnimation.End.g != targetColor.g || _colorAnimation.End.b != targetColor.b)
             {
