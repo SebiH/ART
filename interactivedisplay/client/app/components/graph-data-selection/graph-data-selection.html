@@ -6,6 +6,8 @@
 
               touch-button
               (touchclick)="handleClick($event)"
+              [usePress]="true"
+              (touchpress)="handleClick($event)"
 
               moveable
               (moveStart)="handleTouchDown($event)"
