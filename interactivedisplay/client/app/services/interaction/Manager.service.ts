@@ -464,13 +464,13 @@ export class InteractionManager {
 
                 if (interaction.type === InteractionType.Press || interaction.type === InteractionType.Touch) {
                     let eventType = (interaction.type === InteractionType.Press) ? InteractionEventType.PressUp : InteractionEventType.TouchUp;
-                    this.raiseEvent(interaction, {
+                    let raisedEvent = this.raiseEvent(interaction, {
                         type: eventType,
                         position: touchPos
                     });
 
                     // if event was press, but no listener was registered, fire a click event just in case
-                    if (Point.distanceBetween(new Point(0, 0), interaction.totalDistance) < MAX_PRESS_DISTANCE) {
+                    if (!raisedEvent && Point.distanceBetween(new Point(0, 0), interaction.totalDistance) < MAX_PRESS_DISTANCE) {
                         this.raiseEvent(interaction, {
                             type: InteractionEventType.Click,
                             position: touchPos
