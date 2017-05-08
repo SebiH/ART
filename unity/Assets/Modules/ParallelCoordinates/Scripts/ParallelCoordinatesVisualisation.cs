@@ -135,8 +135,16 @@ namespace Assets.Modules.ParallelCoordinates
                 var rightMats = Right.Visualisation.BasePlane.materials;
                 var renderQueueRight = rightMats[rightMats.Length - 1].renderQueue;
 
-                var lineRenderQueue = Mathf.Max(renderQueueLeft, renderQueueRight);
-                _skinnedRenderer.materials[_skinnedRenderer.materials.Length - 1].renderQueue = lineRenderQueue + 1;
+                if (Left.Graph.IsSelected || Right.Graph.IsSelected)
+                {
+                    var lineRenderQueue = Mathf.Min(renderQueueLeft, renderQueueRight);
+                    _skinnedRenderer.materials[_skinnedRenderer.materials.Length - 1].renderQueue = lineRenderQueue;
+                }
+                else
+                {
+                    var lineRenderQueue = Mathf.Max(renderQueueLeft, renderQueueRight);
+                    _skinnedRenderer.materials[_skinnedRenderer.materials.Length - 1].renderQueue = lineRenderQueue + 1;
+                }
             }
         }
 
