@@ -122,6 +122,7 @@ namespace Assets.Modules.ParallelCoordinates
             if (_colorAnimation.CurrentValue.Length != colors.Length)
             {
                 _colorAnimation.Init(new Color32[colors.Length]);
+                AnimateColors(colors);
             }
             else
             {
