@@ -143,7 +143,7 @@ namespace Assets.Modules.ParallelCoordinates
                 else
                 {
                     var lineRenderQueue = Mathf.Max(renderQueueLeft, renderQueueRight);
-                    _skinnedRenderer.materials[_skinnedRenderer.materials.Length - 1].renderQueue = lineRenderQueue + 1;
+                    _skinnedRenderer.materials[_skinnedRenderer.materials.Length - 1].renderQueue = lineRenderQueue;
                 }
             }
         }

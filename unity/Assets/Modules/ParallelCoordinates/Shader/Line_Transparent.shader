@@ -195,7 +195,8 @@ Shader "Graph/Line_Transparent"
             {
                 fixed4 inputColor = input.color;
                 clip((1 - input.color.a) - 0.001);
-				inputColor *= 0.85;
+				// fade out color as transparency decreases - to prevent jumps when switching from 1.0 alpha to 0.99 alpha
+				inputColor *= (0.85 + 0.15 * input.color.a);
                 return inputColor;
             }
 
