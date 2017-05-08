@@ -1,4 +1,3 @@
-using Assets.Modules.Core;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -82,8 +81,8 @@ namespace Assets.Modules.ParallelCoordinates
                 boneWeights[i * 2 + 1].weight0 = 1.0f;
                 boneWeights[i * 2 + 1].boneIndex0 = i * 2 + 1;
 
-                colors[i * 2 + 0] = Lines[i].Color;
-                colors[i * 2 + 1] = Lines[i].Color;
+                colors[i * 2 + 0] = new Color32(255, 255, 255, 255);
+                colors[i * 2 + 1] = new Color32(255, 255, 255, 255);
 
                 uv2[i * 2 + 0].x = ColorOffsets[i];
                 uv2[i * 2 + 1].x = ColorOffsets[i];

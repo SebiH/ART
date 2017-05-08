@@ -1,5 +1,4 @@
 using Assets.Modules.Core;
-using Assets.Modules.Graphs;
 using Assets.Modules.ParallelCoordinates;
 using Assets.Modules.Surfaces;
 using System;
