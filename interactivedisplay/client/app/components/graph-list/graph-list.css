@@ -23,7 +23,7 @@
 .list.moving {
     -webkit-transition: none;
     -ms-transition: none;
-    transition:  none;
+    transition: none;
 }
 
 .add-button-container {

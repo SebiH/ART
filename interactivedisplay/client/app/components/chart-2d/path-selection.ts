@@ -43,6 +43,7 @@ export class PathSelection extends ChartElement {
 
         if (this.prevTextureDef != null) {
             this.prevTextureDef.remove();
+            this.prevTextureDef = null;
         }
     }
 
@@ -57,6 +58,7 @@ export class PathSelection extends ChartElement {
     private setColor(): void {
         if (this.prevTextureDef != null) {
             this.prevTextureDef.remove();
+            this.prevTextureDef = null;
         }
 
         if (this.filter.isSelected) {
@@ -108,7 +110,10 @@ export class PathSelection extends ChartElement {
 
     private setPrevTexture(url: string): void {
         let id = url.replace('url(#', '').replace(')', '');
-        this.prevTextureDef = document.getElementById(id).parentElement;
+        let texture = document.getElementById(id);
+        if (texture) {
+            this.prevTextureDef = texture.parentElement;
+        }
     }
 
     // Texture.js returns relative url as 'url(#xyz)',

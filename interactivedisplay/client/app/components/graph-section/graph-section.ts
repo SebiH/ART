@@ -123,8 +123,10 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     }
 
     private selectGraph(): void {
-        this.graphProvider.selectGraph(this.graph);
-        this.changeDetector.markForCheck();
+        if (this.showOverview) {
+            this.graphProvider.selectGraph(this.graph);
+            this.changeDetector.markForCheck();
+        }
     }
 
     private deleteGraph(): void {
@@ -149,7 +151,9 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     }
 
     private closeSelection(): void {
-        this.graphProvider.selectGraph(null);
+        if (this.showDetail) {
+            this.graphProvider.selectGraph(null);
+        }
     }
 
 }
