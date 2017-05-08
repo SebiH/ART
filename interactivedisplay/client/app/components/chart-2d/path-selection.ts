@@ -13,6 +13,7 @@ export class PathSelection extends ChartElement {
     private pathElement: HtmlChartElement;
     private line: d3.Line<number[]>;
     private filterSub: Subscription;
+    private prevTextureDef: HTMLElement = null;
 
     public constructor(public id: number, private parent: Chart2dComponent, private filter: DetailFilter) {
         super();
@@ -37,9 +38,12 @@ export class PathSelection extends ChartElement {
     }
 
     public unregister(): void {
-        // TODO: remove texture?
         this.pathElement.remove();
         this.filterSub.unsubscribe();
+
+        if (this.prevTextureDef != null) {
+            this.prevTextureDef.remove();
+        }
     }
 
     public resize(width: number, height: number): void {
@@ -51,10 +55,15 @@ export class PathSelection extends ChartElement {
     }
 
     private setColor(): void {
+        if (this.prevTextureDef != null) {
+            this.prevTextureDef.remove();
+        }
+
         if (this.filter.isSelected) {
             let texture = textures.lines().heavier().thicker().stroke(this.filter.getColor());
             this.parent.chart.svgElement.call(texture);
             let textureFill = this.getAbsoluteTextureUrl(texture.url());
+            this.setPrevTexture(texture.url());
 
             this.pathElement
                 .attr('stroke', this.filter.getColor())
@@ -74,6 +83,7 @@ export class PathSelection extends ChartElement {
                 .stroke(this.filter.getColor());
             this.parent.chart.svgElement.call(texture);
             let textureFill = this.getAbsoluteTextureUrl(texture.url());
+            this.setPrevTexture(texture.url());
 
             this.pathElement
                 .attr('stroke', this.filter.getColor())
@@ -88,11 +98,17 @@ export class PathSelection extends ChartElement {
                 .stroke(this.filter.getColor());
             this.parent.chart.svgElement.call(texture);
             let textureFill = this.getAbsoluteTextureUrl(texture.url());
+            this.setPrevTexture(texture.url());
 
             this.pathElement
                 .attr('stroke', this.filter.getColor())
                 .attr('fill', textureFill);
         }
+    }
+
+    private setPrevTexture(url: string): void {
+        let id = url.replace('url(#', '').replace(')', '');
+        this.prevTextureDef = document.getElementById(id).parentElement;
     }
 
     // Texture.js returns relative url as 'url(#xyz)',
