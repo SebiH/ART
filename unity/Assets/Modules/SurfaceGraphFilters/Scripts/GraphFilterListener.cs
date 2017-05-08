@@ -152,7 +152,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             }
 
             //if (rFilter.type == RemoteFilter.Type.Metric)
-            if (rFilter.type == RemoteFilter.Type.Detail && rFilter.gradient != null)
+            if (rFilter.type == RemoteFilter.Type.Detail && rFilter.gradient != null && rFilter.useAxisColor != "n")
             {
                 filter.Gradients = ConvertGradient(rFilter.gradient);
                 filter.GradientAxis = rFilter.useAxisColor == "x" ? 'x' : 'y';
@@ -163,9 +163,9 @@ namespace Assets.Modules.SurfaceGraphFilters
                 filter.Color = color;
             }
 
-            if (rFilter.type == RemoteFilter.Type.Detail && rFilter.mappings != null)
+            if (rFilter.type == RemoteFilter.Type.Detail && rFilter.mappings != null && rFilter.useAxisColor != "n")
             {   
-                filter.GradientAxis = rFilter.useAxisColor == "x" ? 'x' : 'y';
+                filter.CategoryAxis = rFilter.useAxisColor == "x" ? 'x' : 'y';
                 filter.UseCategories = true;
                 filter.Categories = ConvertMappings(rFilter.mappings);
             }

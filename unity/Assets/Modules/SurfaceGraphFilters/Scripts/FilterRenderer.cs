@@ -104,6 +104,8 @@ namespace Assets.Modules.SurfaceGraphFilters
             }
         }
 
+        public char CategoryAxis = 'x'; // 'x' | 'y'
+
         private Mapping[] _categories = null;
         public Mapping[] Categories
         {
@@ -233,13 +235,13 @@ namespace Assets.Modules.SurfaceGraphFilters
                 vertices[counter + 1] = new Vector3(Convert.ToSingle(vectors[1].x), Convert.ToSingle(vectors[1].y), 0);
                 vertices[counter + 2] = new Vector3(Convert.ToSingle(vectors[2].x), Convert.ToSingle(vectors[2].y), 0);
 
-                if (_useCategories && GradientAxis == 'x')
+                if (_useCategories && CategoryAxis == 'x')
                 {
                     colors[counter + 0] = GetCategoryColor(vectors[0].x);
                     colors[counter + 1] = GetCategoryColor(vectors[1].x);
                     colors[counter + 2] = GetCategoryColor(vectors[2].x);
                 }
-                else if (_useCategories && GradientAxis == 'y')
+                else if (_useCategories && CategoryAxis == 'y')
                 {
                     colors[counter + 0] = GetCategoryColor(vectors[0].y);
                     colors[counter + 1] = GetCategoryColor(vectors[1].y);
@@ -268,7 +270,7 @@ namespace Assets.Modules.SurfaceGraphFilters
         {
             Mapping prevCategory = null;
             Mapping nextCategory = null;
-            Dimension dim = GradientAxis == 'x' ? _graph.DimX : _graph.DimY;
+            Dimension dim = CategoryAxis == 'x' ? _graph.DimX : _graph.DimY;
 
             foreach (var mapping in Categories)
             {
