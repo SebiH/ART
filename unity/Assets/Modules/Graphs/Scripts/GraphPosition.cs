@@ -103,7 +103,7 @@ namespace Assets.Modules.Graphs
             _graph = GetComponent<Graph>();
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             Offset = _graph.IsSelected ? OFFSET_SELECTED : OFFSET_NORMAL;
             Height = _graph.IsPickedUp ? HEIGHT_PICKEDUP : HEIGHT_NORMAL;
@@ -123,7 +123,7 @@ namespace Assets.Modules.Graphs
                 _rotationAnimation.Restart(targetRotation);
             }
 
-            var actualPosition = _positionAnimation.CurrentValue;
+            var actualPosition = _position; //_positionAnimation.CurrentValue;
             var actualHeight = _heightAnimation.CurrentValue;
             var actualOffset = _offsetAnimation.CurrentValue;
 
