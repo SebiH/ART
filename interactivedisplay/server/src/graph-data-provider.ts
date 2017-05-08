@@ -29,9 +29,9 @@ export class GraphDataProvider {
                     +mapping.maxValue;
 
                 for (let i = 0; i < randomDataCount; i++) {
-                    let val = Math.random() * (maxValue - minValue + 1) + minValue;
+                    let val = Math.random() * (maxValue - minValue) + minValue;
                     if (mapping.type === DataRepresentation.Categorical) {
-                        val = Math.floor(val);
+                        val = Math.round(val);
                     }
                     data[i].dimensions[dimension] = val;
                 }
