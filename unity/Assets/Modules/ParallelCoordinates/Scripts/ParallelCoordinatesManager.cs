@@ -90,6 +90,7 @@ namespace Assets.Modules.ParallelCoordinates
         {
             var connection = Instantiate(Template);
             connection.SetColors(_colorAnimation.CurrentValue);
+            if (graph) { graph.Visualisation.DataField.SetColors(_colorAnimation.CurrentValue); }
             connection.transform.parent = transform;
 
             var orderedGraphs = Manager.GetAllGraphs()

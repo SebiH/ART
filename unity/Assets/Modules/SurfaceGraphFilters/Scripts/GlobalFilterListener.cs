@@ -8,20 +8,17 @@ using UnityEngine;
 
 namespace Assets.Modules.SurfaceGraphFilters
 {
-    [RequireComponent(typeof(GraphManager))]
     public class GlobalFilterListener : MonoBehaviour
     {
         const byte TRANSPARENCY_FILTERED = 30;
         const byte TRANSPARENCY_NORMAL = 255;
 
         private Surface _surface;
-        private GraphManager _graphManager;
 
         private void OnEnable()
         {
             _surface = UnityUtility.FindParent<Surface>(this);
             _surface.OnAction += HandleSurfaceAction;
-            _graphManager = GetComponent<GraphManager>();
 
             StartCoroutine(InitWebData());
         }
@@ -81,11 +78,6 @@ namespace Assets.Modules.SurfaceGraphFilters
             }
 
             ParallelCoordinatesManager.Instance.SetColors(colors);
-
-            foreach (var graph in _graphManager.GetAllGraphs())
-            {
-                graph.Visualisation.DataField.SetColors(colors);
-            }
         }
 
 
