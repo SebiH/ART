@@ -10,6 +10,16 @@ namespace Assets.Modules.Graphs
 
         public override void RebuildData()
         {
+            if (Data == null)
+            {
+                return;
+            }
+
+            if (ScaledData == null || ScaledData.Length != Data.Length)
+            {
+                ScaledData = new float[Data.Length];
+            }
+
             _range = DomainMax - DomainMin;
             for (var i = 0; i < Data.Length; i++)
             {

@@ -1,4 +1,5 @@
 using Assets.Modules.Core;
+using Assets.Modules.Graphs;
 using Assets.Modules.ParallelCoordinates;
 using Assets.Modules.Surfaces;
 using System;
@@ -7,17 +8,20 @@ using UnityEngine;
 
 namespace Assets.Modules.SurfaceGraphFilters
 {
+    [RequireComponent(typeof(GraphManager))]
     public class GlobalFilterListener : MonoBehaviour
     {
         const byte TRANSPARENCY_FILTERED = 30;
         const byte TRANSPARENCY_NORMAL = 255;
 
         private Surface _surface;
+        private GraphManager _graphManager;
 
         private void OnEnable()
         {
             _surface = UnityUtility.FindParent<Surface>(this);
             _surface.OnAction += HandleSurfaceAction;
+            _graphManager = GetComponent<GraphManager>();
 
             StartCoroutine(InitWebData());
         }
@@ -57,32 +61,30 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         private void ApplyMetadata(RemoteValueMetadata[] metadata)
         {
-            if (metadata.Length == Globals.DataPointsCount)
+            var colors = new Color32[metadata.Length];
+
+            for (var i = 0; i < colors.Length; i++)
             {
-                var colors = new Color32[Globals.DataPointsCount];
+                var color = new Color();
+                var parseSuccess = ColorUtility.TryParseHtmlString(metadata[i].c, out color);
 
-                for (var i = 0; i < colors.Length; i++)
+                if (parseSuccess)
                 {
-                    var color = new Color();
-                    var parseSuccess = ColorUtility.TryParseHtmlString(metadata[i].c, out color);
-
-                    if (parseSuccess)
-                    {
-                        colors[i] = color;
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Unable to parse color " + metadata[i].c);
-                    }
-
-                    colors[i].a = (metadata[i].f >= 1) ? TRANSPARENCY_FILTERED : TRANSPARENCY_NORMAL;
+                    colors[i] = color;
+                }
+                else
+                {
+                    Debug.LogWarning("Unable to parse color " + metadata[i].c);
                 }
 
-                ParallelCoordinatesManager.Instance.SetColors(colors);
+                colors[i].a = (metadata[i].f >= 1) ? TRANSPARENCY_FILTERED : TRANSPARENCY_NORMAL;
             }
-            else
+
+            ParallelCoordinatesManager.Instance.SetColors(colors);
+
+            foreach (var graph in _graphManager.GetAllGraphs())
             {
-                Debug.LogError(String.Format("Invalid amount of metadata from globalfilter, expected {0}, got {1}", Globals.DataPointsCount, metadata.Length));
+                graph.Visualisation.DataField.SetColors(colors);
             }
         }
 

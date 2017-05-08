@@ -22,9 +22,8 @@ namespace Assets.Modules.ParallelCoordinates
 
             Manager.OnGraphAdded += SyncConnectionCount;
             Manager.OnGraphDeleted += SyncConnectionCount;
-
             _colorAnimation.Update += AnimateColors;
-            _colorAnimation.Init(new Color32[Globals.DataPointsCount]);
+            _colorAnimation.Init(new Color32[0]);
         }
 
         private void OnDisable()
@@ -59,7 +58,6 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-
         private void SyncConnectionCount(GraphMetaData graph)
         {
             var graphs = Manager.GetAllGraphs();
@@ -92,7 +90,6 @@ namespace Assets.Modules.ParallelCoordinates
         {
             var connection = Instantiate(Template);
             connection.SetColors(_colorAnimation.CurrentValue);
-            if (graph != null) { graph.Visualisation.DataField.SetColors(_colorAnimation.CurrentValue); }
             connection.transform.parent = transform;
 
             var orderedGraphs = Manager.GetAllGraphs()
@@ -122,7 +119,14 @@ namespace Assets.Modules.ParallelCoordinates
         // colorindex == data index
         public void SetColors(Color32[] colors)
         {
-            _colorAnimation.Restart(colors);
+            if (_colorAnimation.CurrentValue.Length != colors.Length)
+            {
+                _colorAnimation.Init(new Color32[colors.Length]);
+            }
+            else
+            {
+                _colorAnimation.Restart(colors);
+            }
         }
 
 

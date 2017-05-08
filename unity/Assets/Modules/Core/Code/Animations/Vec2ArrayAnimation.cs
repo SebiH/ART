@@ -10,6 +10,11 @@ namespace Assets.Modules.Core.Animations
 
         protected override Vector2[] Lerp(Vector2[] start, Vector2[] end, float weight)
         {
+            if (start.Length != end.Length)
+            {
+                return end;
+            }
+
             var current = new Vector2[start.Length];
 
             for (var i = 0; i < current.Length; i++)

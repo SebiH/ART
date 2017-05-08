@@ -10,6 +10,11 @@ namespace Assets.Modules.Core.Animations
 
         protected override Color32[] Lerp(Color32[] start, Color32[] end, float weight)
         {
+            if (start.Length != end.Length)
+            {
+                return end;
+            }
+
             var colors = new Color32[start.Length];
 
             for (var i = 0; i < colors.Length; i++)

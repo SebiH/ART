@@ -43,7 +43,6 @@ namespace Assets.Modules.SurfaceGraphs
             yield return dataWebRequest;
 
             var response = JsonUtility.FromJson<DataResponse>(dataWebRequest.text);
-            Debug.Assert(response.data.Length == Globals.DataPointsCount, String.Format("Expected {0} datapoints, but received {1}", Globals.DataPointsCount, response.data.Length));
             Dimension dimension;
 
             if (response.isMetric)
@@ -64,7 +63,7 @@ namespace Assets.Modules.SurfaceGraphs
                 dimension = catDimension;
             }
 
-            var data = new float[Globals.DataPointsCount];
+            var data = new float[response.data.Length];
             foreach (var d in response.data)
             {
                 // assuming ids are 0 - data.length

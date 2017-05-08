@@ -1,4 +1,3 @@
-using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
 using UnityEngine;
@@ -12,14 +11,17 @@ namespace Assets.Modules.ParallelCoordinates
 
         protected static float[] RandomOffsetX = null;
         protected static float[] RandomOffsetY = null;
-        private void InitRandom()
+        private void InitRandom(int length)
         {
-            RandomOffsetX = new float[Globals.DataPointsCount];
-            RandomOffsetY = new float[Globals.DataPointsCount];
-            for (var i = 0; i < RandomOffsetX.Length; i++)
+            if (RandomOffsetX == null || RandomOffsetX.Length < length)
             {
-                RandomOffsetX[i] = (Random.value - 0.5f) / 70f;
-                RandomOffsetY[i] = (Random.value - 0.5f) / 70f;
+                RandomOffsetX = new float[length];
+                RandomOffsetY = new float[length];
+                for (var i = 0; i < RandomOffsetX.Length; i++)
+                {
+                    RandomOffsetX[i] = (Random.value - 0.5f) / 70f;
+                    RandomOffsetY[i] = (Random.value - 0.5f) / 70f;
+                }
             }
         }
 
@@ -103,11 +105,6 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void OnEnable()
         {
-            if (RandomOffsetX == null)
-            {
-                InitRandom();
-            }
-
             _lineRenderer = GetComponent<SkinnedMeshLineRenderer>();
             _skinnedRenderer = GetComponent<SkinnedMeshRenderer>();
             _rightAnimation.Update += SetRightData;
@@ -171,7 +168,12 @@ namespace Assets.Modules.ParallelCoordinates
         }
         private void SetLeftData(Vector2[] data)
         {
-            Debug.Assert(data.Length == _lineRenderer.Lines.Length);
+            if (data.Length != _lineRenderer.Lines.Length)
+            {
+                _lineRenderer.Resize(data.Length);
+            }
+
+            InitRandom(data.Length);
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
                 _lineRenderer.Lines[i].Start = data[i] + new Vector2(RandomOffsetX[i], RandomOffsetY[i]);
@@ -206,7 +208,12 @@ namespace Assets.Modules.ParallelCoordinates
 
         private void SetRightData(Vector2[] data)
         {
-            Debug.Assert(data.Length == _lineRenderer.Lines.Length);
+            if (data.Length != _lineRenderer.Lines.Length)
+            {
+                _lineRenderer.Resize(data.Length);
+            }
+
+            InitRandom(data.Length);
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
                 _lineRenderer.Lines[i].End = data[i] + new Vector2(RandomOffsetX[i], RandomOffsetY[i]);
@@ -217,6 +224,12 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void SetColors(Color32[] colors)
         {
+            if (colors.Length != _lineRenderer.Lines.Length)
+            {
+                _lineRenderer.Resize(colors.Length);
+            }
+
+            InitRandom(colors.Length);
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
                 _lineRenderer.Lines[i].Color = colors[i];

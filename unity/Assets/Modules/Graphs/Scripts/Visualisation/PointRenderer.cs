@@ -16,16 +16,21 @@ namespace Assets.Modules.Graphs.Visualisation
             public Color32 Color;
         }
 
-        public PointProperty[] Points = new PointProperty[Globals.DataPointsCount];
+        public PointProperty[] Points = new PointProperty[0];
 
         private void OnEnable()
         {
+            _renderer = GetComponent<MeshRenderer>();
+        }
+
+        public void Resize(int length)
+        {
+            Debug.Assert(Points.Length != length, "Performing unnecessary resize()!");
+            Points = new PointProperty[length];
             _mesh = new Mesh();
 
             _filter = GetComponent<MeshFilter>();
             _filter.mesh = _mesh;
-
-            _renderer = GetComponent<MeshRenderer>();
 
             var triangles = new int[Points.Length * 3];
             var colors = new Color32[Points.Length];
@@ -57,6 +62,11 @@ namespace Assets.Modules.Graphs.Visualisation
 
         public void GenerateMesh()
         {
+            if (_mesh == null)
+            {
+                return;
+            }
+
             var vertices = _mesh.vertices;
             var colors = _mesh.colors32;
 
@@ -74,6 +84,11 @@ namespace Assets.Modules.Graphs.Visualisation
 
         public void UpdateColor()
         {
+            if (_mesh == null)
+            {
+                return;
+            }
+
             var colors = _mesh.colors32;
 
             for (var i = 0; i < Points.Length; i++)
@@ -86,6 +101,11 @@ namespace Assets.Modules.Graphs.Visualisation
 
         public void UpdatePositions()
         {
+            if (_mesh == null)
+            {
+                return;
+            }
+
             var vertices = _mesh.vertices;
 
             for (var i = 0; i < Points.Length; i++)

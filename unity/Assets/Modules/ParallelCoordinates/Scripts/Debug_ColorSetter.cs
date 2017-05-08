@@ -1,7 +1,7 @@
 using Assets.Modules.Core;
 using UnityEngine;
 
-namespace Assets.Modules.ParallelCoordinates.Scripts
+namespace Assets.Modules.ParallelCoordinates
 {
     [RequireComponent(typeof(ParallelCoordinatesManager))]
     public class Debug_ColorSetter : MonoBehaviour
@@ -10,6 +10,7 @@ namespace Assets.Modules.ParallelCoordinates.Scripts
 
         [Range(0f, 1f)]
         public float FilterPercent = 0.3f;
+        public int LineCount = 100;
 
         private Color32[] _colors = new[]
         {
@@ -21,7 +22,6 @@ namespace Assets.Modules.ParallelCoordinates.Scripts
 
         private void OnEnable()
         {
-            DoUpdate = true;
         }
 
         private void LateUpdate()
@@ -36,7 +36,7 @@ namespace Assets.Modules.ParallelCoordinates.Scripts
         public void Randomize()
         {
             var manager = GetComponent<ParallelCoordinatesManager>();
-            var colors = new Color32[Globals.DataPointsCount];
+            var colors = new Color32[LineCount];
 
             for (var i = 0; i < colors.Length; i++)
             {

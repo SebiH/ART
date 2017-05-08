@@ -5,8 +5,8 @@ namespace Assets.Modules.Graphs
 {
     public abstract class Dimension
     {
-        public float[] Data = new float[Globals.DataPointsCount];
-        public float[] ScaledData = new float[Globals.DataPointsCount];
+        public float[] Data = null;
+        public float[] ScaledData = null;
         public string DisplayName = "";
 
         public float DomainMin = 0f;

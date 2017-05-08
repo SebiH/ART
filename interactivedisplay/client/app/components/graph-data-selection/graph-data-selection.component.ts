@@ -178,7 +178,6 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             filter.useAxisColor = 'n';
             this.activeFilter = filter;
         }
-        console.log(this.filterCreationMode);
     }
 
 

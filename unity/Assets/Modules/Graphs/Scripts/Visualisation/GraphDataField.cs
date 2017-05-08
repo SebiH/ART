@@ -56,7 +56,12 @@ namespace Assets.Modules.Graphs.Visualisation
 
         private void SetData(Vector2[] data)
         {
-            for (var i = 0; i < Globals.DataPointsCount; i++)
+            if (_pointRenderer.Points.Length != data.Length)
+            {
+                _pointRenderer.Resize(data.Length);
+            }
+
+            for (var i = 0; i < data.Length; i++)
             {
                 _pointRenderer.Points[i].Position = data[i];
             }
@@ -66,7 +71,12 @@ namespace Assets.Modules.Graphs.Visualisation
 
         public void SetColors(Color32[] colors)
         {
-            for (var i = 0; i < Globals.DataPointsCount; i++)
+            if (_pointRenderer.Points.Length != colors.Length)
+            {
+                _pointRenderer.Resize(colors.Length);
+            }
+
+            for (var i = 0; i < colors.Length; i++)
             {
                 _pointRenderer.Points[i].Color = colors[i];
             }

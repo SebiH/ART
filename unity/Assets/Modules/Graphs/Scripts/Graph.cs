@@ -1,4 +1,3 @@
-using Assets.Modules.Core;
 using System;
 using UnityEngine;
 
@@ -80,7 +79,7 @@ namespace Assets.Modules.Graphs
             if (_dataCache == null)
             {
                 Debug.Assert(_dimX != null && _dimY != null, "Tried retrieving data from graph with null dimensions");
-                _dataCache = new Vector2[Globals.DataPointsCount];
+                _dataCache = new Vector2[_dimX.Data.Length];
                 for (var i = 0; i < _dataCache.Length; i++)
                 {
                     _dataCache[i] = new Vector2(_dimX.ScaledData[i], _dimY.ScaledData[i]);

@@ -22,24 +22,28 @@ namespace Assets.Modules.ParallelCoordinates
         private static float[] ColorOffsets = null;
 
         // Array position == data index
-        public LineProperty[] Lines = new LineProperty[Globals.DataPointsCount];
+        public LineProperty[] Lines = new LineProperty[0];
 
         private void OnEnable()
         {
-            if (ColorOffsets == null)
+            _renderer = GetComponent<SkinnedMeshRenderer>();
+            _renderer.enabled = false;
+        }
+
+        public void Resize(int length)
+        {
+            if (ColorOffsets == null || ColorOffsets.Length < length)
             {
-                ColorOffsets = new float[Globals.DataPointsCount];
+                ColorOffsets = new float[length];
                 for (var i = 0; i < ColorOffsets.Length; i++)
                 {
-                    ColorOffsets[i] = (i - Globals.DataPointsCount / 2f) / (2f * Globals.DataPointsCount);
+                    ColorOffsets[i] = (i - length / 2f) / (2f * length);
                 }
             }
 
-
+            Debug.Assert(Lines.Length != length, "Performing unnecessary resize()!");
+            Lines = new LineProperty[length];
             _mesh = new Mesh();
-
-            _renderer = GetComponent<SkinnedMeshRenderer>();
-            _renderer.enabled = false;
 
             // initialize unchanging properties of mesh
             var triangles = new int[Lines.Length * 3];
@@ -101,6 +105,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void GenerateMesh()
         {
+            if (!_mesh)
+            {
+                return;
+            }
+
             var vertices = _mesh.vertices;
             var colors = _mesh.colors32;
 
@@ -122,6 +131,10 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void UpdatePositions()
         {
+            if (!_mesh)
+            {
+                return;
+            }
             var vertices = _mesh.vertices;
 
             for (var i = 0; i < Lines.Length; i++)
@@ -137,6 +150,11 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void UpdateColors()
         {
+            if (!_mesh)
+            {
+                return;
+            }
+
             var colors = _mesh.colors32;
 
             for (var i = 0; i < Lines.Length; i++)
