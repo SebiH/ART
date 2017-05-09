@@ -18,7 +18,7 @@ namespace Assets.Modules.Vision
                 if (VisionManager.Instance.ActiveCamera is OvrvisionCameraSource)
                 {
                     var ovrCam = VisionManager.Instance.ActiveCamera as OvrvisionCameraSource;
-                    Gap = ovrCam.GetHMDRightGap().x;
+                    Gap = ovrCam.GetHMDRightGap().x / 2;
 
                     // original code - AttachTexture
                     //var IMAGE_ZOFFSET = 0.02f;
@@ -36,8 +36,12 @@ namespace Assets.Modules.Vision
                 }
             }
 
+            // ??? (ovrvision uses 0.032 for left, 0.04 for right -- so theres a 0.008f offset between them???) ???
+            // ??? and artoolkit markers are more accurate if left eye is adjusted by this offset) ???
+            float strangeOffset = 0.008f;
+
             // apply gap
-            LeftEye.localPosition = new Vector3(-Gap, 0, LeftEye.localPosition.z);
+            LeftEye.localPosition = new Vector3(-Gap + strangeOffset, 0, LeftEye.localPosition.z);
             RightEye.localPosition = new Vector3(Gap, 0, RightEye.localPosition.z);
         }
     }
