@@ -1,8 +1,11 @@
+using Assets.Modules.Core;
 using Assets.Modules.Vision;
 using Assets.Modules.Vision.Outputs;
 using Assets.Modules.Vision.Processors;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.Tracking
@@ -17,6 +20,11 @@ namespace Assets.Modules.Tracking
         // for filter
         [Range(0, 200)]
         public int MaxMissedFrames = 10;
+
+        [Range(-0.05f, 0.05f)]
+        public float OffsetLeft = 0;
+        [Range(-0.05f, 0.05f)]
+        public float OffsetRight = 0.0032f;
 
         private ArToolkitProcessor _artkProcessor;
         private JsonOutput _artkOutput;
@@ -71,52 +79,88 @@ namespace Assets.Modules.Tracking
                     output = (ArToolkitOutput)_currentOutput.Dequeue();
                 }
 
+                var pairs = new List<MarkerPair>();
+
                 foreach (var marker in output.markers_left)
                 {
-                    ProcessMarker(marker);
+                    pairs.Add(new MarkerPair { Left = marker });
                 }
 
-                // TODO: combine, in case marker shows up in both?
-                //foreach (var marker in _currentOutput.markers_right)
-                //{
-                //    ProcessMarker(marker);
-                //}
+                foreach (var marker in output.markers_right)
+                {
+                    var match = pairs.FirstOrDefault(p => p.Left.id == marker.id);
+                    if (match != null)
+                    {
+                        match.Right = marker;
+                    }
+                    else
+                    {
+                        pairs.Add(new MarkerPair { Right = marker });
+                    }
+                }
+
+                foreach (var pair in pairs)
+                {
+                    ProcessMarker(pair);
+                }
             }
 
             if (MinConfidence != _artkProcessor.MinConfidence)
             {
                 _artkProcessor.MinConfidence = MinConfidence;
-                // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
+                // TODO: workaround since property will be propagated to c++ lib, may limit value
                 MinConfidence = _artkProcessor.MinConfidence;
             }
 
             if (UseFilters != _artkProcessor.UseFilters)
             {
                 _artkProcessor.UseFilters = UseFilters;
-                // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
+                // TODO: workaround since property will be propagated to c++ lib, may limit value
                 UseFilters = _artkProcessor.UseFilters;
             }
 
             if (MaxMissedFrames != _artkProcessor.MaxMissedFrames)
             {
                 _artkProcessor.MaxMissedFrames = MaxMissedFrames;
-                // TODO: workaround since minconfidence will be propagated to c++ lib, may limit value
+                // TODO: workaround since property will be propagated to c++ lib, may limit value
                 MaxMissedFrames = _artkProcessor.MaxMissedFrames;
             }
         }
 
 
-        private void ProcessMarker(MarkerInfo marker)
+        private void ProcessMarker(MarkerPair marker)
         {
-            Matrix4x4 matrixRaw = MatrixFromFloatArray(marker.transformation_matrix);
-            var transformMatrix = LHMatrixFromRHMatrix(matrixRaw);
+            var positions = new List<Vector3>();
+            var rotations = new List<Quaternion>();
+            int id = -1;
+            float confidence = 0;
+
+            if (marker.Left != null)
+            {
+                var matrixRaw = MatrixFromFloatArray(marker.Left.transformation_matrix);
+                var transformMatrix = LHMatrixFromRHMatrix(matrixRaw);
+                positions.Add(transformMatrix.GetPosition() + new Vector3(OffsetLeft, 0, 0));
+                rotations.Add(transformMatrix.GetRotation());
+                id = marker.Left.id;
+                confidence = Mathf.Max(confidence, marker.Left.confidence);
+            }
+
+            if (marker.Right != null)
+            {
+                var matrixRaw = MatrixFromFloatArray(marker.Right.transformation_matrix);
+                var transformMatrix = LHMatrixFromRHMatrix(matrixRaw);
+                positions.Add(transformMatrix.GetPosition() + new Vector3(OffsetRight, 0, 0));
+                rotations.Add(transformMatrix.GetRotation());
+                id = marker.Right.id;
+                confidence = Mathf.Max(confidence, marker.Right.confidence);
+            }
 
             OnNewPoseDetected(new MarkerPose
             {
-                Id = marker.id,
-                Confidence = marker.confidence,
-                Position = transformMatrix.GetPosition(),
-                Rotation = transformMatrix.GetRotation()
+                Id = id,
+                Confidence = confidence,
+                Position = MathUtility.Average(positions),
+                Rotation = MathUtility.Average(rotations)
             });
         }
 
@@ -165,7 +209,7 @@ namespace Assets.Modules.Tracking
 
         protected override void UpdateMarkerSize(float size)
         {
-            // artoolkit uses mm, size is given in cm
+            // artoolkit uses mm, size is given in m
             _artkProcessor.MarkerSize = size * 1000;
         }
 
@@ -175,15 +219,21 @@ namespace Assets.Modules.Tracking
         }
 
 
+        private class MarkerPair
+        {
+            public MarkerInfo Left = null;
+            public MarkerInfo Right = null;
+        }
+
         #region JSON Message Content
         [Serializable]
-        private struct MarkerInfo
+        private class MarkerInfo
         {
-            public int id;
-            public float confidence;
-            public float match_error;
-            public float trans_error;
-            public float[] transformation_matrix;
+            public int id = -1;
+            public float confidence = 0;
+            public float match_error = 0;
+            public float trans_error = 0;
+            public float[] transformation_matrix = null;
         }
 
         [Serializable]
