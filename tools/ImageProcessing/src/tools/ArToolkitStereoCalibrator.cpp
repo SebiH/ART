@@ -131,7 +131,7 @@ void ArToolkitStereoCalibrator::Calibrate(const std::shared_ptr<CameraSourceInte
 	int capturedImageNum = 0;
 
 	// capture corners for calibration
-	while (capturedImageNum < calib_image_count) //??
+	while (capturedImageNum < calib_image_count && false) //??
 	{
 		camera->PrepareNextFrame();
 		camera->GrabFrame(buffer_left.get(), buffer_right.get());
@@ -187,76 +187,82 @@ void ArToolkitStereoCalibrator::Calibrate(const std::shared_ptr<CameraSourceInte
 
 	// ArToolkit Calibration
 	//COVHI10400, COVHI10352
-	ICPDataT    icpData;
-	ICPHandleT *icpHandleL = NULL;
-	ICPHandleT *icpHandleR = NULL;
-	ARdouble    initTransL2R[3][4], matL[3][4], matR[3][4], invMatL[3][4];
-	ARdouble    initMatXw2Xc[3][4];
-	ARdouble    transL2R[3][4];
-	ARdouble    err;
+	//ICPDataT    icpData;
+	//ICPHandleT *icpHandleL = NULL;
+	//ICPHandleT *icpHandleR = NULL;
+	//ARdouble    initTransL2R[3][4], matL[3][4], matR[3][4], invMatL[3][4];
+	//ARdouble    initMatXw2Xc[3][4];
+	//ARdouble    transL2R[3][4];
+	//ARdouble    err;
 
-	if ((icpHandleL = icpCreateHandle(paramL.mat)) == NULL) {
-		ARLOG("Error!! icpCreateHandle\n");
-		goto done;
-	}
-	icpSetBreakLoopErrorThresh(icpHandleL, 0.00001);
+	//if ((icpHandleL = icpCreateHandle(paramL.mat)) == NULL) {
+	//	ARLOG("Error!! icpCreateHandle\n");
+	//	goto done;
+	//}
+	//icpSetBreakLoopErrorThresh(icpHandleL, 0.00001);
 
-	if ((icpHandleR = icpCreateHandle(paramR.mat)) == NULL) {
-		ARLOG("Error!! icpCreateHandle\n");
-		goto done;
-	}
-	icpSetBreakLoopErrorThresh(icpHandleR, 0.00001);
+	//if ((icpHandleR = icpCreateHandle(paramR.mat)) == NULL) {
+	//	ARLOG("Error!! icpCreateHandle\n");
+	//	goto done;
+	//}
+	//icpSetBreakLoopErrorThresh(icpHandleR, 0.00001);
 
-	for (int i = 0; i < calib_image_count; i++) {
-		if (icpGetInitXw2Xc_from_PlanarData(paramL.mat, calibData[i].screenCoordL, calibData[i].worldCoordL, calibData[i].numL,
-			calibData[i].initMatXw2Xcl) < 0) {
-			ARLOG("Error!! icpGetInitXw2Xc_from_PlanarData\n");
-			goto done;
-		}
-		icpData.screenCoord = calibData[i].screenCoordL;
-		icpData.worldCoord = calibData[i].worldCoordL;
-		icpData.num = calibData[i].numL;
-	}
+	//for (int i = 0; i < calib_image_count; i++) {
+	//	if (icpGetInitXw2Xc_from_PlanarData(paramL.mat, calibData[i].screenCoordL, calibData[i].worldCoordL, calibData[i].numL,
+	//		calibData[i].initMatXw2Xcl) < 0) {
+	//		ARLOG("Error!! icpGetInitXw2Xc_from_PlanarData\n");
+	//		goto done;
+	//	}
+	//	icpData.screenCoord = calibData[i].screenCoordL;
+	//	icpData.worldCoord = calibData[i].worldCoordL;
+	//	icpData.num = calibData[i].numL;
+	//}
 
-	if (icpGetInitXw2Xc_from_PlanarData(paramL.mat, calibData[0].screenCoordL, calibData[0].worldCoordL, calibData[0].numL,
-		initMatXw2Xc) < 0) {
-		ARLOG("Error!! icpGetInitXw2Xc_from_PlanarData\n");
-		goto done;
-	}
-	icpData.screenCoord = calibData[0].screenCoordL;
-	icpData.worldCoord = calibData[0].worldCoordL;
-	icpData.num = calibData[0].numL;
-	if (icpPoint(icpHandleL, &icpData, initMatXw2Xc, matL, &err) < 0) {
-		ARLOG("Error!! icpPoint\n");
-		goto done;
-	}
-	if (icpGetInitXw2Xc_from_PlanarData(paramR.mat, calibData[0].screenCoordR, calibData[0].worldCoordR, calibData[0].numR,
-		matR) < 0) {
-		ARLOG("Error!! icpGetInitXw2Xc_from_PlanarData\n");
-		goto done;
-	}
-	icpData.screenCoord = calibData[0].screenCoordR;
-	icpData.worldCoord = calibData[0].worldCoordR;
-	icpData.num = calibData[0].numR;
-	if (icpPoint(icpHandleR, &icpData, initMatXw2Xc, matR, &err) < 0) {
-		ARLOG("Error!! icpPoint\n");
-		goto done;
-	}
-	arUtilMatInv(matL, invMatL);
-	arUtilMatMul(matR, invMatL, initTransL2R);
+	//if (icpGetInitXw2Xc_from_PlanarData(paramL.mat, calibData[0].screenCoordL, calibData[0].worldCoordL, calibData[0].numL,
+	//	initMatXw2Xc) < 0) {
+	//	ARLOG("Error!! icpGetInitXw2Xc_from_PlanarData\n");
+	//	goto done;
+	//}
+	//icpData.screenCoord = calibData[0].screenCoordL;
+	//icpData.worldCoord = calibData[0].worldCoordL;
+	//icpData.num = calibData[0].numL;
+	//if (icpPoint(icpHandleL, &icpData, initMatXw2Xc, matL, &err) < 0) {
+	//	ARLOG("Error!! icpPoint\n");
+	//	goto done;
+	//}
+	//if (icpGetInitXw2Xc_from_PlanarData(paramR.mat, calibData[0].screenCoordR, calibData[0].worldCoordR, calibData[0].numR,
+	//	matR) < 0) {
+	//	ARLOG("Error!! icpGetInitXw2Xc_from_PlanarData\n");
+	//	goto done;
+	//}
+	//icpData.screenCoord = calibData[0].screenCoordR;
+	//icpData.worldCoord = calibData[0].worldCoordR;
+	//icpData.num = calibData[0].numR;
+	//if (icpPoint(icpHandleR, &icpData, initMatXw2Xc, matR, &err) < 0) {
+	//	ARLOG("Error!! icpPoint\n");
+	//	goto done;
+	//}
+	//arUtilMatInv(matL, invMatL);
+	//arUtilMatMul(matR, invMatL, initTransL2R);
 
-	if (icpCalibStereo(calibData, calib_image_count, paramL.mat, paramR.mat, initTransL2R, transL2R, &err) < 0) {
-		ARLOG("Calibration error!!\n");
-		goto done;
-	}
-	ARLOG("Estimated transformation matrix from Left to Right.\n");
-	arParamDispExt(transL2R);
+	//if (icpCalibStereo(calibData, calib_image_count, paramL.mat, paramR.mat, initTransL2R, transL2R, &err) < 0) {
+	//	ARLOG("Calibration error!!\n");
+	//	goto done;
+	//}
+	//ARLOG("Estimated transformation matrix from Left to Right.\n");
+	//arParamDispExt(transL2R);
+
+	ARdouble    transL2R[3][4] = {
+		{ 1, 0, 0, 6 },
+		{ 0, 1, 0, 0 },
+		{ 0, 0, 1, 0 }
+	};
 
 	SaveParam(transL2R, filename);
 
 done:
-	free(icpHandleL);
-	free(icpHandleR);
+	//free(icpHandleL);
+	//free(icpHandleR);
 
 	// clean up
 	cv::destroyWindow(window_name);
