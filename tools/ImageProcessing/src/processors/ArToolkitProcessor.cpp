@@ -87,7 +87,7 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 
 			if (info.cf > min_confidence_ && 0 <= info.id && info.id < MAX_MARKER_ID)
 			{
-				auto pose = ProcessMarkerInfo(info, filters_l_[info.id]);
+				auto pose = ProcessMarkerInfo(ar_3d_handle_l_, info, filters_l_[info.id]);
 				DrawMarker(info, frame->size, frame->buffer_left.get());
 				payload["markers_left"].push_back(pose);
 				marker_detected = true;
@@ -109,7 +109,7 @@ std::shared_ptr<const FrameData> ArToolkitProcessor::Process(const std::shared_p
 		{
 			if (info.cf > min_confidence_ && 0 <= info.id && info.id < MAX_MARKER_ID)
 			{
-				auto pose = ProcessMarkerInfo(info, filters_r_[info.id]);
+				auto pose = ProcessMarkerInfo(ar_3d_handle_r_, info, filters_r_[info.id]);
 				DrawMarker(info, frame->size, frame->buffer_right.get());
 				payload["markers_right"].push_back(pose);
 				marker_detected = true;
@@ -160,10 +160,10 @@ static void arglCameraViewRH(const ARdouble para[3][4], ARdouble m_modelview[16]
 	}
 }
 
-json ArToolkitProcessor::ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilter &filter)
+json ArToolkitProcessor::ProcessMarkerInfo(AR3DHandle *ar_3d_handle, ARMarkerInfo &info, const MarkerFilter &filter)
 {
 	ARdouble transform_matrix[3][4];
-	arGetTransMatSquare(ar_3d_handle_l_, &info, marker_size_, transform_matrix);
+	arGetTransMatSquare(ar_3d_handle, &info, marker_size_, transform_matrix);
 
 	if (use_filters_)
 	{

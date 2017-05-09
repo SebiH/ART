@@ -75,7 +75,7 @@ namespace ImageProcessing
 		bool SetupCamera(const std::string filename, const int sizeX, const int sizeY, ARParamLT **cparamLT_p);
 		void Cleanup();
 
-		nlohmann::json ProcessMarkerInfo(ARMarkerInfo &info, const MarkerFilter &filter);
+		nlohmann::json ProcessMarkerInfo(AR3DHandle *ar_3d_handle, ARMarkerInfo &info, const MarkerFilter &filter);
 		void DrawMarker(const ARMarkerInfo &info, const FrameSize &size, unsigned char *buffer);
 	};
 }
