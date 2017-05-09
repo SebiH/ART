@@ -124,7 +124,6 @@
     <ClCompile Include="src\tools\ArToolkitCalibrator.cpp" />
     <ClCompile Include="src\tools\ArToolkitStereoCalibrator.cpp" />
     <ClCompile Include="src\tools\ArucoTools.cpp" />
-    <ClCompile Include="src\tools\FisheyeCalibrator.cpp" />
     <ClCompile Include="src\utils\Logger.cpp" />
     <ClCompile Include="src\utils\Quaternion.cpp" />
     <ClCompile Include="src\tools\StandardCalibrator.cpp" />
@@ -158,7 +157,6 @@
     <ClInclude Include="src\tools\ArToolkitCalibrator.h" />
     <ClInclude Include="src\tools\ArToolkitStereoCalibrator.h" />
     <ClInclude Include="src\tools\ArucoTools.h" />
-    <ClInclude Include="src\tools\FisheyeCalibrator.h" />
     <ClInclude Include="src\utils\Event.h" />
     <ClInclude Include="src\utils\Logger.h" />
     <ClInclude Include="src\utils\Quaternion.h" />

@@ -35,7 +35,7 @@ void ArToolkitCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>
 	int frame_counter = 0;
 
 	// capture corners for calibration
-	while (calibrated_corners_left.size() < calib_image_count)
+	while (calibrated_corners_left.size() < calib_image_count && false)
 	{
 		camera->PrepareNextFrame();
 		camera->GrabFrame(buffer_left.get(), buffer_right.get());
@@ -80,8 +80,8 @@ void ArToolkitCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>
 	}
 
 	// perform calibration
-	SingleCameraCalibration(filename + std::string("_left.dat"), calibrated_corners_left, mat_size);
-	SingleCameraCalibration(filename + std::string("_right.dat"), calibrated_corners_right, mat_size);
+	SingleCameraCalibration(camera, filename + std::string("_left.dat"), calibrated_corners_left, mat_size);
+	SingleCameraCalibration(camera, filename + std::string("_right.dat"), calibrated_corners_right, mat_size);
 
 	// clean up
 	cv::destroyWindow(window_name);
@@ -89,7 +89,7 @@ void ArToolkitCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>
 }
 
 
-double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename, const std::vector<std::vector<cv::Point2f>> &image_points, const cv::Size &image_size)
+double ArToolkitCalibrator::SingleCameraCalibration(const std::shared_ptr<CameraSourceInterface> &camera, const std::string &filename, const std::vector<std::vector<cv::Point2f>> &image_points, const cv::Size &image_size)
 {
 	// calculate opencv calibration
 	std::vector<std::vector<cv::Point3f>> object_points(1);
@@ -104,17 +104,43 @@ double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename,
 
 	cv::Mat camera_matrix = cv::Mat::eye(3, 3, CV_64F);
 	cv::Mat dist_coeffs = cv::Mat::zeros(8, 1, CV_64F);
-	std::vector<cv::Mat> rvecs;
-	std::vector<cv::Mat> tvecs;
+	//std::vector<cv::Mat> rvecs;
+	//std::vector<cv::Mat> tvecs;
 
-	auto rms = cv::calibrateCamera(object_points, image_points, image_size, camera_matrix, dist_coeffs, rvecs, tvecs, 0);
-	DebugLog(std::string("Calibrated camera with error ") + std::to_string(rms));
-	bool ok = cv::checkRange(camera_matrix) && cv::checkRange(dist_coeffs);
+	//auto rms = cv::calibrateCamera(object_points, image_points, image_size, camera_matrix, dist_coeffs, rvecs, tvecs, 0);
+	//DebugLog(std::string("Calibrated camera with error ") + std::to_string(rms));
+	//bool ok = cv::checkRange(camera_matrix) && cv::checkRange(dist_coeffs);
 
-	if (!ok)
-	{
-		throw std::exception("Invalid calibration");
+	//if (!ok)
+	//{
+	//	throw std::exception("Invalid calibration");
+	//}
+
+
+	/* ??? Taken from Ovrvision */
+	float focalPointScale = 1.0f;
+	//Adjustment calc
+	if (image_size.width > 1280) {
+		focalPointScale = 2.0f;
 	}
+	else if (image_size.width <= 640) {
+		if (image_size.width <= 320)
+			focalPointScale = 0.25f;
+		else
+			focalPointScale = 0.5f;
+	}
+
+	auto focal_point = camera->GetFocalLength();
+	camera_matrix.at<double>(0) = focal_point * focalPointScale;
+	camera_matrix.at<double>(1) = 0;
+	camera_matrix.at<double>(2) = image_size.width / 2.0;
+	camera_matrix.at<double>(3) = 0;
+	camera_matrix.at<double>(4) = focal_point * focalPointScale;
+	camera_matrix.at<double>(5) = image_size.height / 2.0;
+	camera_matrix.at<double>(6) = 0;
+	camera_matrix.at<double>(7) = 0;
+	camera_matrix.at<double>(8) = 1;
+
 	
 
 	// convert & save as ArToolkit calibration
@@ -133,15 +159,17 @@ double ArToolkitCalibrator::SingleCameraCalibration(const std::string &filename,
 	for (int i = 0; i < 4; i++)
 	{
 		//dist[i] = ((float*)(dist_coeffs.data))[i];
-		dist[i] = (float)(dist_coeffs.at<double>(i));
+		//dist[i] = (float)(dist_coeffs.at<double>(i));
+		dist[i] = 0;
 	}
 	ConvParam(intr, dist, image_size.width, image_size.height, &param); //COVHI10434 ignored.
 	arParamDisp(&param);
 	SaveParam(&param, filename);
 
 	// return calibration quality (totalAvgError)
-	std::vector<float> reproj_errs;
-	return computeReprojectionErrors(object_points, image_points, rvecs, tvecs, camera_matrix, dist_coeffs, reproj_errs);
+	//std::vector<float> reproj_errs;
+	//return computeReprojectionErrors(object_points, image_points, rvecs, tvecs, camera_matrix, dist_coeffs, reproj_errs);
+	return 0;
 }
 
 
