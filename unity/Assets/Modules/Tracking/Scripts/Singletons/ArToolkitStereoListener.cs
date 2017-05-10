@@ -18,6 +18,11 @@ namespace Assets.Modules.Tracking
         [Range(0, 1000)]
         public int MaxMissedFrames = 180;
 
+        [Range(0f, 10f)]
+        public float MaxMatchError = 2f;
+        [Range(0f, 10f)]
+        public float MaxTransformationError = 2f;
+
         private ArToolkitStereoProcessor _artkProcessor;
         private JsonOutput _artkOutput;
 
@@ -25,8 +30,8 @@ namespace Assets.Modules.Tracking
 
         public float Offset = -0.02f;
 
-        public float MinMatchError = 0;
-        public float MinTransformationError = 0;
+        public float CurrentMatchError = 0;
+        public float CurrentTransError = 0;
 
         public ArToolkitStereoListener()
         {
@@ -76,8 +81,8 @@ namespace Assets.Modules.Tracking
                     output = (ArToolkitOutput)_currentOutput.Dequeue();
                 }
 
-                MinTransformationError = float.MaxValue;
-                MinMatchError = float.MaxValue;
+                CurrentTransError = float.MaxValue;
+                CurrentMatchError = float.MaxValue;
 
                 foreach (var marker in output.markers)
                 {
@@ -110,19 +115,22 @@ namespace Assets.Modules.Tracking
 
         private void ProcessMarker(MarkerInfo marker)
         {
-            Matrix4x4 matrixRaw = MatrixFromFloatArray(marker.transformation_matrix);
-            var transformMatrix = LHMatrixFromRHMatrix(matrixRaw);
+            CurrentMatchError = Mathf.Min(marker.match_error, CurrentMatchError);
+            CurrentTransError = Mathf.Min(marker.trans_error, CurrentTransError);
 
-            MinMatchError = Mathf.Min(marker.match_error, MinMatchError);
-            MinTransformationError = Mathf.Min(marker.trans_error, MinTransformationError);
-
-            OnNewPoseDetected(new MarkerPose
+            if (marker.match_error < MaxMatchError && marker.trans_error < MaxTransformationError)
             {
-                Id = marker.id,
-                Confidence = marker.confidence,
-                Position = transformMatrix.GetPosition() + new Vector3(Offset, 0, 0),
-                Rotation = transformMatrix.GetRotation()
-            });
+                Matrix4x4 matrixRaw = MatrixFromFloatArray(marker.transformation_matrix);
+                var transformMatrix = LHMatrixFromRHMatrix(matrixRaw);
+
+                OnNewPoseDetected(new MarkerPose
+                {
+                    Id = marker.id,
+                    Confidence = marker.confidence,
+                    Position = transformMatrix.GetPosition() + new Vector3(Offset, 0, 0),
+                    Rotation = transformMatrix.GetRotation()
+                });
+            }
         }
 
         // Taken from ARUtilityFunctions.cs in artoolkit/arunity5
