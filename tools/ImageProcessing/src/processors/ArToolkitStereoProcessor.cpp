@@ -215,7 +215,7 @@ void ArToolkitStereoProcessor::Initialize(const int sizeX, const int sizeY, cons
 	{
 		MarkerFilter mf;
 		mf.id = i;
-		mf.ftmi = arFilterTransMatInit(90, 15);
+		mf.ftmi = arFilterTransMatInit(60, 10);
 		filters_.push_back(mf);
 	}
 
