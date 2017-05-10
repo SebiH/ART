@@ -243,11 +243,15 @@ void ArToolkitProcessor::Initialize(const int sizeX, const int sizeY, const int 
 
 	for (int i = 0; i < MAX_MARKER_ID; i++)
 	{
-		MarkerFilter mf;
-		mf.id = i;
-		mf.ftmi = arFilterTransMatInit(90, 15);
-		filters_l_.push_back(mf);
-		filters_r_.push_back(mf);
+		MarkerFilter mf_l;
+		mf_l.id = i;
+		mf_l.ftmi = arFilterTransMatInit(90, 15);
+		filters_l_.push_back(mf_l);
+
+		MarkerFilter mf_r;
+		mf_r.id = i;
+		mf_r.ftmi = arFilterTransMatInit(90, 15);
+		filters_r_.push_back(mf_r);
 	}
 
 
