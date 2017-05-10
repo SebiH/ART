@@ -6,7 +6,7 @@ namespace Assets.Modules.CalibratedTracking
     public class OptitrackCalibratedObject : MonoBehaviour
     {
         // Name in Optitrack
-        public string TrackedName = "";
+        public string TrackedName = "HMD";
 
         public bool TrackPosition = false;
         public bool TrackRotation = false;
@@ -16,7 +16,7 @@ namespace Assets.Modules.CalibratedTracking
         private void OnEnable()
         {
             _camTracker = GetComponent<CameraTrackingSwitcher>();
-            TrackedName = _camTracker.OptitrackTracker.TrackedName;
+            _camTracker.OptitrackTracker.TrackedName = TrackedName;
         }
 
 #if UNITY_EDITOR

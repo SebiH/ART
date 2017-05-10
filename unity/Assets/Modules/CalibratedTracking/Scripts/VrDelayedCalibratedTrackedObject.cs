@@ -16,7 +16,7 @@ namespace Assets.Modules.CalibratedTracking.Scripts
         private void OnEnable()
         {
             _camTracker = GetComponent<CameraTrackingSwitcher>();
-            TrackingDelay = _camTracker.VrTracker.TrackingDelay;
+            _camTracker.VrTracker.TrackingDelay = TrackingDelay;
         }
 
 #if UNITY_EDITOR

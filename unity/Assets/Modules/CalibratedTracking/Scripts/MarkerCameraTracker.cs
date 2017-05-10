@@ -6,7 +6,7 @@ namespace Assets.Modules.CalibratedTracking
     public class MarkerCameraTracker : MonoBehaviour
     {
         // in seconds
-        public float CutoffTime = 0.6f;
+        public float CutoffTime = 0.02f;
         public bool UseAverage = true;
         public float AverageWeight = 0.5f;
 
@@ -20,9 +20,9 @@ namespace Assets.Modules.CalibratedTracking
             _camTracker = GetComponent<CameraTrackingSwitcher>();
 
             var arMarkerTracker = _camTracker.MarkerTracker;
-            CutoffTime = arMarkerTracker.CutoffTime;
-            UseAverage = arMarkerTracker.UseAverages;
-            AverageWeight = arMarkerTracker.AverageWeight;
+            arMarkerTracker.CutoffTime = CutoffTime;
+            arMarkerTracker.UseAverages = UseAverage;
+            arMarkerTracker.AverageWeight = AverageWeight;
         }
 
 #if UNITY_EDITOR

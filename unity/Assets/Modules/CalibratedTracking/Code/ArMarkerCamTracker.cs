@@ -7,7 +7,7 @@ namespace Assets.Modules.CalibratedTracking
     public class ArMarkerCamTracker : CamTracker
     {
         // in seconds
-        public float CutoffTime = 0.6f;
+        public float CutoffTime = 0.02f;
         public bool UseAverages = true;
         public float AverageWeight = 0.5f;
 
