@@ -23,6 +23,8 @@ namespace Assets.Modules.Tracking
 
         private Queue _currentOutput;
 
+        public float Offset = -0.02f;
+
         public float MinMatchError = 0;
         public float MinTransformationError = 0;
 
@@ -81,12 +83,6 @@ namespace Assets.Modules.Tracking
                 {
                     ProcessMarker(marker);
                 }
-
-                // TODO: combine, in case marker shows up in both?
-                //foreach (var marker in _currentOutput.markers_right)
-                //{
-                //    ProcessMarker(marker);
-                //}
             }
 
             if (MinConfidence != _artkProcessor.MinConfidence)
@@ -124,7 +120,7 @@ namespace Assets.Modules.Tracking
             {
                 Id = marker.id,
                 Confidence = marker.confidence,
-                Position = transformMatrix.GetPosition(),
+                Position = transformMatrix.GetPosition() + new Vector3(Offset, 0, 0),
                 Rotation = transformMatrix.GetRotation()
             });
         }
