@@ -1,6 +1,5 @@
 using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
-using System;
 using UnityEngine;
 
 namespace Assets.Modules.Graphs
@@ -9,10 +8,10 @@ namespace Assets.Modules.Graphs
     public class GraphPosition : MonoBehaviour
     {
         const float OFFSET_SELECTED = 0.2f;
-        const float OFFSET_NORMAL = 0.8f;
+        const float OFFSET_NORMAL = 0.65f;
 
-        const float HEIGHT_NORMAL = 0.5f;
-        const float HEIGHT_PICKEDUP = 0.6f;
+        const float HEIGHT_NORMAL = 0.33f;
+        const float HEIGHT_PICKEDUP = 0.5f;
 
         private ValueAnimation _positionAnimation = new ValueAnimation(Globals.FastAnimationSpeed);
         private ValueAnimation _heightAnimation = new ValueAnimation(Globals.QuickAnimationSpeed);

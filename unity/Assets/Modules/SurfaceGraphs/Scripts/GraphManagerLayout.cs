@@ -8,8 +8,8 @@ namespace Assets.Modules.SurfaceGraphs
     [RequireComponent(typeof(GraphManager))]
     public class GraphManagerLayout : MonoBehaviour
     {
-        const float OFFSET_SELECTED = 0.6f;
-        const float OFFSET_NORMAL = 0.2f;
+        const float OFFSET_SELECTED = 0.4f;
+        const float OFFSET_NORMAL = 0f;
 
         private GraphManager _graphManager;
         private ValueAnimation _offsetAnimation = new ValueAnimation(0.6f);
