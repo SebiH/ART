@@ -53,6 +53,7 @@ import { routing } from './routes';
     Services.MapProvider,
     Services.MarkerProvider,
     Services.ServiceLoader,
+    Services.SettingsProvider,
     Services.SocketIO,
     Services.SurfaceProvider
   ]

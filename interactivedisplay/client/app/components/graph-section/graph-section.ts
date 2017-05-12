@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { Marker, Graph } from '../../models/index';
-import { MarkerProvider, GraphProvider } from '../../services/index';
+import { MarkerProvider, GraphProvider, Settings, SettingsProvider } from '../../services/index';
 
 const NUM_MARKERS = 8;
 
@@ -22,10 +22,13 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
     private showDetail: boolean = false;
     private isAnyGraphSelected: boolean = false;
 
+    private settings: Settings = new Settings();
+
     constructor (
         private markerProvider: MarkerProvider,
         private graphProvider: GraphProvider,
         private elementRef: ElementRef,
+        private settingsProvider: SettingsProvider,
         private changeDetector: ChangeDetectorRef
         ) {}
 
@@ -48,6 +51,13 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
             .takeWhile(() => this.isActive)
             .subscribe(selectedGraph => {
                 this.isAnyGraphSelected = (selectedGraph != null);
+                this.changeDetector.markForCheck();
+            });
+
+        this.settingsProvider.getCurrent()
+            .takeWhile(() => this.isActive)
+            .subscribe(s => {
+                this.settings = s;
                 this.changeDetector.markForCheck();
             });
 

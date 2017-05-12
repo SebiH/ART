@@ -59,3 +59,11 @@
     </button>
 </div>
 
+<div class="buttons row">
+    <button class="six columns toggle-button" (click)="toggleMarkers()" [ngClass]="{ toggled: settings.showMarkers }">
+        ArMarkers
+    </button>
+    <button class="six columns toggle-button" (click)="toggleChart()" [ngClass]="{ toggled: settings.showOverviewChart }">
+        OverviewChart
+    </button>
+</div>

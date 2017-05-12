@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { SocketIO } from '../../services/index';
+import { SocketIO, Settings, SettingsProvider } from '../../services/index';
 
 @Component({
     selector: 'admin-table-setup',
@@ -7,9 +7,7 @@ import { SocketIO } from '../../services/index';
     styleUrls: ['./app/components/admin-table-setup/admin-table-setup.css']
 })
 export class AdminTableSetupComponent implements OnInit, OnDestroy {
-    private width: number = window.innerWidth * 0.8;
-    private tabs: string[] = ['Calibration', 'Stability', 'Actions', 'Camera', 'Data'];
-    private activeTab = this.tabs[0];
+    private isActive: boolean = true;
 
     private corner: number = 0;
     private socketioListener: Function;
@@ -18,16 +16,22 @@ export class AdminTableSetupComponent implements OnInit, OnDestroy {
     private isCalibrating: boolean = false;
     private calibrationStatus: number = 0;
 
-    constructor(private socketio: SocketIO) {
+    private settings: Settings = new Settings();
+
+    constructor(private socketio: SocketIO, private settingsProvider: SettingsProvider) {
     }
 
     ngOnInit() {
         this.socketioListener = (update) => this.onStatusUpdate(update);
         this.socketio.on('admin-cmd-calibration-status', this.socketioListener);
+        this.settingsProvider.getCurrent()
+            .takeWhile(() => this.isActive)
+            .subscribe((s) => this.settings = s);
     }
 
     ngOnDestroy() {
         this.socketio.off('admin-cmd-calibration-status', this.socketioListener);
+        this.isActive = false;
     }
 
     private onStatusUpdate(update: any) {
@@ -54,5 +58,15 @@ export class AdminTableSetupComponent implements OnInit, OnDestroy {
 
     private saveSurfaces() {
         this.socketio.sendMessage('admin-cmd-save-surfaces', null);
+    }
+
+    private toggleMarkers(): void {
+        this.settings.showMarkers = !this.settings.showMarkers;
+        this.settingsProvider.sync(this.settings);
+    }
+
+    private toggleChart(): void {
+        this.settings.showOverviewChart = !this.settings.showOverviewChart;
+        this.settingsProvider.sync(this.settings);
     }
 }

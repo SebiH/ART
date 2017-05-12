@@ -4,19 +4,28 @@
     <div class="graph-section">
 
         <div class="row">
-            <div class="markers horizontal">
+            <div class="markers horizontal" *ngIf="settings.showMarkers">
                 <ar-marker [marker]="markers[0]"></ar-marker>
+            </div>
+            <div *ngIf="!settings.showMarkers" style="background: none; border: none; height: 500px;">
             </div>
         </div>
 
         <div class="row">
-            <div class="markers vertical">
+            <div class="markers vertical" *ngIf="settings.showMarkers">
                 <ar-marker [marker]="markers[1]"></ar-marker>
                 <ar-marker [marker]="markers[2]"></ar-marker>
                 <ar-marker [marker]="markers[3]"></ar-marker>
             </div>
 
-            <div class="chart-container" [ngClass]="{ selected: graph.isSelected }">
+            <div class="chart-container selected" *ngIf="!settings.showOverviewChart" style="height: 1250px; background: none; border: none;">
+                    <graph-detail
+                        *ngIf="showDetail"
+                        [graph]="graph">
+                    </graph-detail>
+            </div>
+
+            <div class="chart-container" [ngClass]="{ selected: graph.isSelected }" *ngIf="settings.showOverviewChart">
 
                 <div>
                     <div *ngIf="showOverview && graph.dimX && graph.dimY">
@@ -35,8 +44,8 @@
                             <div class="text">
                                 <span class="fa fa-paint-brush"></span> Color
                             </div>
+                        </div>
                     </div>
-                </div>
                 </div>
 
                 <div>
@@ -47,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="markers vertical" style="position: relative;">
+            <div class="markers vertical" style="position: relative;" *ngIf="settings.showMarkers">
                 <ar-marker [marker]="markers[4]"></ar-marker>
                 <ar-marker [marker]="markers[5]"></ar-marker>
                 <ar-marker [marker]="markers[6]"></ar-marker>
@@ -90,8 +99,22 @@
                 </div>
             </div>
 
-            <div class="markers horizontal">
+            <div class="markers horizontal" *ngIf="settings.showMarkers">
                 <ar-marker [marker]="markers[7]"></ar-marker>
+            </div>
+
+            <div class="button-container" style="margin: 30px;" *ngIf="!settings.showMarkers">
+                <div class="button"
+                    touch-button
+                    (touchclick)="toggleColor()"
+                    [ngClass]="{ active: graph.isColored }">
+                    <div class="icon">
+                        <span class="fa fa-paint-brush"></span>
+                    </div>
+                    <div class="text">
+                        Color
+                    </div>
+               </div>
             </div>
 
             <div class="button-container" style="margin: 30px;">

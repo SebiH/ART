@@ -153,7 +153,7 @@ sioServer.onMessageReceived({
                 filterStorage.remove(<number>msg.payload);
         }
     }
-})
+});
 
 
 let globalFilter = [];
@@ -168,7 +168,26 @@ sioServer.onMessageReceived({
             globalFilter = JSON.parse(msg.payload).globalfilter;
         }
     }
-})
+});
+
+let clientSettings = {};
+
+webServer.addPath('/api/settings', (req, res, next) => {
+    res.json(clientSettings);
+});
+
+sioServer.onMessageReceived({
+    handler: (msg) => {
+        if (msg.command == 'settings') {
+            clientSettings = JSON.parse(msg.payload);
+            sioServer.broadcast(msg.command, msg.payload, msg.origin);
+        }
+    }
+});
+
+
+
 
 webServer.start();
 sioServer.start(webServer);
+
