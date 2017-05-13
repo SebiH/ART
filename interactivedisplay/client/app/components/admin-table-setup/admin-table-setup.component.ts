@@ -69,4 +69,9 @@ export class AdminTableSetupComponent implements OnInit, OnDestroy {
         this.settings.showOverviewChart = !this.settings.showOverviewChart;
         this.settingsProvider.sync(this.settings);
     }
+
+    private toggleOverlay(): void {
+        this.settings.showMarkerOverlay = !this.settings.showMarkerOverlay;
+        this.settingsProvider.sync(this.settings);
+    }
 }

@@ -59,11 +59,20 @@
     </button>
 </div>
 
+<hr/>
+<hr/>
+
 <div class="buttons row">
     <button class="six columns toggle-button" (click)="toggleMarkers()" [ngClass]="{ toggled: settings.showMarkers }">
         ArMarkers
     </button>
     <button class="six columns toggle-button" (click)="toggleChart()" [ngClass]="{ toggled: settings.showOverviewChart }">
         OverviewChart
+    </button>
+</div>
+
+<div class="buttons row">
+    <button class="twelve columns toggle-button" (click)="toggleOverlay()" [ngClass]="{ toggled: settings.showMarkerOverlay }">
+        Show Calibration Overlay
     </button>
 </div>
