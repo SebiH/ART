@@ -1,4 +1,5 @@
-import { SqlConnection, SqlData } from './sql-connection';
+import { RawData } from './raw-data';
+import { SqlConnection } from './sql-connection';
 import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
 import * as _ from 'lodash';
@@ -14,7 +15,7 @@ export class GraphDataProvider {
         if (config.debug) {
             console.log('Using random data');
             let randomDataCount = 1000;
-            let data: SqlData[] = [];
+            let data: RawData[] = [];
             for (let i = 0; i < randomDataCount; i++) {
                 data.push({ id: i, dimensions: {} });
             }
@@ -62,7 +63,7 @@ export class GraphDataProvider {
         }
     }
 
-    private convertData(dimension: string, data: SqlData[]): any {
+    private convertData(dimension: string, data: RawData[]): any {
         let mapping = _.find(SmartactMapping, m => m.name === dimension);
 
         if (!mapping) {

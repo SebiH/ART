@@ -1,13 +1,9 @@
 import { Observable, ReplaySubject } from 'rxjs';
 import { SqlColumnMapping, CategoricalSqlMapping, MetricSqlMapping, DataRepresentation } from './sql-mapping';
+import { RawData } from './raw-data';
 
 import * as sql from 'tedious';
 import * as _ from 'lodash';
-
-export interface SqlData {
-    id: number,
-    dimensions: { [dim: string]: number }
-}
 
 enum ConnectionState {
     Offline, Connected, Busy
@@ -55,7 +51,7 @@ export class SqlConnection {
     private sqlConnection: sql.Connection;
     private status: Status = new Status();
 
-    private sqlData: ReplaySubject<SqlData[]>;
+    private sqlData: ReplaySubject<RawData[]>;
     private idCounter: number = 0;
     private readonly idTable: { [sess_id: string]: number } = {};
 
@@ -104,9 +100,9 @@ export class SqlConnection {
         return <string[]> _.map(this.mapping, 'name');
     }
 
-    public getData(): Observable<SqlData[]> {
+    public getData(): Observable<RawData[]> {
         if (!this.sqlData) {
-            this.sqlData = new ReplaySubject<SqlData[]>(1);
+            this.sqlData = new ReplaySubject<RawData[]>(1);
 
             this.status.whenReady(() => {
                 this.getDataConnectionEstablished((data) => {
@@ -121,7 +117,7 @@ export class SqlConnection {
     }
 
     // assumes connection is established
-    private getDataConnectionEstablished(onSuccess: (data: SqlData[]) => void): void {
+    private getDataConnectionEstablished(onSuccess: (data: RawData[]) => void): void {
 
         let filters: string[] = [];
 
@@ -179,7 +175,7 @@ export class SqlConnection {
 
         requestSql += ';';
 
-        let requestedData: SqlData[] = [];
+        let requestedData: RawData[] = [];
         let request = new sql.Request(requestSql, (error: Error, rowCount: number, rows: any[]) => {
             if (error) {
                 console.error('Could not complete sql request');
