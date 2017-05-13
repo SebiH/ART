@@ -170,7 +170,10 @@ sioServer.onMessageReceived({
     }
 });
 
-let clientSettings = {};
+let clientSettings = {
+    showMarkers: true,
+    showOverviewChart: true
+};
 
 webServer.addPath('/api/settings', (req, res, next) => {
     res.json(clientSettings);
