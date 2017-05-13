@@ -1,7 +1,9 @@
 import { RawData } from './raw-data';
 import { SqlConnection } from './sql-connection';
+import { CsvReader, CsvConfig } from './csv-reader';
 import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
+import { TitanicMapping } from './titanic-mappings';
 import * as _ from 'lodash';
 
 export class GraphDataProvider {
@@ -12,7 +14,7 @@ export class GraphDataProvider {
     public constructor(useRandom?: boolean) {
         let config = require('../sql.conf.json');
 
-        if (config.debug) {
+        if (config.mode == "debug") {
             console.log('Using random data');
             let randomDataCount = 1000;
             let data: RawData[] = [];
@@ -38,8 +40,14 @@ export class GraphDataProvider {
                 }
                 this.dataCache[dimension] = this.convertData(dimension, data);
             }
-        } else {
+        } else if (config.mode == "sql") {
             this.sqlConnection.connect(config.sqlSecrets);
+        } else if (config.mode == "csv") {
+            let reader = new CsvReader(config.csvConfig as CsvConfig, TitanicMapping);
+            // load data on startup for faster response later on
+            reader.getData();
+        } else {
+            throw new Error("Unknown config mode " + config.mode);
         }
     }
 
