@@ -183,13 +183,14 @@ namespace Assets.Modules.SurfaceGraphFilters
                 }
             }
 
+            var zOffset = _graph.IsFlipped ? -SELECTED_OFFSET : SELECTED_OFFSET;
             if (!IsSelected && _selectedAnimation.End != 0)
             {
                 _selectedAnimation.Restart(0);
             }
-            if (IsSelected && _selectedAnimation.End != SELECTED_OFFSET)
+            if (IsSelected && _selectedAnimation.End != zOffset)
             {
-                _selectedAnimation.Restart(SELECTED_OFFSET);
+                _selectedAnimation.Restart(zOffset);
             }
             transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, _selectedAnimation.CurrentValue);
         }
