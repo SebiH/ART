@@ -42,7 +42,7 @@ export class DetailFilter extends Filter {
         if (this._useAxisColor != v) {
             this._useAxisColor = v;
             if (v == 'x' || v == 'y') {
-                this._color = '#9E9E9E';
+                this._color = '#212121';
             }
             this.propagateUpdates(['useAxisColor', 'color']);
         }
