@@ -33,6 +33,7 @@ export class CsvReader implements DataSource {
             let parser = new Parser(this.config.options);
             let data: RawData[] = [];
             let dimensions: string[] = [];
+            let idCounter = 0;
 
             parser.on('readable', () => {
                 let record: any;
@@ -51,7 +52,8 @@ export class CsvReader implements DataSource {
                         }
 
                         data.push({
-                            id: record[0],
+                            // id: record[0],
+                            id: idCounter++,
                             dimensions: dims
                         });
                     }
