@@ -38,6 +38,9 @@ export class FilterProvider {
         this.graphProvider.onGraphDeletion()
             .subscribe(graph => this.clearFilters(graph));
 
+        this.graphProvider.onGraphSelectionChanged()
+            .subscribe(graph => this.setSelected(null));
+
         this.delayedFilterSync = _.debounce(this.syncFilters, 0);
     }
 
