@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 export interface GradientStop {
     stop: number;
-    color: string 
+    color: string
 }
 
 export class ChartDimension {
@@ -26,7 +26,7 @@ export class ChartDimension {
 
     public getMinValue(): number {
         if (this.isMetric) {
-            return this.domain.min - 0.1;
+            return this.domain.min;
         } else {
             return _.minBy(this.mappings, 'value').value - 1;
         }
@@ -34,7 +34,7 @@ export class ChartDimension {
 
     public getMaxValue(): number {
         if (this.isMetric) {
-            return this.domain.max + 0.1;
+            return this.domain.max;
         } else {
             return _.maxBy(this.mappings, 'value').value + 1;
         }
