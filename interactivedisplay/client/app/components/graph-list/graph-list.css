@@ -10,14 +10,15 @@
 }
 
 .list {
-    position: relative;
+    position: absolute;
+    top: 0;
 
     height: 100%;
     box-sizing: border-box;
 
-    -webkit-transition: -webkit-transform 0.5s linear;
-    -ms-transition: -ms-transform 0.5s linear;
-    transition:  transform 0.5s linear;
+    -webkit-transition: left 0.5s linear;
+    -ms-transition: left 0.5s linear;
+    transition: left 0.5s linear;
 }
 
 .list.moving {

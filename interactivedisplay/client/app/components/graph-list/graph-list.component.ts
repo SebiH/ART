@@ -25,9 +25,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
     private interactionCounter: number = 0;
 
     private listStyle = {
-        '-webkit-transform': 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)',
-        '-ms-transform': 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)',
-        transform: 'translate3d(' + (-this.scrollOffset) + 'px, 0, 0)'
+        left: -this.scrollOffset
     };
 
     private _scrollOffset : number = 0;
@@ -37,10 +35,7 @@ export class GraphListComponent implements OnInit, OnDestroy {
     private set scrollOffset(v: number) {
         this._scrollOffset = v;
 
-        let transform = 'translate3d(' + (-v) + 'px, 0, 0)';
-        this.listStyle['-webkit-transform'] = transform;
-        this.listStyle['-ms-transform'] = transform;
-        this.listStyle.transform = transform;
+        this.listStyle.left = -this.scrollOffset;
         this.changeDetector.markForCheck();
     }
 
