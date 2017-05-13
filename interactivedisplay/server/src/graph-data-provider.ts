@@ -1,15 +1,18 @@
 import { RawData } from './raw-data';
+import { DataSource } from './data-source';
 import { SqlConnection } from './sql-connection';
 import { CsvReader, CsvConfig } from './csv-reader';
 import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
 import { TitanicMapping } from './titanic-mappings';
+import { SqlColumnMapping } from './sql-mapping';
 import * as _ from 'lodash';
 
 export class GraphDataProvider {
 
-    private sqlConnection = new SqlConnection(SmartactMapping);
+    private dataSource: DataSource;
     private dataCache: { [id: string]: any } = {};
+    private mapping: SqlColumnMapping[];
 
     public constructor(useRandom?: boolean) {
         let config = require('../sql.conf.json');
@@ -41,25 +44,32 @@ export class GraphDataProvider {
                 this.dataCache[dimension] = this.convertData(dimension, data);
             }
         } else if (config.mode == "sql") {
-            this.sqlConnection.connect(config.sqlSecrets);
+            let sqlConnection = new SqlConnection(SmartactMapping);
+            sqlConnection.connect(config.sqlSecrets);
+            this.dataSource = sqlConnection;
+            this.mapping = SmartactMapping;
         } else if (config.mode == "csv") {
-            let reader = new CsvReader(config.csvConfig as CsvConfig, TitanicMapping);
-            // load data on startup for faster response later on
-            reader.getData();
+            this.dataSource = new CsvReader(config.csvConfig as CsvConfig, TitanicMapping);
+            this.mapping = TitanicMapping;
         } else {
             throw new Error("Unknown config mode " + config.mode);
+        }
+
+        if (this.dataSource) {
+            // load data on startup for faster response later on
+            this.dataSource.getData();
         }
     }
 
     public getDimensions(): any {
         // workaround since Unity needs an object type for JSON conversion
-        return { dimensions: this.sqlConnection.getDimensions() };
+        return { dimensions: this.dataSource.getDimensions() };
     }
 
     public getData(dimension: string, onDataRetrieved: (data: any) => void): void {
         if (this.dataCache[dimension] === undefined) {
 
-            this.sqlConnection.getData()
+            this.dataSource.getData()
                 .first()
                 .subscribe((data) => {
                     this.dataCache[dimension] = this.convertData(dimension, data);
@@ -72,7 +82,7 @@ export class GraphDataProvider {
     }
 
     private convertData(dimension: string, data: RawData[]): any {
-        let mapping = _.find(SmartactMapping, m => m.name === dimension);
+        let mapping = _.find(this.mapping, m => m.name === dimension);
 
         if (!mapping) {
             console.log('Unable to find mapping for ' + dimension);

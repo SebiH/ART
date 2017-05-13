@@ -52,7 +52,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
         converter: (d: any) => {
             if (d == 'female') { return 0; }
             else  if (d == 'male') { return 1; }
-            else { return 2; }
+            else { console.error('Unexpected value for column "Sex": ' + d); return 0; }
         },
         values: [
             {
@@ -64,12 +64,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
                 dbValue: 1,
                 name: 'Male',
                 color: Colors.Blue
-            },
-            {
-                dbValue: 2,
-                name: 'Unknown',
-                color: Colors.Green,
-            },
+            }
         ]
     },
     {
@@ -145,7 +140,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
         isTimeBased: false,
         converter: numberConverter,
         minValue: 0,
-        maxValue: 8,
+        maxValue: 9,
         ticks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
         bins: [
             { displayName: '0', value: 0 },

@@ -1,6 +1,7 @@
 import { Observable, ReplaySubject } from 'rxjs';
 import { SqlColumnMapping, CategoricalSqlMapping, MetricSqlMapping, DataRepresentation } from './sql-mapping';
 import { RawData } from './raw-data';
+import { DataSource } from './data-source';
 
 import * as sql from 'tedious';
 import * as _ from 'lodash';
@@ -46,7 +47,7 @@ class Status {
     }
 }
 
-export class SqlConnection {
+export class SqlConnection implements DataSource {
 
     private sqlConnection: sql.Connection;
     private status: Status = new Status();

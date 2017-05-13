@@ -1,7 +1,8 @@
+import { Parser } from 'csv-parse';
 import { Observable, ReplaySubject } from 'rxjs';
 import { SqlColumnMapping, CategoricalSqlMapping, MetricSqlMapping, DataRepresentation } from './sql-mapping';
 import { RawData } from './raw-data';
-import { Parser } from 'csv-parse';
+import { DataSource } from './data-source';
 
 import * as _ from 'lodash';
 import * as fs from 'fs';
@@ -11,11 +12,12 @@ export interface CsvConfig {
     options: any;
 }
 
-export class CsvReader {
+export class CsvReader implements DataSource {
 
     private cachedData: ReplaySubject<RawData[]>;
 
     public constructor(private config: CsvConfig, private mapping: SqlColumnMapping[]) {
+        console.log('Using CSV data from ' + config.filename);
     }
 
     public getDimensions(): string[] {
@@ -44,7 +46,7 @@ export class CsvReader {
                             let map = _.find(this.mapping, (m) => m.dbColumn == dimensions[i]);
 
                             if (map) {
-                                dims[dimensions[i]] = map.converter(record[i]);
+                                dims[map.name] = map.converter(record[i]);
                             }
                         }
 
