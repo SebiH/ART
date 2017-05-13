@@ -7,11 +7,13 @@ namespace Assets.Modules.Graphs
     [RequireComponent(typeof(Graph))]
     public class GraphPosition : MonoBehaviour
     {
-        const float OFFSET_SELECTED = 0.2f;
-        const float OFFSET_NORMAL = 0.65f;
+        public float OffsetSelected= 0.2f;
+        public float OffsetNormal = 0.65f;
 
-        const float HEIGHT_NORMAL = 0.33f;
-        const float HEIGHT_PICKEDUP = 0.5f;
+        public float HeightNormal = 0.33f;
+        public float HeightPickedUp = 0.5f;
+
+        public float Scale = 0.6f;
 
         private ValueAnimation _positionAnimation = new ValueAnimation(Globals.FastAnimationSpeed);
         private ValueAnimation _heightAnimation = new ValueAnimation(Globals.QuickAnimationSpeed);
@@ -78,11 +80,6 @@ namespace Assets.Modules.Graphs
             }
         }
 
-        public Vector3 Scale
-        {
-            set { transform.localScale = value; }
-        }
-
         // x axis rotation
         public float FlipRotation
         {
@@ -104,8 +101,8 @@ namespace Assets.Modules.Graphs
 
         private void LateUpdate()
         {
-            Offset = _graph.IsSelected ? OFFSET_SELECTED : OFFSET_NORMAL;
-            Height = _graph.IsPickedUp ? HEIGHT_PICKEDUP : HEIGHT_NORMAL;
+            Offset = _graph.IsSelected ? OffsetSelected : OffsetNormal;
+            Height = _graph.IsPickedUp ? HeightPickedUp : HeightNormal;
 
             var rotZ = _graph.IsFlipped ? 90 : 0;
 
@@ -128,6 +125,7 @@ namespace Assets.Modules.Graphs
 
             transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
             transform.localRotation = _rotationAnimation.CurrentValue;
+            transform.localScale = Vector3.one * Scale;
         }
 
         public void Init(float pos, float height, float offset)

@@ -95,7 +95,6 @@ namespace Assets.Modules.SurfaceGraphs
 
                 UpdateGraph(graph, remoteGraph);
                 graph.Layout.Init(_surface.PixelToUnityCoord(remoteGraph.pos), -0.5f, 0.5f);
-                graph.Layout.Scale = Vector3.one * 0.6f;
             }
             else
             {
