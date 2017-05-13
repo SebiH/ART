@@ -16,7 +16,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
                 color: Colors.Red
             },
             {
-                dbValue: 2,
+                dbValue: 1,
                 name: 'Survived',
                 color: Colors.Green
             }
@@ -175,12 +175,17 @@ export const TitanicMapping: SqlColumnMapping[] = [
         maxValue: 550,
         ticks: [0, 50, 100, 200, 300, 400, 500],
         bins: [
-            { displayName: '<100', range: [0, 99.9999] },
-            { displayName: '100-200', range: [100, 200] },
-            { displayName: '200-200', range: [200, 300] },
-            { displayName: '300-200', range: [300, 400] },
-            { displayName: '400-500', range: [400, 500] },
-            { displayName: '500+', range: [500, 600] },
+            { displayName: '<50', range: [0, 50] },
+            { displayName: '50 - 100', range: [50, 100] },
+            { displayName: '100 - 150', range: [100, 100] },
+            { displayName: '150 - 200', range: [150, 200] },
+            { displayName: '200 - 250', range: [200, 250] },
+            { displayName: '250 - 300', range: [250, 300] },
+            { displayName: '300 - 350', range: [200, 350] },
+            { displayName: '350 - 400', range: [350, 400] },
+            { displayName: '400 - 450', range: [400, 450] },
+            { displayName: '450 - 500', range: [450, 500] },
+            { displayName: '>500', range: [500, 550] },
         ],
         gradient: [
             {
