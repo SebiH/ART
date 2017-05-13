@@ -16,6 +16,7 @@ export * from './graph-list-item/graph-list-item.component';
 export * from './graph-list/graph-list.component';
 export * from './graph-overview-chart/graph-overview-chart';
 export * from './graph-section/graph-section';
+export * from './marker-overlay/marker-overlay.component';
 export * from './marker-test/marker-test.component';
 export * from './marker/marker.component';
 export * from './measurement/measurement';

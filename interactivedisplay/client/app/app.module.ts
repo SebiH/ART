@@ -33,6 +33,7 @@ import { routing } from './routes';
     Components.GraphOverviewChartComponent,
     Components.GraphSectionComponent,
     Components.MarkerComponent,
+    Components.MarkerOverlayComponent,
     Components.MarkerTestComponent,
     Components.MeasurementComponent,
     Components.MenuComponent,
