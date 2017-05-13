@@ -1,143 +1,139 @@
-<div class="section-root"
-    [style.background]="graph.color">
+<div class="section-root" [style.background]="graph.color">
 
-    <div class="graph-section">
+    <div class="row" style="height: 414px;">
+        <div class="markers horizontal" *ngIf="settings.showMarkers">
+            <ar-marker [marker]="markers[0]"></ar-marker>
+        </div>
+        <div *ngIf="!settings.showMarkers" style="background: none; border: none; height: 500px;">
+        </div>
+    </div>
 
-        <div class="row">
-            <div class="markers horizontal" *ngIf="settings.showMarkers">
-                <ar-marker [marker]="markers[0]"></ar-marker>
-            </div>
-            <div *ngIf="!settings.showMarkers" style="background: none; border: none; height: 500px;">
+    <div class="row" style="height: 1350px;">
+        <div class="markers vertical" *ngIf="settings.showMarkers">
+            <ar-marker [marker]="markers[1]"></ar-marker>
+            <ar-marker [marker]="markers[2]"></ar-marker>
+            <ar-marker [marker]="markers[3]"></ar-marker>
+        </div>
+
+        <div *ngIf="!settings.showOverviewChart" style="min-width: 300px;">
+            <div class="chart-container selected" *ngIf="showDetail" style="height: 1250px;">
+                <graph-detail [graph]="graph"></graph-detail>
             </div>
         </div>
 
-        <div class="row">
-            <div class="markers vertical" *ngIf="settings.showMarkers">
-                <ar-marker [marker]="markers[1]"></ar-marker>
-                <ar-marker [marker]="markers[2]"></ar-marker>
-                <ar-marker [marker]="markers[3]"></ar-marker>
-            </div>
+        <div class="chart-container" [ngClass]="{ selected: graph.isSelected }" *ngIf="settings.showOverviewChart">
 
-            <div class="chart-container selected" *ngIf="!settings.showOverviewChart" style="height: 1250px; background: none; border: none;">
-                    <graph-detail
-                        *ngIf="showDetail"
-                        [graph]="graph">
-                    </graph-detail>
-            </div>
+            <div>
+                <div *ngIf="showOverview && graph.dimX && graph.dimY">
+                    <!-- Width & height from css -->
+                    <graph-overview-chart
+                        [width]="300"
+                        [height]="settings.showMarkers ? 1250 : 1350"
+                        [graph]="graph"
+                        [dim]="graph.isFlipped ? graph.dimY : graph.dimX">
+                    </graph-overview-chart>
 
-            <div class="chart-container" [ngClass]="{ selected: graph.isSelected }" *ngIf="settings.showOverviewChart">
-
-                <div>
-                    <div *ngIf="showOverview && graph.dimX && graph.dimY">
-                        <!-- Width & height from css -->
-                        <graph-overview-chart
-                            [width]="300"
-                            [height]="1250"
-                            [graph]="graph"
-                            [dim]="graph.isFlipped ? graph.dimY : graph.dimX">
-                        </graph-overview-chart>
-
-                        <div class="button chart-button"
-                            touch-button
-                            (touchclick)="toggleColor()"
-                            [ngClass]="{ active: graph.isColored }">
-                            <div class="text">
-                                <span class="fa fa-paint-brush"></span> Color
-                            </div>
+                    <div class="button chart-button"
+                        *ngIf="settings.showMarkers"
+                        touch-button
+                        (touchclick)="toggleColor()"
+                        [ngClass]="{ active: graph.isColored }">
+                        <div class="text">
+                            <span class="fa fa-paint-brush"></span> Color
                         </div>
                     </div>
                 </div>
-
-                <div>
-                    <graph-detail
-                        *ngIf="showDetail"
-                        [graph]="graph">
-                    </graph-detail>
-                </div>
             </div>
 
-            <div class="markers vertical" style="position: relative;" *ngIf="settings.showMarkers">
-                <ar-marker [marker]="markers[4]"></ar-marker>
-                <ar-marker [marker]="markers[5]"></ar-marker>
-                <ar-marker [marker]="markers[6]"></ar-marker>
+            <div>
+                <graph-detail
+                    *ngIf="showDetail"
+                    [graph]="graph">
+                </graph-detail>
             </div>
         </div>
 
+        <div class="markers vertical" style="position: relative;" *ngIf="settings.showMarkers">
+            <ar-marker [marker]="markers[4]"></ar-marker>
+            <ar-marker [marker]="markers[5]"></ar-marker>
+            <ar-marker [marker]="markers[6]"></ar-marker>
+        </div>
+    </div>
 
-        <div class="row" style="align-items: flex-start;">
-            <div class="button-container" style="margin: 30px;">
-                <div class="button"
-                    [ngClass]="{ active: graph.isPickedUp }"
-                    moveable
-                    (moveStart)="handleMoveStart($event)"
-                    (moveUpdate)="handleMoveUpdate($event)"
-                    (moveEnd)="handleMoveEnd($event)">
-                    <div class="icon">
-                        <span class="fa fa-arrows-h" aria-hidden="true"></span>
-                    </div>
-                    <div class="text">
-                        Move
-                    </div>
+
+    <div class="row" style="align-items: flex-start; height: 135px;">
+        <div class="button-container" style="margin-top: 30px;">
+            <div class="button"
+                [ngClass]="{ active: graph.isPickedUp }"
+                moveable
+                (moveStart)="handleMoveStart($event)"
+                (moveUpdate)="handleMoveUpdate($event)"
+                (moveEnd)="handleMoveEnd($event)">
+                <div class="icon">
+                    <span class="fa fa-arrows-h" aria-hidden="true"></span>
                 </div>
-                <div class="button" touch-button (touchclick)="selectGraph()" *ngIf="!graph.isSelected">
-                    <div class="icon">
-                        <span class="fa fa-sliders" aria-hidden="true"></span>
-                    </div>
-
-                    <div class="text">
-                        Select
-                    </div>
-                </div>
-                <div class="button" touch-button (touchclick)="closeSelection()" *ngIf="graph.isSelected">
-                    <div class="icon">
-                        <span class="fa fa-times" aria-hidden="true"></span>
-                    </div>
-
-                    <div class="text">
-                        Close
-                    </div>
+                <div class="text">
+                    Move
                 </div>
             </div>
-
-            <div class="markers horizontal" *ngIf="settings.showMarkers">
-                <ar-marker [marker]="markers[7]"></ar-marker>
-            </div>
-
-            <div class="button-container" style="margin: 30px;" *ngIf="!settings.showMarkers">
-                <div class="button"
-                    touch-button
-                    (touchclick)="toggleColor()"
-                    [ngClass]="{ active: graph.isColored }">
-                    <div class="icon">
-                        <span class="fa fa-paint-brush"></span>
-                    </div>
-                    <div class="text">
-                        Color
-                    </div>
-               </div>
-            </div>
-
-            <div class="button-container" style="margin: 30px;">
-                <div class="button"
-                    touch-button
-                    (touchclick)="toggleFlip()"
-                    [ngClass]="{ active: graph.isFlipped }">
-                    <div class="icon">
-                        <span class="fa fa-level-up" [ngClass]="{ 'fa-rotate-90': !graph.isFlipped }" aria-hidden="true"></span>
-                    </div>
-
-                    <div class="text">
-                        Flip
-                    </div>
+            <div class="button" touch-button (touchclick)="selectGraph()" *ngIf="!graph.isSelected">
+                <div class="icon">
+                    <span class="fa fa-sliders" aria-hidden="true"></span>
                 </div>
-                <div class="button" touch-button (touchclick)="deleteGraph()" style="background: #D32F2F; color: white;">
-                    <div class="icon">
-                        <span class="fa fa-trash-o" aria-hidden="true"></span>
-                    </div>
 
-                    <div class="text">
-                        Delete
-                    </div>
+                <div class="text">
+                    Select
+                </div>
+            </div>
+            <div class="button" touch-button (touchclick)="closeSelection()" *ngIf="graph.isSelected">
+                <div class="icon">
+                    <span class="fa fa-times" aria-hidden="true"></span>
+                </div>
+
+                <div class="text">
+                    Close
+                </div>
+            </div>
+        </div>
+
+        <div class="markers horizontal" *ngIf="settings.showMarkers">
+            <ar-marker [marker]="markers[7]"></ar-marker>
+        </div>
+
+        <div class="button-container" style="margin-top: 30px;" *ngIf="!settings.showMarkers">
+            <div class="button"
+                touch-button
+                (touchclick)="toggleColor()"
+                [ngClass]="{ active: graph.isColored }">
+                <div class="icon">
+                    <span class="fa fa-paint-brush"></span>
+                </div>
+                <div class="text">
+                    Color
+                </div>
+           </div>
+        </div>
+
+        <div class="button-container" style="margin-top: 30px;">
+            <div class="button"
+                touch-button
+                (touchclick)="toggleFlip()"
+                [ngClass]="{ active: graph.isFlipped }">
+                <div class="icon">
+                    <span class="fa fa-level-up" [ngClass]="{ 'fa-rotate-90': !graph.isFlipped }" aria-hidden="true"></span>
+                </div>
+
+                <div class="text">
+                    Flip
+                </div>
+            </div>
+            <div class="button" touch-button (touchclick)="deleteGraph()" style="background: #D32F2F; color: white;">
+                <div class="icon">
+                    <span class="fa fa-trash-o" aria-hidden="true"></span>
+                </div>
+
+                <div class="text">
+                    Delete
                 </div>
             </div>
         </div>

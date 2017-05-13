@@ -1,13 +1,6 @@
 .section-root {
     height: 100%;
     position: relative;
-    transition: width 0.5s linear;
-}
-
-.graph-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
 }
 
 .row {
