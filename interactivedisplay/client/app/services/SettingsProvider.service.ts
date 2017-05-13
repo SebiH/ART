@@ -7,6 +7,7 @@ import { SocketIO } from './SocketIO.service';
 export class Settings {
     showMarkers: boolean = true;
     showOverviewChart: boolean = true;
+    showMarkerOverlay: boolean = false;
 };
 
 @Injectable()
