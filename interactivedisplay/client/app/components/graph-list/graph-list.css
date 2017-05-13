@@ -66,10 +66,12 @@
 
 .selection-close-area.left {
     left: 0;
+    z-index: 99;
 }
 
 .selection-close-area.right {
     right: 0;
+    z-index: 99;
 }
 
 .indicator {
