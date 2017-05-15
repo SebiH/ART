@@ -26,7 +26,7 @@ export class ChartDimension {
 
     public getMinValue(): number {
         if (this.isMetric) {
-            return this.domain.min;
+            return this.domain.min - 0.0001;
         } else {
             return _.minBy(this.mappings, 'value').value - 1;
         }
@@ -34,7 +34,7 @@ export class ChartDimension {
 
     public getMaxValue(): number {
         if (this.isMetric) {
-            return this.domain.max;
+            return this.domain.max + 0.0001;
         } else {
             return _.maxBy(this.mappings, 'value').value + 1;
         }
