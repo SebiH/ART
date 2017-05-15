@@ -71,7 +71,8 @@ export class SocketIOServer {
     }
 
     private handleNewClientConnection(socket: SocketIO.Socket): void {
-        console.log(LOG_PREFIX + "New SocketIO client connected from " + socket.id);
+        let address = socket.handshake.address;
+        console.log(LOG_PREFIX + "New SocketIO client connected from " + socket.id + " @ " + address);
         this.clients.push(socket);
     }
 
