@@ -5,6 +5,23 @@ namespace Assets.Modules.ParallelCoordinates
     [RequireComponent(typeof(SkinnedMeshRenderer))]
     public class SkinnedMeshLineRenderer : MonoBehaviour
     {
+        protected static float[] RandomOffsetX = null;
+        protected static float[] RandomOffsetY = null;
+        private void InitRandom(int length)
+        {
+            if (RandomOffsetX == null || RandomOffsetX.Length < length)
+            {
+                RandomOffsetX = new float[length];
+                RandomOffsetY = new float[length];
+                for (var i = 0; i < RandomOffsetX.Length; i++)
+                {
+                    RandomOffsetX[i] = (Random.value - 0.5f) / 70f;
+                    RandomOffsetY[i] = (Random.value - 0.5f) / 70f;
+                }
+            }
+        }
+
+
         private Mesh _mesh;
         private SkinnedMeshRenderer _renderer;
 
@@ -23,6 +40,7 @@ namespace Assets.Modules.ParallelCoordinates
         // Array position == data index
         public LineProperty[] Lines = new LineProperty[0];
 
+
         private void OnEnable()
         {
             _renderer = GetComponent<SkinnedMeshRenderer>();
@@ -31,6 +49,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         public void Resize(int length)
         {
+            InitRandom(length);
             if (ColorOffsets == null || ColorOffsets.Length < length)
             {
                 ColorOffsets = new float[length];
@@ -50,6 +69,7 @@ namespace Assets.Modules.ParallelCoordinates
             var bindPoses = new Matrix4x4[Lines.Length * 2];
             var boneWeights = new BoneWeight[Lines.Length * 2];
             var colors = new Color32[Lines.Length * 2];
+            var uv = new Vector2[Lines.Length * 2];
             var uv2 = new Vector2[Lines.Length * 2];
 
             for (var i = 0; i < Lines.Length; i++)
@@ -84,6 +104,11 @@ namespace Assets.Modules.ParallelCoordinates
                 colors[i * 2 + 0] = new Color32(255, 255, 255, 255);
                 colors[i * 2 + 1] = new Color32(255, 255, 255, 255);
 
+                uv[i * 2 + 0].x = RandomOffsetX[i];
+                uv[i * 2 + 0].y = RandomOffsetY[i];
+                uv[i * 2 + 1].x = RandomOffsetX[i];
+                uv[i * 2 + 1].y = RandomOffsetY[i];
+
                 uv2[i * 2 + 0].x = ColorOffsets[i];
                 uv2[i * 2 + 1].x = ColorOffsets[i];
             }
@@ -91,6 +116,7 @@ namespace Assets.Modules.ParallelCoordinates
             triangles[triangles.Length - 1] = 0;
 
             _mesh.vertices = new Vector3[Lines.Length * 2];
+            _mesh.uv = uv;
             _mesh.uv2 = uv2;
             _mesh.colors32 = colors;
             _mesh.triangles = triangles;

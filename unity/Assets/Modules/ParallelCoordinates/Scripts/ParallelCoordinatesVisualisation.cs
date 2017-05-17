@@ -9,24 +9,6 @@ namespace Assets.Modules.ParallelCoordinates
     {
         const float LINE_ANIMATION_LENGTH = 0.5f;
 
-        protected static float[] RandomOffsetX = null;
-        protected static float[] RandomOffsetY = null;
-        private void InitRandom(int length)
-        {
-            if (RandomOffsetX == null || RandomOffsetX.Length < length)
-            {
-                RandomOffsetX = new float[length];
-                RandomOffsetY = new float[length];
-                for (var i = 0; i < RandomOffsetX.Length; i++)
-                {
-                    RandomOffsetX[i] = (Random.value - 0.5f) / 70f;
-                    RandomOffsetY[i] = (Random.value - 0.5f) / 70f;
-                }
-            }
-        }
-
-
-
         public GraphTracker LeftTracker;
         public GraphTracker RightTracker;
 
@@ -181,10 +163,9 @@ namespace Assets.Modules.ParallelCoordinates
                 _lineRenderer.Resize(data.Length);
             }
 
-            InitRandom(data.Length);
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
-                _lineRenderer.Lines[i].Start = data[i] + new Vector2(RandomOffsetX[i], RandomOffsetY[i]);
+                _lineRenderer.Lines[i].Start = data[i];
             }
             UpdateRenderer(UpdateMode.Position);
         }
@@ -221,10 +202,9 @@ namespace Assets.Modules.ParallelCoordinates
                 _lineRenderer.Resize(data.Length);
             }
 
-            InitRandom(data.Length);
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
-                _lineRenderer.Lines[i].End = data[i] + new Vector2(RandomOffsetX[i], RandomOffsetY[i]);
+                _lineRenderer.Lines[i].End = data[i];
             }
             UpdateRenderer(UpdateMode.Position);
         }
@@ -237,7 +217,6 @@ namespace Assets.Modules.ParallelCoordinates
                 _lineRenderer.Resize(colors.Length);
             }
 
-            InitRandom(colors.Length);
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
                 _lineRenderer.Lines[i].Color = colors[i];

@@ -3,6 +3,7 @@ Shader "Graph/Line_Transparent"
     Properties
     {
         _lineWidth ("Line Width", Range(0.0001, 0.01)) = 0.002
+		_randomStrength("Random multiplicator", Range(0, 5)) = 1
 		_colorAdj("Colour Adjustment", Range(0.0001, 1)) = 0.1
     }
 
@@ -26,12 +27,14 @@ Shader "Graph/Line_Transparent"
             #include "UnityCG.cginc"
 
 			uniform float _lineWidth;
+			uniform float _randomStrength;
 			uniform float _colorAdj;
 
             struct Input
             {
                 float4 vertex : POSITION;
                 float4 color: COLOR;
+				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD1;
 			};
 
@@ -39,6 +42,7 @@ Shader "Graph/Line_Transparent"
             {
                 float4 vertex : SV_POSITION;
                 float4 color : COLOR;
+				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD1;
 				UNITY_VERTEX_OUTPUT_STEREO
             };
@@ -75,6 +79,7 @@ Shader "Graph/Line_Transparent"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(output);
                 output.vertex = input.vertex;
                 output.color = input.color;
+				output.uv = input.uv;
 				output.uv2 = input.uv2;
                 return output;
             }
@@ -91,6 +96,9 @@ Shader "Graph/Line_Transparent"
                 v2g start = IN[0];
                 v2g end = IN[1];
 
+				float3 startPos = start.vertex + float3(start.uv.x, start.uv.y, 0) * _randomStrength;
+				float3 endPos = end.vertex + float3(end.uv.x, end.uv.y, 0) * _randomStrength;
+
 				// adjust colours to distinguish individual lines a bit better
 				float3 hsvStartCol = rgb2hsv(start.color);
 				hsvStartCol.z += start.uv2.x * _colorAdj;
@@ -104,30 +112,30 @@ Shader "Graph/Line_Transparent"
 
 
 				// left
-				o.position = UnityObjectToClipPos(start.vertex + widthY + widthX);
+				o.position = UnityObjectToClipPos(startPos + widthY + widthX);
 				o.color = startCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(end.vertex + widthY + widthX);
+				o.position = UnityObjectToClipPos(endPos + widthY + widthX);
 				o.color = endCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(start.vertex - widthY + widthX);
+				o.position = UnityObjectToClipPos(startPos - widthY + widthX);
 				o.color = startCol;
 				tristream.Append(o);
 
 				tristream.RestartStrip();
 
 
-				o.position = UnityObjectToClipPos(start.vertex - widthY + widthX);
+				o.position = UnityObjectToClipPos(startPos - widthY + widthX);
 				o.color = startCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(end.vertex + widthY + widthX);
+				o.position = UnityObjectToClipPos(endPos + widthY + widthX);
 				o.color = endCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(end.vertex - widthY + widthX);
+				o.position = UnityObjectToClipPos(endPos - widthY + widthX);
 				o.color = endCol;
 				tristream.Append(o);
 
@@ -135,60 +143,60 @@ Shader "Graph/Line_Transparent"
 
 
 				// right
-				o.position = UnityObjectToClipPos(end.vertex + widthY - widthX);
+				o.position = UnityObjectToClipPos(endPos + widthY - widthX);
 				o.color = endCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(start.vertex + widthY - widthX);
+				o.position = UnityObjectToClipPos(startPos + widthY - widthX);
 				o.color = startCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(start.vertex - widthY - widthX);
+				o.position = UnityObjectToClipPos(startPos - widthY - widthX);
 				o.color = startCol;
 				tristream.Append(o);
 
 				tristream.RestartStrip();
 
 
-				o.position = UnityObjectToClipPos(end.vertex + widthY - widthX);
+				o.position = UnityObjectToClipPos(endPos + widthY - widthX);
 				o.color = endCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(start.vertex - widthY - widthX);
+				o.position = UnityObjectToClipPos(startPos - widthY - widthX);
 				o.color = startCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(end.vertex - widthY - widthX);
+				o.position = UnityObjectToClipPos(endPos - widthY - widthX);
 				o.color = endCol;
 				tristream.Append(o);
 
 				tristream.RestartStrip();
 
 				// bottom
-				o.position = UnityObjectToClipPos(end.vertex + widthX + widthY);
+				o.position = UnityObjectToClipPos(endPos + widthX + widthY);
 				o.color = endCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(start.vertex + widthX + widthY);
+				o.position = UnityObjectToClipPos(startPos + widthX + widthY);
 				o.color = startCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(start.vertex - widthX + widthY);
+				o.position = UnityObjectToClipPos(startPos - widthX + widthY);
 				o.color = startCol;
 				tristream.Append(o);
 
 				tristream.RestartStrip();
 
 
-				o.position = UnityObjectToClipPos(end.vertex + widthX + widthY);
+				o.position = UnityObjectToClipPos(endPos + widthX + widthY);
 				o.color = endCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(start.vertex - widthX + widthY);
+				o.position = UnityObjectToClipPos(startPos - widthX + widthY);
 				o.color = startCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(end.vertex - widthX + widthY);
+				o.position = UnityObjectToClipPos(endPos - widthX + widthY);
 				o.color = endCol;
 				tristream.Append(o);
 
@@ -196,30 +204,30 @@ Shader "Graph/Line_Transparent"
 
 
 				// top
-				o.position = UnityObjectToClipPos(start.vertex + widthX - widthY);
+				o.position = UnityObjectToClipPos(startPos + widthX - widthY);
 				o.color = startCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(end.vertex + widthX - widthY);
+				o.position = UnityObjectToClipPos(endPos + widthX - widthY);
 				o.color = endCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(start.vertex - widthX - widthY);
+				o.position = UnityObjectToClipPos(startPos - widthX - widthY);
 				o.color = startCol;
 				tristream.Append(o);
 
 				tristream.RestartStrip();
 
 
-				o.position = UnityObjectToClipPos(start.vertex - widthX - widthY);
+				o.position = UnityObjectToClipPos(startPos - widthX - widthY);
 				o.color = startCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(end.vertex + widthX - widthY);
+				o.position = UnityObjectToClipPos(endPos + widthX - widthY);
 				o.color = endCol;
 				tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(end.vertex - widthX - widthY);
+				o.position = UnityObjectToClipPos(endPos - widthX - widthY);
 				o.color = endCol;
 				tristream.Append(o);
 
