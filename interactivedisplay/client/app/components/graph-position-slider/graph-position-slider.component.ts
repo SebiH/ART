@@ -28,7 +28,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
             border-bottom: 1px solid black;
 
             background: #607D8B;
-            transition: background 0.5s linear;
         }`,
         '.bar.touched { background: #8BC34A; }'
     ],
