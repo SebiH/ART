@@ -48,7 +48,6 @@ namespace Assets.Modules.Surfaces
 
         private void ApplyProperties(SurfaceDataPayload properties)
         {
-            _surface = GetComponent<Surface>();
             var resolution = new Resolution
             {
                 width = properties.width,
@@ -56,6 +55,7 @@ namespace Assets.Modules.Surfaces
             };
             _surface.DisplayResolution = resolution;
             _surface.PixelToCmRatio = Math.Max(properties.pixelToCmRatio, float.Epsilon);
+            _surface.Offset = properties.offset;
         }
 
         [Serializable]
@@ -65,6 +65,7 @@ namespace Assets.Modules.Surfaces
             public float pixelToCmRatio = 1;
             public int width = 0;
             public int height = 0;
+            public float offset;
         }
     }
 }

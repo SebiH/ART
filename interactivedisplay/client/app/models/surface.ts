@@ -90,10 +90,11 @@ export class Surface {
 
     public toJson(): any {
         return {
-            name: this.name,
-            pixelToCmRatio: this.pixelToCmRatio,
-            width: this.width,
-            height: this.height
+            name: this._name,
+            pixelToCmRatio: this._pixelToCmRatio,
+            width: this._width,
+            height: this._height,
+            offset: this._offset
         }
     }
 }

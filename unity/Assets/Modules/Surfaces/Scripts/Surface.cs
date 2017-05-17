@@ -6,6 +6,7 @@ namespace Assets.Modules.Surfaces
 {
     public class Surface : MonoBehaviour
     {
+        public float Offset = 0.65f;
         public float PixelToCmRatio = 0.0485f; // measured 2016-11-15 on Microsoft Surface
         public Resolution DisplayResolution { get; set; }
         public string ClientName = "Surface";

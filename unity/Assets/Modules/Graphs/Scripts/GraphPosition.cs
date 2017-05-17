@@ -7,8 +7,8 @@ namespace Assets.Modules.Graphs
     [RequireComponent(typeof(Graph))]
     public class GraphPosition : MonoBehaviour
     {
-        public float OffsetSelected= 0.2f;
-        public float OffsetNormal = 0.65f;
+        public float OffsetSelected= -0.4f;
+        public float OffsetNormal = 0;
 
         public float HeightNormal = 0.33f;
         public float HeightPickedUp = 0.5f;
