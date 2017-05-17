@@ -180,9 +180,25 @@ export class GlobalFilterProvider {
                 }
             }
 
-            // no filters but graph is colored -> color all values along active axis?
-            // if (graph.isColored && filters.length == 0) {
-            // }
+            if (graph.isColored && filters.length == 0) {
+                let dim = graph.dimY;
+                if (dim.isMetric) {
+                    for (let f of this.globalFilter) {
+                        let data = dim.data[f.id].value;
+                        let relData = (data - dim.getMinValue()) / Math.abs(dim.getMaxValue() - dim.getMinValue());
+                        relData = _.clamp(relData, 0, 1);
+                        f.color = Utils.getGradientColor(dim.gradient, relData);
+                    }
+                } else {
+                    for (let f of this.globalFilter) {
+                        let datum = dim.data[f.id];
+                        let mapping = _.find(dim.mappings, (m) => m.value == datum.value);
+                        if (mapping) {
+                            f.color = mapping.color;
+                        }
+                    }
+                }
+            }
 
             let selectedXY: number[] = [];
 
