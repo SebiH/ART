@@ -3,6 +3,7 @@ import { SqlColumnMapping, CategoricalSqlMapping, MetricSqlMapping, DataRepresen
 import { RawData } from './raw-data';
 import { DataSource } from './data-source';
 
+import * as Colors from './colors';
 import * as sql from 'tedious';
 import * as _ from 'lodash';
 
@@ -126,27 +127,28 @@ export class SqlConnection implements DataSource {
 
             if (map.type == DataRepresentation.Categorical) {
 
-                let filter = map.dbColumn + ' IN (';
+                if (!map.autoGenerateValues) {
+                    let filter = map.dbColumn + ' IN (';
 
-                if (map.limitValues) {
-                    for (let i = 0; i < map.limitValues.length; i++) {
-                        if (i > 0) {
-                            filter += ',';
+                    if (map.limitValues) {
+                        for (let i = 0; i < map.limitValues.length; i++) {
+                            if (i > 0) {
+                                filter += ',';
+                            }
+                            filter += '' + map.limitValues[i];
                         }
-                        filter += '' + map.limitValues[i];
-                    }
-                } else {
-                    for (let i = 0; i < map.values.length; i++) {
-                        if (i > 0) {
-                            filter += ',';
+                    } else {
+                        for (let i = 0; i < map.values.length; i++) {
+                            if (i > 0) {
+                                filter += ',';
+                            }
+                            filter += '' + map.values[i].dbValue;
                         }
-                        filter += '' + map.values[i].dbValue;
                     }
+
+                    filter += ')';
+                    filters.push(filter);
                 }
-
-                filter += ')';
-                filters.push(filter);
-
             } else {
                 let min: any = map.minValue;
                 let max: any = map.maxValue;
@@ -194,8 +196,20 @@ export class SqlConnection implements DataSource {
                 for (let i = 0; i < this.mapping.length; i++) {
                     let map = this.mapping[i];
                     let value = columns[i + 1].value;
+                    let numericValue = map.converter(value);
 
-                    values[map.name] = map.converter(value);
+                    if (map.type == DataRepresentation.Categorical && map.autoGenerateValues) {
+                        let mapVal = _.find(map.values, v => v.dbValue == numericValue);
+                        if (!mapVal) {
+                            map.values.push({
+                                dbValue: numericValue,
+                                name: value,
+                                color: Colors.random()
+                            });
+                        }
+                    }
+
+                    values[map.name] = numericValue;
                 }
 
                 requestedData.push({

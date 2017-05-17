@@ -24,7 +24,9 @@ export interface CategoricalSqlMapping {
     dbColumn: string;
     name: string;
     converter: (d: any) => number;
+
     limitValues?: number[];
+    autoGenerateValues?: boolean;
 
     values: ValueMapping[];
 }

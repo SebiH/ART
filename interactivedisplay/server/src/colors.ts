@@ -10,3 +10,10 @@ export const Cyan = '#00BCD4';
 export const Pink = '#E91E63';
 export const White = '#FFFFFF';
 export const Black = '#000000';
+
+
+let colors: string[] = [Red, Green, Blue, Yellow, Purple, Orange, Cyan];
+let rndCounter = 0;
+export function random(): string {
+    return colors[rndCounter++ % colors.length];
+}
