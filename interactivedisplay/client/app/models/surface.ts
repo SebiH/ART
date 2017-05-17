@@ -1,13 +1,78 @@
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+
 export class Surface {
-    public name: string = "Surface";
-    public width: number;
-    public height: number;
-    public pixelToCmRatio: number = 0.0485; // measured 2016-11-15 on Microsoft Surface
+
+    /*
+     *    Name
+     */
+    private _name : string = "Surface";
+    public get name() : string {
+        return this._name;
+    }
+    public set name(v : string) {
+        if (this._name != v) {
+            this._name = v;
+            this.updateSubscription.next();
+        }
+    }
+
+    /*
+     *    Width
+     */
+    private _width : number;
+    public get width() : number {
+        return this._width;
+    }
+    public set width(v : number) {
+        if (this._width != v) {
+            this._width = v;
+            this.updateSubscription.next();
+        }
+    }
+
+    /*
+     *    Height
+     */
+    private _height : number;
+    public get height() : number {
+        return this._height;
+    }
+    public set height(v : number) {
+        if (this._height != v) {
+            this._height = v;
+            this.updateSubscription.next();
+        }
+    }
+
+
+    /*
+     *    PixelToCmRatio
+     */
+    private _pixelToCmRatio : number = 0.0485;
+    public get pixelToCmRatio() : number {
+        return this._pixelToCmRatio;
+    }
+    public set pixelToCmRatio(v : number) {
+        if (this._pixelToCmRatio != v) {
+            this._pixelToCmRatio = v;
+            this.updateSubscription.next();
+        }
+    }
+
+
 
     public constructor() {
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
+        this._width = window.innerWidth;
+        this._height = window.innerHeight;
     }
+
+
+    private updateSubscription: Subject<void> = new Subject<void>();
+    public get onUpdate() : Observable<void> {
+        return this.updateSubscription.asObservable();
+    }
+
 
     public toJson(): any {
         return {
