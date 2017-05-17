@@ -151,7 +151,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             }
 
             let filter = this.createFilter(path);
-            filter.useAxisColor = 'x';
+            filter.useAxisColor = this.graph.isFlipped ? 'y' : 'x';
             this.activeFilter = filter;
 
         } else if (clickedYAxis) {
@@ -169,7 +169,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
             }
 
             let filter = this.createFilter(path);
-            filter.useAxisColor = 'y';
+            filter.useAxisColor = this.graph.isFlipped ? 'x' : 'y';
             this.activeFilter = filter;
 
         } else {
@@ -366,7 +366,15 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
             if (!hasSamePath) {
                 let filter = this.createFilter(path);
-                filter.useAxisColor = axis;
+                if (this.graph.isFlipped) {
+                    if (axis == 'x') {
+                        filter.useAxisColor = 'y';
+                    } else {
+                        filter.useAxisColor = 'x';
+                    }
+                } else {
+                    filter.useAxisColor = axis;
+                }
             }
         }
 
