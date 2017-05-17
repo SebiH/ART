@@ -61,6 +61,20 @@ export class Surface {
     }
 
 
+    /*
+     *    Offset
+     */
+    private _offset : number = 0.65;
+    public get offset() : number {
+        return this._offset;
+    }
+    public set offset(v : number) {
+        if (this._offset != v) {
+            this._offset = v;
+            this.updateSubscription.next();
+        }
+    }
+
 
     public constructor() {
         this._width = window.innerWidth;

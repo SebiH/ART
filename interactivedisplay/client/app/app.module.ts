@@ -31,6 +31,7 @@ import { routing } from './routes';
     Components.GraphListItemComponent,
     Components.GraphOverviewChartComponent,
     Components.GraphOverviewChartComponent,
+    Components.GraphPositionSliderComponent,
     Components.GraphSectionComponent,
     Components.MarkerComponent,
     Components.MarkerOverlayComponent,
