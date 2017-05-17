@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Graph } from '../../models/index';
 import { GraphProvider } from '../../services/index';
@@ -9,11 +9,22 @@ import { GraphProvider } from '../../services/index';
     styleUrls: ['./app/components/graph-detail/graph-detail.css'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GraphDetailComponent {
+export class GraphDetailComponent implements OnInit, OnDestroy {
     @Input() graph: Graph;
+    private isActive: boolean = true;
 
-    constructor(private graphProvider: GraphProvider) {
+    constructor(private graphProvider: GraphProvider, private changeDetector: ChangeDetectorRef) {
+    }
 
+    ngOnInit() {
+        this.graph.onUpdate
+            .takeWhile(() => this.isActive)
+            .filter(changes => changes.indexOf('isColored') >= 0)
+            .subscribe(() => this.changeDetector.markForCheck());
+    }
+
+    ngOnDestroy() {
+        this.isActive = false;
     }
 
     private toggleColor() {
