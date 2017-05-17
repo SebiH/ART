@@ -66,7 +66,9 @@ sioServer.onMessageReceived({
             case 'graph':
                 let graphs = JSON.parse(msg.payload).graphs;
                 for (let graph of graphs) {
-                    graphStorage.set(graph);
+                    if (graphStorage.has(graph)) {
+                        graphStorage.set(graph);
+                    }
                 }
                 break;
             case '-graph':
@@ -184,6 +186,9 @@ sioServer.onMessageReceived({
     handler: (msg) => {
         if (msg.command == 'settings') {
             clientSettings = JSON.parse(msg.payload);
+            sioServer.broadcast(msg.command, msg.payload, msg.origin);
+        }
+        if (msg.command == 'renew-graphs') {
             sioServer.broadcast(msg.command, msg.payload, msg.origin);
         }
     }

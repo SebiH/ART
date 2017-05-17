@@ -36,6 +36,17 @@ export class GraphProvider {
         private http: Http,
         private dataProvider: DataProvider) {
 
+        this.init();
+        this.socketio.on('renew-graphs', () => this.init());
+        this.delayedGraphUpdate = _.debounce(this.updateGraph, 0);
+    }
+
+    private init(): void {
+        while (this.graphs.length > 0) {
+            this.graphs.pop();
+        }
+        this.graphObserver.next(this.graphs);
+
         this.http.get('/api/graph/list')
             .subscribe(response => {
                 // response gives graphs as interface, *not* as class
@@ -60,8 +71,6 @@ export class GraphProvider {
                 // for live editing via console
                 window['graphs'] = this.graphs;
             });
-
-        this.delayedGraphUpdate = _.debounce(this.updateGraph, 0);
     }
 
     public onGraphSelectionChanged(): Observable<Graph> {

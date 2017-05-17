@@ -45,21 +45,30 @@
 <hr/>
 
 <div class="buttons row">
-    <button class="button-primary four columns" (click)="setSurface()">
+    <button class="button-primary six columns" (click)="setSurface()">
         Set Surface
     </button>
-    <button class="button-primary four columns"
+    <button class="button-primary six columns"
         (click)="saveSurfaces()">
         Save Surfaces
     </button>
 
-    <button class="button-primary four columns"
+</div>
+
+<hr/>
+
+<div class="row">
+    <button class="six columns toggle-button" (click)="toggleOverlay()" [ngClass]="{ toggled: settings.showMarkerOverlay }">
+        Show Calibration Overlay
+    </button>
+
+
+    <button class="button-primary six columns"
         (click)="resetCalibration()">
         Reset Calibration
     </button>
 </div>
 
-<hr/>
 <hr/>
 
 <div class="buttons row">
@@ -71,8 +80,14 @@
     </button>
 </div>
 
+<hr/>
+
 <div class="buttons row">
-    <button class="twelve columns toggle-button" (click)="toggleOverlay()" [ngClass]="{ toggled: settings.showMarkerOverlay }">
-        Show Calibration Overlay
+    <select class="six columns" #dimSelector>
+        <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
+    </select>
+
+    <button class="button-primary six columns" (click)="generateGraphs(dimSelector.value)">
+        Generate graph mutations
     </button>
 </div>

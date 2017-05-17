@@ -18,6 +18,10 @@ export class ObjectStorage {
         }
     }
 
+    public has(obj: any): boolean {
+        return _.find(this.storage, o => o.id == obj.id) != null;
+    }
+
     public getAll(): any {
         return this.storage;
     }
