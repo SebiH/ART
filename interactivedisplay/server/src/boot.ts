@@ -171,8 +171,8 @@ sioServer.onMessageReceived({
 });
 
 let clientSettings = {
-    showMarkers: true,
-    showOverviewChart: true,
+    showMarkers: false,
+    showOverviewChart: false,
     showMarkerOverlay: false
 };
 
