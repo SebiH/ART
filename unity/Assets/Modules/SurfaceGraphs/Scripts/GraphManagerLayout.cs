@@ -14,7 +14,7 @@ namespace Assets.Modules.SurfaceGraphs
 
         private Surface _surface;
         private GraphManager _graphManager;
-        private ValueAnimation _offsetAnimation = new ValueAnimation(0.6f);
+        private ValueAnimation _offsetAnimation = new ValueAnimation(Globals.NormalAnimationSpeed);
         private bool _wasGraphSelected = false;
 
         private void OnEnable()
