@@ -1,5 +1,6 @@
 using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
+using Assets.Modules.Tracking;
 using UnityEngine;
 
 namespace Assets.Modules.ParallelCoordinates
@@ -127,6 +128,16 @@ namespace Assets.Modules.ParallelCoordinates
                     var lineRenderQueue = Mathf.Max(renderQueueLeft, renderQueueRight);
                     _skinnedRenderer.materials[_skinnedRenderer.materials.Length - 1].renderQueue = lineRenderQueue;
                 }
+            }
+
+
+            if ((transform.position - SceneCameraTracker.Instance.transform.position).magnitude > 2)
+            {
+                _lineRenderer.SetHidden(true);
+            }
+            else
+            {
+                _lineRenderer.SetHidden(false);
             }
         }
 
