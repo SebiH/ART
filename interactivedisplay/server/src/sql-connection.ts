@@ -182,7 +182,7 @@ export class SqlConnection implements DataSource {
             }
         }
 
-        requestSql += ' FROM Flat_Dataset_1_Small ';
+        requestSql += ' FROM ImmersiveDataset ';
 
         // for (let i = 0; i < filters.length; i++) {
         //     requestSql += (i == 0) ? ' WHERE ' : ' AND ';
