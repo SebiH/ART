@@ -163,20 +163,24 @@ export class SqlConnection implements DataSource {
 
         }
 
-        let requestSql = 'SELECT TOP 1000 Sess_Id';
+        let requestSql = 'SELECT ';
+        let isFirst = true;
 
         for (let map of this.mapping) {
-            requestSql += ', ' + map.dbColumn;
+            if (isFirst) { requestSql += map.dbColumn; isFirst = false; }
+            else {
+                requestSql += ', ' + map.dbColumn;
+            }
         }
 
-        requestSql += ' FROM Flat_Dataset_1 ';
+        requestSql += ' FROM ImmersiveDataset ';
 
         for (let i = 0; i < filters.length; i++) {
             requestSql += (i == 0) ? ' WHERE ' : ' AND ';
             requestSql += filters[i];
         }
 
-        requestSql += ';';
+        requestSql += ' ORDER BY Cond;';
 
         let requestedData: RawData[] = [];
         let request = new sql.Request(requestSql, (error: Error, rowCount: number, rows: any[]) => {
@@ -188,14 +192,15 @@ export class SqlConnection implements DataSource {
             }
         });
 
+        let idCounter = 0;
 
         request.on('row', (columns) => {
-            if (columns.length == this.mapping.length + 1) {
+            if (columns.length == this.mapping.length) {
                 let values: {[dim: string]: number} = { };
 
                 for (let i = 0; i < this.mapping.length; i++) {
                     let map = this.mapping[i];
-                    let value = columns[i + 1].value;
+                    let value = columns[i].value;
                     let numericValue = map.converter(value);
 
                     if (map.type == DataRepresentation.Categorical && map.autoGenerateValues) {
@@ -213,7 +218,7 @@ export class SqlConnection implements DataSource {
                 }
 
                 requestedData.push({
-                    id: this.idToNumber(columns[0].value),
+                    id: idCounter++, //this.idToNumber(columns[0].value),
                     dimensions: values
                 });
             } else {
