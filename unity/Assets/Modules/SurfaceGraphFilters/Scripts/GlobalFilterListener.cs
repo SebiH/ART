@@ -76,7 +76,10 @@ namespace Assets.Modules.SurfaceGraphFilters
                 colors[i].a = (metadata[i].f >= 1) ? TRANSPARENCY_FILTERED : TRANSPARENCY_NORMAL;
             }
 
-            ParallelCoordinatesManager.Instance.SetColors(colors);
+            if (colors.Length > 0)
+            {
+                ParallelCoordinatesManager.Instance.SetColors(colors);
+            }
         }
 
 
