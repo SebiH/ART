@@ -25,6 +25,7 @@ export interface CategoricalSqlMapping {
     name: string;
     converter: (d: any) => number;
 
+    hideTicks?: boolean;
     limitValues?: number[];
     autoGenerateValues?: boolean;
 
@@ -42,6 +43,8 @@ export interface MetricSqlMapping {
     dbTime?: boolean;
     isTimeBased: boolean;
     timeFormat?: string;
+
+    hideTicks?: boolean;
 
     minValue: number;
     maxValue: number;

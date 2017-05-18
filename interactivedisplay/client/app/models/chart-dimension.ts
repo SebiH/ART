@@ -11,6 +11,8 @@ export class ChartDimension {
 
     public name: string;
 
+    public hideTicks: boolean;
+
     public isMetric: boolean;
 
     public isTimeBased: boolean;
@@ -52,6 +54,7 @@ export class ChartDimension {
         dim.bins = jDim.bins;
         dim.gradient = jDim.gradient;
         dim.ticks = jDim.ticks;
+        dim.hideTicks = jDim.hideTicks;
 
         return dim;
     }

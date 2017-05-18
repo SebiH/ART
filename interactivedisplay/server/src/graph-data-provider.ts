@@ -169,6 +169,7 @@ export class GraphDataProvider {
                 max: maxValue
             },
             name: dimension,
+            hideTicks: !!mapping.hideTicks,
             isMetric: isMetric,
             isTimeBased: isTimeBased,
             timeFormat: timeFormat,

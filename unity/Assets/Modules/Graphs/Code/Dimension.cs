@@ -12,6 +12,8 @@ namespace Assets.Modules.Graphs
         public float DomainMin = 0f;
         public float DomainMax = 1f;
 
+        public bool HideTicks = false;
+
         public struct Mapping
         {
             public string Name;

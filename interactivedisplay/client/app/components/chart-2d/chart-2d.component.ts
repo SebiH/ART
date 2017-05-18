@@ -126,8 +126,8 @@ export class Chart2dComponent implements AfterViewInit, OnChanges {
     private getScaleHack(dim: ChartDimension, type: 'x' | 'y') {
         let range = type === 'x' ? [0, this.width] : [this.height, 0];
 
-        if (dim == null) {
-            return d3.scaleLinear().range(range).domain([0, 1]);
+        if (dim == null || dim.hideTicks) {
+            return d3.scalePoint().range([0, type === 'x' ? this.width : this.height]).domain([]);
         } else if (dim.isMetric) {
             if (dim.isTimeBased) {
                 let timeTicks: string[] = [];
