@@ -79,7 +79,7 @@ namespace Assets.Modules.Graphs.Visualisation
 
             _mesh.vertices = vertices;
             _mesh.colors32 = colors;
-            //_mesh.RecalculateBounds();
+            _mesh.RecalculateBounds();
         }
 
         public void UpdateColor()
@@ -115,7 +115,7 @@ namespace Assets.Modules.Graphs.Visualisation
             }
 
             _mesh.vertices = vertices;
-            //_mesh.RecalculateBounds();
+            _mesh.RecalculateBounds();
         }
 
         public void SetHidden(bool isHidden)
