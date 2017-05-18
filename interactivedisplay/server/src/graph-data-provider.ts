@@ -57,8 +57,12 @@ export class GraphDataProvider {
 
         if (this.dataSource) {
             // load data on startup for faster response later on
-            this.dataSource.getData();
+            // this.dataSource.getData();
         }
+    }
+
+    public getDataSource(): DataSource {
+        return this.dataSource;
     }
 
     public getDimensions(): any {

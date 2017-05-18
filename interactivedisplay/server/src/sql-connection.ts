@@ -53,7 +53,9 @@ export class SqlConnection implements DataSource {
     private sqlConnection: sql.Connection;
     private status: Status = new Status();
 
-    private sqlData: ReplaySubject<RawData[]>;
+    private sqlQuery: string = "";
+
+    private sqlData: ReplaySubject<RawData[]> = new ReplaySubject<RawData[]>(1);
     private idCounter: number = 0;
     private readonly idTable: { [sess_id: string]: number } = {};
 
@@ -102,85 +104,88 @@ export class SqlConnection implements DataSource {
         return <string[]> _.map(this.mapping, 'name');
     }
 
-    public getData(): Observable<RawData[]> {
-        if (!this.sqlData) {
-            this.sqlData = new ReplaySubject<RawData[]>(1);
+    public setSqlQuery(query: string) {
+        this.sqlQuery = query;
 
-            this.status.whenReady(() => {
-                this.getDataConnectionEstablished((data) => {
-                    this.sqlData.next(data);
-                    // unmark connection from being busy, so that next request can be started
-                    this.status.set(ConnectionState.Connected);
-                });
+        this.status.whenReady(() => {
+            this.getDataConnectionEstablished((data) => {
+                this.sqlData.next(data);
+                // unmark connection from being busy, so that next request can be started
+                this.status.set(ConnectionState.Connected);
             });
-        }
+        });
+    }
 
+    public getData(): Observable<RawData[]> {
         return this.sqlData.asObservable();
     }
 
     // assumes connection is established
     private getDataConnectionEstablished(onSuccess: (data: RawData[]) => void): void {
 
-        let filters: string[] = [];
+        // let filters: string[] = [];
 
-        for (let map of this.mapping) {
+        // for (let map of this.mapping) {
 
-            if (map.type == DataRepresentation.Categorical) {
+        //     if (map.type == DataRepresentation.Categorical) {
 
-                if (!map.autoGenerateValues) {
-                    let filter = map.dbColumn + ' IN (';
+        //         if (!map.autoGenerateValues) {
+        //             let filter = map.dbColumn + ' IN (';
 
-                    if (map.limitValues) {
-                        for (let i = 0; i < map.limitValues.length; i++) {
-                            if (i > 0) {
-                                filter += ',';
-                            }
-                            filter += '' + map.limitValues[i];
-                        }
-                    } else {
-                        for (let i = 0; i < map.values.length; i++) {
-                            if (i > 0) {
-                                filter += ',';
-                            }
-                            filter += '' + map.values[i].dbValue;
-                        }
-                    }
+        //             if (map.limitValues) {
+        //                 for (let i = 0; i < map.limitValues.length; i++) {
+        //                     if (i > 0) {
+        //                         filter += ',';
+        //                     }
+        //                     filter += '' + map.limitValues[i];
+        //                 }
+        //             } else {
+        //                 for (let i = 0; i < map.values.length; i++) {
+        //                     if (i > 0) {
+        //                         filter += ',';
+        //                     }
+        //                     filter += '' + map.values[i].dbValue;
+        //                 }
+        //             }
 
-                    filter += ')';
-                    filters.push(filter);
-                }
-            } else {
-                let min: any = map.minValue;
-                let max: any = map.maxValue;
+        //             filter += ')';
+        //             filters.push(filter);
+        //         }
+        //     } else {
+        //         let min: any = map.minValue;
+        //         let max: any = map.maxValue;
 
-                if (map.dbTime) {
-                    min = '\'' + this.formatDate(new Date(min * 1000)) + '\'';
-                    max = '\'' + this.formatDate(new Date(max * 1000)) + '\'';
-                }
+        //         if (map.dbTime) {
+        //             min = '\'' + this.formatDate(new Date(min * 1000)) + '\'';
+        //             max = '\'' + this.formatDate(new Date(max * 1000)) + '\'';
+        //         }
 
-                filters.push(map.dbColumn + ' BETWEEN ' + min + ' AND ' + max);
-            }
+        //         filters.push(map.dbColumn + ' BETWEEN ' + min + ' AND ' + max);
+        //     }
 
-        }
+        // }
 
-        let requestSql = 'SELECT ';
-        let isFirst = true;
+        // let requestSql = 'SELECT ';
+        // let isFirst = true;
 
-        for (let map of this.mapping) {
-            if (isFirst) { requestSql += map.dbColumn; isFirst = false; }
-            else {
-                requestSql += ', ' + map.dbColumn;
-            }
-        }
+        // for (let map of this.mapping) {
+        //     if (isFirst) { requestSql += map.dbColumn; isFirst = false; }
+        //     else {
+        //         requestSql += ', ' + map.dbColumn;
+        //     }
+        // }
 
-        requestSql += ' FROM ImmersiveDataset ';
+        // requestSql += ' FROM ImmersiveDataset ';
 
-        for (let i = 0; i < filters.length; i++) {
-            requestSql += (i == 0) ? ' WHERE ' : ' AND ';
-            requestSql += filters[i];
-        }
+        // for (let i = 0; i < filters.length; i++) {
+        //     requestSql += (i == 0) ? ' WHERE ' : ' AND ';
+        //     requestSql += filters[i];
+        // }
 
-        requestSql += ' ORDER BY Cond;';
+        // requestSql += ' ORDER BY Cond;';
+
+        let requestSql = this.sqlQuery;
+
 
         let requestedData: RawData[] = [];
         let request = new sql.Request(requestSql, (error: Error, rowCount: number, rows: any[]) => {

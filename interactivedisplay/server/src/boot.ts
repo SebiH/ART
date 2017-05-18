@@ -5,6 +5,7 @@ import { SocketIOServer } from "./socketio-server";
 import { SocketIOMessageListener } from './socketio-message-listener';
 import { GraphDataProvider } from './graph-data-provider';
 import { ObjectStorage } from './object-storage';
+import { SqlConnection } from './sql-connection';
 
 const UNITY_PORT = 8835;
 const WEB_PORT = 81; // 80 might already be in use, thanks skype!
@@ -23,6 +24,19 @@ webServer.addPath('/api/graph/data', (req, res, next) => {
         res.json(data);
     });
 });
+
+
+webServer.addPath('/api/setquery', (req, res, next) => {
+    let params = req.body;
+
+    let source = graphDataProvider.getDataSource();
+
+    if (source instanceof SqlConnection) {
+        source.setSqlQuery(params.sql);
+    }
+});
+
+
 
 webServer.addPath('/api/graph/dimensions', (req, res, next) => {
     res.json(graphDataProvider.getDimensions());
