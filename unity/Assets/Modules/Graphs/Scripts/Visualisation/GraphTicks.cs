@@ -56,7 +56,7 @@ namespace Assets.Modules.Graphs.Visualisation
         {
             ClearTicks();
 
-            if (_dimension != null)
+            if (_dimension != null && _dimension.DisplayName != "User")
             {
                 foreach (var tick in _dimension.Ticks)
                 {
