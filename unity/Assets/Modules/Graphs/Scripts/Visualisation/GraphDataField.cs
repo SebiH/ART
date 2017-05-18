@@ -34,7 +34,7 @@ namespace Assets.Modules.Graphs.Visualisation
 
         private void Update()
         {
-            if ((transform.position - SceneCameraTracker.Instance.transform.position).magnitude > 2)
+            if ((transform.position - SceneCameraTracker.Instance.transform.position).magnitude > Globals.DataViewDistance)
             {
                 _pointRenderer.SetHidden(true);
             }

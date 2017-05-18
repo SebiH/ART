@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
 using Assets.Modules.Tracking;
@@ -131,7 +132,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
 
-            if ((transform.position - SceneCameraTracker.Instance.transform.position).magnitude > 2)
+            if ((transform.position - SceneCameraTracker.Instance.transform.position).magnitude > Globals.DataViewDistance)
             {
                 _lineRenderer.SetHidden(true);
             }
