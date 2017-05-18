@@ -1,5 +1,6 @@
 using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
+using Assets.Modules.Tracking;
 using UnityEngine;
 
 namespace Assets.Modules.Graphs.Visualisation
@@ -28,6 +29,19 @@ namespace Assets.Modules.Graphs.Visualisation
         private void OnDisable()
         {
             _graph.OnDataChange -= OnDataChange;
+        }
+
+
+        private void Update()
+        {
+            if ((transform.position - SceneCameraTracker.Instance.transform.position).magnitude > 2)
+            {
+                _pointRenderer.SetHidden(true);
+            }
+            else
+            {
+                _pointRenderer.SetHidden(false);
+            }
         }
 
         private void OnDataChange()
