@@ -25,10 +25,13 @@ namespace Assets.Modules.SurfaceInterface.Scripts
 
         private IEnumerator SendUpdatesPeriodically()
         {
-            while (isActiveAndEnabled)
+            if (DisplayCalibration)
             {
-                yield return new WaitForSeconds(DisplayCalibration.IsCalibrating ? 0.1f : 1f);
-                SendUpdates();
+                while (isActiveAndEnabled)
+                {
+                    yield return new WaitForSeconds(DisplayCalibration.IsCalibrating ? 0.1f : 1f);
+                    SendUpdates();
+                }
             }
         }
 
