@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Graph } from '../../models/index';
-import { GraphProvider } from '../../services/index';
+import { GraphProvider, Settings, SettingsProvider } from '../../services/index';
 
 @Component({
     selector: 'graph-detail',
@@ -12,8 +12,12 @@ import { GraphProvider } from '../../services/index';
 export class GraphDetailComponent implements OnInit, OnDestroy {
     @Input() graph: Graph;
     private isActive: boolean = true;
+    private settings: Settings;
 
-    constructor(private graphProvider: GraphProvider, private changeDetector: ChangeDetectorRef) {
+    constructor(
+        private graphProvider: GraphProvider,
+        private settingsProvider: SettingsProvider,
+        private changeDetector: ChangeDetectorRef) {
     }
 
     ngOnInit() {
@@ -21,6 +25,10 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
             .takeWhile(() => this.isActive)
             .filter(changes => changes.indexOf('isColored') >= 0)
             .subscribe(() => this.changeDetector.markForCheck());
+
+        this.settingsProvider.getCurrent()
+            .takeWhile(() => this.isActive)
+            .subscribe((s) => this.settings = s);
     }
 
     ngOnDestroy() {
