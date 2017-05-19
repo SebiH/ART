@@ -1,8 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Observer } from 'rxjs/Observer';
+import { Observable, Observer } from 'rxjs/Rx';
 import { GraphProvider } from '../../services/index';
 import { Graph } from '../../models/index';
+import { GraphListItemComponent } from '../graph-list-item/graph-list-item.component';
 
 import * as _ from 'lodash';
 
@@ -13,6 +14,8 @@ import * as _ from 'lodash';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GraphListComponent implements OnInit, OnDestroy {
+
+    @ViewChildren(GraphListItemComponent) listItems: QueryList<GraphListItemComponent>;
 
     private graphs: Graph[] = [];
     private newGraphs: Graph[] = [];
@@ -42,6 +45,10 @@ export class GraphListComponent implements OnInit, OnDestroy {
     constructor(private graphProvider: GraphProvider, private changeDetector: ChangeDetectorRef) {}
 
     ngOnInit() {
+        Observable.timer(0, 10)
+            .takeWhile(() => this.isActive)
+            .subscribe(this.checkForChanges.bind(this));
+
         this.graphProvider.getGraphs()
             .takeWhile(() => this.isActive)
             .subscribe(graphs => {
@@ -68,6 +75,18 @@ export class GraphListComponent implements OnInit, OnDestroy {
         this.isActive = false;
     }
 
+
+    private checkForChanges(): void {
+        let listItems = this.listItems.toArray();
+        for (let item of listItems) {
+            let pos = item.getPosition();
+            let currentPosition = pos.left + pos.width / 2;
+
+            if (item.graph.absolutePos == undefined || item.graph.absolutePos !== currentPosition) {
+                item.graph.absolutePos = currentPosition;
+            }
+        }
+    }
 
     private getOffset(graph: Graph) {
         let offset = 0;

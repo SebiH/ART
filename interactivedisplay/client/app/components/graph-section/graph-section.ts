@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, ElementRef } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
 import { Marker, Graph } from '../../models/index';
 import { MarkerProvider, GraphProvider, Settings, SettingsProvider } from '../../services/index';
 
@@ -36,10 +35,6 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         for (let i = 0; i < NUM_MARKERS; i++) {
             this.markers.push(this.markerProvider.createMarker());
         }
-
-        Observable.timer(0, 10)
-            .takeWhile(() => this.isActive)
-            .subscribe(this.checkForChanges.bind(this));
 
         this.graph.onUpdate
             .takeWhile(() => this.isActive)
@@ -102,17 +97,7 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         this.changeDetector.markForCheck();
     }
 
-
-    private checkForChanges(): void {
-        let pos = this.getSectionPosition();
-        let currentPosition = pos.left + pos.width / 2;
-
-        if (this.graph.absolutePos == undefined || this.graph.absolutePos !== currentPosition) {
-            this.graph.absolutePos = currentPosition;
-        }
-    }
-
-    private getSectionPosition() {
+    public getSectionPosition() {
         let element = <HTMLElement>this.elementRef.nativeElement;
         return element.getBoundingClientRect();
     }
