@@ -184,6 +184,20 @@ export class Graph {
         }
     }
 
+    /*
+     *    sortAxis
+     */
+    private _sortAxis : boolean;
+    public get sortAxis() : boolean {
+        return this._sortAxis;
+    }
+    public set sortAxis(v : boolean) {
+        if (this._sortAxis != v) {
+            this._sortAxis = v;
+            this.propagateUpdates(['sortAxis', 'dimX']);
+        }
+    }
+
     public constructor(id: number) {
         this._id = id;
     }
@@ -214,6 +228,7 @@ export class Graph {
             isNewlyCreated: this.isNewlyCreated,
             isPickedUp: this.isPickedUp,
             isSelected: this.isSelected,
+            sortAxis: this.sortAxis,
 
             pos: this.absolutePos,
             width: this.width
@@ -241,6 +256,7 @@ export class Graph {
         graph._isColored = jGraph.isColored;
         graph._isSelected = jGraph.isSelected;
         graph._isFlipped = jGraph.isFlipped;
+        graph._sortAxis = jGraph.sortAxis;
 
         // force newly created to false because touch events won't persist
         graph._isNewlyCreated = false;

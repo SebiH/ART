@@ -166,4 +166,8 @@ export class GraphSectionComponent implements OnInit, OnDestroy {
         }
     }
 
+    private toggleSort(): void {
+        this.graph.sortAxis = !this.graph.sortAxis;
+    }
+
 }

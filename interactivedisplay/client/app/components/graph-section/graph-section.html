@@ -96,6 +96,15 @@
                     Close
                 </div>
             </div>
+            <div class="button" [ngClass]="{ active: graph.sortAxis }" touch-button (touchclick)="toggleSort()">
+                <div class="icon">
+                    <span class="fa fa-sort-amount-asc" aria-hidden="true"></span>
+                </div>
+
+                <div class="text">
+                    Sort
+                </div>
+            </div>
         </div>
 
         <div class="markers horizontal" *ngIf="settings.showMarkers">
