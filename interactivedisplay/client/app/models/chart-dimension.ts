@@ -1,3 +1,4 @@
+import { Utils } from '../Utils';
 import * as _ from 'lodash';
 
 export interface GradientStop {
@@ -30,7 +31,7 @@ export class ChartDimension {
         if (this.isMetric) {
             return this.domain.min - 0.0001;
         } else {
-            return _.minBy(this.mappings, 'value').value - 1;
+            return this.domain.min - 1;
         }
     }
 
@@ -38,8 +39,57 @@ export class ChartDimension {
         if (this.isMetric) {
             return this.domain.max + 0.0001;
         } else {
-            return _.maxBy(this.mappings, 'value').value + 1;
+            return this.domain.max + 1;
         }
+    }
+
+    public sortBy(dim: ChartDimension) {
+        if (!dim) {
+            return;
+        }
+
+        let sortedData = _.sortBy(this.data, (d) => {
+            return _.find(dim.data, (o) => o.id == d.id).value;
+        });
+
+        let oldMappings = this.mappings;
+        this.mappings = [];
+        for (let i = 0; i < this.data.length; i++) {
+
+            let color = '#FFFFFF';
+            if (this.isMetric) {
+                color = Utils.getGradientColor(this.gradient, sortedData[i].value);
+            } else {
+                color = _.find(oldMappings, (m) => m.value == sortedData[i].value).color;
+            }
+
+            sortedData[i].value = i;
+            this.mappings.push({
+                value: i,
+                name: '',
+                color: ''
+            });
+        }
+
+        this.domain = { min: 0, max: this.data.length };
+        this.isMetric = false;
+        this.hideTicks = true;
+    }
+
+    public clone(): ChartDimension {
+        let dim = new ChartDimension();
+        dim.data = _.cloneDeep(this.data);
+        dim.domain = _.cloneDeep(this.domain);
+        dim.name = this.name;
+        dim.hideTicks = this.hideTicks;
+        dim.isMetric = this.isMetric;
+        dim.isTimeBased = this.isTimeBased;
+        dim.timeFormat = this.timeFormat;
+        dim.mappings = _.cloneDeep(this.mappings);
+        dim.bins = _.cloneDeep(this.bins);
+        dim.gradient = _.cloneDeep(this.gradient);
+        dim.ticks = _.cloneDeep(this.ticks);
+        return dim;
     }
 
     public static fromJson(jDim: any): ChartDimension {

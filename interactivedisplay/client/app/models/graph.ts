@@ -26,6 +26,7 @@ export class Graph {
     public set dimX(v : ChartDimension) {
         if (this._dimX != v) {
             this._dimX = v;
+            this.sortedAxisX = null;
             this.propagateUpdates(['dimX']);
         }
     }
@@ -40,6 +41,7 @@ export class Graph {
     public set dimY(v : ChartDimension) {
         if (this._dimY != v) {
             this._dimY = v;
+            this.sortedAxisX = null;
             this.propagateUpdates(['dimY']);
         }
     }
@@ -200,6 +202,42 @@ export class Graph {
 
     public constructor(id: number) {
         this._id = id;
+    }
+
+
+    private sortedAxisX: ChartDimension = null;
+
+    public getCurrentXAxis(): ChartDimension {
+        if (this.isFlipped) {
+            return this.getActualYAxis();
+        } else {
+            return this.getActualXAxis();
+        }
+    }
+
+    public getCurrentYAxis(): ChartDimension {
+        if (this.isFlipped) {
+            return this.getActualXAxis();
+        } else {
+            return this.getActualYAxis();
+        }
+    }
+
+    public getActualXAxis(): ChartDimension {
+        if (this.sortAxis && this.dimX) {
+            if (!this.sortedAxisX) {
+                this.sortedAxisX = this.dimX.clone();
+                this.sortedAxisX.sortBy(this.dimY);
+            }
+
+            return this.sortedAxisX;
+        } else {
+            return this.dimX;
+        }
+    }
+
+    public getActualYAxis(): ChartDimension {
+        return this.dimY;
     }
 
 

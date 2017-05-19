@@ -1,4 +1,5 @@
 import { Component, AfterViewInit, OnDestroy, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Chart2dComponent } from '../chart-2d/chart-2d.component';
 import { PathSelection } from '../chart-2d/path-selection';
 import { PathContainer } from '../chart-2d/path-container';
@@ -9,9 +10,10 @@ import { Utils } from '../../Utils';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'graph-data-selection',
-  templateUrl: './app/components/graph-data-selection/graph-data-selection.html',
-  styleUrls: ['./app/components/graph-data-selection/graph-data-selection.css']
+    selector: 'graph-data-selection',
+    templateUrl: './app/components/graph-data-selection/graph-data-selection.html',
+    styleUrls: ['./app/components/graph-data-selection/graph-data-selection.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     @Input() graph: Graph;
@@ -28,6 +30,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
     constructor(
         private filterProvider: FilterProvider,
+        private changeDetector: ChangeDetectorRef,
         private globalFilterProvider: GlobalFilterProvider) {
     }
 
@@ -46,6 +49,7 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         this.graph.onUpdate
             .takeWhile(() => this.isActive)
             .subscribe(() => {
+                this.changeDetector.detectChanges();
                 // let chart component update first
                 setTimeout(() => {
                     this.drawFilters();
