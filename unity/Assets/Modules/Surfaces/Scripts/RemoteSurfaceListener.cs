@@ -65,7 +65,7 @@ namespace Assets.Modules.Surfaces
             public float pixelToCmRatio = 1;
             public int width = 0;
             public int height = 0;
-            public float offset;
+            public float offset = 0;
         }
     }
 }
