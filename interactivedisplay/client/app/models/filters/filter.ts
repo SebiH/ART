@@ -118,15 +118,15 @@ export abstract class Filter {
     }
 
     private attachListener(graph: Graph): void {
-        let prevDimX = graph.dimX;
-        let prevDimY = graph.dimY;
+        let prevDimX = graph.getActualXAxis();
+        let prevDimY = graph.getActualYAxis();
         graph.onUpdate
             .takeWhile(() => this.isActive)
             .filter(changes => changes.indexOf('dimX') >= 0 || changes.indexOf('dimY') >= 0)
             .subscribe((changes) => {
                 this.onDimensionChanged(prevDimX, prevDimY);
-                prevDimX = graph.dimX;
-                prevDimY = graph.dimY;
+                prevDimX = graph.getActualXAxis();
+                prevDimY = graph.getActualYAxis();
             });
     }
 

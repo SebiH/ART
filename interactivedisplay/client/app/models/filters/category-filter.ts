@@ -41,11 +41,11 @@ export class CategoryFilter extends Filter {
         if (this.boundDimensions == 'x') {
             left = this.category - 0.5;
             right = this.category + 0.5;
-            top = this.origin.dimY.getMaxValue();
-            bottom = this.origin.dimY.getMinValue();
+            top = this.origin.getActualYAxis().getMaxValue();
+            bottom = this.origin.getActualYAxis().getMinValue();
         } else {
-            left = this.origin.dimX.getMinValue();
-            right = this.origin.dimX.getMaxValue();
+            left = this.origin.getActualXAxis().getMinValue();
+            right = this.origin.getActualXAxis().getMaxValue();
             top = this.category - 0.5;
             bottom = this.category + 0.5;
         }
@@ -54,7 +54,7 @@ export class CategoryFilter extends Filter {
     }
 
     protected recalculateIndices(): void {
-        let dim = this.boundDimensions == 'x' ? this.origin.dimX : this.origin.dimY;
+        let dim = this.boundDimensions == 'x' ? this.origin.getActualXAxis() : this.origin.getActualYAxis();
 
         let indices: number[] = [];
         for (let i = 0; i < dim.data.length; i++) {
@@ -68,9 +68,9 @@ export class CategoryFilter extends Filter {
     }
 
     protected onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
-        if (this.origin.dimX !== prevDimX && this.boundDimensions == 'x') {
+        if (this.origin.getActualXAxis() !== prevDimX && this.boundDimensions == 'x') {
             this.isInvalid = true;
-        } else if (this.origin.dimY !== prevDimY && this.boundDimensions == 'y') {
+        } else if (this.origin.getActualYAxis() !== prevDimY && this.boundDimensions == 'y') {
             this.isInvalid = true;
         } else {
             this.generatePath();

@@ -63,9 +63,9 @@ export class DetailFilter extends Filter {
     }
 
     public addPathPoint(p: [number, number]): void {
-        if (this.origin.dimX && this.origin.dimY) {
-            let x = Math.max(this.origin.dimX.getMinValue(), Math.min(p[0], this.origin.dimX.getMaxValue()));
-            let y = Math.max(this.origin.dimY.getMinValue(), Math.min(p[1], this.origin.dimY.getMaxValue()));
+        if (this.origin.getActualXAxis() && this.origin.getActualYAxis()) {
+            let x = Math.max(this.origin.getActualXAxis().getMinValue(), Math.min(p[0], this.origin.getActualXAxis().getMaxValue()));
+            let y = Math.max(this.origin.getActualYAxis().getMinValue(), Math.min(p[1], this.origin.getActualYAxis().getMaxValue()));
 
             if (this.path.length == 0) {
                 this.minX = x;
@@ -86,8 +86,8 @@ export class DetailFilter extends Filter {
     }
 
     public setPathPoint(index: number, p: [number, number]): void {
-        let x = Math.max(this.origin.dimX.getMinValue(), Math.min(p[0], this.origin.dimX.getMaxValue()));
-        let y = Math.max(this.origin.dimY.getMinValue(), Math.min(p[1], this.origin.dimY.getMaxValue()));
+        let x = Math.max(this.origin.getActualXAxis().getMinValue(), Math.min(p[0], this.origin.getActualXAxis().getMaxValue()));
+        let y = Math.max(this.origin.getActualYAxis().getMinValue(), Math.min(p[1], this.origin.getActualYAxis().getMaxValue()));
 
         this.path[index] = [x, y];
 
@@ -113,8 +113,8 @@ export class DetailFilter extends Filter {
 
 
     protected recalculateIndices(): void {
-        let dimX = this.origin.dimX;
-        let dimY = this.origin.dimY;
+        let dimX = this.origin.getActualXAxis();
+        let dimY = this.origin.getActualYAxis();
 
         let indices: number[] = [];
         let boundingRect = Utils.buildBoundingRect(this.path);
@@ -148,18 +148,18 @@ export class DetailFilter extends Filter {
         jFilter.useAxisColor = this.useAxisColor;
 
         if (this._useAxisColor == 'x') {
-            if (this.origin.dimX.isMetric) {
-                jFilter.gradient = this.origin.dimX.gradient;
+            if (this.origin.getActualXAxis().isMetric) {
+                jFilter.gradient = this.origin.getActualXAxis().gradient;
                 jFilter.range = [this.minX, this.maxX];
             } else {
-                jFilter.mappings = this.origin.dimX.mappings;
+                jFilter.mappings = this.origin.getActualXAxis().mappings;
             }
         } else if (this._useAxisColor == 'y') {
-            if (this.origin.dimY.isMetric) {
-                jFilter.gradient = this.origin.dimY.gradient;
+            if (this.origin.getActualYAxis().isMetric) {
+                jFilter.gradient = this.origin.getActualYAxis().gradient;
                 jFilter.range = [this.minY, this.maxY];
             } else {
-                jFilter.mappings = this.origin.dimY.mappings;
+                jFilter.mappings = this.origin.getActualYAxis().mappings;
             }
         }
 

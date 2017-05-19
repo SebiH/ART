@@ -32,7 +32,7 @@ export class MetricFilter extends Filter {
     }
     public set range(v: Range) {
         if (v.min != this._range.min || v.max != this._range.max) {
-            let dim = this.boundDimensions == 'x' ? this.origin.dimX : this.origin.dimY;
+            let dim = this.boundDimensions == 'x' ? this.origin.getActualXAxis() : this.origin.getActualYAxis();
             let min = Math.max(v.min, dim.getMinValue());
             let max = Math.min(v.max, dim.getMaxValue());
 
@@ -57,11 +57,11 @@ export class MetricFilter extends Filter {
         if (this.boundDimensions == 'x') {
             left = this.range.min;
             right = this.range.max;
-            top = this.origin.dimY.getMaxValue();
-            bottom = this.origin.dimY.getMinValue();
+            top = this.origin.getActualYAxis().getMaxValue();
+            bottom = this.origin.getActualYAxis().getMinValue();
         } else {
-            left = this.origin.dimX.getMinValue();
-            right = this.origin.dimX.getMaxValue();
+            left = this.origin.getActualXAxis().getMinValue();
+            right = this.origin.getActualXAxis().getMaxValue();
             top = this.range.max;
             bottom = this.range.min;
         }
@@ -71,7 +71,7 @@ export class MetricFilter extends Filter {
 
 
     protected recalculateIndices(): void {
-        let dim = this.boundDimensions == 'x' ? this.origin.dimX : this.origin.dimY;
+        let dim = this.boundDimensions == 'x' ? this.origin.getActualXAxis() : this.origin.getActualYAxis();
 
         let indices: number[] = [];
         for (let i = 0; i < dim.data.length; i++) {
@@ -85,9 +85,9 @@ export class MetricFilter extends Filter {
     }
 
     protected onDimensionChanged(prevDimX: ChartDimension, prevDimY: ChartDimension): void {
-        if (this.origin.dimX !== prevDimX && this.boundDimensions == 'x') {
+        if (this.origin.getActualXAxis() !== prevDimX && this.boundDimensions == 'x') {
             this.isInvalid = true;
-        } else if (this.origin.dimY !== prevDimY && this.boundDimensions == 'y') {
+        } else if (this.origin.getActualYAxis() !== prevDimY && this.boundDimensions == 'y') {
             this.isInvalid = true;
         } else {
             this.generatePath();

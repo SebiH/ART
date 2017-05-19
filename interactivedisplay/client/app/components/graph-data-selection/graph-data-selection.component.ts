@@ -126,15 +126,15 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private filterCreationMode: 'x' | 'y' | 'xy' = 'xy';
 
     private handleTouchDown(event): void {
-        if (this.graph.dimX === null && this.graph.dimY === null) {
+        if (this.graph.getActualXAxis() === null && this.graph.getActualYAxis() === null) {
             return;
         }
 
         let clickedYAxis = event.relativePos.x <= this.margin.left;
         let clickedXAxis = (this.height + this.margin.top) <= event.relativePos.y;
 
-        let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
-        let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+        let dimX = this.graph.getCurrentXAxis();
+        let dimY = this.graph.getCurrentYAxis();
         let pos = this.positionInGraph(event.relativePos);
 
         if (clickedXAxis && clickedYAxis) {
@@ -205,8 +205,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     private handleTouchMove(event): void {
         if (this.activeFilter) {
             let pos = this.positionInGraph(event.relativePos);
-            let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
-            let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+            let dimX = this.graph.getCurrentXAxis();
+            let dimY = this.graph.getCurrentYAxis();
 
             if (this.filterCreationMode == 'x') {
                 if (this.graph.isFlipped) {
@@ -256,8 +256,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
         let pos = this.positionInGraph(event.relativePos);
         let clickedYAxis = event.relativePos.x <= this.margin.left;
         let clickedXAxis = (this.height + this.margin.top) <= event.relativePos.y;
-        let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
-        let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+        let dimX = this.graph.getCurrentXAxis();
+        let dimY = this.graph.getCurrentYAxis();
 
         if (dimX == null || dimY == null) {
             return;
@@ -309,8 +309,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
     }
 
     private toggleMetricFilter(position: [number, number], axis: 'x' | 'y') {
-        let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
-        let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+        let dimX = this.graph.getCurrentXAxis();
+        let dimY = this.graph.getCurrentYAxis();
         let pos = axis == 'x' ? position[0] : position[1];
         if (this.graph.isFlipped) {
             pos = axis == 'x' ? position[1] : position[0];
@@ -386,8 +386,8 @@ export class GraphDataSelectionComponent implements AfterViewInit, OnDestroy {
 
 
     private toggleCategoryFilter(position: [number, number], axis: 'x' | 'y') {
-        let dimX = this.graph.isFlipped ? this.graph.dimY : this.graph.dimX;
-        let dimY = this.graph.isFlipped ? this.graph.dimX : this.graph.dimY;
+        let dimX = this.graph.getCurrentXAxis();
+        let dimY = this.graph.getCurrentYAxis();
         let pos = axis == 'x' ? position[0] : position[1];
         if (this.graph.isFlipped) {
             pos = axis == 'x' ? position[1] : position[0];

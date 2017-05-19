@@ -129,11 +129,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
     }
 
     private getActiveDim(): ChartDimension {
-        if (this.graph.isFlipped) {
-            return this.axis === 'x' ? this.graph.dimY : this.graph.dimX;
-        } else {
-            return this.axis === 'x' ? this.graph.dimX : this.graph.dimY;
-        }
+        return this.axis === 'x' ? this.graph.getCurrentXAxis() : this.graph.getCurrentYAxis();
     }
 
     private getItemSize(): number {

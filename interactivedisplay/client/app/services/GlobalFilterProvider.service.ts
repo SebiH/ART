@@ -83,10 +83,10 @@ export class GlobalFilterProvider {
                     break;
 
                 case 'x':
-                    this.applyFilterByValue(filter, filter.origin.dimX, 'x');
+                    this.applyFilterByValue(filter, filter.origin.getActualXAxis(), 'x');
                 break;
                 case 'y':
-                    this.applyFilterByValue(filter, filter.origin.dimY, 'y');
+                    this.applyFilterByValue(filter, filter.origin.getActualYAxis(), 'y');
                 break;
             }
         }
@@ -139,13 +139,13 @@ export class GlobalFilterProvider {
         let remainingIndices: number[] = [];
 
         // small hack to initialize all datapoints
-        let sampleGraph = _.find(this.graphs, g => g.dimX != null || g.dimY != null);
+        let sampleGraph = _.find(this.graphs, g => g.getActualXAxis() != null || g.getActualYAxis() != null);
         if (sampleGraph == null) {
             return;
         }
 
         this.globalFilter = [];
-        let sampleDim = sampleGraph.dimX || sampleGraph.dimY;
+        let sampleDim = sampleGraph.getActualXAxis() || sampleGraph.getActualYAxis();
         for (let i = 0; i < sampleDim.data.length; i++) {
             this.globalFilter.push({
                 id: i,
@@ -181,7 +181,7 @@ export class GlobalFilterProvider {
             }
 
             if (graph.isColored && filters.length == 0) {
-                let dim = graph.dimY;
+                let dim = graph.getActualYAxis();
                 if (dim.isMetric) {
                     for (let f of this.globalFilter) {
                         let data = dim.data[f.id].value;

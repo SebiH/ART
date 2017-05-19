@@ -32,7 +32,7 @@
                         [width]="300"
                         [height]="settings.showMarkers ? 1250 : 1350"
                         [graph]="graph"
-                        [dim]="graph.isFlipped ? graph.dimY : graph.dimX">
+                        [dim]="graph.getCurrentDimX()">
                     </graph-overview-chart>
 
                     <div class="button chart-button"
