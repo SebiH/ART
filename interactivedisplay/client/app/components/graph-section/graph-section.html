@@ -18,7 +18,7 @@
         <div *ngIf="!settings.showOverviewChart"
              class="chart-container"
              [ngClass]="{ selected: graph.isSelected }"
-             style="min-width: 300px; height: 1250px;">
+             style="min-width: 300px; height: 1350px;">
             <graph-position-slider *ngIf="showOverview"></graph-position-slider>
             <graph-detail *ngIf="showDetail" [graph]="graph"></graph-detail>
         </div>
