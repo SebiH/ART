@@ -49,10 +49,11 @@ namespace Assets.Modules.Graphs
         {
             if (!_rndValues.ContainsKey(name))
             {
-                var rndValues = new float[NumData];
+                var rndValues = new Dimension.DimData[NumData];
                 for (var i = 0; i < rndValues.Length; i++)
                 {
-                    rndValues[i] = Random.Range(-0.5f, 0.5f);
+                    rndValues[i].Id = i;
+                    rndValues[i].Value = Random.Range(-0.5f, 0.5f);
                 }
 
                 var dimension = new MetricDimension

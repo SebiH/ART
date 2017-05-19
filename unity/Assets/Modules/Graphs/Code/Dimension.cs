@@ -5,7 +5,13 @@ namespace Assets.Modules.Graphs
 {
     public abstract class Dimension
     {
-        public float[] Data = null;
+        public struct DimData
+        {
+            public int Id;
+            public float Value;
+        }
+
+        public DimData[] Data = null;
         public float[] ScaledData = null;
         public string DisplayName = "";
 

@@ -63,12 +63,12 @@ namespace Assets.Modules.SurfaceGraphs
                 dimension = catDimension;
             }
 
-            var data = new float[response.data.Length];
-            foreach (var d in response.data)
+            var data = new Dimension.DimData[response.data.Length];
+            for (var i = 0; i < response.data.Length; i++)
             {
                 // assuming ids are 0 - data.length
-                var id = int.Parse(d.id);
-                data[id] = d.value;
+                data[i].Id = int.Parse(response.data[i].id);
+                data[i].Value = response.data[i].value;
             }
 
             dimension.Data = data;
