@@ -6,6 +6,7 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { SocketIO } from './SocketIO.service';
 import { Graph } from '../models/index';
 import { DataProvider } from './DataProvider.service';
+import { SettingsProvider, Settings } from './SettingsProvider.service';
 import * as _ from 'lodash';
 
 const COLOURS = [
@@ -28,17 +29,21 @@ export class GraphProvider {
     private graphDeletionObserver: Subject<Graph> = new Subject<Graph>();
     private graphColorChangeObserver: Subject<Graph> = new Subject<Graph>();
     private idCounter: number = 0;
+    private settings: Settings = new Settings();
 
     private delayedGraphUpdate: Function;
 
     constructor(
         private socketio: SocketIO,
         private http: Http,
-        private dataProvider: DataProvider) {
+        private dataProvider: DataProvider,
+        private settingsProvider: SettingsProvider) {
 
         this.init();
         this.socketio.on('renew-graphs', () => this.init());
         this.delayedGraphUpdate = _.debounce(this.updateGraph, 0);
+        this.settingsProvider.getCurrent()
+            .subscribe((s) => this.settings = s);
     }
 
     private init(): void {
@@ -119,6 +124,12 @@ export class GraphProvider {
         let graph = new Graph(this.idCounter++);
         graph.color = COLOURS[graph.id % COLOURS.length];
         graph.isNewlyCreated = true;
+
+        if (this.settings.lockDimension != '') {
+            this.dataProvider.getData(this.settings.lockDimension)
+                .first()
+                .subscribe(data => graph.dimX = data);
+        }
 
         this.attachListeners(graph);
         this.socketio.sendMessage('+graph', graph.toJson());
