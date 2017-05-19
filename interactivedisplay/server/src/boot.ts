@@ -189,7 +189,8 @@ sioServer.onMessageReceived({
 let clientSettings = {
     showMarkers: false,
     showOverviewChart: false,
-    showMarkerOverlay: false
+    showMarkerOverlay: false,
+    lockDimension: ''
 };
 
 webServer.addPath('/api/settings', (req, res, next) => {

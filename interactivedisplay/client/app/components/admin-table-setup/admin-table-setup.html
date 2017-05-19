@@ -91,3 +91,16 @@
         Generate graph mutations
     </button>
 </div>
+
+
+<hr/>
+
+<div class="buttons row">
+    <select class="six columns" #lockSelector>
+        <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
+    </select>
+
+    <button class="six columns toggle-button" (click)="lockGraphs(lockSelector.value)" [ngClass]="{ toggled: settings.lockDimension != '' }">
+        Lock Dimension
+    </button>
+</div>

@@ -8,6 +8,7 @@ export class Settings {
     showMarkers: boolean = true;
     showOverviewChart: boolean = true;
     showMarkerOverlay: boolean = false;
+    lockDimension: string = '';
 };
 
 @Injectable()

@@ -113,4 +113,13 @@ export class AdminTableSetupComponent implements OnInit, OnDestroy {
 
         setTimeout(() => this.socketio.sendMessage('renew-graphs', null), 1000);
     }
+
+    private lockGraphs(dim: string): void {
+        if (this.settings.lockDimension == dim) {
+            this.settings.lockDimension = '';
+        } else {
+            this.settings.lockDimension = dim;
+        }
+        this.settingsProvider.sync(this.settings);
+    }
 }
