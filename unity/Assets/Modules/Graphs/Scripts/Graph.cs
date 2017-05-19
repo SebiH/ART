@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Modules.Graphs
@@ -19,10 +21,26 @@ namespace Assets.Modules.Graphs
         // minor performance improvement
         private Vector2[] _dataCache = null;
 
+        private CategoricalDimension _sortedDimX;
         private Dimension _dimX;
         public Dimension DimX
         {
-            get { return _dimX; }
+            get
+            {
+                if (SortAxis && _dimX != null)
+                {
+                    if (_sortedDimX == null)
+                    {
+                        _sortedDimX = SortBy(_dimX, _dimY);
+                    }
+
+                    return _sortedDimX;
+                }
+                else
+                {
+                    return _dimX;
+                }
+            }
             set
             {
                 if (_dimX != value)
@@ -42,6 +60,23 @@ namespace Assets.Modules.Graphs
                 if (_dimY != value)
                 {
                     _dimY = value;
+                    TriggerDataChange();
+                }
+            }
+        }
+
+        private bool _sortAxis = false;
+        public bool SortAxis
+        {
+            get
+            {
+                return _sortAxis;
+            }
+            set
+            {
+                if (_sortAxis != value)
+                {
+                    _sortAxis = value;
                     TriggerDataChange();
                 }
             }
@@ -78,11 +113,11 @@ namespace Assets.Modules.Graphs
         {
             if (_dataCache == null)
             {
-                Debug.Assert(_dimX != null && _dimY != null, "Tried retrieving data from graph with null dimensions");
-                _dataCache = new Vector2[_dimX.Data.Length];
+                Debug.Assert(DimX != null && DimY != null, "Tried retrieving data from graph with null dimensions");
+                _dataCache = new Vector2[DimX.Data.Length];
                 for (var i = 0; i < _dataCache.Length; i++)
                 {
-                    _dataCache[i] = new Vector2(_dimX.ScaledData[i], _dimY.ScaledData[i]);
+                    _dataCache[i] = new Vector2(DimX.ScaledData[i], DimY.ScaledData[i]);
                 }
             }
 
@@ -97,6 +132,55 @@ namespace Assets.Modules.Graphs
             {
                 OnDataChange();
             }
+        }
+
+        private CategoricalDimension SortBy(Dimension dimX, Dimension dimY)
+        {
+            if (dimX == null || dimY == null)
+            {
+                return null;
+            }
+
+            var sortedDim = new CategoricalDimension();
+            sortedDim.DisplayName = dimX.DisplayName;
+            sortedDim.HideTicks = true;
+            sortedDim.Ticks = new Dimension.Mapping[0];
+            sortedDim.DomainMin = 0;
+            sortedDim.DomainMax = dimX.Data.Length;
+
+            
+            sortedDim.Data = dimX.Data.ToArray();
+            Array.Sort(sortedDim.Data, (d1, d2) => {
+                var d1v = dimY.Data[d1.Id].Value;
+                var d2v = dimY.Data[d2.Id].Value;
+
+                if (d1v < d2v) { return -1; }
+                if (d1v > d2v) { return 1; }
+                return 0;
+            });
+
+            sortedDim.Mappings = new List<Dimension.Mapping>();
+
+            for (var i = 0; i < dimX.Data.Length; i++)
+            {
+                sortedDim.Data[i].Value = i;
+                //sortedDim.Mappings.Add(new Dimension.Mapping
+                //{
+                //    Name = "",
+                //    Value = i
+                //});
+            }
+
+            Array.Sort(sortedDim.Data, (d1, d2) =>
+            {
+                if (d1.Id < d2.Id) { return -1; }
+                if (d1.Id > d2.Id) { return 1; }
+                return 0;
+            });
+
+            sortedDim.RebuildData();
+
+            return sortedDim;
         }
     }
 }

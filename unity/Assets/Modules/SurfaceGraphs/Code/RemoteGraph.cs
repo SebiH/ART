@@ -16,6 +16,7 @@ namespace Assets.Modules.SurfaceGraphs
         public bool isNewlyCreated = false;
         public bool isPickedUp = false;
         public bool isSelected = false;
+        public bool sortAxis = false;
 
         public float pos = 0;
         public float width = 0;

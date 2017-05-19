@@ -108,6 +108,7 @@ namespace Assets.Modules.SurfaceGraphs
             g.Graph.IsSelected = remoteGraph.isSelected;
             g.Graph.IsFlipped = remoteGraph.isFlipped;
             g.Graph.IsPickedUp = remoteGraph.isPickedUp;
+            g.Graph.SortAxis = remoteGraph.sortAxis;
 
             if (g.Graph.IsNewlyCreated && !remoteGraph.isNewlyCreated)
             {
