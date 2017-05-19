@@ -14,9 +14,7 @@ export class GraphDataProvider {
     private dataCache: { [id: string]: any } = {};
     private mapping: SqlColumnMapping[];
 
-    public constructor(useRandom?: boolean) {
-        let config = require('../sql.conf.json');
-
+    public constructor(config: any) {
         if (config.mode == "debug") {
             console.log('Using random data');
             let randomDataCount = 1000;

@@ -10,13 +10,15 @@ import { SqlConnection } from './sql-connection';
 const UNITY_PORT = 8835;
 const WEB_PORT = 81; // 80 might already be in use, thanks skype!
 
+let config = require('../sql.conf.json');
+
 let unityServer = new UnityServer();
 unityServer.start(UNITY_PORT);
 
 
 let webServer = new WebServer(WEB_PORT);
 
-let graphDataProvider = new GraphDataProvider();
+let graphDataProvider = new GraphDataProvider(config);
 webServer.addPath('/api/graph/data', (req, res, next) => {
     let params = req.body;
 
@@ -186,12 +188,9 @@ sioServer.onMessageReceived({
     }
 });
 
-let clientSettings = {
-    showMarkers: false,
-    showOverviewChart: false,
-    showMarkerOverlay: false,
-    lockDimension: ''
-};
+
+console.log("Using config: " + JSON.stringify(config.settings, null, '    '));
+let clientSettings = config.settings;
 
 webServer.addPath('/api/settings', (req, res, next) => {
     res.json(clientSettings);

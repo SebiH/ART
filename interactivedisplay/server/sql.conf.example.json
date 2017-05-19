@@ -14,5 +14,11 @@
         "options": {
             // see: http://csv.adaltas.com/parse/
         }
+    },
+    "settings": {
+        "showMarkers": false,
+        "showOverviewChart": false,
+        "showMarkerOverlay": false,
+        "lockDimension": ""
     }
 }
