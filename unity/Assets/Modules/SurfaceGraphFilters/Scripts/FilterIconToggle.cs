@@ -1,6 +1,7 @@
 using Assets.Modules.Core;
 using Assets.Modules.Core.Animations;
 using Assets.Modules.Graphs;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,7 @@ namespace Assets.Modules.SurfaceGraphFilters
 
             _rotationAnimation.Init(Quaternion.identity);
             _colorAnimation.Init(new Color32(255, 255, 255, 0));
+            StartCoroutine(RunUpdates());
         }
 
         private void OnDestroy()
@@ -33,7 +35,19 @@ namespace Assets.Modules.SurfaceGraphFilters
             _filterListener.OnFilterUpdate -= OnFilterUpdate;
         }
 
-        private void Update()
+        private IEnumerator RunUpdates()
+        {
+            yield return new WaitForEndOfFrame();
+
+            while (isActiveAndEnabled)
+            {
+                var children = GetComponentsInChildren<Image>();
+                ApplyChanges(children);
+                yield return new WaitForSeconds(0.2f);
+            }
+        }
+
+        private void ApplyChanges(Image[] children)
         {
             var targetRotation = _graph.IsFlipped ? Quaternion.Euler(0, 0, -90) : Quaternion.identity;
             if (_rotationAnimation.End != targetRotation)
@@ -51,7 +65,7 @@ namespace Assets.Modules.SurfaceGraphFilters
                 _colorAnimation.Restart(targetColor);
             }
 
-            foreach (var icon in GetComponentsInChildren<Image>())
+            foreach (var icon in children)
             {
                 icon.material.color = _colorAnimation.CurrentValue;
                 icon.enabled = _colorAnimation.CurrentValue.a > 0;

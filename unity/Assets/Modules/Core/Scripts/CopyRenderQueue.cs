@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -54,9 +55,21 @@ namespace Assets.Modules.Core
                 text.material = mat;
                 _targets.Add(mat);
             }
+
+            StartCoroutine(RunUpdates());
         }
 
-        private void Update()
+        private IEnumerator RunUpdates()
+        {
+            yield return new WaitForEndOfFrame();
+            while (isActiveAndEnabled)
+            {
+                ApplyRenderQueue();
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+
+        private void ApplyRenderQueue()
         {
             int renderQueue = 3500;
             if (Source)

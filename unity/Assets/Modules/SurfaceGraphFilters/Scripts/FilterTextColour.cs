@@ -18,8 +18,14 @@ namespace Assets.Modules.SurfaceGraphFilters.Scripts
         private void OnEnable()
         {
             _graph = UnityUtility.FindParent<Graph>(this);
-            _colorAnimation.Init(new Color32(255, 255, 255, 255));
             _label = GetComponent<GraphLabel>();
+            _colorAnimation.Init(new Color32(255, 255, 255, 255));
+            _colorAnimation.Finished += ApplyColor;
+        }
+
+        private void OnDisable()
+        {
+            _colorAnimation.Finished -= ApplyColor;
         }
 
         private void Update()
@@ -31,6 +37,14 @@ namespace Assets.Modules.SurfaceGraphFilters.Scripts
                 _colorAnimation.Restart(targetColor);
             }
 
+            if (_colorAnimation.IsRunning)
+            {
+                ApplyColor();
+            }
+        }
+
+        private void ApplyColor()
+        {
             _label.Front.material.color = _colorAnimation.CurrentValue;
             _label.Back.material.color = _colorAnimation.CurrentValue;
         }

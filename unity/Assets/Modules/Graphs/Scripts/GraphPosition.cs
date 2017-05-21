@@ -20,6 +20,7 @@ namespace Assets.Modules.Graphs
         private ValueAnimation _offsetAnimation = new ValueAnimation(Globals.NormalAnimationSpeed);
         private QuaternionAnimation _rotationAnimation = new QuaternionAnimation(Globals.NormalAnimationSpeed);
 
+        private bool _needsUpdate = false;
         // TODO - animate?
         public float Width { get; set; }
 
@@ -31,6 +32,7 @@ namespace Assets.Modules.Graphs
             {
                 if (value != _position)
                 {
+                    _needsUpdate = true;
                     _position = value;
                     _positionAnimation.Restart(value);
                 }
@@ -97,6 +99,16 @@ namespace Assets.Modules.Graphs
         private void OnEnable()
         {
             _graph = GetComponent<Graph>();
+            _rotationAnimation.Finished += MarkUpdate;
+            _heightAnimation.Finished += MarkUpdate;
+            _offsetAnimation.Finished += MarkUpdate;
+        }
+
+        private void OnDisable()
+        {
+            _rotationAnimation.Finished -= MarkUpdate;
+            _heightAnimation.Finished -= MarkUpdate;
+            _offsetAnimation.Finished -= MarkUpdate;
         }
 
         private void LateUpdate()
@@ -119,13 +131,34 @@ namespace Assets.Modules.Graphs
                 _rotationAnimation.Restart(targetRotation);
             }
 
+            if (_needsUpdate || _heightAnimation.IsRunning || _offsetAnimation.IsRunning || _rotationAnimation.IsRunning)
+            {
+                ApplyPosition();
+                ApplyRotation();
+                _needsUpdate = false;
+            }
+
+#if UNITY_EDITOR
+            transform.localScale = Vector3.one * Scale;
+#endif
+        }
+
+        private void MarkUpdate()
+        {
+            _needsUpdate = true;
+        }
+
+        private void ApplyPosition()
+        {
             var actualPosition = _position; //_positionAnimation.CurrentValue;
             var actualHeight = _heightAnimation.CurrentValue;
             var actualOffset = _offsetAnimation.CurrentValue;
-
             transform.localPosition = new Vector3(actualPosition, actualHeight, actualOffset);
+        }
+
+        private void ApplyRotation()
+        {
             transform.localRotation = _rotationAnimation.CurrentValue;
-            transform.localScale = Vector3.one * Scale;
         }
 
         public void Init(float pos, float height, float offset)
