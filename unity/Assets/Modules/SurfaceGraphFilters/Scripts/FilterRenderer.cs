@@ -214,7 +214,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             var options = new ConstraintOptions { Convex = false, ConformingDelaunay = false };
             var quality = new QualityOptions { };
             if (UseCategories)
-                quality = new QualityOptions { MaximumArea = 0.0001 };
+                quality = new QualityOptions { MaximumArea = 0.002 };
 
             var generatedMesh = polygon.Triangulate(options, quality);
 
