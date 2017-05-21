@@ -50,7 +50,7 @@ export class GraphProvider {
         while (this.graphs.length > 0) {
             this.graphs.pop();
         }
-        this.graphObserver.next(this.graphs);
+        // this.graphObserver.next(this.graphs);
 
         this.http.get('/api/graph/list')
             .subscribe(response => {
