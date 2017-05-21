@@ -155,7 +155,7 @@ namespace Assets.Modules.ParallelCoordinates
             else
             {
                 var data = _leftGraph.Graph.GetDataPosition();
-                if (_hasLeftData && _hasRightData)
+                if (_hasLeftData && _hasRightData && _lineRenderer.IsVisible)
                 {
                     _leftAnimation.Restart(data);
                 }
@@ -193,7 +193,7 @@ namespace Assets.Modules.ParallelCoordinates
             {
                 var data = _rightGraph.Graph.GetDataPosition();
 
-                if (_hasLeftData && _hasRightData)
+                if (_hasLeftData && _hasRightData && _lineRenderer.IsVisible)
                 {
                     _rightAnimation.Restart(data);
                 }

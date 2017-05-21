@@ -192,6 +192,8 @@ namespace Assets.Modules.ParallelCoordinates
             _mesh.colors32 = colors;
         }
 
+        public bool IsVisible { get { return _renderer.enabled; } }
+
         public void SetHidden(bool isHidden)
         {
             _renderer.enabled = !isHidden;
