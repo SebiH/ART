@@ -6,6 +6,7 @@ import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
 import { TitanicMapping } from './titanic-mappings';
 import { SqlColumnMapping } from './sql-mapping';
+import * as Colors from './colors';
 import * as _ from 'lodash';
 
 export class GraphDataProvider {
@@ -17,6 +18,7 @@ export class GraphDataProvider {
     public constructor(config: any) {
         if (config.mode == "debug") {
             console.log('Using random data');
+            this.mapping = SmartactMapping;
             let randomDataCount = 1000;
             let data: RawData[] = [];
             for (let i = 0; i < randomDataCount; i++) {
@@ -25,21 +27,34 @@ export class GraphDataProvider {
 
             for (let mapping of SmartactMapping) {
                 let dimension = mapping.name;
-                let minValue = (mapping.type === DataRepresentation.Categorical) ?
-                    +_.minBy(mapping.values, 'dbValue').dbValue :
-                    +mapping.minValue;
-                let maxValue = (mapping.type === DataRepresentation.Categorical) ?
-                    +_.maxBy(mapping.values, 'dbValue').dbValue :
-                    +mapping.maxValue;
 
-                for (let i = 0; i < randomDataCount; i++) {
-                    let val = Math.random() * (maxValue - minValue) + minValue;
-                    if (mapping.type === DataRepresentation.Categorical) {
-                        val = Math.round(val);
+                if (mapping.type == DataRepresentation.Categorical && mapping.autoGenerateValues) {
+                    for (let i = 0; i < randomDataCount; i++) {
+                        data[i].dimensions[dimension] = i;
+                        mapping.values.push({
+                            color: Colors.random(),
+                            dbValue: i,
+                            name: i + ''
+                        });
                     }
-                    data[i].dimensions[dimension] = val;
+                    this.dataCache[dimension] = this.convertData(dimension, data);
+                } else {
+                    let minValue = (mapping.type === DataRepresentation.Categorical) ?
+                        +_.minBy(mapping.values, 'dbValue').dbValue :
+                        +mapping.minValue;
+                    let maxValue = (mapping.type === DataRepresentation.Categorical) ?
+                        +_.maxBy(mapping.values, 'dbValue').dbValue :
+                        +mapping.maxValue;
+
+                    for (let i = 0; i < randomDataCount; i++) {
+                        let val = Math.random() * (maxValue - minValue) + minValue;
+                        if (mapping.type === DataRepresentation.Categorical) {
+                            val = Math.round(val);
+                        }
+                        data[i].dimensions[dimension] = val;
+                    }
+                    this.dataCache[dimension] = this.convertData(dimension, data);
                 }
-                this.dataCache[dimension] = this.convertData(dimension, data);
             }
         } else if (config.mode == "sql") {
             let sqlConnection = new SqlConnection(SmartactMapping);
@@ -64,8 +79,12 @@ export class GraphDataProvider {
     }
 
     public getDimensions(): any {
-        // workaround since Unity needs an object type for JSON conversion
-        return { dimensions: this.dataSource.getDimensions() };
+        if (this.dataSource) {
+            // workaround since Unity needs an object type for JSON conversion
+            return { dimensions: this.dataSource.getDimensions() };
+        } else {
+            return { dimensions: <string[]>_.map(this.mapping, 'name') };
+        }
     }
 
     public getData(dimension: string, onDataRetrieved: (data: any) => void): void {
@@ -84,7 +103,7 @@ export class GraphDataProvider {
     }
 
     private convertData(dimension: string, data: RawData[]): any {
-        let mapping = _.find(this.mapping, m => m.name === dimension);
+        let mapping = _.find(this.mapping, m => m.name == dimension);
 
         if (!mapping) {
             console.log('Unable to find mapping for ' + dimension);
