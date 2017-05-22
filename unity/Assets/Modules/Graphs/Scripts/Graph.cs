@@ -154,8 +154,8 @@ namespace Assets.Modules.Graphs
                 var d1v = dimY.Data[d1.Id].Value;
                 var d2v = dimY.Data[d2.Id].Value;
 
-                if (d1v < d2v) { return -1; }
-                if (d1v > d2v) { return 1; }
+                if (d1v > d2v) { return -1; }
+                if (d1v < d2v) { return 1; }
                 return 0;
             });
 
