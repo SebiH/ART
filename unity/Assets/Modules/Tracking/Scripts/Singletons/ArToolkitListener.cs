@@ -29,12 +29,7 @@ namespace Assets.Modules.Tracking
         private ArToolkitProcessor _artkProcessor;
         private JsonOutput _artkOutput;
 
-        private Queue _currentOutput;
-
-        public ArToolkitListener()
-        {
-            _currentOutput = Queue.Synchronized(new Queue());
-        }
+        private LockFreeQueue<ArToolkitOutput> _currentOutput = new LockFreeQueue<ArToolkitOutput>();
 
         protected override void OnEnable()
         {
@@ -70,13 +65,14 @@ namespace Assets.Modules.Tracking
 
         void Update()
         {
-            if (_currentOutput.Count > 0)
+            ArToolkitOutput output;
+            if (_currentOutput.Dequeue(out output))
             {
                 // only fetch latest output
-                ArToolkitOutput output = (ArToolkitOutput)_currentOutput.Dequeue();
-                while (_currentOutput.Count > 0)
+                var latestOutput = output;
+                while (_currentOutput.Dequeue(out latestOutput))
                 {
-                    output = (ArToolkitOutput)_currentOutput.Dequeue();
+                    output = latestOutput;
                 }
 
                 var pairs = new List<MarkerPair>();

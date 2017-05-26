@@ -18,14 +18,13 @@ namespace Assets.Modules.Surfaces
         private static int _expectedPacketSize = -1;
 
         private static UTF8Encoding _encoding = new UTF8Encoding();
-        private static Queue _queuedCommands;
+        private static LockFreeQueue<InPacket> _queuedCommands = new LockFreeQueue<InPacket>();
 
         public delegate void CommandReceivedHandler(string cmd, string payload);
         public static event CommandReceivedHandler OnCommandReceived;
 
         static RemoteSurfaceConnection()
         {
-            _queuedCommands = Queue.Synchronized(new Queue());
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             GameLoop.Instance.OnUpdate += Update;
@@ -62,18 +61,18 @@ namespace Assets.Modules.Surfaces
         {
             var surfaceManager = SurfaceManager.Instance;
 
-            while (_queuedCommands.Count > 0)
+            InPacket packet = new InPacket();
+            while (_queuedCommands.Dequeue(out packet))
             {
-                var cmd = _queuedCommands.Dequeue() as InPacket;
-                if (surfaceManager && surfaceManager.Has(cmd.origin))
+                if (surfaceManager && surfaceManager.Has(packet.origin))
                 {
-                    var surface = surfaceManager.Get(cmd.origin);
-                    surface.TriggerAction(cmd.command, cmd.payload);
+                    var surface = surfaceManager.Get(packet.origin);
+                    surface.TriggerAction(packet.command, packet.payload);
                 }
 
                 if (OnCommandReceived != null)
                 {
-                    OnCommandReceived(cmd.command, cmd.payload);
+                    OnCommandReceived(packet.command, packet.payload);
                 }
             }
         }

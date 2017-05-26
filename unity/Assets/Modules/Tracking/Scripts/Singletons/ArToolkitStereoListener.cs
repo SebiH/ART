@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using Assets.Modules.Vision;
 using Assets.Modules.Vision.Outputs;
 using Assets.Modules.Vision.Processors;
@@ -26,17 +27,12 @@ namespace Assets.Modules.Tracking
         private ArToolkitStereoProcessor _artkProcessor;
         private JsonOutput _artkOutput;
 
-        private Queue _currentOutput;
+        private LockFreeQueue<ArToolkitOutput> _currentOutput = new LockFreeQueue<ArToolkitOutput>();
 
         public float Offset = -0.02f;
 
         public float CurrentMatchError = 0;
         public float CurrentTransError = 0;
-
-        public ArToolkitStereoListener()
-        {
-            _currentOutput = Queue.Synchronized(new Queue());
-        }
 
         protected override void OnEnable()
         {
@@ -72,13 +68,14 @@ namespace Assets.Modules.Tracking
 
         void Update()
         {
-            if (_currentOutput.Count > 0)
+            ArToolkitOutput output;
+            if (_currentOutput.Dequeue(out output))
             {
                 // only fetch latest output
-                ArToolkitOutput output = (ArToolkitOutput)_currentOutput.Dequeue();
-                while (_currentOutput.Count > 0)
+                var latestOutput = output;
+                while (_currentOutput.Dequeue(out latestOutput))
                 {
-                    output = (ArToolkitOutput)_currentOutput.Dequeue();
+                    output = latestOutput;
                 }
 
                 CurrentTransError = float.MaxValue;
