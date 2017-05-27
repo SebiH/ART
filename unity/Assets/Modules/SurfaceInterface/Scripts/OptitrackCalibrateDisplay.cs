@@ -11,7 +11,6 @@ namespace Assets.Modules.Tracking
         // Set within editor
         public Corner CurrentCorner;
         public string CalibratorName = "CalibrationHelper";
-        public int CalibratorMarkerIndex = 4;
 
         public int MaxSamples = 100;
         public float MaxPoseLag = 0.1f;
@@ -81,7 +80,7 @@ namespace Assets.Modules.Tracking
                 }
 
                 var pos = _calibratorPose.Position;
-                var marker = _calibratorPose.Markers.FirstOrDefault((m) => m.Id == CalibratorMarkerIndex);
+                var marker = _calibratorPose.Markers.OrderBy((m) => m.Position.y).FirstOrDefault();
                 if (marker != null)
                 {
                     pos = marker.Position;
@@ -129,7 +128,7 @@ namespace Assets.Modules.Tracking
                 if (_calibratorPose != null)
                 {
                     var calibPosition = _calibratorPose.Position;
-                    var marker = _calibratorPose.Markers.FirstOrDefault((m) => m.Id == CalibratorMarkerIndex);
+                    var marker = _calibratorPose.Markers.OrderBy((m) => m.Position.y).FirstOrDefault();
                     if (marker != null)
                     {
                         calibPosition = marker.Position;
