@@ -28,7 +28,10 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
 
         this.settingsProvider.getCurrent()
             .takeWhile(() => this.isActive)
-            .subscribe((s) => this.settings = s);
+            .subscribe((s) => {
+                this.settings = s;
+                this.changeDetector.markForCheck();
+            });
     }
 
     ngOnDestroy() {
