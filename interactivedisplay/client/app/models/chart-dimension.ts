@@ -49,7 +49,7 @@ export class ChartDimension {
         }
 
         let sortedData = _.sortBy(this.data, (d) => {
-            return _.find(dim.data, (o) => o.id == d.id).value;
+            return -_.find(dim.data, (o) => o.id == d.id).value;
         });
 
         let oldMappings = this.mappings;
