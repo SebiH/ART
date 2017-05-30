@@ -1,3 +1,4 @@
+using Assets.Modules.ParallelCoordinates;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,6 +31,16 @@ namespace Assets.Modules.Graphs
             }
 
             SetPositions();
+        }
+
+        private void Start()
+        {
+            //var colors = new Color32[NumData];
+            //for (var i = 0; i < colors.Length; i++)
+            //{
+            //    colors[i] = Random.ColorHSV();
+            //}
+            //ParallelCoordinatesManager.Instance.SetColors(colors);
         }
 
         private void OnDisable()
@@ -77,8 +88,7 @@ namespace Assets.Modules.Graphs
             foreach (var g in _graphManager.GetAllGraphs())
             {
                 var pos = g.Graph.Id * SpaceBetweenGraphs;
-                g.Graph.transform.localPosition = new Vector3(pos, 0, 0);
-                g.Graph.transform.localRotation = Quaternion.Euler(0, 90, 0);
+                g.Layout.Init(pos, -0.5f, 0.5f);
                 g.Layout.Position = pos;
             }
         }

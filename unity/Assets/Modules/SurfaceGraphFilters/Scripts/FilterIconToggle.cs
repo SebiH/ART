@@ -20,10 +20,13 @@ namespace Assets.Modules.SurfaceGraphFilters
         private void Start()
         {
             _graph = UnityUtility.FindParent<Graph>(this);
-            _filterListener = UnityUtility.FindParent<GraphFilterListener>(this);
-            _filterListener.OnFilterUpdate += OnFilterUpdate;
 
-            OnFilterUpdate();
+            _filterListener = UnityUtility.FindParent<GraphFilterListener>(this);
+            if (_filterListener)
+            {
+                _filterListener.OnFilterUpdate += OnFilterUpdate;
+                OnFilterUpdate();
+            }
 
             _rotationAnimation.Init(Quaternion.identity);
             _colorAnimation.Init(new Color32(255, 255, 255, 0));
@@ -32,7 +35,10 @@ namespace Assets.Modules.SurfaceGraphFilters
 
         private void OnDestroy()
         {
-            _filterListener.OnFilterUpdate -= OnFilterUpdate;
+            if (_filterListener)
+            {
+                _filterListener.OnFilterUpdate -= OnFilterUpdate;
+            }
         }
 
         private IEnumerator RunUpdates()
