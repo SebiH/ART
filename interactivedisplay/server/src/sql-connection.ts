@@ -54,6 +54,7 @@ export class SqlConnection implements DataSource {
     private status: Status = new Status();
 
     private sqlQuery: string = "";
+    private table: string = "";
 
     private sqlData: ReplaySubject<RawData[]> = new ReplaySubject<RawData[]>(1);
     private idCounter: number = 0;
@@ -62,6 +63,13 @@ export class SqlConnection implements DataSource {
     public constructor(private mapping: SqlColumnMapping[]) {}
 
     public connect(config: any) {
+        if (!config.table) {
+            throw "No table found in config";
+        } else {
+            this.table = config.table;
+            console.log("Using table " + config.table);
+        }
+
         if (this.status.isConnected()) {
             console.error('Cannot connect to sql server: Already connected');
             return;
@@ -182,7 +190,7 @@ export class SqlConnection implements DataSource {
             }
         }
 
-        requestSql += ' FROM ImmersiveDataset ';
+        requestSql += ' FROM ' + this.table + ' ';
 
         // for (let i = 0; i < filters.length; i++) {
         //     requestSql += (i == 0) ? ' WHERE ' : ' AND ';
