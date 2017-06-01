@@ -21,5 +21,15 @@
         "showOverviewChart": false,
         "showMarkerOverlay": false,
         "lockDimension": ""
-    }
+    },
+    "graphs": [
+        {
+            "dimX": "...",
+            "dimY": "...",
+            "isColored": false, // optional
+            "isSelected": false, // optional
+            "isFlipped": false, // optional
+            "sortAxis": false, // optional
+        }
+    ]
 }

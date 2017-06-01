@@ -6,6 +6,7 @@ import { SocketIOMessageListener } from './socketio-message-listener';
 import { GraphDataProvider } from './graph-data-provider';
 import { ObjectStorage } from './object-storage';
 import { SqlConnection } from './sql-connection';
+import * as Colors from './colors';
 
 const UNITY_PORT = 8835;
 const WEB_PORT = 81; // 80 might already be in use, thanks skype!
@@ -64,6 +65,28 @@ unityServer.onMessageReceived({
 
 let graphStorage = new ObjectStorage();
 let selectedDataIndices = null;
+
+if (config.graphs) {
+    let idCounter = 0;
+
+    console.log('Starting with ' + config.graphs.length + ' initial graphs');
+
+    for (let graph of config.graphs) {
+        graphStorage.set({
+            id: idCounter,
+            dimX: graph.dimX || '',
+            dimY: graph.dimY || '',
+            color: Colors.random(),
+            isColored: !!graph.isColored,
+            isSelected: !!graph.isSelected,
+            isFlipped: !!graph.isFlipped,
+            sortAxis: !!graph.sortAxis,
+            pos: idCounter
+        });
+
+        idCounter++;
+    }
+}
 
 webServer.addPath('/api/graph/list', (req, res, next) => {
     res.json({
