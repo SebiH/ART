@@ -7,6 +7,8 @@ namespace Assets.Modules.ParallelCoordinates
     public class LineSelector : MonoBehaviour
     {
         private ParallelCoordinatesVisualisation _activeVisualisation;
+        private Color32[] _colors;
+        private int _prevNearestLine = -1;
 
         private void OnTriggerEnter(Collider other)
         {
@@ -25,9 +27,50 @@ namespace Assets.Modules.ParallelCoordinates
                 {
                     var nearestLine = GetNearestLine(leftGraph, rightGraph);
 
-                    if (nearestLine >= 0)
+                    if (_colors == null && leftGraph.Graph.DimX.Data != null)
                     {
-                        // TODO
+                        _colors = new Color32[leftGraph.Graph.DimX.Data.Length];
+                    }
+
+                    if (nearestLine != _prevNearestLine)
+                    {
+                        if (_prevNearestLine >= 0)
+                        {
+                            _colors[_prevNearestLine] = new Color32(255, 255, 255, 255);
+                        }
+
+                        if (nearestLine >= 0)
+                        {
+                            if (_prevNearestLine < 0)
+                            {
+                                for (var i = 0; i < _colors.Length; i++)
+                                {
+                                    _colors[i].a = 60;
+                                }
+                            }
+                            else
+                            {
+                                _colors[_prevNearestLine].a = 60;
+                                _colors[_prevNearestLine].r = 255;
+                                _colors[_prevNearestLine].g = 255;
+                                _colors[_prevNearestLine].b = 255;
+                            }
+
+                            _colors[nearestLine].a = 255;
+                            _colors[nearestLine].r = 255;
+                            _colors[nearestLine].g = 0;
+                            _colors[nearestLine].b = 0;
+                        }
+                        else
+                        {
+                            for (var i = 0; i < _colors.Length; i++)
+                            {
+                                _colors[i] = new Color32(255, 255, 255, 255);
+                            }
+                        }
+                        ParallelCoordinatesManager.Instance.SetColors(_colors);
+
+                        _prevNearestLine = nearestLine;
                     }
                 }
             }
