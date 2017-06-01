@@ -15,6 +15,8 @@ namespace Assets.Modules.Tracking
         public bool TrackPosition = true;
         public bool TrackOrientation = true;
 
+        public int TrackMarker = -1;
+
         public bool DrawMarkers;
         private bool _prevDrawMarkers;
         private List<GameObject> _createdMarkerObjs = new List<GameObject>();
@@ -41,7 +43,14 @@ namespace Assets.Modules.Tracking
 
                 if (TrackPosition)
                 {
-                    transform.position = pose.Position;
+                    if (TrackMarker < 0)
+                    {
+                        transform.position = pose.Position;
+                    }
+                    else if (pose.Markers.Count < TrackMarker)
+                    {
+                        transform.position = pose.Markers[TrackMarker].Position;
+                    }
                 }
 
                 if (TrackOrientation)
