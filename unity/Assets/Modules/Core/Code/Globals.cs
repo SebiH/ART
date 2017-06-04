@@ -25,7 +25,7 @@ namespace Assets.Modules.Core
         public static readonly string DefaultSurfaceName = "Surface";
 
         // View distance after which lines/points are disabled for performance gains
-        public static readonly float DataViewDistance = 3f;
+        public static readonly float DataViewDistance = 3000f;
 
         // for selection, etc.
         public const float NormalAnimationSpeed = 0.5f;
