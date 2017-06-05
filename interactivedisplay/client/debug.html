@@ -1,0 +1,37 @@
+<html>
+<head>
+    <title>Interactive Display</title>
+    <base href="/debug.html">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />
+
+    <!-- Polyfills -->
+    <script src="node_modules/core-js/client/shim.min.js"></script>
+    <script src="node_modules/zone.js/dist/zone.js"></script>
+    <script src="node_modules/reflect-metadata/Reflect.js"></script>
+    <script src="node_modules/systemjs/dist/system.src.js"></script>
+
+    <!-- Libraries without proper Typescript support -->
+    <script src="node_modules/textures/textures.js"></script>
+
+    <!-- Configure SystemJS -->
+    <script src="systemjs.config.js"></script>
+    <script>
+        System.import('app').catch(function(err){ console.error(err); });
+    </script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" type="text/css" href="./node_modules/skeleton-css/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="./node_modules/skeleton-css/css/skeleton.css">
+    <link rel="stylesheet" type="text/css" href="./node_modules/font-awesome/css/font-awesome.min.css">
+
+    <!-- Separate stylesheet because angular css files & svg don't mix well -->
+    <link rel="stylesheet" type="text/css" href="./chart.css">
+</head>
+
+<body>
+    <main-app></main-app>
+</body>
+
+</html>
