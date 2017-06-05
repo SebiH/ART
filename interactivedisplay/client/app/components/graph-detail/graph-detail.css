@@ -30,6 +30,7 @@
     font-size: 30px;
 }
 
+.dimbutton.active,
 .colbutton.active {
     background: #8BC34A;
 }
@@ -40,6 +41,24 @@
     height: 120px;
     margin-left: 20px;
     margin-right: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background 0.2s linear;
+    text-transform: uppercase;
+}
+
+.dimbuttons {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.dimbutton {
+    border: 1px solid black;
+    width: 140px;
+    height: 60px;
 
     display: flex;
     align-items: center;
