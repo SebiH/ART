@@ -1,8 +1,10 @@
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
-import { DataProvider } from '../../services/index';
+import { DataProvider, Dimension } from '../../services/index';
 import { Graph, ChartDimension } from '../../models/index';
+
+import * as _ from 'lodash';
 
 const BORDER_SIZE = 30;
 const VERTICAL_ITEM_SIZE = 240;
@@ -19,7 +21,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
     @Input() graph: Graph;
     @Input() size: number = 1000;
 
-    private dimensions: string[] = [];
+    private dimensions: Dimension[] = [];
     private offset: number = 0;
     private maxOffset: number = 0;
     private hasTouchDown: boolean = false;
@@ -89,7 +91,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
         let dim = graphDim ? graphDim.name : '';
         let itemSize = this.getItemSize();
         if (graphDim && this.dimensions) {
-            this.offset = this.dimensions.indexOf(dim) * itemSize - this.size / 2 + BORDER_SIZE * 2;
+            this.offset = _.findIndex(this.dimensions, { name: dim }) * itemSize - this.size / 2 + BORDER_SIZE * 2;
             this.updateOffset();
         }
     }

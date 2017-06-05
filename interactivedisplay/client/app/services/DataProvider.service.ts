@@ -7,20 +7,43 @@ import { ChartDimension } from '../models/index';
 
 import * as _ from 'lodash';
 
+export interface Dimension {
+    name: string;
+    phase: string;
+};
+
 @Injectable()
 export class DataProvider {
 
     private dataCount: ReplaySubject<number> = new ReplaySubject<number>(1);
-    private dimensions: ReplaySubject<string[]> = new ReplaySubject<string[]>(1);
+    private dimensions: ReplaySubject<Dimension[]> = new ReplaySubject<Dimension[]>(1);
     private data: { [id: string]: ReplaySubject<ChartDimension> } = {}
 
     constructor(private http: Http) {
         this.http.get('/api/graph/dimensions')
-            .subscribe(res => this.dimensions.next(<string[]>res.json().dimensions));
+            .subscribe(res => this.dimensions.next(<Dimension[]>res.json().dimensions));
     }
 
-    public getDimensions(): Observable<string[]> {
+    public getDimensions(): Observable<Dimension[]> {
         return this.dimensions.first();
+    }
+
+    public getPhases(): Observable<string[]> {
+        return this.dimensions
+            .first()
+            .map(dims => _.map(_.uniqBy(dims, 'phase'), 'phase'));
+    }
+
+    public getDimensionNamesByPhase(phase: string): Observable<string[]> {
+        return this.dimensions
+            .first()
+            .map(dims => _.map(_.uniqBy(_.filter(dims, { phase: phase }), 'name'), 'name'));
+    }
+
+    public getDimensionNames(): Observable<string[]> {
+        return this.dimensions
+            .first()
+            .map(dims => _.map(_.uniqBy(dims, 'name'), 'name'));
     }
 
     public getData(dim: string): ReplaySubject<ChartDimension> {

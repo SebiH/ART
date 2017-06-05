@@ -36,7 +36,7 @@ export class ServiceLoader {
                 let dimCounter = 0;
 
                 for (let dim of dims) {
-                    dataProvider.getData(dim)
+                    dataProvider.getData(dim.name)
                         .first()
                         .subscribe(() => {
                             dimCounter++;
