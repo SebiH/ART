@@ -22,6 +22,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
     @Input() size: number = 1000;
 
     private dimensions: Dimension[] = [];
+    private activeDimensions: Dimension[] = [];
     private offset: number = 0;
     private maxOffset: number = 0;
     private hasTouchDown: boolean = false;
@@ -48,18 +49,17 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
             .first()
             .subscribe((dims) => {
                 this.dimensions = dims;
-                let itemSize = this.getItemSize();
+                this.init();
+            });
 
-                if (this.axis === 'x') {
-                    this.maxOffset = dims.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
-                } else {
-                    this.maxOffset = dims.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
-                }
-
-                this.scrollToCurrent();
+        this.graph.onUpdate
+            .takeWhile(() => this.isActive)
+            .filter(changes => changes.indexOf('phase') >= 0)
+            .subscribe(() => {
+                this.init();
+                this.offset = 0;
+                this.updateOffset();
                 this.changeDetector.markForCheck();
-                // needs to update twice for some reason
-                setTimeout(() => this.changeDetector.markForCheck());
             });
 
         this.graph.onUpdate
@@ -86,12 +86,28 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
         this.isActive = false;
     }
 
+    private init() {
+        this.activeDimensions = _.filter(this.dimensions, { phase: this.graph.phase });
+        let itemSize = this.getItemSize();
+
+        if (this.axis === 'x') {
+            this.maxOffset = this.activeDimensions.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
+        } else {
+            this.maxOffset = this.activeDimensions.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
+        }
+
+        this.scrollToCurrent();
+        this.changeDetector.markForCheck();
+        // needs to update twice for some reason
+        setTimeout(() => this.changeDetector.markForCheck());
+    }
+
     private scrollToCurrent(): void {
         let graphDim = this.getActiveDim();
         let dim = graphDim ? graphDim.name : '';
         let itemSize = this.getItemSize();
-        if (graphDim && this.dimensions) {
-            this.offset = _.findIndex(this.dimensions, { name: dim }) * itemSize - this.size / 2 + BORDER_SIZE * 2;
+        if (graphDim && this.activeDimensions) {
+            this.offset = _.findIndex(this.activeDimensions, { name: dim }) * itemSize - this.size / 2 + BORDER_SIZE * 2;
             this.updateOffset();
         }
     }
