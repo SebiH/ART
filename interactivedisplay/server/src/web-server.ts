@@ -28,7 +28,11 @@ export class WebServer {
     public start(): void {
         // add default route for 404s
         this.app.use((req, res, next) => {
-            res.sendFile(path.join(__dirname, '../../client/index.html'));
+            if (req.url.includes('debug.html')) {
+                res.sendFile(path.join(__dirname, '../../client/debug.html'));
+            } else {
+                res.sendFile(path.join(__dirname, '../../client/index.html'));
+            }
         });
 
         // lock server so no more route changes are allowed etc
