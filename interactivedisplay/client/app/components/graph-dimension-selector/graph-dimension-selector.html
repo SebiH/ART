@@ -15,13 +15,13 @@
             (moveStart)="onDragBegin($event)"
             (moveUpdate)="onDragUpdate($event)"
             (moveEnd)="onDragEnd($event)">
-            <div *ngFor="let dim of dimensions">
+            <div *ngFor="let dim of activeDimensions">
                 <div class="item"
-                    [ngClass]="{ selected: getActiveDim()?.name === dim }"
+                    [ngClass]="{ selected: getActiveDim()?.name === dim.name }"
                     touch-button
-                    (touchclick)="setDimension(dim)">
+                    (touchclick)="setDimension(dim.name)">
 
-                    {{ dim }}
+                    {{ dim.name }}
                 </div>
             </div>
         </div>

@@ -31,6 +31,15 @@
                     <span class="fa fa-paint-brush"></span> Color
                 </span>
             </div>
+            <div *ngIf="!settings.showMarker && phases.length > 1" class="dimbuttons">
+                <div class="dimbutton" *ngFor="let phase of phases"
+                     [ngClass]="{ active: graph.phase == phase }"
+                     touch-button (touchclick)="setPhase(phase)">
+                    <span>
+                        {{ phase }}
+                    </span>
+                </div>
+            </div>
         </div>
 
 

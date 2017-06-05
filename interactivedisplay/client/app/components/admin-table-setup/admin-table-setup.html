@@ -84,7 +84,7 @@
 
 <div class="buttons row">
     <select class="six columns" #dimSelector>
-        <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
+        <option *ngFor="let dim of dimensions" [value]="dim.name">{{dim.name}}</option>
     </select>
 
     <button class="button-primary six columns" (click)="generateGraphs(dimSelector.value)">
@@ -97,7 +97,7 @@
 
 <div class="buttons row">
     <select class="six columns" #lockSelector>
-        <option *ngFor="let dim of dimensions" [value]="dim">{{dim}}</option>
+        <option *ngFor="let dim of dimensions" [value]="dim.name">{{dim.name}}</option>
     </select>
 
     <button class="six columns toggle-button" (click)="lockGraphs(lockSelector.value)" [ngClass]="{ toggled: settings.lockDimension != '' }">

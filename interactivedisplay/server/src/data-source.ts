@@ -2,6 +2,6 @@ import { Observable } from 'rxjs';
 import { RawData } from './raw-data';
 
 export interface DataSource {
-    getDimensions(): string[];
+    getDimensions(): { name: string, phase: string }[];
     getData(): Observable<RawData[]>;
 }

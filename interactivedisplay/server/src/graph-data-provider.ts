@@ -78,12 +78,20 @@ export class GraphDataProvider {
         return this.dataSource;
     }
 
-    public getDimensions(): any {
+    public getDimensions(): {dimensions: {name: string, phase: string}[]} {
         if (this.dataSource) {
             // workaround since Unity needs an object type for JSON conversion
             return { dimensions: this.dataSource.getDimensions() };
         } else {
-            return { dimensions: <string[]>_.map(this.mapping, 'name') };
+            let dimensions: {name: string, phase: string}[] = [];
+            for (let map of this.mapping) {
+                dimensions.push({
+                    name: map.name,
+                    phase: map.phase
+                });
+            }
+
+            return {dimensions: dimensions};
         }
     }
 

@@ -33,7 +33,7 @@ export class AdminTableSetupComponent implements OnInit, OnDestroy {
         this.settingsProvider.getCurrent()
             .takeWhile(() => this.isActive)
             .subscribe((s) => this.settings = s);
-        this.dataProvider.getDimensions()
+        this.dataProvider.getDimensionNames()
             .first()
             .subscribe((dims) => this.dimensions = dims);
     }

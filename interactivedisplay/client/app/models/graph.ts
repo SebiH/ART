@@ -47,6 +47,22 @@ export class Graph {
     }
 
     /*
+     *    phase
+     */
+    private _phase: string = null;
+    public get phase() : string {
+        return this._phase;
+    }
+    public set phase(v : string) {
+        if (this._phase != v) {
+            this.dimY = null;
+            this.dimX = null;
+            this._phase = v;
+            this.propagateUpdates(['phase']);
+        }
+    }
+
+    /*
      *    color
      */
     private _color : string = "#FFFFFF";
@@ -260,6 +276,7 @@ export class Graph {
 
             dimX: (this.dimX ? this.dimX.name : ''),
             dimY: (this.dimY ? this.dimY.name : ''),
+            phase: this.phase,
             color: this.color,
             isColored: this.isColored,
             isFlipped: this.isFlipped,
@@ -290,6 +307,7 @@ export class Graph {
                 .subscribe(data => graph.dimY = data);
         }
 
+        graph._phase = jGraph.phase;
         graph._color = jGraph.color;
         graph._isColored = jGraph.isColored;
         graph._isSelected = jGraph.isSelected;

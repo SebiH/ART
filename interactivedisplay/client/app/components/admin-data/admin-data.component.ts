@@ -26,7 +26,7 @@ export class AdminDataComponent implements OnInit, OnDestroy {
         private changeDetector: ChangeDetectorRef) { }
 
     ngOnInit() {
-        this.dataProvider.getDimensions()
+        this.dataProvider.getDimensionNames()
             .first()
             .subscribe((dims) => {
                 for (let dim of dims) {
