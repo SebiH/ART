@@ -35,12 +35,30 @@ export class ChartDimension {
         }
     }
 
+    private minValCache: number;
+    public getActualMinValue(): number {
+        if (this.minValCache === undefined) {
+            this.minValCache = _.minBy(this.data, 'value').value;
+        }
+
+        return this.minValCache;
+    }
+
     public getMaxValue(): number {
         if (this.isMetric) {
             return this.domain.max + 0.0001;
         } else {
             return this.domain.max + 1;
         }
+    }
+
+    private maxValCache: number;
+    public getActualMaxValue(): number {
+        if (this.maxValCache === undefined) {
+            this.maxValCache = _.maxBy(this.data, 'value').value;
+        }
+
+        return this.maxValCache;
     }
 
     public sortBy(dim: ChartDimension) {

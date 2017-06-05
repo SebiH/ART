@@ -185,7 +185,7 @@ export class GlobalFilterProvider {
                 if (dim.isMetric) {
                     for (let f of this.globalFilter) {
                         let data = dim.data[f.id].value;
-                        let relData = (data - dim.getMinValue()) / Math.abs(dim.getMaxValue() - dim.getMinValue());
+                        let relData = (data - dim.getActualMinValue()) / Math.abs(dim.getActualMaxValue() - dim.getActualMinValue());
                         relData = _.clamp(relData, 0, 1);
                         f.color = Utils.getGradientColor(dim.gradient, relData);
                     }
