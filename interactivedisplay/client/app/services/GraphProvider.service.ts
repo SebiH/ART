@@ -5,7 +5,7 @@ import { Subject } from 'rxjs/Subject';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { SocketIO } from './SocketIO.service';
 import { Graph } from '../models/index';
-import { DataProvider } from './DataProvider.service';
+import { DataProvider, Dimension } from './DataProvider.service';
 import { SettingsProvider, Settings } from './SettingsProvider.service';
 import * as _ from 'lodash';
 
@@ -30,6 +30,7 @@ export class GraphProvider {
     private graphColorChangeObserver: Subject<Graph> = new Subject<Graph>();
     private idCounter: number = 0;
     private settings: Settings = new Settings();
+    private dimensions: Dimension[] = [];
 
     private delayedGraphUpdate: Function;
 
@@ -42,6 +43,9 @@ export class GraphProvider {
         this.init();
         this.socketio.on('renew-graphs', () => this.init());
         this.delayedGraphUpdate = _.debounce(this.updateGraph, 0);
+        this.dataProvider.getDimensions()
+            .first()
+            .subscribe(dims => this.dimensions = dims);
         this.settingsProvider.getCurrent()
             .subscribe((s) => this.settings = s);
     }
@@ -124,6 +128,7 @@ export class GraphProvider {
         let graph = new Graph(this.idCounter++);
         graph.color = COLOURS[graph.id % COLOURS.length];
         graph.isNewlyCreated = true;
+        graph.phase = this.dimensions[0].phase;
 
         if (this.settings.lockDimension != '') {
             this.dataProvider.getData(this.settings.lockDimension)
