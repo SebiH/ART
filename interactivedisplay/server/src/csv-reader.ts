@@ -20,8 +20,16 @@ export class CsvReader implements DataSource {
         console.log('Using CSV data from ' + config.filename);
     }
 
-    public getDimensions(): string[] {
-        return <string[]> _.map(this.mapping, 'name');
+    public getDimensions(): {name:string, phase:string}[] {
+        let dimensions: {name: string, phase: string}[] = [];
+        for (let map of this.mapping) {
+            dimensions.push({
+                name: map.name,
+                phase: map.phase
+            });
+        }
+
+        return dimensions;
     }
 
     public getData(): Observable<RawData[]> {
