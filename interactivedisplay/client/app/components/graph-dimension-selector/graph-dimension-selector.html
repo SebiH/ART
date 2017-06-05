@@ -19,7 +19,7 @@
                 <div class="item"
                     [ngClass]="{ selected: getActiveDim()?.name === dim.name }"
                     touch-button
-                    (touchclick)="setDimension(dim)">
+                    (touchclick)="setDimension(dim.name)">
 
                     {{ dim.name }}
                 </div>
