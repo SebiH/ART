@@ -1,8 +1,14 @@
 <div class="root">
 
     <div class="row" style="z-index: 99;">
-        <div class="selection" *ngIf="!graph.isFlipped || settings.lockDimension == ''">
-            <graph-dimension-selector [axis]="'y'" [graph]="graph" [size]="950"></graph-dimension-selector>
+
+        <div style="width: 294px; height: 1150px;">
+            <div class="selection" *ngIf="!graph.isFlipped || settings.lockDimension == ''">
+                <graph-dimension-selector [axis]="'y'" [graph]="graph" [size]="950"></graph-dimension-selector>
+            </div>
+
+            <div class="selection" *ngIf="graph.isFlipped && settings.lockDimension != ''">
+            </div>
         </div>
 
         <div class="chart">
@@ -27,8 +33,13 @@
             </div>
         </div>
 
-        <div class="selection" *ngIf="graph.isFlipped || settings.lockDimension == ''">
-            <graph-dimension-selector [axis]="'x'" [graph]="graph" [size]="950"></graph-dimension-selector>
+
+        <div style="width: 1100px; height: 184px;">
+            <div class="selection" *ngIf="graph.isFlipped || settings.lockDimension == ''">
+                <graph-dimension-selector [axis]="'x'" [graph]="graph" [size]="950"></graph-dimension-selector>
+            </div>
+            <div class="selection" *ngIf="!graph.isFlipped && settings.lockDimension !== ''">
+            </div>
         </div>
     </div>
 </div>
