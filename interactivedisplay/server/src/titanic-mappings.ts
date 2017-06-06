@@ -7,7 +7,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'Survived',
         name: 'Survival Status',
-        phase: '',
+        phases: [''],
         type: DataRepresentation.Categorical,
         converter: numberConverter,
         values: [
@@ -26,7 +26,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'Pclass',
         name: 'Ticket Class',
-        phase: '',
+        phases: [''],
         type: DataRepresentation.Categorical,
         converter: numberConverter,
         values: [
@@ -50,7 +50,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'Sex',
         name: 'Sex',
-        phase: '',
+        phases: [''],
         type: DataRepresentation.Categorical,
         converter: (d: any) => {
             if (d == 'female') { return 0; }
@@ -73,7 +73,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'Age',
         name: 'Age',
-        phase: '',
+        phases: [''],
         type: DataRepresentation.Metric,
         isTimeBased: false,
         converter: numberConverter,
@@ -109,7 +109,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'SibSp',
         name: '# of Siblings / Spouses aboard',
-        phase: '',
+        phases: [''],
         type: DataRepresentation.Metric,
         isTimeBased: false,
         converter: numberConverter,
@@ -141,7 +141,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'Parch',
         name: '# of Parents / Children aboard',
-        phase: '',
+        phases: [''],
         type: DataRepresentation.Metric,
         isTimeBased: false,
         converter: numberConverter,
@@ -174,7 +174,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'Fare',
         name: 'Passenger Fare',
-        phase: '',
+        phases: [''],
         type: DataRepresentation.Metric,
         isTimeBased: false,
         converter: numberConverter,
@@ -208,7 +208,7 @@ export const TitanicMapping: SqlColumnMapping[] = [
     {
         dbColumn: 'Embarked',
         name: 'Port of Embarkation',
-        phase: '',
+        phases: [''],
         type: DataRepresentation.Categorical,
         converter: (d: any) => {
             switch (d) {
