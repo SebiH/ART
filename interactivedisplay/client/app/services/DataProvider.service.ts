@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 
 export interface Dimension {
     name: string;
+    displayName: string;
     phases: string[];
 };
 
