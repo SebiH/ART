@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 
 export interface Dimension {
     name: string;
-    phase: string;
+    phases: string[];
 };
 
 @Injectable()
@@ -31,13 +31,24 @@ export class DataProvider {
     public getPhases(): Observable<string[]> {
         return this.dimensions
             .first()
-            .map(dims => _.map(_.uniqBy(dims, 'phase'), 'phase'));
+            .map(dims => {
+                let phases: string[] = [];
+                for (let dim of dims) {
+                    for (let phase of dim.phases) {
+                        if (phases.indexOf(phase) < 0) {
+                            phases.push(phase);
+                        }
+                    }
+                }
+
+                return phases;
+            });
     }
 
     public getDimensionNamesByPhase(phase: string): Observable<string[]> {
         return this.dimensions
             .first()
-            .map(dims => _.map(_.uniqBy(_.filter(dims, { phase: phase }), 'name'), 'name'));
+            .map(dims => _.map(_.uniqBy(_.filter(dims, (d) => d.phases.indexOf(phase) >= 0), 'name'), 'name'));
     }
 
     public getDimensionNames(): Observable<string[]> {

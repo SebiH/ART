@@ -20,12 +20,12 @@ export class CsvReader implements DataSource {
         console.log('Using CSV data from ' + config.filename);
     }
 
-    public getDimensions(): {name:string, phase:string}[] {
-        let dimensions: {name: string, phase: string}[] = [];
+    public getDimensions(): {name:string, phases:string[]}[] {
+        let dimensions: {name: string, phases: string[]}[] = [];
         for (let map of this.mapping) {
             dimensions.push({
                 name: map.name,
-                phase: map.phase
+                phases: map.phases
             });
         }
 

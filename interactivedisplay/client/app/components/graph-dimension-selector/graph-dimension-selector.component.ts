@@ -87,7 +87,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
     }
 
     private init() {
-        this.activeDimensions = _.filter(this.dimensions, { phase: this.graph.phase });
+        this.activeDimensions = _.filter(this.dimensions, (dim) => dim.phases.indexOf(this.graph.phase) >= 0);
         let itemSize = this.getItemSize();
 
         if (this.axis === 'x') {

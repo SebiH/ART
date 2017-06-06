@@ -128,7 +128,7 @@ export class GraphProvider {
         let graph = new Graph(this.idCounter++);
         graph.color = COLOURS[graph.id % COLOURS.length];
         graph.isNewlyCreated = true;
-        graph.phase = this.dimensions[0].phase;
+        graph.phase = this.dimensions[0].phases[0];
 
         if (this.settings.lockDimension != '') {
             this.dataProvider.getData(this.settings.lockDimension)

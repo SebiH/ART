@@ -4,6 +4,7 @@ import { SqlConnection } from './sql-connection';
 import { CsvReader, CsvConfig } from './csv-reader';
 import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
+import { SmartactTemporalMapping } from './smartact-temporal-mappings';
 import { TitanicMapping } from './titanic-mappings';
 import { SqlColumnMapping } from './sql-mapping';
 import * as Colors from './colors';
@@ -18,14 +19,14 @@ export class GraphDataProvider {
     public constructor(config: any) {
         if (config.mode == "debug") {
             console.log('Using random data');
-            this.mapping = SmartactMapping;
+            this.mapping = SmartactTemporalMapping;
             let randomDataCount = 1000;
             let data: RawData[] = [];
             for (let i = 0; i < randomDataCount; i++) {
                 data.push({ id: i, dimensions: {} });
             }
 
-            for (let mapping of SmartactMapping) {
+            for (let mapping of SmartactTemporalMapping) {
                 let dimension = mapping.name;
 
                 if (mapping.type == DataRepresentation.Categorical && mapping.autoGenerateValues) {
@@ -57,10 +58,10 @@ export class GraphDataProvider {
                 }
             }
         } else if (config.mode == "sql") {
-            let sqlConnection = new SqlConnection(SmartactMapping);
+            let sqlConnection = new SqlConnection(SmartactTemporalMapping);
             sqlConnection.connect(config.sqlSecrets);
             this.dataSource = sqlConnection;
-            this.mapping = SmartactMapping;
+            this.mapping = SmartactTemporalMapping;
         } else if (config.mode == "csv") {
             this.dataSource = new CsvReader(config.csvConfig as CsvConfig, TitanicMapping);
             this.mapping = TitanicMapping;
@@ -78,16 +79,16 @@ export class GraphDataProvider {
         return this.dataSource;
     }
 
-    public getDimensions(): {dimensions: {name: string, phase: string}[]} {
+    public getDimensions(): {dimensions: {name: string, phases: string[]}[]} {
         if (this.dataSource) {
             // workaround since Unity needs an object type for JSON conversion
             return { dimensions: this.dataSource.getDimensions() };
         } else {
-            let dimensions: {name: string, phase: string}[] = [];
+            let dimensions: {name: string, phases: string[]}[] = [];
             for (let map of this.mapping) {
                 dimensions.push({
                     name: map.name,
-                    phase: map.phase
+                    phases: map.phases
                 });
             }
 

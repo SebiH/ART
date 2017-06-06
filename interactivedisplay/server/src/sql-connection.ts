@@ -108,12 +108,12 @@ export class SqlConnection implements DataSource {
     }
 
 
-    public getDimensions(): { name: string, phase: string }[] {
-        let dimensions: {name: string, phase: string}[] = [];
+    public getDimensions(): { name: string, phases: string[] }[] {
+        let dimensions: {name: string, phases: string[]}[] = [];
         for (let map of this.mapping) {
             dimensions.push({
                 name: map.name,
-                phase: map.phase
+                phases: map.phases
             });
         }
 

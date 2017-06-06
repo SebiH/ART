@@ -104,10 +104,14 @@ namespace Assets.Modules.ParallelCoordinates
                 colors[i * 2 + 0] = new Color32(255, 255, 255, 255);
                 colors[i * 2 + 1] = new Color32(255, 255, 255, 255);
 
-                uv[i * 2 + 0].x = RandomOffsetX[i];
-                uv[i * 2 + 0].y = RandomOffsetY[i];
-                uv[i * 2 + 1].x = RandomOffsetX[i];
-                uv[i * 2 + 1].y = RandomOffsetY[i];
+                uv[i * 2 + 0].x = 0;
+                uv[i * 2 + 0].y = 0;
+                uv[i * 2 + 1].x = 0;
+                uv[i * 2 + 1].y = 0;
+                //uv[i * 2 + 0].x = RandomOffsetX[i];
+                //uv[i * 2 + 0].y = RandomOffsetY[i];
+                //uv[i * 2 + 1].x = RandomOffsetX[i];
+                //uv[i * 2 + 1].y = RandomOffsetY[i];
 
                 uv2[i * 2 + 0].x = ColorOffsets[i];
                 uv2[i * 2 + 1].x = ColorOffsets[i];

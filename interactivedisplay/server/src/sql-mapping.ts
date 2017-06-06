@@ -23,7 +23,7 @@ export interface CategoricalSqlMapping {
     type: DataRepresentation.Categorical;
     dbColumn: string;
     name: string;
-    phase: string;
+    phases: string[];
     converter: (d: any) => number;
 
     hideTicks?: boolean;
@@ -38,7 +38,7 @@ export interface MetricSqlMapping {
     type: DataRepresentation.Metric;
     dbColumn: string;
     name: string;
-    phase: string;
+    phases: string[];
     converter: (d: any) => number;
 
     // quick hack to trigger time-based restrictions in sql
