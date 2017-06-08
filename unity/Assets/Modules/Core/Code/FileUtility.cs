@@ -8,7 +8,12 @@ namespace Assets.Modules.Core
     {
         public static string GetPath(string relativePath)
         {
-            return Path.Combine(Globals.CustomDataPath, relativePath);
+            var path = Path.Combine(Globals.CustomDataPath, relativePath);
+            if (!Directory.Exists(Globals.CustomDataPath))
+            {
+                Directory.CreateDirectory(Globals.CustomDataPath);
+            }
+            return path;
         }
 
         public static void SaveToFile(string filename, string text)
