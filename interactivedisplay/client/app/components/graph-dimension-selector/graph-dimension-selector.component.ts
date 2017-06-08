@@ -7,8 +7,8 @@ import { Graph, ChartDimension } from '../../models/index';
 import * as _ from 'lodash';
 
 const BORDER_SIZE = 30;
-const VERTICAL_ITEM_SIZE = 284;
-const HORIZONTAL_ITEM_SIZE = 394;
+const VERTICAL_ITEM_SIZE = 240;
+const HORIZONTAL_ITEM_SIZE = 350;
 
 @Component({
     selector: 'graph-dimension-selector',
@@ -90,7 +90,11 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
         this.activeDimensions = _.filter(this.dimensions, (dim) => dim.phases.indexOf(this.graph.phase) >= 0);
         let itemSize = this.getItemSize();
 
-        this.maxOffset = this.activeDimensions.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
+        if (this.axis === 'x') {
+            this.maxOffset = this.activeDimensions.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
+        } else {
+            this.maxOffset = this.activeDimensions.length * itemSize - this.size / 2 + BORDER_SIZE * 2;
+        }
 
         this.scrollToCurrent();
         this.changeDetector.markForCheck();
@@ -103,7 +107,7 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
         let dim = graphDim ? graphDim.name : '';
         let itemSize = this.getItemSize();
         if (graphDim && this.activeDimensions) {
-            this.offset = _.findIndex(this.activeDimensions, { name: dim }) * itemSize;
+            this.offset = _.findIndex(this.activeDimensions, { name: dim }) * itemSize - this.size / 2 + BORDER_SIZE * 2;
             this.updateOffset();
         }
     }
