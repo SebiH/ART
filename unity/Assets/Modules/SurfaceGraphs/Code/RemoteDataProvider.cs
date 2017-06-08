@@ -72,6 +72,7 @@ namespace Assets.Modules.SurfaceGraphs
             }
 
             dimension.Data = data;
+            dimension.Name = response.name;
             dimension.DisplayName = response.displayName;
             dimension.DomainMin = response.domain.min;
             dimension.DomainMax = response.domain.max;

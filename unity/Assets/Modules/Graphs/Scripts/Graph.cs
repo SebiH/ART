@@ -144,6 +144,7 @@ namespace Assets.Modules.Graphs
             }
 
             var sortedDim = new CategoricalDimension();
+            sortedDim.Name = dimX.Name;
             sortedDim.DisplayName = dimX.DisplayName;
             sortedDim.HideTicks = true;
             sortedDim.Ticks = new Dimension.Mapping[0];

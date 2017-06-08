@@ -13,6 +13,7 @@ namespace Assets.Modules.Graphs
 
         public DimData[] Data = null;
         public float[] ScaledData = null;
+        public string Name = "";
         public string DisplayName = "";
 
         public float DomainMin = 0f;

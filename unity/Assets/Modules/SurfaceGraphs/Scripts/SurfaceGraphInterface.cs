@@ -126,7 +126,7 @@ namespace Assets.Modules.SurfaceGraphs
             {
                 g.Graph.DimX = null;
             }
-            else if (g.Graph.DimX == null || g.Graph.DimX.DisplayName != remoteGraph.dimX)
+            else if (g.Graph.DimX == null || g.Graph.DimX.Name != remoteGraph.dimX)
             {
                 _dataProvider.LoadDataAsync(remoteGraph.dimX, (dim) =>
                 {
@@ -138,7 +138,7 @@ namespace Assets.Modules.SurfaceGraphs
             {
                 g.Graph.DimY = null;
             }
-            else if (g.Graph.DimY == null || g.Graph.DimY.DisplayName != remoteGraph.dimY)
+            else if (g.Graph.DimY == null || g.Graph.DimY.Name != remoteGraph.dimY)
             {
                 _dataProvider.LoadDataAsync(remoteGraph.dimY, (dim) =>
                 {
