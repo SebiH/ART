@@ -72,7 +72,7 @@ namespace Assets.Modules.SurfaceGraphs
             }
 
             dimension.Data = data;
-            dimension.DisplayName = response.name;
+            dimension.DisplayName = response.displayName;
             dimension.DomainMin = response.domain.min;
             dimension.DomainMax = response.domain.max;
             dimension.HideTicks = response.hideTicks;
@@ -92,6 +92,7 @@ namespace Assets.Modules.SurfaceGraphs
             public DataValue[] data = null;
             public DataDomain domain = null;
             public string name = "";
+            public string displayName = "";
             public bool hideTicks = false;
             public bool isMetric = true;
             public bool isTimeBased = false;

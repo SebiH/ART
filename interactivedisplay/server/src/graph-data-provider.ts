@@ -201,7 +201,8 @@ export class GraphDataProvider {
                 min: minValue,
                 max: maxValue
             },
-            name: mapping.name,
+            name: mapping.dbColumn,
+            displayName: mapping.name,
             hideTicks: !!mapping.hideTicks,
             isMetric: isMetric,
             isTimeBased: isTimeBased,

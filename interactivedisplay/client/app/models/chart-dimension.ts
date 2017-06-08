@@ -11,6 +11,7 @@ export class ChartDimension {
     public domain: { min: number, max: number };
 
     public name: string;
+    public displayName: string;
 
     public hideTicks: boolean;
 
@@ -99,6 +100,7 @@ export class ChartDimension {
         dim.data = _.cloneDeep(this.data);
         dim.domain = _.cloneDeep(this.domain);
         dim.name = this.name;
+        dim.displayName = this.displayName;
         dim.hideTicks = this.hideTicks;
         dim.isMetric = this.isMetric;
         dim.isTimeBased = this.isTimeBased;
@@ -115,6 +117,7 @@ export class ChartDimension {
         dim.data = jDim.data;
         dim.domain = jDim.domain;
         dim.name = jDim.name;
+        dim.displayName = jDim.displayName;
         dim.isMetric = jDim.isMetric;
         dim.isTimeBased = jDim.isTimeBased;
         dim.timeFormat = jDim.timeFormat;
