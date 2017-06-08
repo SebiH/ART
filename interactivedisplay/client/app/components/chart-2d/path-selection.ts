@@ -78,33 +78,35 @@ export class PathSelection extends ChartElement {
 
         } else if ((this.filter.origin.isFlipped && this.filter.useAxisColor == 'y')
             || (!this.filter.origin.isFlipped && this.filter.useAxisColor == 'x')) {
-            let texture = textures.paths()
-                .d('waves')
-                .heavier()
-                .lighter()
-                .stroke(this.filter.getColor());
-            this.parent.chart.svgElement.call(texture);
-            let textureFill = this.getAbsoluteTextureUrl(texture.url());
-            this.setPrevTexture(texture.url());
+            // let texture = textures.paths()
+            //     .d('waves')
+            //     .heavier()
+            //     .lighter()
+            //     .stroke(this.filter.getColor());
+            // this.parent.chart.svgElement.call(texture);
+            // let textureFill = this.getAbsoluteTextureUrl(texture.url());
+            // this.setPrevTexture(texture.url());
 
             this.pathElement
                 .attr('stroke', this.filter.getColor())
-                .attr('fill', textureFill);
+                // .attr('fill', textureFill);
+                .attr('fill', 'black');
 
         } else if ((this.filter.origin.isFlipped && this.filter.useAxisColor == 'x')
             || (!this.filter.origin.isFlipped && this.filter.useAxisColor == 'y')) {
-            let texture = textures.paths()
-                .d('caps')
-                .heavier()
-                .lighter()
-                .stroke(this.filter.getColor());
-            this.parent.chart.svgElement.call(texture);
-            let textureFill = this.getAbsoluteTextureUrl(texture.url());
-            this.setPrevTexture(texture.url());
+            // let texture = textures.paths()
+            //     .d('caps')
+            //     .heavier()
+            //     .lighter()
+            //     .stroke(this.filter.getColor());
+            // this.parent.chart.svgElement.call(texture);
+            // let textureFill = this.getAbsoluteTextureUrl(texture.url());
+            // this.setPrevTexture(texture.url());
 
             this.pathElement
                 .attr('stroke', this.filter.getColor())
-                .attr('fill', textureFill);
+                // .attr('fill', textureFill);
+                .attr('fill', 'black');
         }
     }
 
