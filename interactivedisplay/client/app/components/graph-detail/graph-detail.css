@@ -28,6 +28,8 @@
     width: 300px;
     margin-right: 20px;
     font-size: 30px;
+    display: flex;
+    align-items: flex-end;
 }
 
 .dimbutton.active,
