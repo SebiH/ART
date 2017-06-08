@@ -71,7 +71,13 @@ export class GraphDataProvider {
 
         if (this.dataSource) {
             // load data on startup for faster response later on
-            this.dataSource.getData();
+            this.dataSource.getData()
+                .first()
+                .subscribe(data => console.log('Caching data completed'));
+
+            if (this.dataSource instanceof SqlConnection) {
+                this.dataSource.disconnect();
+            }
         }
     }
 
@@ -113,7 +119,7 @@ export class GraphDataProvider {
     }
 
     private convertData(dimension: string, data: RawData[]): any {
-        let mapping = _.find(this.mapping, m => m.name == dimension);
+        let mapping = _.find(this.mapping, m => m.dbColumn == dimension);
 
         if (!mapping) {
             console.log('Unable to find mapping for ' + dimension);
@@ -124,7 +130,7 @@ export class GraphDataProvider {
         for (let datum of data) {
             values.push({
                 id: '' + datum.id,
-                value: datum.dimensions[dimension],
+                value: datum.dimensions[mapping.name],
             });
         }
 
@@ -195,7 +201,7 @@ export class GraphDataProvider {
                 min: minValue,
                 max: maxValue
             },
-            name: dimension,
+            name: mapping.name,
             hideTicks: !!mapping.hideTicks,
             isMetric: isMetric,
             isTimeBased: isTimeBased,

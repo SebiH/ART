@@ -42,9 +42,11 @@ export class AdminDataComponent implements OnInit, OnDestroy {
             .subscribe((filter) => {
                 this.selectedData = [];
                 for (let fd of filter) {
-                    if (fd.f == 0) {
-                        this.data[fd.id].color = fd.c;
-                        this.selectedData.push(this.data[fd.id]);
+                    if (+fd.id < 100) {
+                        if (fd.f == 0) {
+                            this.data[fd.id].color = fd.c;
+                            this.selectedData.push(this.data[fd.id]);
+                        }
                     }
                 }
                 this.changeDetector.detectChanges();
@@ -68,10 +70,12 @@ export class AdminDataComponent implements OnInit, OnDestroy {
                 }
 
                 for (let data of chartDim.data) {
-                    this.data[data.id][dim] = {
-                        value: data.value,
-                        name: this.getName(chartDim, data.value)
-                    };
+                    if (+data.id < 100) {
+                        this.data[data.id][dim] = {
+                            value: data.value,
+                            name: this.getName(chartDim, data.value)
+                        };
+                    }
                 }
                 this.changeDetector.detectChanges();
             });
