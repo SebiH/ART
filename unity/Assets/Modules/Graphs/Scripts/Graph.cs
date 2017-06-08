@@ -46,6 +46,7 @@ namespace Assets.Modules.Graphs
                 if (_dimX != value)
                 {
                     _dimX = value;
+                    _sortedDimX = null;
                     TriggerDataChange();
                 }
             }
@@ -60,6 +61,7 @@ namespace Assets.Modules.Graphs
                 if (_dimY != value)
                 {
                     _dimY = value;
+                    _sortedDimX = null;
                     TriggerDataChange();
                 }
             }
