@@ -109,8 +109,13 @@ export class UnityServer {
         let msgs = this.splitJson(data + '');
 
         for (let msgText of msgs) {
-            let msg = <UnityMessage>JSON.parse(msgText);
-            this.raiseMessageReceivedEvent(msg)
+            try {
+                let msg = <UnityMessage>JSON.parse(msgText);
+                this.raiseMessageReceivedEvent(msg)
+            } catch (error) {
+                console.error('Unable to parse unity message');
+                console.error(msgText);
+            }
         }
     }
 
