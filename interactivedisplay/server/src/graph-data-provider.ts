@@ -27,11 +27,11 @@ export class GraphDataProvider {
             }
 
             for (let mapping of SmartactTemporalMapping) {
-                let dimension = mapping.name;
+                let dimension = mapping.dbColumn;
 
                 if (mapping.type == DataRepresentation.Categorical && mapping.autoGenerateValues) {
                     for (let i = 0; i < randomDataCount; i++) {
-                        data[i].dimensions[dimension] = i;
+                        data[i].dimensions[mapping.dbColumn] = i;
                         mapping.values.push({
                             color: Colors.random(),
                             dbValue: i,
@@ -130,7 +130,7 @@ export class GraphDataProvider {
         for (let datum of data) {
             values.push({
                 id: '' + datum.id,
-                value: datum.dimensions[mapping.name],
+                value: datum.dimensions[mapping.dbColumn],
             });
         }
 

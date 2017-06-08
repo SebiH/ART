@@ -243,7 +243,7 @@ export class SqlConnection implements DataSource {
                         }
                     }
 
-                    values[map.name] = numericValue;
+                    values[map.dbColumn] = numericValue;
                 }
 
                 requestedData.push({

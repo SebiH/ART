@@ -56,7 +56,7 @@ export class CsvReader implements DataSource {
                             let map = _.find(this.mapping, (m) => m.dbColumn == dimensions[i]);
 
                             if (map) {
-                                dims[map.name] = map.converter(record[i]);
+                                dims[map.dbColumn] = map.converter(record[i]);
                             }
                         }
 
