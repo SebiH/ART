@@ -75,8 +75,9 @@ export class GraphDataProvider {
             // this.dataSource.getData()
             //     .first()
             //     .subscribe(data => console.log('Caching data completed'));
-            for (let dim of this.getDimensions().dimensions) {
-                this.getData(dim.name, (data) => console.log('Cached ' + dim.name));
+            let dims = this.getDimensions().dimensions;
+            for (let dim of dims) {
+                this.getData(dim.name, (data) => { if (dims.indexOf(dim) == dims.length - 1) { console.log('Cached all data'); } });
             }
 
             if (this.dataSource instanceof SqlConnection) {

@@ -56,7 +56,7 @@ export class SqlConnection implements DataSource {
     private sqlQuery: string = "";
     private table: string = "";
 
-    private sqlData: ReplaySubject<RawData[]> = new ReplaySubject<RawData[]>(1);
+    private sqlData: ReplaySubject<RawData[]>;
     private idCounter: number = 0;
     private readonly idTable: { [sess_id: string]: number } = {};
 
@@ -122,25 +122,28 @@ export class SqlConnection implements DataSource {
     }
 
     public setSqlQuery(query: string) {
-        this.sqlQuery = query;
+        // this.sqlQuery = query;
 
-        this.status.whenReady(() => {
-            this.getDataConnectionEstablished((data) => {
-                this.sqlData.next(data);
-                // unmark connection from being busy, so that next request can be started
-                this.status.set(ConnectionState.Connected);
-            });
-        });
+        // this.status.whenReady(() => {
+        //     this.getDataConnectionEstablished((data) => {
+        //         this.sqlData.next(data);
+        //         // unmark connection from being busy, so that next request can be started
+        //         this.status.set(ConnectionState.Connected);
+        //     });
+        // });
     }
 
     public getData(): Observable<RawData[]> {
-        this.status.whenReady(() => {
-            this.getDataConnectionEstablished((data) => {
-                this.sqlData.next(data);
-                // unmark connection from being busy, so that next request can be started
-                this.status.set(ConnectionState.Connected);
+        if (!this.sqlData) {
+            this.sqlData = new ReplaySubject<RawData[]>(1);
+            this.status.whenReady(() => {
+                this.getDataConnectionEstablished((data) => {
+                    this.sqlData.next(data);
+                    // unmark connection from being busy, so that next request can be started
+                    this.status.set(ConnectionState.Connected);
+                });
             });
-        });
+        }
         return this.sqlData.asObservable();
     }
 
