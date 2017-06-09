@@ -201,12 +201,15 @@ export class SqlConnection implements DataSource {
 
         requestSql += ' FROM ' + this.table + ' ';
 
+
+        requestSql += ' WHERE name = \'AvgDay_BE_day\'';
         // for (let i = 0; i < filters.length; i++) {
         //     requestSql += (i == 0) ? ' WHERE ' : ' AND ';
         //     requestSql += filters[i];
         // }
 
         requestSql += ' ORDER BY Cond;';
+        console.log(requestSql);
 
         // let requestSql = this.sqlQuery;
 

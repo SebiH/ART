@@ -5,6 +5,7 @@ import { CsvReader, CsvConfig } from './csv-reader';
 import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
 import { SmartactTemporalMapping } from './smartact-temporal-mappings';
+import { SmartactTimelineMapping } from './smartact-timeline-mappings';
 import { TitanicMapping } from './titanic-mappings';
 import { SqlColumnMapping } from './sql-mapping';
 import * as Colors from './colors';
@@ -19,14 +20,14 @@ export class GraphDataProvider {
     public constructor(config: any) {
         if (config.mode == "debug") {
             console.log('Using random data');
-            this.mapping = SmartactTemporalMapping;
+            this.mapping = SmartactTimelineMapping;
             let randomDataCount = 1000;
             let data: RawData[] = [];
             for (let i = 0; i < randomDataCount; i++) {
                 data.push({ id: i, dimensions: {} });
             }
 
-            for (let mapping of SmartactTemporalMapping) {
+            for (let mapping of SmartactTimelineMapping) {
                 let dimension = mapping.dbColumn;
 
                 if (mapping.type == DataRepresentation.Categorical && mapping.autoGenerateValues) {
@@ -58,10 +59,10 @@ export class GraphDataProvider {
                 }
             }
         } else if (config.mode == "sql") {
-            let sqlConnection = new SqlConnection(SmartactTemporalMapping);
+            let sqlConnection = new SqlConnection(SmartactTimelineMapping);
             sqlConnection.connect(config.sqlSecrets);
             this.dataSource = sqlConnection;
-            this.mapping = SmartactTemporalMapping;
+            this.mapping = SmartactTimelineMapping;
         } else if (config.mode == "csv") {
             this.dataSource = new CsvReader(config.csvConfig as CsvConfig, TitanicMapping);
             this.mapping = TitanicMapping;
@@ -71,9 +72,12 @@ export class GraphDataProvider {
 
         if (this.dataSource) {
             // load data on startup for faster response later on
-            this.dataSource.getData()
-                .first()
-                .subscribe(data => console.log('Caching data completed'));
+            // this.dataSource.getData()
+            //     .first()
+            //     .subscribe(data => console.log('Caching data completed'));
+            for (let dim of this.getDimensions().dimensions) {
+                this.getData(dim.name, (data) => console.log('Cached ' + dim.name));
+            }
 
             if (this.dataSource instanceof SqlConnection) {
                 this.dataSource.disconnect();
