@@ -25,6 +25,7 @@ namespace Assets.Modules.Graphs
 
 
             _range = DomainMax - DomainMin;
+            if (_range == 0) { _range = 1; }
             for (var i = 0; i < Data.Length; i++)
             {
                 ScaledData[i] = Scale(Data[i].Value);
