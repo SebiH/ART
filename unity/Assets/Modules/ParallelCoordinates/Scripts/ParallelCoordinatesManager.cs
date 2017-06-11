@@ -121,7 +121,13 @@ namespace Assets.Modules.ParallelCoordinates
         {
             if (_colorAnimation.CurrentValue.Length != colors.Length)
             {
-                _colorAnimation.Init(new Color32[colors.Length]);
+                var c = new Color32[colors.Length];
+                for (int i = 0; i < c.Length; i++)
+                {
+                    c[i] = new Color32(255, 255, 255, 255);
+                }
+
+                _colorAnimation.Init(c);
                 AnimateColors(colors);
             }
             else
