@@ -17,6 +17,8 @@ namespace ImageProcessing
 	private:
 		Eye eye_;
 		void *texture_ptr_;
+        ID3D11Texture2D* d3dtex_;
+        ID3D11Device *g_D3D11Device_;
 
 	public:
 
