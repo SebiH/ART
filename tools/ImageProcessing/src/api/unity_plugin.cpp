@@ -17,6 +17,7 @@
 
 #include "pipelines/PipelineManager.h"
 
+#include "debugging/MeasurePerformance.h"
 
 // ------------------------------------------
 // Rendering Events
@@ -24,11 +25,14 @@
 
 static void UNITY_INTERFACE_API OnRenderEvent(int eventID)
 {
+	PERF_MEASURE(start)
 	auto pipelines = ImageProcessing::PipelineManager::Instance()->GetPipelines();
 	for (auto pipeline : *pipelines)
 	{
 		pipeline->FlushOutputs();
 	}
+	PERF_MEASURE(end)
+	PERF_OUTPUT("rendering mapped withlocks 10ms ", start, end)
 }
 
 

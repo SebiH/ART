@@ -1,5 +1,7 @@
 #pragma once
 
+#define ENABLE_PERFORMANCE_DEBUGGING 1
+
 #if ENABLE_PERFORMANCE_DEBUGGING 
 
 #include <chrono>
