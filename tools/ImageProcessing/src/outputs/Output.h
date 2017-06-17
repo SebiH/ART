@@ -30,17 +30,12 @@ namespace ImageProcessing
 
 		virtual void WriteResult()
 		{
-			std::shared_ptr<const FrameData> local_result;
+            std::lock_guard<std::mutex> lock(result_mutex_);
 
+			if (current_result_->id > last_written_frameid)
 			{
-				std::lock_guard<std::mutex> lock(result_mutex_);
-				local_result = current_result_;
-			}
-
-			if (local_result && local_result->id > last_written_frameid)
-			{
-				Write(local_result.get());
-				last_written_frameid = local_result->id;
+				Write(current_result_.get());
+				last_written_frameid = current_result_->id;
 			}
 		}
 
