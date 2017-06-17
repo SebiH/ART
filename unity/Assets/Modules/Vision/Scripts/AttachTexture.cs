@@ -42,8 +42,10 @@ namespace Assets.Modules.Vision
 
             var camTexture = new Texture2D(imageWidth, imageHeight, txFormat, false, false);
             camTexture.wrapMode = TextureWrapMode.Clamp;
+            camTexture.filterMode = FilterMode.Point;
 
             GetComponent<Renderer>().materials[0].SetTexture("_MainTex", camTexture);
+            GetComponent<MeshFilter>().mesh.MarkDynamic();
 
             var texturePtr = camTexture.GetNativeTexturePtr();
             _output = new DirectXOutput(texturePtr, Eye);
