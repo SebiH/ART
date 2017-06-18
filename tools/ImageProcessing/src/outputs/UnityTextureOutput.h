@@ -21,8 +21,7 @@ namespace ImageProcessing
 
         bool is_initialized_ = false;
         CRITICAL_SECTION lock_;
-        ID3D11Texture2D* front_buffer_ = NULL;
-        ID3D11Texture2D* back_buffer_ = NULL;
+        ID3D11Texture2D* staging_tx_ = NULL;
 
         ID3D11DeviceContext* deferred_ctx_ = NULL;
         ID3D11CommandList* cmd_list_ = NULL;

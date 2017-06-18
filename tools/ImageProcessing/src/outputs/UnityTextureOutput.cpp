@@ -33,16 +33,10 @@ UnityTextureOutput::UnityTextureOutput(Eye eye, void *texture_ptr)
 
 UnityTextureOutput::~UnityTextureOutput()
 {
-    if (front_buffer_)
+    if (staging_tx_)
     {
-        front_buffer_->Release();
-        front_buffer_ = NULL;
-    }
-
-    if (back_buffer_)
-    {
-        back_buffer_->Release();
-        back_buffer_ = NULL;
+        staging_tx_->Release();
+        staging_tx_ = NULL;
     }
 
     is_initialized_ = false;
@@ -74,80 +68,33 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
         srInitData.SysMemPitch = frame->size.width * frame->size.depth;
         srInitData.SysMemSlicePitch = frame->size.width * frame->size.height * frame->size.depth;
 
+        HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &staging_tx_);
 
-        // buffer 1
+        if (r != S_OK)
         {
-            HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &front_buffer_);
-
-            if (r != S_OK)
-            {
-                DebugLog("Could not initialize front buffer");
-                return;
-            }
+            DebugLog("Could not initialize staging buffer");
         }
-
-        // buffer 2
+        else
         {
-            HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &back_buffer_);
-
-            if (r != S_OK)
-            {
-                DebugLog("Could not initialize back buffer");
-                return;
-            }
+            is_initialized_ = true;
         }
-
-        is_initialized_ = true;
     }
     else if (deferred_ctx_ != NULL)
     {
-
-        //{
-        //    ID3D11DeviceContext* ctx = NULL;
-        //    g_D3D11Device_->GetImmediateContext(&ctx);
-        //    D3D11_MAPPED_SUBRESOURCE mapped;
-        //    ZeroMemory(&mapped, sizeof(mapped));
-        //    HRESULT result = ctx->Map(back_buffer_, 0, D3D11_MAP_WRITE, 0, &mapped);
-
-        //    if (result == S_OK && mapped.pData != (void *)0xcccccccccccccccc)
-        //    {
-        //        memcpy(mapped.pData, buffer, frame->size.BufferSize());
-        //    }
-
-        //    ctx->Unmap(back_buffer_, 0);
-        //    ctx->Release();
-        //}
-
         D3D11_MAPPED_SUBRESOURCE mapped;
         ZeroMemory(&mapped, sizeof(mapped));
-        HRESULT map_result = deferred_ctx_->Map(front_buffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+        HRESULT map_result = deferred_ctx_->Map(staging_tx_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
 
         if (map_result == S_OK)
         {
             memcpy(mapped.pData, buffer, frame->size.BufferSize());
 
-            deferred_ctx_->Unmap(front_buffer_, 0);
+            deferred_ctx_->Unmap(staging_tx_, 0);
 
             EnterCriticalSection(&lock_);
             deferred_ctx_->FinishCommandList(false, &cmd_list_);
             LeaveCriticalSection(&lock_);
         }
-
-        //EnterCriticalSection(&lock_);
-        //{
-        //    auto tmp = back_buffer_;
-        //    back_buffer_ = front_buffer_;
-        //    front_buffer_ = back_buffer_;
-        //}
-        //LeaveCriticalSection(&lock_);
-
-        //{
-        //    ID3D11DeviceContext* ctx = NULL;
-        //    g_D3D11Device_->GetImmediateContext(&ctx);
-
-        //    ctx->CopyResource(d3dtex_, back_buffer_);
-        //    ctx->Release();
-        //}
     }
 
 }
@@ -162,10 +109,8 @@ void UnityTextureOutput::Write(const FrameData *frame) noexcept
 {
     EnterCriticalSection(&lock_);
 
-
     if (is_initialized_)
     {
-
         ID3D11DeviceContext* ctx = NULL;
         g_D3D11Device_->GetImmediateContext(&ctx);
 
@@ -176,7 +121,7 @@ void UnityTextureOutput::Write(const FrameData *frame) noexcept
             cmd_list_ = NULL;
         }
 
-        ctx->CopyResource(d3dtex_, front_buffer_);
+        ctx->CopyResource(d3dtex_, staging_tx_);
         ctx->Release();
     }
     LeaveCriticalSection(&lock_);
