@@ -40,6 +40,10 @@ D3dOutput::D3dOutput()
     {
         deferred_ctx_ = NULL;
     }
+
+
+
+
 }
 
 
@@ -70,6 +74,28 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
 
     if (!is_initialized_)
     {
+        //D3D11_BUFFER_DESC vertexBufferDesc = { 0 };
+        //vertexBufferDesc.ByteWidth = frame->size.BufferSize();
+        //vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        //vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        //vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        //vertexBufferDesc.MiscFlags = 0;
+        //vertexBufferDesc.StructureByteStride = 0;
+
+        //D3D11_SUBRESOURCE_DATA vertexBufferData;
+        //vertexBufferData.pSysMem = buffer;
+        //vertexBufferData.SysMemPitch = 0;
+        //vertexBufferData.SysMemSlicePitch = 0;
+
+
+        //HRESULT hr = g_D3D11Device_->CreateBuffer(
+        //    &vertexBufferDesc,
+        //    &vertexBufferData,
+        //    &vertexBuffer2
+        //);
+
+
+
         D3D11_TEXTURE2D_DESC desc;
         memset(&desc, 0, sizeof(desc));
         desc.Width = frame->size.width;
@@ -77,9 +103,9 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
         desc.MipLevels = desc.ArraySize = 1;
         desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         desc.SampleDesc.Count = 1;
-        desc.Usage = D3D11_USAGE_DEFAULT;
-        desc.BindFlags = 0;
-        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+        desc.Usage = D3D11_USAGE_DYNAMIC;
+        desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
         D3D11_SUBRESOURCE_DATA srInitData;
         srInitData.pSysMem = (void *)buffer;
@@ -89,7 +115,6 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
         // buffer 1
         {
             HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &front_buffer_);
-            //HRESULT r = g_D3D11Device_->CreateBuffer(&desc, &srInitData, &front_buffer_);
 
             if (r != S_OK)
             {
@@ -100,6 +125,9 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
 
         // buffer 2
         {
+            desc.Usage = D3D11_USAGE_DEFAULT;
+            desc.CPUAccessFlags = 0;
+            desc.BindFlags = D3D11_BIND_RENDER_TARGET;
             HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &back_buffer_);
 
             if (r != S_OK)
@@ -132,9 +160,9 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
 
         D3D11_MAPPED_SUBRESOURCE mapped;
         ZeroMemory(&mapped, sizeof(mapped));
-        HRESULT map_result = deferred_ctx_->Map(front_buffer_, 0, D3D11_MAP::D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mapped);
+        HRESULT map_result = deferred_ctx_->Map(front_buffer_, 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mapped);
 
-        if (map_result == S_OK && mapped.pData != (void *)0xcccccccccccccccc)
+        if (map_result == S_OK)
         {
             memcpy(mapped.pData, buffer, frame->size.BufferSize());
 
@@ -144,6 +172,7 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
             LeaveCriticalSection(&lock_);
         }
 
+
         //EnterCriticalSection(&lock_);
         //{
         //    auto tmp = back_buffer_;
@@ -152,13 +181,21 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
         //}
         //LeaveCriticalSection(&lock_);
 
-        //{
-        //    ID3D11DeviceContext* ctx = NULL;
-        //    g_D3D11Device_->GetImmediateContext(&ctx);
+        {
 
-        //    ctx->CopyResource(d3dtex_, back_buffer_);
-        //    ctx->Release();
-        //}
+            ID3D11DeviceContext* ctx = NULL;
+            g_D3D11Device_->GetImmediateContext(&ctx);
+
+            if (cmd_list_ != NULL)
+            {
+                ctx->ExecuteCommandList(cmd_list_, true);
+                cmd_list_->Release();
+                cmd_list_ = NULL;
+            }
+
+            ctx->CopyResource(back_buffer_, front_buffer_);
+            ctx->Release();
+        }
     }
 
 }

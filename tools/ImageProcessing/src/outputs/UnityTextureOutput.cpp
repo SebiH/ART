@@ -18,6 +18,16 @@ UnityTextureOutput::UnityTextureOutput(Eye eye, void *texture_ptr)
     d3dtex_ = (ID3D11Texture2D*)texture_ptr;
     d3dtex_->GetDevice(&g_D3D11Device_);
     InitializeCriticalSection(&lock_);
+
+    if (deferred_ctx_ == NULL)
+    {
+        HRESULT result = g_D3D11Device_->CreateDeferredContext(0, &deferred_ctx_);
+        if (result != S_OK)
+        {
+            DebugLog("Invalid call! Start Unity with cmd line parameters!");
+            deferred_ctx_ = NULL;
+        }
+    }
 }
 
 
@@ -55,7 +65,7 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
         desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         desc.SampleDesc.Count = 1;
         desc.Usage = D3D11_USAGE_DYNAMIC;
-        desc.BindFlags = 0;
+        desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
         D3D11_SUBRESOURCE_DATA srInitData;
@@ -112,12 +122,13 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
         ZeroMemory(&mapped, sizeof(mapped));
         HRESULT map_result = deferred_ctx_->Map(front_buffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
 
-        if (map_result == S_OK && mapped.pData != (void *)0xcccccccccccccccc)
+        if (map_result == S_OK)
         {
             memcpy(mapped.pData, buffer, frame->size.BufferSize());
 
-            EnterCriticalSection(&lock_);
             deferred_ctx_->Unmap(front_buffer_, 0);
+
+            EnterCriticalSection(&lock_);
             deferred_ctx_->FinishCommandList(false, &cmd_list_);
             LeaveCriticalSection(&lock_);
         }
@@ -150,15 +161,6 @@ void UnityTextureOutput::WriteResult()
 void UnityTextureOutput::Write(const FrameData *frame) noexcept
 {
     EnterCriticalSection(&lock_);
-    if (deferred_ctx_ == NULL)
-    {
-        HRESULT result = g_D3D11Device_->CreateDeferredContext(0, &deferred_ctx_);
-        if (result != S_OK)
-        {
-            DebugLog("Invalid call! Start Unity with cmd line parameters!");
-            deferred_ctx_ = NULL;
-        }
-    }
 
 
     if (is_initialized_)

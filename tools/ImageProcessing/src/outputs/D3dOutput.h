@@ -14,6 +14,7 @@ namespace ImageProcessing
 
         ID3D11Device *g_D3D11Device_;
         ID3D11Texture2D *d3dtex_;
+        ID3D11Buffer *vertexBuffer2;
 
         bool is_initialized_ = false;
         CRITICAL_SECTION lock_;
