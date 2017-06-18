@@ -6,6 +6,7 @@
 #include "outputs/Output.h"
 #include "outputs/OpenCvOutput.h"
 #include "outputs/UnityTextureOutput.h"
+#include "outputs/D3dOutput.h"
 #include "outputs/JsonOutput.h"
 #include "pipelines/PipelineManager.h"
 #include "utils/Logger.h"
@@ -17,7 +18,8 @@ extern "C" UNITY_INTERFACE_EXPORT int AddOpenCvOutput(const int pipeline_id, con
 	try
 	{
 		auto pipeline = PipelineManager::Instance()->GetPipeline(pipeline_id);
-		std::shared_ptr<Output> opencv_output = std::make_shared<OpenCvOutput>(windowname);
+		//std::shared_ptr<Output> opencv_output = std::make_shared<OpenCvOutput>(windowname);
+		std::shared_ptr<Output> opencv_output = std::make_shared<D3dOutput>();
 		pipeline->AddOutput(opencv_output);
 		return opencv_output->Id();
 	}
