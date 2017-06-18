@@ -51,6 +51,10 @@ namespace GUI
                 {
                     ImageProcessing.SetDummyCamera("C:/code/img/4.png");
                 }
+                else if (camera == "Null")
+                {
+                    ImageProcessing.SetEmptyCamera();
+                }
 
                 ImageProcessing.StartImageProcessing();
 

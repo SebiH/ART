@@ -1,9 +1,9 @@
 #include "outputs/D3dOutput.h"
 
 #include <d3d11.h>
-#include <d3dx11.h>
 #include "utils/Logger.h"
 
+#pragma comment(lib, "d3d11.lib")
 
 using namespace ImageProcessing;
 
@@ -15,6 +15,7 @@ using namespace ImageProcessing;
 
 D3dOutput::D3dOutput()
 {
+    InitializeCriticalSection(&lock_);
     hwnd_ = ::CreateWindowA("STATIC", "D3dOutput", WS_VISIBLE, 0, 0, 100, 100, NULL, NULL, NULL, NULL);
 
     if (hwnd_ == NULL)
@@ -33,6 +34,12 @@ D3dOutput::D3dOutput()
     scd.Windowed = TRUE;
 
     D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, D3D11_CREATE_DEVICE_DEBUG, NULL, NULL, D3D11_SDK_VERSION, &scd, &swapchain, &g_D3D11Device_, NULL, &devcon);
+
+    HRESULT result = g_D3D11Device_->CreateDeferredContext(0, &deferred_ctx_);
+    if (result != S_OK)
+    {
+        deferred_ctx_ = NULL;
+    }
 }
 
 
@@ -70,19 +77,19 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
         desc.MipLevels = desc.ArraySize = 1;
         desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         desc.SampleDesc.Count = 1;
-        desc.Usage = D3D11_USAGE_DYNAMIC;
+        desc.Usage = D3D11_USAGE_DEFAULT;
         desc.BindFlags = 0;
-        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
 
         D3D11_SUBRESOURCE_DATA srInitData;
         srInitData.pSysMem = (void *)buffer;
         srInitData.SysMemPitch = frame->size.width * frame->size.depth;
         srInitData.SysMemSlicePitch = frame->size.width * frame->size.height * frame->size.depth;
 
-
         // buffer 1
         {
             HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &front_buffer_);
+            //HRESULT r = g_D3D11Device_->CreateBuffer(&desc, &srInitData, &front_buffer_);
 
             if (r != S_OK)
             {
@@ -125,7 +132,7 @@ void D3dOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
 
         D3D11_MAPPED_SUBRESOURCE mapped;
         ZeroMemory(&mapped, sizeof(mapped));
-        HRESULT map_result = deferred_ctx_->Map(front_buffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+        HRESULT map_result = deferred_ctx_->Map(front_buffer_, 0, D3D11_MAP::D3D11_MAP_WRITE_NO_OVERWRITE, 0, &mapped);
 
         if (map_result == S_OK && mapped.pData != (void *)0xcccccccccccccccc)
         {
@@ -164,6 +171,7 @@ void D3dOutput::WriteResult()
 
 void D3dOutput::Write(const FrameData *frame) noexcept
 {
+    return;
     EnterCriticalSection(&lock_);
     if (deferred_ctx_ == NULL)
     {
