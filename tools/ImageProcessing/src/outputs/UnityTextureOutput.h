@@ -29,8 +29,8 @@ namespace ImageProcessing
 		UnityTextureOutput(Eye eye, void *texture_ptr);
 		virtual ~UnityTextureOutput();
 
-        void RegisterResult(const std::shared_ptr<const FrameData> &result) override;
-        void WriteResult() override;
+        //void RegisterResult(const std::shared_ptr<const FrameData> &result) override;
+        //void WriteResult() override;
 
 	protected:
 		virtual void Write(const FrameData *frame) noexcept override;
