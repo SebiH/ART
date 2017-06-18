@@ -109,6 +109,7 @@
     <ClCompile Include="src\api\logging.cpp" />
     <ClCompile Include="src\api\unity_plugin.cpp" />
     <ClCompile Include="src\frames\JsonFrameData.cpp" />
+    <ClCompile Include="src\outputs\D3dOutput.cpp" />
     <ClCompile Include="src\outputs\JsonOutput.cpp" />
     <ClCompile Include="src\outputs\OpenCvOutput.cpp" />
     <ClCompile Include="src\outputs\UnityTextureOutput.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="src\frames\FrameSize.h" />
     <ClInclude Include="src\frames\JsonFrameData.h" />
     <ClInclude Include="src\cameras\CameraSourceInterface.h" />
+    <ClInclude Include="src\outputs\D3dOutput.h" />
     <ClInclude Include="src\outputs\JsonOutput.h" />
     <ClInclude Include="src\outputs\OpenCvOutput.h" />
     <ClInclude Include="src\outputs\Output.h" />

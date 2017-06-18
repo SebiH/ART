@@ -154,7 +154,7 @@ void ThreadedPipeline::Run()
 
 			PERF_MEASURE(end)
 			ReleaseSRWLockShared(list_lock_);
-			PERF_OUTPUT("pipeline: ", start, end)
+			//PERF_OUTPUT("pipeline: ", start, end)
 		}
 
 		SwitchBuffers();

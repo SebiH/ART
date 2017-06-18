@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mutex>
+#include <Windows.h> // slim read/write lock
 #include "frames/FrameData.h"
 #include "utils/UID.h"
 #include "utils/UIDGenerator.h"
@@ -13,10 +13,13 @@ namespace ImageProcessing
 		const UID id_;
 		std::shared_ptr<const FrameData> current_result_;
 		UID last_written_frameid;
-		std::mutex result_mutex_;
 
 	public:
-		Output() : id_(UIDGenerator::Instance()->GetUID()), result_mutex_(), last_written_frameid(-1) { }
+		Output() : id_(UIDGenerator::Instance()->GetUID()), last_written_frameid(-1)
+        {
+            lock_ = new SRWLOCK();
+            InitializeSRWLock(lock_);
+        }
 		virtual ~Output() { }
 
 
@@ -24,27 +27,26 @@ namespace ImageProcessing
 
 		virtual void RegisterResult(const std::shared_ptr<const FrameData> &result)
 		{
-			std::lock_guard<std::mutex> lock(result_mutex_);
-			current_result_ = result;
-		}
+            AcquireSRWLockExclusive(lock_);
+            current_result_ = result;
+            ReleaseSRWLockExclusive(lock_);
+        }
 
 		virtual void WriteResult()
 		{
-			std::shared_ptr<const FrameData> local_result;
+            AcquireSRWLockShared(lock_);
 
+			if (current_result_ && current_result_->id > last_written_frameid)
 			{
-				std::lock_guard<std::mutex> lock(result_mutex_);
-				local_result = current_result_;
+				Write(current_result_.get());
+				last_written_frameid = current_result_->id;
 			}
 
-			if (local_result && local_result->id > last_written_frameid)
-			{
-				Write(local_result.get());
-				last_written_frameid = local_result->id;
-			}
+            ReleaseSRWLockShared(lock_);
 		}
 
-	protected:
-		virtual void Write(const FrameData *result) noexcept = 0;
+    protected:
+        PSRWLOCK lock_;
+        virtual void Write(const FrameData *result) noexcept = 0;
 	};
 }

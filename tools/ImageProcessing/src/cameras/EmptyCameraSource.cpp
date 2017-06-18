@@ -7,14 +7,14 @@ using namespace ImageProcessing;
 
 void EmptyCameraSource::PrepareNextFrame()
 {
-	std::this_thread::sleep_for(std::chrono::seconds(1));
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 void EmptyCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
 {
 	auto buffer_size = GetFrameWidth() * GetFrameHeight() * GetFrameChannels();
-	std::memset(left_buffer, 0, buffer_size);
-	std::memset(right_buffer, 0, buffer_size);
+	std::memset(left_buffer, rand() % 255, buffer_size);
+	std::memset(right_buffer, rand() % 255, buffer_size);
 }
 
 void EmptyCameraSource::Open()
@@ -27,22 +27,22 @@ void EmptyCameraSource::Close()
 
 bool EmptyCameraSource::IsOpen() const
 {
-	return false;
+	return true;
 }
 
 int EmptyCameraSource::GetFrameWidth() const
 {
-	return 640;
+	return 1920 * 2;
 }
 
 int EmptyCameraSource::GetFrameHeight() const
 {
-	return 480;
+	return 1080 * 2;
 }
 
 int EmptyCameraSource::GetFrameChannels() const
 {
-	return 3;
+	return 4;
 }
 
 float EmptyCameraSource::GetFocalLength() const
