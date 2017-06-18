@@ -18,11 +18,11 @@ namespace ImageProcessing
 		Eye eye_;
 		ID3D11Device *g_D3D11Device_;
 		ID3D11Texture2D *d3dtex_;
-		bool is_desc_initialized_ = false;
-		bool is_desc_initialized_2 = false;
 
-        ID3D11Texture2D *pTexture = NULL;
-        ID3D11Texture2D *pTexture2 = NULL;
+        bool is_initialized_ = false;
+        CRITICAL_SECTION lock_;
+        ID3D11Texture2D* front_buffer_ = NULL;
+        ID3D11Texture2D* back_buffer_ = NULL;
 
 	public:
 
@@ -30,6 +30,7 @@ namespace ImageProcessing
 		virtual ~UnityTextureOutput();
 
         void RegisterResult(const std::shared_ptr<const FrameData> &result) override;
+        void WriteResult() override;
 
 	protected:
 		virtual void Write(const FrameData *frame) noexcept override;

@@ -1,7 +1,8 @@
 #include "outputs/UnityTextureOutput.h"
 
 #include <d3d11.h>
-#include "debugging/MeasurePerformance.h"
+#include "utils/Logger.h"
+
 
 using namespace ImageProcessing;
 
@@ -11,167 +12,122 @@ UnityTextureOutput::UnityTextureOutput(Eye eye, void *texture_ptr)
 {
     d3dtex_ = (ID3D11Texture2D*)texture_ptr;
     d3dtex_->GetDevice(&g_D3D11Device_);
+    InitializeCriticalSection(&lock_);
 }
 
 
 UnityTextureOutput::~UnityTextureOutput()
 {
-    if (is_desc_initialized_)
+    if (front_buffer_)
     {
+        front_buffer_->Release();
+        front_buffer_ = NULL;
     }
+
+    if (back_buffer_)
+    {
+        back_buffer_->Release();
+        back_buffer_ = NULL;
+    }
+
+    is_initialized_ = false;
+    DeleteCriticalSection(&lock_);
 }
 
 
 void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &frame)
 {
-    Output::RegisterResult(frame);
     auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
 
-    if (!is_desc_initialized_)
+    if (!is_initialized_)
     {
-        AcquireSRWLockExclusive(lock_);
+        D3D11_TEXTURE2D_DESC desc;
+        memset(&desc, 0, sizeof(desc));
+        desc.Width = frame->size.width;
+        desc.Height = frame->size.height;
+        desc.MipLevels = desc.ArraySize = 1;
+        desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+        desc.SampleDesc.Count = 1;
+        desc.Usage = D3D11_USAGE_STAGING;
+        desc.BindFlags = 0;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+
+        D3D11_SUBRESOURCE_DATA srInitData;
+        auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
+        srInitData.pSysMem = (void *)buffer;
+        srInitData.SysMemPitch = frame->size.width * frame->size.depth;
+        srInitData.SysMemSlicePitch = frame->size.width * frame->size.height * frame->size.depth;
+
+
+        // buffer 1
         {
-            D3D11_TEXTURE2D_DESC desc;
-            memset(&desc, 0, sizeof(desc));
-            desc.Width = frame->size.width;
-            desc.Height = frame->size.height;
-            desc.MipLevels = desc.ArraySize = 1;
-            desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-            desc.SampleDesc.Count = 1;
-            desc.Usage = D3D11_USAGE_STAGING;
-            desc.BindFlags = 0;
-            desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+            HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &front_buffer_);
 
-            D3D11_SUBRESOURCE_DATA srInitData;
-            auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
-            srInitData.pSysMem = (void *)buffer;
-            srInitData.SysMemPitch = frame->size.width * frame->size.depth;
-            srInitData.SysMemSlicePitch = frame->size.width * frame->size.height * frame->size.depth;
-
-            HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &pTexture);
-
-            if (r == S_OK)
+            if (r != S_OK)
             {
-                is_desc_initialized_ = true;
+                DebugLog("Could not initialize front buffer");
+                return;
             }
         }
 
+        // buffer 2
         {
-            D3D11_TEXTURE2D_DESC desc;
-            memset(&desc, 0, sizeof(desc));
-            desc.Width = frame->size.width;
-            desc.Height = frame->size.height;
-            desc.MipLevels = desc.ArraySize = 1;
-            desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-            desc.SampleDesc.Count = 1;
-            desc.Usage = D3D11_USAGE_STAGING;
-            desc.BindFlags = 0;
-            desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+            HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &back_buffer_);
 
-            D3D11_SUBRESOURCE_DATA srInitData;
-            auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
-            srInitData.pSysMem = (void *)buffer;
-            srInitData.SysMemPitch = frame->size.width * frame->size.depth;
-            srInitData.SysMemSlicePitch = frame->size.width * frame->size.height * frame->size.depth;
-
-            HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &pTexture2);
-
-            if (r == S_OK)
+            if (r != S_OK)
             {
-                is_desc_initialized_2 = true;
+                DebugLog("Could not initialize back buffer");
+                return;
             }
         }
 
-        ReleaseSRWLockExclusive(lock_);
+        is_initialized_ = true;
     }
-
     else
-    if (is_desc_initialized_2)
     {
 
         ID3D11DeviceContext* ctx = NULL;
         g_D3D11Device_->GetImmediateContext(&ctx);
-        D3D11_TEXTURE2D_DESC desc;
-        d3dtex_->GetDesc(&desc);
         D3D11_MAPPED_SUBRESOURCE mapped;
         ZeroMemory(&mapped, sizeof(mapped));
-        auto result = ctx->Map(pTexture2, 0, D3D11_MAP_WRITE, 0, &mapped);
+        HRESULT result = ctx->Map(back_buffer_, 0, D3D11_MAP_WRITE, 0, &mapped);
 
-        if (mapped.pData)
+        if (result == S_OK && mapped.pData != (void *)0xcccccccccccccccc)
         {
             memcpy(mapped.pData, buffer, frame->size.BufferSize());
         }
 
-        ctx->Unmap(pTexture2, 0);
+        ctx->Unmap(back_buffer_, 0);
         ctx->Release();
+
+
+        //EnterCriticalSection(&lock_);
+        //{
+        //    auto tmp = back_buffer_;
+        //    back_buffer_ = front_buffer_;
+        //    front_buffer_ = back_buffer_;
+        //}
+        //LeaveCriticalSection(&lock_);
     }
 
+}
+
+void UnityTextureOutput::WriteResult()
+{
+    Write(NULL);
 }
 
 
 void UnityTextureOutput::Write(const FrameData *frame) noexcept
 {
-    //auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
-
-    //if (!is_desc_initialized_)
-    //{
-    //    D3D11_TEXTURE2D_DESC desc;
-    //    memset(&desc, 0, sizeof(desc));
-    //    desc.Width = frame->size.width;
-    //    desc.Height = frame->size.height;
-    //    desc.MipLevels = desc.ArraySize = 1;
-    //    desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
-    //    desc.SampleDesc.Count = 1;
-    //    desc.Usage = D3D11_USAGE_STAGING;
-    //    desc.BindFlags = 0;
-    //    desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
-
-    //    D3D11_SUBRESOURCE_DATA srInitData;
-    //    auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
-    //    srInitData.pSysMem = (void *)buffer;
-    //    srInitData.SysMemPitch = frame->size.width * frame->size.depth;
-    //    srInitData.SysMemSlicePitch = frame->size.width * frame->size.height * frame->size.depth;
-
-    //    HRESULT r = g_D3D11Device_->CreateTexture2D(&desc, &srInitData, &pTexture);
-
-    //    if (r == S_OK)
-    //    {
-    //        is_desc_initialized_ = true;
-    //    }
-    //}
-
-
-
-
-
-    if (is_desc_initialized_)
+    //EnterCriticalSection(&lock_);
+    if (is_initialized_)
     {
         ID3D11DeviceContext* ctx = NULL;
         g_D3D11Device_->GetImmediateContext(&ctx);
 
-
-
-
-        // TODO: critical section instead of SRWLock, DoubleBuffering to avoid locks??
-        // Test if it even works in MultiThreading in the first place...
-        //D3D11_MAPPED_SUBRESOURCE mapped;
-        //ZeroMemory(&mapped, sizeof(mapped));
-        //auto result = ctx->Map(pTexture, 0, D3D11_MAP_WRITE, 0, &mapped);
-
-        //if (mapped.pData)
-        //{
-        //    auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
-        //    memcpy(mapped.pData, buffer, frame->size.BufferSize());
-        //}
-
-        //ctx->Unmap(pTexture, 0);
-        ///
-
-
-        PERF_MEASURE(start)
-        ctx->CopyResource(d3dtex_, pTexture);
-        PERF_MEASURE(end)
-        PERF_OUTPUT("CopyResource", start, end)
+        ctx->CopyResource(d3dtex_, front_buffer_);
         ctx->Release();
     }
+    //LeaveCriticalSection(&lock_);
 }
