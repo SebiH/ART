@@ -7,6 +7,11 @@
 using namespace ImageProcessing;
 
 
+//
+// Warning: Must have "-force-d3d11-no-singlethreaded" parameter when starting Unity!
+//
+
+
 UnityTextureOutput::UnityTextureOutput(Eye eye, void *texture_ptr)
     : eye_(eye)
 {
@@ -39,6 +44,7 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
 {
     auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
 
+
     if (!is_initialized_)
     {
         D3D11_TEXTURE2D_DESC desc;
@@ -48,9 +54,9 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
         desc.MipLevels = desc.ArraySize = 1;
         desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
         desc.SampleDesc.Count = 1;
-        desc.Usage = D3D11_USAGE_STAGING;
+        desc.Usage = D3D11_USAGE_DYNAMIC;
         desc.BindFlags = 0;
-        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+        desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
         D3D11_SUBRESOURCE_DATA srInitData;
         auto buffer = (eye_ == Eye::LEFT) ? frame->buffer_left.get() : frame->buffer_right.get();
@@ -83,23 +89,38 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
 
         is_initialized_ = true;
     }
-    else
+    else if (deferred_ctx_ != NULL)
     {
 
-        ID3D11DeviceContext* ctx = NULL;
-        g_D3D11Device_->GetImmediateContext(&ctx);
+        //{
+        //    ID3D11DeviceContext* ctx = NULL;
+        //    g_D3D11Device_->GetImmediateContext(&ctx);
+        //    D3D11_MAPPED_SUBRESOURCE mapped;
+        //    ZeroMemory(&mapped, sizeof(mapped));
+        //    HRESULT result = ctx->Map(back_buffer_, 0, D3D11_MAP_WRITE, 0, &mapped);
+
+        //    if (result == S_OK && mapped.pData != (void *)0xcccccccccccccccc)
+        //    {
+        //        memcpy(mapped.pData, buffer, frame->size.BufferSize());
+        //    }
+
+        //    ctx->Unmap(back_buffer_, 0);
+        //    ctx->Release();
+        //}
+
         D3D11_MAPPED_SUBRESOURCE mapped;
         ZeroMemory(&mapped, sizeof(mapped));
-        HRESULT result = ctx->Map(back_buffer_, 0, D3D11_MAP_WRITE, 0, &mapped);
+        HRESULT map_result = deferred_ctx_->Map(front_buffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
 
-        if (result == S_OK && mapped.pData != (void *)0xcccccccccccccccc)
+        if (map_result == S_OK && mapped.pData != (void *)0xcccccccccccccccc)
         {
             memcpy(mapped.pData, buffer, frame->size.BufferSize());
+
+            EnterCriticalSection(&lock_);
+            deferred_ctx_->Unmap(front_buffer_, 0);
+            deferred_ctx_->FinishCommandList(false, &cmd_list_);
+            LeaveCriticalSection(&lock_);
         }
-
-        ctx->Unmap(back_buffer_, 0);
-        ctx->Release();
-
 
         //EnterCriticalSection(&lock_);
         //{
@@ -108,6 +129,14 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
         //    front_buffer_ = back_buffer_;
         //}
         //LeaveCriticalSection(&lock_);
+
+        //{
+        //    ID3D11DeviceContext* ctx = NULL;
+        //    g_D3D11Device_->GetImmediateContext(&ctx);
+
+        //    ctx->CopyResource(d3dtex_, back_buffer_);
+        //    ctx->Release();
+        //}
     }
 
 }
@@ -120,14 +149,33 @@ void UnityTextureOutput::WriteResult()
 
 void UnityTextureOutput::Write(const FrameData *frame) noexcept
 {
-    //EnterCriticalSection(&lock_);
+    EnterCriticalSection(&lock_);
+    if (deferred_ctx_ == NULL)
+    {
+        HRESULT result = g_D3D11Device_->CreateDeferredContext(0, &deferred_ctx_);
+        if (result != S_OK)
+        {
+            DebugLog("Invalid call! Start Unity with cmd line parameters!");
+            deferred_ctx_ = NULL;
+        }
+    }
+
+
     if (is_initialized_)
     {
+
         ID3D11DeviceContext* ctx = NULL;
         g_D3D11Device_->GetImmediateContext(&ctx);
+
+        if (cmd_list_ != NULL)
+        {
+            ctx->ExecuteCommandList(cmd_list_, true);
+            cmd_list_->Release();
+            cmd_list_ = NULL;
+        }
 
         ctx->CopyResource(d3dtex_, front_buffer_);
         ctx->Release();
     }
-    //LeaveCriticalSection(&lock_);
+    LeaveCriticalSection(&lock_);
 }

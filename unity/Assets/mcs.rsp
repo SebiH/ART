@@ -1,1 +1,1 @@
--unsafe
+-unsafe -force-d3d11-no-singlethreaded

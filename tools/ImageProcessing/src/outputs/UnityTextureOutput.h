@@ -24,6 +24,8 @@ namespace ImageProcessing
         ID3D11Texture2D* front_buffer_ = NULL;
         ID3D11Texture2D* back_buffer_ = NULL;
 
+        ID3D11DeviceContext* deferred_ctx_ = NULL;
+        ID3D11CommandList* cmd_list_ = NULL;
 	public:
 
 		UnityTextureOutput(Eye eye, void *texture_ptr);
