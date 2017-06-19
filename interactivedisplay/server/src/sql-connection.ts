@@ -55,6 +55,7 @@ export class SqlConnection implements DataSource {
 
     private sqlQuery: string = "";
     private table: string = "";
+    private config: any = {};
 
     private sqlData: ReplaySubject<RawData[]>;
     private idCounter: number = 0;
@@ -63,6 +64,8 @@ export class SqlConnection implements DataSource {
     public constructor(private mapping: SqlColumnMapping[]) {}
 
     public connect(config: any) {
+        this.config = config.sqlSettings;
+
         if (!config.table) {
             throw "No table found in config";
         } else {
@@ -196,8 +199,9 @@ export class SqlConnection implements DataSource {
         let isFirst = true;
 
         for (let map of this.mapping) {
-            if (isFirst) { requestSql += map.dbColumn; isFirst = false; }
-            else {
+            if (isFirst) {
+                requestSql += map.dbColumn; isFirst = false;
+            } else {
                 requestSql += ', ' + map.dbColumn;
             }
         }
@@ -205,13 +209,15 @@ export class SqlConnection implements DataSource {
         requestSql += ' FROM ' + this.table + ' ';
 
 
-        requestSql += ' WHERE name = \'AvgWeek_BE_day\'';
+        if (this.config.queryAddition) {
+            requestSql += this.config.queryAddition;
+        }
+
         // for (let i = 0; i < filters.length; i++) {
         //     requestSql += (i == 0) ? ' WHERE ' : ' AND ';
         //     requestSql += filters[i];
         // }
 
-        requestSql += ' ORDER BY Cond;';
         console.log(requestSql);
 
         // let requestSql = this.sqlQuery;
