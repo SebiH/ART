@@ -60,8 +60,13 @@ namespace Assets.Modules.Graphs.Visualisation
             {
                 foreach (var tick in _dimension.Ticks)
                 {
-                    var tickGO = SpawnTick(tick.Name, _dimension.Scale(tick.Value));
-                    _ticks.Add(tickGO);
+                    var position = _dimension.Scale(tick.Value);
+
+                    if (-0.5f <= position && position <= 0.5f)
+                    {
+                        var tickGO = SpawnTick(tick.Name, position);
+                        _ticks.Add(tickGO);
+                    }
                 }
             }
         }
