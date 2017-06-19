@@ -13,6 +13,26 @@ namespace Assets.Modules.Graphs.Visualisation
         public Material MaterialTemplate;
         private Material _sharedMaterial;
 
+        private bool _isVisible = true;
+        public bool IsVisible
+        {
+            set
+            {
+                if (_isVisible != value)
+                {
+                    _isVisible = value;
+                    if (_isVisible)
+                    {
+                        BuildTicks();
+                    }
+                    else
+                    {
+                        ClearTicks();
+                    }
+                }
+            }
+        }
+
         public bool IsXAxis = true;
 
         private readonly List<GraphLabel> _ticks = new List<GraphLabel>();
@@ -27,7 +47,10 @@ namespace Assets.Modules.Graphs.Visualisation
                 if (_dimension != value)
                 {
                     _dimension = value;
-                    BuildTicks();
+                    if (_isVisible)
+                    {
+                        BuildTicks();
+                    }
                 }
             }
         }

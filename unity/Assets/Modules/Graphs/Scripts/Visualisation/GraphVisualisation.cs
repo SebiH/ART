@@ -1,4 +1,5 @@
 using Assets.Modules.Core;
+using Assets.Modules.Tracking;
 using UnityEngine;
 
 namespace Assets.Modules.Graphs.Visualisation
@@ -23,6 +24,31 @@ namespace Assets.Modules.Graphs.Visualisation
         private void OnDisable()
         {
             _graph.OnDataChange -= OnDataChange;
+        }
+
+        private void Update()
+        {
+            if ((transform.position - SceneCameraTracker.Instance.transform.position).magnitude > Globals.DataViewDistance)
+            {
+                TicksX.IsVisible = false;
+                TicksY.IsVisible = false;
+            }
+            else
+            {
+                TicksX.IsVisible = true;
+                TicksY.IsVisible = true;
+            }
+
+            if ((transform.position - SceneCameraTracker.Instance.transform.position).magnitude > Globals.DataViewDistance * 2)
+            {
+                LabelX.IsVisible = false;
+                LabelY.IsVisible = false;
+            }
+            else
+            {
+                LabelX.IsVisible = true;
+                LabelY.IsVisible = true;
+            }
         }
 
         private void OnDataChange()
