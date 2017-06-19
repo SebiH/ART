@@ -7,11 +7,50 @@ import { GraphDataProvider } from './graph-data-provider';
 import { ObjectStorage } from './object-storage';
 import { SqlConnection } from './sql-connection';
 import * as Colors from './colors';
+import * as fs from 'fs';
+import * as _ from 'lodash';
 
 const UNITY_PORT = 8835;
 const WEB_PORT = 81; // 80 might already be in use, thanks skype!
 
 let config = require('../sql.conf.json');
+
+
+//
+// Save/Load entire state
+//
+
+const cachePath = './data/cache.json';
+let globalState: any = {};
+
+let saveGlobalState = _.throttle(() => {
+    fs.writeFile(cachePath, JSON.stringify(globalState, null, '  '), (err) => {
+        if (err) console.error('Could not save global state: ' + err.message);
+        else console.log('Successfully saved global state!');
+    });
+}, 1000, { leading: false });
+
+
+
+if (fs.existsSync(cachePath)) {
+    fs.readFile(cachePath, (err, data) => {
+        if (err) throw err;
+        globalState = JSON.parse(data.toString());
+
+        for (let graph of globalState.graphs) {
+            graphStorage.set(graph);
+        }
+        for (let filter of globalState.filters) {
+            filterStorage.set(filter);
+        }
+
+        console.log('Loaded global state from cache');
+    });
+} else {
+    console.log('Starting with empty cache!');
+}
+
+
 
 let unityServer = new UnityServer();
 unityServer.start(UNITY_PORT);
@@ -96,6 +135,9 @@ sioServer.onMessageReceived({
                 selectedDataIndices = JSON.parse(msg.payload);
                 break;
         }
+
+        globalState.graphs = graphStorage.getAll();
+        saveGlobalState();
     }
 })
 
@@ -171,20 +213,22 @@ sioServer.onMessageReceived({
             case '-filter':
                 filterStorage.remove(<number>msg.payload);
         }
+
+        globalState.filters = filterStorage.getAll();
+        saveGlobalState();
     }
 });
 
 
-let globalFilter = [];
-
 webServer.addPath('/api/filter/global', (req, res, next) => {
-    res.json({ globalfilter: globalFilter });
+    res.json({ globalfilter: globalState.globalFilter });
 });
 
 sioServer.onMessageReceived({
     handler: (msg) => {
         if (msg.command == 'globalfilter') {
-            globalFilter = JSON.parse(msg.payload).globalfilter;
+            globalState.globalFilter = JSON.parse(msg.payload).globalfilter;
+            saveGlobalState();
         }
     }
 });
@@ -214,4 +258,3 @@ sioServer.onMessageReceived({
 
 webServer.start();
 sioServer.start(webServer);
-

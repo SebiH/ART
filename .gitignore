@@ -120,3 +120,5 @@ sysinfo.txt
 # Configs may contain confidential/machine related data
 /interactivedisplay/**/*.conf.json
 
+# Temp data
+/interactivedisplay/server/data/cache.json
