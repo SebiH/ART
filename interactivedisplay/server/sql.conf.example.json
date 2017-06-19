@@ -1,8 +1,5 @@
 {
     "mode": "debug", // "debug", "sql", "csv"
-    "sqlSettings": {
-        "queryAddition": "WHERE x = 'y' ORDER BY z" // optional
-    },
     "sqlSecrets": {
         "server": "",
         "userName": "",
@@ -11,7 +8,8 @@
             "encrypt": true,
             "database": ""
         },
-        "table": ""
+        "table": "",
+        "queryAddition": "WHERE x = 'y' ORDER BY z" // optional
     },
     "csvConfig": {
         "filename": "data/test.csv",

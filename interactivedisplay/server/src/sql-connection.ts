@@ -64,7 +64,7 @@ export class SqlConnection implements DataSource {
     public constructor(private mapping: SqlColumnMapping[]) {}
 
     public connect(config: any) {
-        this.config = config.sqlSettings;
+        this.config = config;
 
         if (!config.table) {
             throw "No table found in config";
