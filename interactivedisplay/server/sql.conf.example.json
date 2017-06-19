@@ -16,6 +16,7 @@
             // see: http://csv.adaltas.com/parse/
         }
     },
+    "mappings": "", // 'titanic', 'smartact', 'smartact-temporal', 'smartact-timeline'
     "settings": {
         "showMarkers": false,
         "showOverviewChart": false,

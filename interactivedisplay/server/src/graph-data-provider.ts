@@ -18,16 +18,40 @@ export class GraphDataProvider {
     private mapping: SqlColumnMapping[];
 
     public constructor(config: any) {
+
+        switch (config.mapping) {
+            case 'titanic':
+                console.log('Using titanic mapping');
+                this.mapping = TitanicMapping;
+                break;
+            case 'smartact':
+                console.log('Using smartact mapping');
+                this.mapping = SmartactMapping;
+                break;
+            case 'smartact-temporal':
+                console.log('Using smartact temporal mapping');
+                this.mapping = SmartactTemporalMapping;
+                break;
+            case 'smartact-timeline':
+                console.log('Using smartact timeline mapping');
+                this.mapping = SmartactTimelineMapping;
+                break;
+
+            default:
+                console.error('Unknown mapping ' + config.mapping);
+                throw 'Unknown mapping';
+        }
+
+
         if (config.mode == "debug") {
             console.log('Using random data');
-            this.mapping = SmartactTimelineMapping;
             let randomDataCount = 1000;
             let data: RawData[] = [];
             for (let i = 0; i < randomDataCount; i++) {
                 data.push({ id: i, dimensions: {} });
             }
 
-            for (let mapping of SmartactTimelineMapping) {
+            for (let mapping of this.mapping) {
                 let dimension = mapping.dbColumn;
 
                 if (mapping.type == DataRepresentation.Categorical && mapping.autoGenerateValues) {
@@ -59,13 +83,11 @@ export class GraphDataProvider {
                 }
             }
         } else if (config.mode == "sql") {
-            let sqlConnection = new SqlConnection(SmartactTimelineMapping);
+            let sqlConnection = new SqlConnection(this.mapping);
             sqlConnection.connect(config.sqlSecrets);
             this.dataSource = sqlConnection;
-            this.mapping = SmartactTimelineMapping;
         } else if (config.mode == "csv") {
-            this.dataSource = new CsvReader(config.csvConfig as CsvConfig, TitanicMapping);
-            this.mapping = TitanicMapping;
+            this.dataSource = new CsvReader(config.csvConfig as CsvConfig, this.mapping);
         } else {
             throw new Error("Unknown config mode " + config.mode);
         }
