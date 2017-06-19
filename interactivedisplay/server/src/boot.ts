@@ -66,28 +66,6 @@ unityServer.onMessageReceived({
 let graphStorage = new ObjectStorage();
 let selectedDataIndices = null;
 
-if (config.graphs) {
-    let idCounter = 0;
-
-    console.log('Starting with ' + config.graphs.length + ' initial graphs');
-
-    for (let graph of config.graphs) {
-        graphStorage.set({
-            id: idCounter,
-            dimX: graph.dimX || '',
-            dimY: graph.dimY || '',
-            color: Colors.random(),
-            isColored: !!graph.isColored,
-            isSelected: !!graph.isSelected,
-            isFlipped: !!graph.isFlipped,
-            sortAxis: !!graph.sortAxis,
-            pos: idCounter
-        });
-
-        idCounter++;
-    }
-}
-
 webServer.addPath('/api/graph/list', (req, res, next) => {
     res.json({
         graphs: graphStorage.getAll(),
