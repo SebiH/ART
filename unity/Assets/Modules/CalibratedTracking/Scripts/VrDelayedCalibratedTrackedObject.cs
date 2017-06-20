@@ -8,7 +8,7 @@ namespace Assets.Modules.CalibratedTracking.Scripts
         public bool TrackPosition = false;
         public bool TrackRotation = false;
 
-        [Range(0, 0.1f)]
+        [Range(-0.1f, 0.1f)]
         public float TrackingDelay = 0f;
 
         private CameraTrackingSwitcher _camTracker;

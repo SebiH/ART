@@ -38,15 +38,11 @@ namespace Assets.Modules.CalibratedTracking
 
         private void StashPose()
         {
-            var pos = VRListener.CurrentPosition;
-            var rot = VRListener.CurrentRotation;
-            var time = VRListener.PoseUpdateTime;
-
             _trackedPoses.Enqueue(new DelayedPose
             {
-                TimeOfPose = Time.time,
-                Position = pos,
-                Rotation = rot
+                TimeOfPose = VRListener.PoseUpdateTime,
+                Position = VRListener.CurrentPosition,
+                Rotation = VRListener.CurrentRotation
             });
         }
 
@@ -55,7 +51,7 @@ namespace Assets.Modules.CalibratedTracking
             DelayedPose pose = null;
 
             var currentTime = Time.unscaledTime;
-            while (_trackedPoses.Count > 0 && _trackedPoses.Peek().TimeOfPose + TrackingDelay < currentTime)
+            while (_trackedPoses.Count > 0 && _trackedPoses.Peek().TimeOfPose + TrackingDelay <= currentTime)
             {
                 pose = _trackedPoses.Dequeue();
             }
