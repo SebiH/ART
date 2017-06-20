@@ -62,8 +62,7 @@ namespace Assets.Modules.CalibratedTracking
 
             if (pose != null)
             {
-                //_position = CalibrationParams.GetCalibratedPosition(pose.Position, pose.Rotation);
-                _position = pose.Position; // position is calibrated 'against' Optitrack
+                _position = CalibrationParams.GetCalibratedPosition(pose.Position, pose.Rotation);
                 _rotation = CalibrationParams.GetCalibratedRotation(pose.Rotation);
             }
         }
