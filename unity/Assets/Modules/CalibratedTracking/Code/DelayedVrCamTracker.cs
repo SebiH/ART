@@ -59,7 +59,7 @@ namespace Assets.Modules.CalibratedTracking
             if (pose != null)
             {
                 _position = CalibrationParams.GetCalibratedPosition(pose.Position, pose.Rotation);
-                _rotation = CalibrationParams.GetCalibratedRotation(pose.Rotation);
+                _rotation = pose.Rotation; //CalibrationParams.GetCalibratedRotation(pose.Rotation);
             }
         }
     }
