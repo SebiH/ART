@@ -10,7 +10,7 @@ namespace Assets.Modules.SurfaceInterface.Scripts
 {
     public class AdminCommandListener : MonoBehaviour
     {
-        public OptitrackCalibrateDisplay DisplayCalibration;
+        public ViveCalibrateDisplay DisplayCalibration;
 
         private void OnEnable()
         {
