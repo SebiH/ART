@@ -168,7 +168,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 289e4088661aba74db9a211a2b6a9d20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TrackedName: HMD
+  TrackedName: HMD2
   TrackPosition: 0
   TrackRotation: 0
 --- !u!114 &114000011352104616
