@@ -39,6 +39,12 @@ UnityTextureOutput::~UnityTextureOutput()
         staging_tx_ = NULL;
     }
 
+    if (deferred_ctx_)
+    {
+        deferred_ctx_->Release();
+        deferred_ctx_ = NULL;
+    }
+
     is_initialized_ = false;
     DeleteCriticalSection(&lock_);
 }
@@ -88,11 +94,18 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
         if (map_result == S_OK)
         {
             memcpy(mapped.pData, buffer, frame->size.BufferSize());
-
             deferred_ctx_->Unmap(staging_tx_, 0);
 
             EnterCriticalSection(&lock_);
-            deferred_ctx_->FinishCommandList(false, &cmd_list_);
+            {
+                if (cmd_list_)
+                {
+                    cmd_list_->Release();
+                    cmd_list_ = NULL;
+                }
+
+                deferred_ctx_->FinishCommandList(false, &cmd_list_);
+            }
             LeaveCriticalSection(&lock_);
         }
     }
