@@ -14,8 +14,8 @@ namespace Assets.Modules.Calibration
         private Vector3 _lastOptitrackPos;
         private Quaternion _lastOptitrackRot;
 
-        private const float OptitrackCutoffTime = 0.3f;
-        private const float OptitrackChangeTolerance = 0.85f;
+        //private const float OptitrackCutoffTime = 0.3f;
+        //private const float OptitrackChangeTolerance = 0.85f;
 
         private const float OvrCutoffTime = 0.3f;
         private const float OvrChangeTolerance = 0.9f;
@@ -39,14 +39,14 @@ namespace Assets.Modules.Calibration
 
         private bool ShouldCalibrate()
         {
-            var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
-            if (optitrackPose == null) { return false; }
+            //var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
+            //if (optitrackPose == null) { return false; }
 
-            var isOptitrackPoseRecent = IsRecent(optitrackPose.DetectionTime, OptitrackCutoffTime);
-            if (!isOptitrackPoseRecent) { return false; }
+            //var isOptitrackPoseRecent = IsRecent(optitrackPose.DetectionTime, OptitrackCutoffTime);
+            //if (!isOptitrackPoseRecent) { return false; }
 
-            var isOptitrackStable = OptitrackMonitor.Stability > OptitrackChangeTolerance;
-            if (!isOptitrackStable) { return false; }
+            //var isOptitrackStable = OptitrackMonitor.Stability > OptitrackChangeTolerance;
+            //if (!isOptitrackStable) { return false; }
 
 
             var isHmdPoseRecent = IsRecent(VRListener.PoseUpdateTime, OvrCutoffTime);
@@ -84,8 +84,9 @@ namespace Assets.Modules.Calibration
             var hasMarkerChangedRecently = IsRecent(marker.LastChangeTime, MarkerChangeCutoffTime);
             if (hasMarkerChangedRecently) { return false; }
 
-            var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
-            var isTooFarAway = Mathf.Abs((optitrackPose.Position - marker.transform.position).magnitude) > MaxMarkerHmdDistance;
+            //var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
+            var hmdPos = VRListener.CurrentPosition;
+            var isTooFarAway = Mathf.Abs((hmdPos - marker.transform.position).magnitude) > MaxMarkerHmdDistance;
             if (isTooFarAway) { return false; }
 
             // TODO: angle between hmd direction & marker? (probably not necessary) - needs intersection
@@ -101,19 +102,19 @@ namespace Assets.Modules.Calibration
 
         private void UpdateTracking()
         {
-            var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
-            if (optitrackPose != null)
-            {
-                var hasPositionChanged = Mathf.Abs((_lastOptitrackPos - optitrackPose.Position).magnitude) > Mathf.Epsilon;
-                var hasRotationChanged = Mathf.Abs(Quaternion.Angle(_lastOptitrackRot, optitrackPose.Rotation)) > Mathf.Epsilon;
+            //var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
+            //if (optitrackPose != null)
+            //{
+                //var hasPositionChanged = Mathf.Abs((_lastOptitrackPos - optitrackPose.Position).magnitude) > Mathf.Epsilon;
+                //var hasRotationChanged = Mathf.Abs(Quaternion.Angle(_lastOptitrackRot, optitrackPose.Rotation)) > Mathf.Epsilon;
 
-                if (hasPositionChanged || hasRotationChanged)
-                {
-                    _lastOptitrackPos = optitrackPose.Position;
-                    _lastOptitrackRot = optitrackPose.Rotation;
-                    OptitrackMonitor.UpdateStability(optitrackPose.Position, optitrackPose.Rotation);
-                }
-            }
+                //if (hasPositionChanged || hasRotationChanged)
+                //{
+                //    _lastOptitrackPos = optitrackPose.Position;
+                //    _lastOptitrackRot = optitrackPose.Rotation;
+                //    OptitrackMonitor.UpdateStability(optitrackPose.Position, optitrackPose.Rotation);
+                //}
+            //}
 
             var ovrPosition = VRListener.CurrentPosition;
             var ovrRotation = VRListener.CurrentRotation;
@@ -129,17 +130,18 @@ namespace Assets.Modules.Calibration
             {
                 var camPositions = validMarkers.Select(m => m.DetectedCameraPosition);
                 var avgCamPosition = MathUtility.Average(camPositions);
-                var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
-                Debug.Assert(optitrackPose != null, "OptitrackPose shall not be null, since we checked for that in ShouldCalibrate??");
-                CalibrationParams.PositionOffset = Quaternion.Inverse(optitrackPose.Rotation) * (avgCamPosition - optitrackPose.Position);
+                //var optitrackPose = OptitrackListener.GetPose(Globals.OptitrackHmdName);
+                //Debug.Assert(optitrackPose != null, "OptitrackPose shall not be null, since we checked for that in ShouldCalibrate??");
+                var hmdRotation = VRListener.CurrentRotation;
+                var hmdPosition = VRListener.CurrentPosition;
+                CalibrationParams.PositionOffset = Quaternion.Inverse(hmdRotation) * (avgCamPosition - hmdPosition);
 
                 var camRotations = validMarkers.Select(m => m.DetectedCameraRotation);
                 var avgCamRotation = MathUtility.Average(camRotations);
-                var ovrRotation = VRListener.CurrentRotation;
 
                 // MarkerRotation = Offset * Ovr
                 // => Offset = MarkerRotation * inv(Ovr)
-                CalibrationParams.RotationOffset = avgCamRotation * Quaternion.Inverse(ovrRotation);
+                CalibrationParams.RotationOffset = avgCamRotation * Quaternion.Inverse(hmdRotation);
             }
         }
     }
