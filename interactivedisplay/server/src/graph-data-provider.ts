@@ -205,15 +205,18 @@ export class GraphDataProvider {
             let dynMinValue = maxValue;
             let dynMaxValue = minValue;
 
-            let similarDimensions = _.filter(this.mapping, { name: mapping.name });
-
-
-            for (let dim of similarDimensions) {
-                for (let i = 0; i < data.length; i++) {
-                    dynMinValue = Math.min(dynMinValue, data[i].dimensions[dim.dbColumn]);
-                    dynMaxValue = Math.max(dynMaxValue, data[i].dimensions[dim.dbColumn]);
-                }
+            for (let i = 0; i < values.length; i++) {
+                dynMinValue = Math.min(dynMinValue, values[i].value);
+                dynMaxValue = Math.max(dynMaxValue, values[i].value);
             }
+
+            // let similarDimensions = _.filter(this.mapping, { name: mapping.name });
+            // for (let dim of similarDimensions) {
+            //     for (let i = 0; i < data.length; i++) {
+            //         dynMinValue = Math.min(dynMinValue, data[i].dimensions[dim.dbColumn]);
+            //         dynMaxValue = Math.max(dynMaxValue, data[i].dimensions[dim.dbColumn]);
+            //     }
+            // }
 
             // let range = (maxValue - minValue);
             // let margin = range / 10;
