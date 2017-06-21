@@ -225,8 +225,8 @@ export class GraphDataProvider {
             // }
             let margin = 0;
 
-            maxValue = Math.min(Math.ceil(dynMaxValue + margin), maxValue);
-            minValue = Math.max(Math.floor(dynMinValue - margin), minValue);
+            // maxValue = Math.min(Math.ceil(dynMaxValue + margin), maxValue);
+            // minValue = Math.max(Math.floor(dynMinValue - margin), minValue);
         }
 
         // mirror chart-dimension model in web app
