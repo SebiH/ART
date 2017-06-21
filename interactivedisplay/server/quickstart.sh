@@ -9,13 +9,17 @@ cp "sql.conf.json" "sql.conf-$TIMESTAMP.json"
 cp "sql.conf-$1.json" "sql.conf.json"
 echo "Initialized configuration"
 
-if [[ $2 ]]; then
-    echo "Loading new saved state $2"
-    cp "data/cache.json" "data/$TIMESTAMP-cache.json"
-    cp "data/cache-$2.json" "data/cache.json"
-else
-    echo "Keeping current state"
-fi
+cp "data/cache.json" "data/$TIMESTAMP-cache.json"
+rm "data/cache.json"
+echo "Loading new state"
+
+# if [[ $2 ]]; then
+#     echo "Loading new saved state $2"
+#     cp "data/cache.json" "data/$TIMESTAMP-cache.json"
+#     cp "data/cache-$2.json" "data/cache.json"
+# else
+#     echo "Keeping current state"
+# fi
 
 # if [[ $3 ]]; then
 #     echo "Switching to database $3"
