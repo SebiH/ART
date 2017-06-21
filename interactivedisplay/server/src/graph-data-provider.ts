@@ -210,6 +210,14 @@ export class GraphDataProvider {
                 dynMaxValue = Math.max(dynMaxValue, values[i].value);
             }
 
+            // let similarDimensions = _.filter(this.mapping, { name: mapping.name });
+            // for (let dim of similarDimensions) {
+            //     for (let i = 0; i < data.length; i++) {
+            //         dynMinValue = Math.min(dynMinValue, data[i].dimensions[dim.dbColumn]);
+            //         dynMaxValue = Math.max(dynMaxValue, data[i].dimensions[dim.dbColumn]);
+            //     }
+            // }
+
             // let range = (maxValue - minValue);
             // let margin = range / 10;
             // if (range > 50000) {
@@ -217,8 +225,8 @@ export class GraphDataProvider {
             // }
             let margin = 0;
 
-            maxValue = Math.min(Math.ceil(dynMaxValue + margin), maxValue);
-            minValue = Math.max(Math.floor(dynMinValue - margin), minValue);
+            // maxValue = Math.min(Math.ceil(dynMaxValue + margin), maxValue);
+            // minValue = Math.max(Math.floor(dynMinValue - margin), minValue);
         }
 
         // mirror chart-dimension model in web app
