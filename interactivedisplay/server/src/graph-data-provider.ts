@@ -6,6 +6,7 @@ import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
 import { SmartactTemporalMapping } from './smartact-temporal-mappings';
 import { SmartactTimelineMapping } from './smartact-timeline-mappings';
+import { SmartactArtTimelineMapping } from './smartact-art-timeline-mapping';
 import { TitanicMapping } from './titanic-mappings';
 import { SqlColumnMapping } from './sql-mapping';
 import * as Colors from './colors';
@@ -35,6 +36,10 @@ export class GraphDataProvider {
             case 'smartact-timeline':
                 console.log('Using smartact timeline mapping');
                 this.mapping = SmartactTimelineMapping;
+                break;
+            case 'smartact-art-timeline':
+                console.log('Using smartact ART timeline mapping');
+                this.mapping = SmartactArtTimelineMapping;
                 break;
 
             default:
