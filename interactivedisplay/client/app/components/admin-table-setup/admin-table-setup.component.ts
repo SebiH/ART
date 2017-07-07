@@ -101,10 +101,10 @@ export class AdminTableSetupComponent implements OnInit, OnDestroy {
                     let graph = this.graphProvider.addGraph();
                     this.dataProvider.getData(baseDim)
                         .first()
-                        .subscribe(data => graph.dimX = data);
+                        .subscribe(data => graph.setDimX(data));
                     this.dataProvider.getData(dim)
                         .first()
-                        .subscribe(data => graph.dimY = data);
+                        .subscribe(data => graph.setDimY(data));
                     graph.absolutePos = posCounter;
                     graph.isNewlyCreated = false;
                     posCounter += graph.width;
