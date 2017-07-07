@@ -61,7 +61,11 @@ export class GraphDataProvider {
 
                 if (mapping.type == DataRepresentation.Categorical && mapping.autoGenerateValues) {
                     for (let i = 0; i < randomDataCount; i++) {
-                        data[i].dimensions[mapping.dbColumn] = i;
+                        data[i].dimensions[mapping.dbColumn] = {
+                            value: i,
+                            isNull: Math.random() < 0.2
+                        };
+
                         mapping.values.push({
                             color: Colors.random(),
                             dbValue: i,
@@ -82,7 +86,10 @@ export class GraphDataProvider {
                         if (mapping.type === DataRepresentation.Categorical) {
                             val = Math.round(val);
                         }
-                        data[i].dimensions[dimension] = val;
+                        data[i].dimensions[dimension] = {
+                            value: val,
+                            isNull: Math.random() < 0.2
+                        };
                     }
                     this.dataCache[dimension] = this.convertData(dimension, data);
                 }
@@ -158,11 +165,12 @@ export class GraphDataProvider {
             return {};
         }
 
-        let values: {id: string, value: number}[] = [];
+        let values: {id: string, value: number, isNull: boolean}[] = [];
         for (let datum of data) {
             values.push({
                 id: '' + datum.id,
-                value: datum.dimensions[mapping.dbColumn],
+                value: datum.dimensions[mapping.dbColumn].value,
+                isNull: datum.dimensions[mapping.dbColumn].isNull
             });
         }
 

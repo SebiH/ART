@@ -1,7 +1,7 @@
 import { Parser } from 'csv-parse';
 import { Observable, ReplaySubject } from 'rxjs';
 import { SqlColumnMapping, CategoricalSqlMapping, MetricSqlMapping, DataRepresentation } from './sql-mapping';
-import { RawData } from './raw-data';
+import { RawData, RawDataPoint } from './raw-data';
 import { DataSource } from './data-source';
 
 import * as _ from 'lodash';
@@ -50,13 +50,16 @@ export class CsvReader implements DataSource {
                     if (dimensions.length == 0) {
                         dimensions = record;
                     } else {
-                        let dims: { [dim: string]: number } = {};
+                        let dims: { [dim: string]: RawDataPoint } = {};
 
                         for (let i = 0; i < dimensions.length; i++) {
                             let map = _.find(this.mapping, (m) => m.dbColumn == dimensions[i]);
 
                             if (map) {
-                                dims[map.dbColumn] = map.converter(record[i]);
+                                dims[map.dbColumn] = {
+                                    value: map.converter(record[i]),
+                                    isNull: false
+                                };
                             }
                         }
 
