@@ -9,6 +9,7 @@ namespace Assets.Modules.Graphs
         {
             public int Id;
             public float Value;
+            public bool IsNull;
         }
 
         public DimData[] Data = null;

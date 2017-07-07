@@ -64,7 +64,9 @@ namespace Assets.Modules.Graphs
                 for (var i = 0; i < rndValues.Length; i++)
                 {
                     rndValues[i].Id = i;
-                    rndValues[i].Value = Random.Range(-0.5f, 0.5f);
+                    var isNull = Random.Range(0f, 1f) < 0.5f;
+                    rndValues[i].IsNull = isNull;
+                    rndValues[i].Value = isNull ? -0.5f : Random.Range(-0.5f, 0.5f);
                 }
 
                 var dimension = new MetricDimension

@@ -16,7 +16,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         #region Properties
 
-        private Vec2ArrayAnimation _leftAnimation = new Vec2ArrayAnimation(LINE_ANIMATION_LENGTH);
+        private DataPointArrayAnimation _leftAnimation = new DataPointArrayAnimation(LINE_ANIMATION_LENGTH);
         private bool _hasLeftData = false;
         private GraphMetaData _leftGraph;
         public GraphMetaData Left
@@ -49,7 +49,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
         }
 
-        private Vec2ArrayAnimation _rightAnimation = new Vec2ArrayAnimation(LINE_ANIMATION_LENGTH);
+        private DataPointArrayAnimation _rightAnimation = new DataPointArrayAnimation(LINE_ANIMATION_LENGTH);
         private bool _hasRightData = false;
         private GraphMetaData _rightGraph;
         public GraphMetaData Right
@@ -154,7 +154,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
             else
             {
-                var data = _leftGraph.Graph.GetDataPosition();
+                var data = _leftGraph.Graph.GetDataPosition2();
                 if (_hasLeftData && _hasRightData && _lineRenderer.IsVisible)
                 {
                     _leftAnimation.Restart(data);
@@ -168,7 +168,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
         }
-        private void SetLeftData(Vector2[] data)
+        private void SetLeftData(Graph.DataPoint[] data)
         {
             if (data.Length != _lineRenderer.Lines.Length)
             {
@@ -177,7 +177,11 @@ namespace Assets.Modules.ParallelCoordinates
 
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
-                _lineRenderer.Lines[i].Start = data[i];
+                _lineRenderer.Lines[i].Start = data[i].Pos;
+                if (data[i].IsNull) 
+                    _lineRenderer.Lines[i].IsNull = (byte)(_lineRenderer.Lines[i].IsNull | 1);
+                else
+                    _lineRenderer.Lines[i].IsNull = (byte)(_lineRenderer.Lines[i].IsNull & 2);
             }
             UpdateRenderer(UpdateMode.Position);
         }
@@ -191,7 +195,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
             else
             {
-                var data = _rightGraph.Graph.GetDataPosition();
+                var data = _rightGraph.Graph.GetDataPosition2();
 
                 if (_hasLeftData && _hasRightData && _lineRenderer.IsVisible)
                 {
@@ -207,7 +211,7 @@ namespace Assets.Modules.ParallelCoordinates
 
         }
 
-        private void SetRightData(Vector2[] data)
+        private void SetRightData(Graph.DataPoint[] data)
         {
             if (data.Length != _lineRenderer.Lines.Length)
             {
@@ -216,7 +220,11 @@ namespace Assets.Modules.ParallelCoordinates
 
             for (var i = 0; i < _lineRenderer.Lines.Length; i++)
             {
-                _lineRenderer.Lines[i].End = data[i];
+                _lineRenderer.Lines[i].End = data[i].Pos;
+                if (data[i].IsNull) 
+                    _lineRenderer.Lines[i].IsNull = (byte)(_lineRenderer.Lines[i].IsNull | 2);
+                else
+                    _lineRenderer.Lines[i].IsNull = (byte)(_lineRenderer.Lines[i].IsNull & 1);
             }
             UpdateRenderer(UpdateMode.Position);
         }

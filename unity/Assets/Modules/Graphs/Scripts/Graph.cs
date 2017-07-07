@@ -20,6 +20,7 @@ namespace Assets.Modules.Graphs
 
         // minor performance improvement
         private Vector2[] _dataCache = null;
+        private DataPoint[] _dataCache2 = null;
 
         private CategoricalDimension _sortedDimX;
         private Dimension _dimX;
@@ -105,12 +106,25 @@ namespace Assets.Modules.Graphs
             }
         }
 
-        public Vector2 GetDataPosition(int index)
+        public struct DataPoint
         {
-            Debug.Assert(_dimX != null && _dimY != null, "Tried retrieving data from graph with null dimensions");
-            return new Vector2(_dimX.ScaledData[index], _dimY.ScaledData[index]);
+            public bool IsNull;
+            public Vector2 Pos;
+
+            public DataPoint(float x, float y, bool isNull)
+            {
+                Pos = new Vector2(x, y);
+                IsNull = isNull;
+            }
         }
 
+        public DataPoint GetDataPosition(int index)
+        {
+            Debug.Assert(_dimX != null && _dimY != null, "Tried retrieving data from graph with null dimensions");
+            return new DataPoint(_dimX.ScaledData[index], _dimY.ScaledData[index], _dimX.Data[index].IsNull || _dimY.Data[index].IsNull);
+        }
+
+   
         public Vector2[] GetDataPosition()
         {
             if (_dataCache == null)
@@ -126,9 +140,26 @@ namespace Assets.Modules.Graphs
             return _dataCache;
         }
 
+
+        public DataPoint[] GetDataPosition2()
+        {
+            if (_dataCache2 == null)
+            {
+                Debug.Assert(DimX != null && DimY != null, "Tried retrieving data from graph with null dimensions");
+                _dataCache2 = new DataPoint[DimX.Data.Length];
+                for (var i = 0; i < _dataCache2.Length; i++)
+                {
+                    _dataCache2[i] = new DataPoint(DimX.ScaledData[i], DimY.ScaledData[i], DimX.Data[i].IsNull || DimY.Data[i].IsNull);
+                }
+            }
+
+            return _dataCache2;
+        }
+
         private void TriggerDataChange()
         {
             _dataCache = null;
+            _dataCache2 = null;
 
             if (OnDataChange != null)
             {
