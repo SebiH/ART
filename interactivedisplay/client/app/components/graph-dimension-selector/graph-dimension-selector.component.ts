@@ -137,9 +137,9 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
             .first()
             .subscribe((data) => {
                 if (axis == 'x') {
-                    this.graph.dimX = data;
+                    this.graph.setDimX(data);
                 } else {
-                    this.graph.dimY = data;
+                    this.graph.setDimY(data);
                 }
 
                 this.changeDetector.markForCheck();

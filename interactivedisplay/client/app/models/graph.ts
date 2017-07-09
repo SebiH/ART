@@ -20,30 +20,38 @@ export class Graph {
      *    dimX
      */
     private _dimX: ChartDimension = null;
-    public get dimX() : ChartDimension {
+    private get dimX() : ChartDimension {
         return this._dimX;
     }
-    public set dimX(v : ChartDimension) {
+    private set dimX(v : ChartDimension) {
         if (this._dimX != v) {
             this._dimX = v;
             this.sortedAxisX = null;
             this.propagateUpdates(['dimX']);
         }
     }
+    // because getter/setter cannot have different accessibility levels
+    public setDimX(v: ChartDimension): void {
+        this.dimX = v;
+    }
 
     /*
      *    dimY
      */
     private _dimY: ChartDimension = null;
-    public get dimY() : ChartDimension {
+    private get dimY() : ChartDimension {
         return this._dimY;
     }
-    public set dimY(v : ChartDimension) {
+    private set dimY(v : ChartDimension) {
         if (this._dimY != v) {
             this._dimY = v;
             this.sortedAxisX = null;
             this.propagateUpdates(['dimY']);
         }
+    }
+    // because getter/setter cannot have different accessibility levels
+    public setDimY(v: ChartDimension): void {
+        this.dimY = v;
     }
 
     /*

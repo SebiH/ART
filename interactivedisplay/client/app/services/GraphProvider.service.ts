@@ -133,7 +133,7 @@ export class GraphProvider {
         if (this.settings.lockDimension != '') {
             this.dataProvider.getData(this.settings.lockDimension)
                 .first()
-                .subscribe(data => graph.dimX = data);
+                .subscribe(data => graph.setDimX(data));
         }
 
         this.attachListeners(graph);

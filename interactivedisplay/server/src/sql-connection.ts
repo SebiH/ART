@@ -1,6 +1,6 @@
 import { Observable, ReplaySubject } from 'rxjs';
 import { SqlColumnMapping, CategoricalSqlMapping, MetricSqlMapping, DataRepresentation } from './sql-mapping';
-import { RawData } from './raw-data';
+import { RawData, RawDataPoint } from './raw-data';
 import { DataSource } from './data-source';
 
 import * as Colors from './colors';
@@ -237,7 +237,7 @@ export class SqlConnection implements DataSource {
 
         request.on('row', (columns) => {
             if (columns.length == this.mapping.length) {
-                let values: {[dim: string]: number} = { };
+                let values: {[dim: string]: RawDataPoint } = { };
 
                 for (let i = 0; i < this.mapping.length; i++) {
                     let map = this.mapping[i];
@@ -255,7 +255,10 @@ export class SqlConnection implements DataSource {
                         }
                     }
 
-                    values[map.dbColumn] = numericValue;
+                    values[map.dbColumn] = {
+                        value: numericValue,
+                        isNull: value === null
+                    };
                 }
 
                 requestedData.push({

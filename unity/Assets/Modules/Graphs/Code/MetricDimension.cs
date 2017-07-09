@@ -28,7 +28,10 @@ namespace Assets.Modules.Graphs
             if (_range == 0) { _range = 1; }
             for (var i = 0; i < Data.Length; i++)
             {
-                ScaledData[i] = Scale(Data[i].Value);
+                if (Data[i].IsNull)
+                    ScaledData[i] = -0.6f;
+                else 
+                    ScaledData[i] = Scale(Data[i].Value);
             }
 
             var ticks = new List<Mapping>();

@@ -33,6 +33,7 @@ namespace Assets.Modules.ParallelCoordinates
             public Vector2 Start;
             public Vector2 End;
             public Color32 Color;
+            public byte IsNull;
         }
 
         private static float[] ColorOffsets = null;
@@ -69,8 +70,12 @@ namespace Assets.Modules.ParallelCoordinates
             var bindPoses = new Matrix4x4[Lines.Length * 2];
             var boneWeights = new BoneWeight[Lines.Length * 2];
             var colors = new Color32[Lines.Length * 2];
+            // Position offset
             var uv = new Vector2[Lines.Length * 2];
+            // Color offset
             var uv2 = new Vector2[Lines.Length * 2];
+            // Null values
+            var uv3 = new Vector2[Lines.Length * 2];
 
             for (var i = 0; i < Lines.Length; i++)
             {
@@ -115,6 +120,11 @@ namespace Assets.Modules.ParallelCoordinates
 
                 uv2[i * 2 + 0].x = ColorOffsets[i];
                 uv2[i * 2 + 1].x = ColorOffsets[i];
+
+                uv3[i * 2 + 0].x = 0;
+                uv3[i * 2 + 0].y = 0;
+                uv3[i * 2 + 1].x = 0;
+                uv3[i * 2 + 1].y = 0;
             }
 
             triangles[triangles.Length - 1] = 0;
@@ -122,6 +132,7 @@ namespace Assets.Modules.ParallelCoordinates
             _mesh.vertices = new Vector3[Lines.Length * 2];
             _mesh.uv = uv;
             _mesh.uv2 = uv2;
+            _mesh.uv3 = uv3;
             _mesh.colors32 = colors;
             _mesh.triangles = triangles;
             _mesh.boneWeights = boneWeights;
@@ -140,6 +151,7 @@ namespace Assets.Modules.ParallelCoordinates
             }
 
             var vertices = _mesh.vertices;
+            var nullIndicator = _mesh.uv3;
             var colors = _mesh.colors32;
 
             for (var i = 0; i < Lines.Length; i++)
@@ -149,11 +161,17 @@ namespace Assets.Modules.ParallelCoordinates
                 vertices[i * 2 + 0] = new Vector3(line.Start.x, line.Start.y, 0);
                 vertices[i * 2 + 1] = new Vector3(line.End.x, line.End.y, 0);
 
+                nullIndicator[i * 2 + 0].x = line.IsNull;
+                nullIndicator[i * 2 + 0].y = line.IsNull;
+                nullIndicator[i * 2 + 1].x = line.IsNull;
+                nullIndicator[i * 2 + 1].y = line.IsNull;
+
                 colors[i * 2 + 0] = line.Color;
                 colors[i * 2 + 1] = line.Color;
             }
 
             _mesh.vertices = vertices;
+            _mesh.uv3 = nullIndicator;
             _mesh.colors32 = colors;
             _mesh.RecalculateBounds();
         }
@@ -165,15 +183,21 @@ namespace Assets.Modules.ParallelCoordinates
                 return;
             }
             var vertices = _mesh.vertices;
+            var nullIndicator = _mesh.uv3;
 
             for (var i = 0; i < Lines.Length; i++)
             {
                 var line = Lines[i];
                 vertices[i * 2 + 0] = new Vector3(line.Start.x, line.Start.y, 0);
                 vertices[i * 2 + 1] = new Vector3(line.End.x, line.End.y, 0);
+                nullIndicator[i * 2 + 0].x = line.IsNull;
+                nullIndicator[i * 2 + 0].y = line.IsNull;
+                nullIndicator[i * 2 + 1].x = line.IsNull;
+                nullIndicator[i * 2 + 1].y = line.IsNull;
             }
 
             _mesh.vertices = vertices;
+            _mesh.uv3 = nullIndicator;
             _mesh.RecalculateBounds();
         }
 

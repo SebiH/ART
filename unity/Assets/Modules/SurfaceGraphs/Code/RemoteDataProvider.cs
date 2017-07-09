@@ -69,6 +69,7 @@ namespace Assets.Modules.SurfaceGraphs
                 // assuming ids are 0 - data.length
                 data[i].Id = int.Parse(response.data[i].id);
                 data[i].Value = response.data[i].value;
+                data[i].IsNull = response.data[i].isNull;
             }
 
             dimension.Data = data;
@@ -108,6 +109,7 @@ namespace Assets.Modules.SurfaceGraphs
         {
             public string id = "0";
             public float value = -1;
+            public bool isNull = false;
         } 
 
         [Serializable]

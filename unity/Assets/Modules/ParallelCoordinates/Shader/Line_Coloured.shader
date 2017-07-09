@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
 Shader "Graph/Line_Coloured"
 {
     Properties
@@ -35,6 +37,7 @@ Shader "Graph/Line_Coloured"
                 float4 color: COLOR;
 				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD1;
+				float2 uv3 : TEXCOORD2;
             };
 
             struct v2g
@@ -43,6 +46,7 @@ Shader "Graph/Line_Coloured"
                 float4 color : COLOR;
 				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD1;
+				float2 uv3 : TEXCOORD2;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -50,6 +54,8 @@ Shader "Graph/Line_Coloured"
             {
                 float4 position : SV_POSITION;
                 float4 color : COLOR;
+                float2 worldPos: TEXCOORD0;
+				float2 uv3 : TEXCOORD2;
             };
 
 
@@ -81,6 +87,7 @@ Shader "Graph/Line_Coloured"
                 output.color = input.color;
 				output.uv = input.uv;
 				output.uv2 = input.uv2;
+				output.uv3 = input.uv3;
                 return output;
             }
 
@@ -88,6 +95,8 @@ Shader "Graph/Line_Coloured"
             void geo(line v2g IN[2], inout TriangleStream<g2f> tristream)
             {
                 g2f o;
+                o.uv3 = IN[0].uv3;
+
                 float3 widthY = float3(0, _lineWidth, 0);
                 float3 widthX = float3(_lineWidth, 0, 0);
 
@@ -110,14 +119,17 @@ Shader "Graph/Line_Coloured"
 
 				// left
                 o.position = UnityObjectToClipPos(startPos + widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos + widthY + widthX).xz;
                 o.color = startCol;
                 tristream.Append(o);
 
                 o.position = UnityObjectToClipPos(endPos + widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthY + widthX).xz;
                 o.color = endCol;
                 tristream.Append(o);
 
                 o.position = UnityObjectToClipPos(startPos - widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthY + widthX).xz;
                 o.color = startCol;
                 tristream.Append(o);
 
@@ -125,14 +137,17 @@ Shader "Graph/Line_Coloured"
 
 
                 o.position = UnityObjectToClipPos(startPos - widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthY + widthX).xz;
                 o.color = startCol;
                 tristream.Append(o);
 
                 o.position = UnityObjectToClipPos(endPos + widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthY + widthX).xz;
                 o.color = endCol;
                 tristream.Append(o);
                 
                 o.position = UnityObjectToClipPos(endPos - widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos - widthY + widthX).xz;
                 o.color = endCol;
                 tristream.Append(o);
 
@@ -141,14 +156,17 @@ Shader "Graph/Line_Coloured"
 
 				// right
 				o.position = UnityObjectToClipPos(endPos + widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthY - widthX).xz;
 				o.color = endCol;
 				tristream.Append(o);
 
 				o.position = UnityObjectToClipPos(startPos + widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos + widthY - widthX).xz;
 				o.color = startCol;
 				tristream.Append(o);
 
 				o.position = UnityObjectToClipPos(startPos - widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthY - widthX).xz;
 				o.color = startCol;
 				tristream.Append(o);
 
@@ -156,14 +174,17 @@ Shader "Graph/Line_Coloured"
 
 
 				o.position = UnityObjectToClipPos(endPos + widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthY - widthX).xz;
 				o.color = endCol;
 				tristream.Append(o);
 
 				o.position = UnityObjectToClipPos(startPos - widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthY - widthX).xz;
 				o.color = startCol;
 				tristream.Append(o);
 
 				o.position = UnityObjectToClipPos(endPos - widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos - widthY - widthX).xz;
 				o.color = endCol;
 				tristream.Append(o);
 
@@ -171,14 +192,17 @@ Shader "Graph/Line_Coloured"
 
 				// bottom
                 o.position = UnityObjectToClipPos(endPos + widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthX + widthY).xz;
                 o.color = endCol;
                 tristream.Append(o);
 
                 o.position = UnityObjectToClipPos(startPos + widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos + widthX + widthY).xz;
                 o.color = startCol;
                 tristream.Append(o);
 
                 o.position = UnityObjectToClipPos(startPos - widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthX + widthY).xz;
                 o.color = startCol;
                 tristream.Append(o);
 
@@ -186,14 +210,17 @@ Shader "Graph/Line_Coloured"
 
 
                 o.position = UnityObjectToClipPos(endPos + widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthX + widthY).xz;
                 o.color = endCol;
                 tristream.Append(o);
 
                 o.position = UnityObjectToClipPos(startPos - widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthX + widthY).xz;
                 o.color = startCol;
                 tristream.Append(o);
                 
                 o.position = UnityObjectToClipPos(endPos - widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos - widthX + widthY).xz;
                 o.color = endCol;
                 tristream.Append(o);
 
@@ -202,14 +229,17 @@ Shader "Graph/Line_Coloured"
 
 				// top
 				o.position = UnityObjectToClipPos(startPos + widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos + widthX - widthY).xz;
 				o.color = startCol;
 				tristream.Append(o);
 
 				o.position = UnityObjectToClipPos(endPos + widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthX - widthY).xz;
 				o.color = endCol;
 				tristream.Append(o);
 
 				o.position = UnityObjectToClipPos(startPos - widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthX - widthY).xz;
 				o.color = startCol;
 				tristream.Append(o);
 
@@ -217,14 +247,17 @@ Shader "Graph/Line_Coloured"
 
 
 				o.position = UnityObjectToClipPos(startPos - widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthX - widthY).xz;
 				o.color = startCol;
 				tristream.Append(o);
 
 				o.position = UnityObjectToClipPos(endPos + widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthX - widthY).xz;
 				o.color = endCol;
 				tristream.Append(o);
 
 				o.position = UnityObjectToClipPos(endPos - widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos - widthX - widthY).xz;
 				o.color = endCol;
 				tristream.Append(o);
 
@@ -236,6 +269,10 @@ Shader "Graph/Line_Coloured"
             {
                 fixed4 inputColor = input.color;
                 clip(input.color.a - 0.999);
+
+                // dotted line for any NULL values (passed in from uv3)
+                clip(floor(frac(input.worldPos.y * 100) * 1.5) - 0.00001 * input.uv3.x);
+
                 return inputColor;
             }
 
