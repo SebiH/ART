@@ -36,7 +36,8 @@ Shader "Graph/Line_Transparent"
                 float4 color: COLOR;
 				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD1;
-			};
+                float2 uv3 : TEXCOORD2;
+            };
 
             struct v2g
             {
@@ -44,13 +45,16 @@ Shader "Graph/Line_Transparent"
                 float4 color : COLOR;
 				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD1;
-				UNITY_VERTEX_OUTPUT_STEREO
+                float2 uv3 : TEXCOORD2;
+                UNITY_VERTEX_OUTPUT_STEREO
             };
 
             struct g2f
             {
                 float4 position : SV_POSITION;
+                float2 worldPos: TEXCOORD0;
                 float4 color : COLOR;
+                float2 uv3 : TEXCOORD2;
             };
 
 			// adapted from http://stackoverflow.com/a/17897228/4090817
@@ -81,6 +85,7 @@ Shader "Graph/Line_Transparent"
                 output.color = input.color;
 				output.uv = input.uv;
 				output.uv2 = input.uv2;
+				output.uv3 = input.uv3;
                 return output;
             }
 
@@ -88,7 +93,8 @@ Shader "Graph/Line_Transparent"
             void geo(line v2g IN[2], inout TriangleStream<g2f> tristream)
             {
                 g2f o;
-				// reduce lineWidth based on alpha
+                o.uv3 = IN[0].uv3;
+                // reduce lineWidth based on alpha
                 float lineWidth = _lineWidth * max(IN[0].color.a, 0.5);
 				float3 widthY = float3(0, lineWidth, 0);
 				float3 widthX = float3(lineWidth, 0, 0);
@@ -111,127 +117,151 @@ Shader "Graph/Line_Transparent"
 				float4 endCol = float4(rgbEndCol, end.color.a);
 
 
-				// left
-				o.position = UnityObjectToClipPos(startPos + widthY + widthX);
-				o.color = startCol;
-				tristream.Append(o);
+                // left
+                o.position = UnityObjectToClipPos(startPos + widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos + widthY + widthX).xz;
+                o.color = startCol;
+                tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(endPos + widthY + widthX);
-				o.color = endCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(endPos + widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthY + widthX).xz;
+                o.color = endCol;
+                tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(startPos - widthY + widthX);
-				o.color = startCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(startPos - widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthY + widthX).xz;
+                o.color = startCol;
+                tristream.Append(o);
 
-				tristream.RestartStrip();
-
-
-				o.position = UnityObjectToClipPos(startPos - widthY + widthX);
-				o.color = startCol;
-				tristream.Append(o);
-
-				o.position = UnityObjectToClipPos(endPos + widthY + widthX);
-				o.color = endCol;
-				tristream.Append(o);
-
-				o.position = UnityObjectToClipPos(endPos - widthY + widthX);
-				o.color = endCol;
-				tristream.Append(o);
-
-				tristream.RestartStrip();
+                tristream.RestartStrip();
 
 
-				// right
-				o.position = UnityObjectToClipPos(endPos + widthY - widthX);
-				o.color = endCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(startPos - widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthY + widthX).xz;
+                o.color = startCol;
+                tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(startPos + widthY - widthX);
-				o.color = startCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(endPos + widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthY + widthX).xz;
+                o.color = endCol;
+                tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(startPos - widthY - widthX);
-				o.color = startCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(endPos - widthY + widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos - widthY + widthX).xz;
+                o.color = endCol;
+                tristream.Append(o);
 
-				tristream.RestartStrip();
-
-
-				o.position = UnityObjectToClipPos(endPos + widthY - widthX);
-				o.color = endCol;
-				tristream.Append(o);
-
-				o.position = UnityObjectToClipPos(startPos - widthY - widthX);
-				o.color = startCol;
-				tristream.Append(o);
-
-				o.position = UnityObjectToClipPos(endPos - widthY - widthX);
-				o.color = endCol;
-				tristream.Append(o);
-
-				tristream.RestartStrip();
-
-				// bottom
-				o.position = UnityObjectToClipPos(endPos + widthX + widthY);
-				o.color = endCol;
-				tristream.Append(o);
-
-				o.position = UnityObjectToClipPos(startPos + widthX + widthY);
-				o.color = startCol;
-				tristream.Append(o);
-
-				o.position = UnityObjectToClipPos(startPos - widthX + widthY);
-				o.color = startCol;
-				tristream.Append(o);
-
-				tristream.RestartStrip();
+                tristream.RestartStrip();
 
 
-				o.position = UnityObjectToClipPos(endPos + widthX + widthY);
-				o.color = endCol;
-				tristream.Append(o);
+                // right
+                o.position = UnityObjectToClipPos(endPos + widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthY - widthX).xz;
+                o.color = endCol;
+                tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(startPos - widthX + widthY);
-				o.color = startCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(startPos + widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos + widthY - widthX).xz;
+                o.color = startCol;
+                tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(endPos - widthX + widthY);
-				o.color = endCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(startPos - widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthY - widthX).xz;
+                o.color = startCol;
+                tristream.Append(o);
 
-				tristream.RestartStrip();
-
-
-				// top
-				o.position = UnityObjectToClipPos(startPos + widthX - widthY);
-				o.color = startCol;
-				tristream.Append(o);
-
-				o.position = UnityObjectToClipPos(endPos + widthX - widthY);
-				o.color = endCol;
-				tristream.Append(o);
-
-				o.position = UnityObjectToClipPos(startPos - widthX - widthY);
-				o.color = startCol;
-				tristream.Append(o);
-
-				tristream.RestartStrip();
+                tristream.RestartStrip();
 
 
-				o.position = UnityObjectToClipPos(startPos - widthX - widthY);
-				o.color = startCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(endPos + widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthY - widthX).xz;
+                o.color = endCol;
+                tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(endPos + widthX - widthY);
-				o.color = endCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(startPos - widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthY - widthX).xz;
+                o.color = startCol;
+                tristream.Append(o);
 
-				o.position = UnityObjectToClipPos(endPos - widthX - widthY);
-				o.color = endCol;
-				tristream.Append(o);
+                o.position = UnityObjectToClipPos(endPos - widthY - widthX);
+                o.worldPos = mul(unity_ObjectToWorld, endPos - widthY - widthX).xz;
+                o.color = endCol;
+                tristream.Append(o);
 
-				tristream.RestartStrip();
+                tristream.RestartStrip();
+
+                // bottom
+                o.position = UnityObjectToClipPos(endPos + widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthX + widthY).xz;
+                o.color = endCol;
+                tristream.Append(o);
+
+                o.position = UnityObjectToClipPos(startPos + widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos + widthX + widthY).xz;
+                o.color = startCol;
+                tristream.Append(o);
+
+                o.position = UnityObjectToClipPos(startPos - widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthX + widthY).xz;
+                o.color = startCol;
+                tristream.Append(o);
+
+                tristream.RestartStrip();
+
+
+                o.position = UnityObjectToClipPos(endPos + widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthX + widthY).xz;
+                o.color = endCol;
+                tristream.Append(o);
+
+                o.position = UnityObjectToClipPos(startPos - widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthX + widthY).xz;
+                o.color = startCol;
+                tristream.Append(o);
+
+                o.position = UnityObjectToClipPos(endPos - widthX + widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos - widthX + widthY).xz;
+                o.color = endCol;
+                tristream.Append(o);
+
+                tristream.RestartStrip();
+
+
+                // top
+                o.position = UnityObjectToClipPos(startPos + widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos + widthX - widthY).xz;
+                o.color = startCol;
+                tristream.Append(o);
+
+                o.position = UnityObjectToClipPos(endPos + widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthX - widthY).xz;
+                o.color = endCol;
+                tristream.Append(o);
+
+                o.position = UnityObjectToClipPos(startPos - widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthX - widthY).xz;
+                o.color = startCol;
+                tristream.Append(o);
+
+                tristream.RestartStrip();
+
+
+                o.position = UnityObjectToClipPos(startPos - widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, startPos - widthX - widthY).xz;
+                o.color = startCol;
+                tristream.Append(o);
+
+                o.position = UnityObjectToClipPos(endPos + widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos + widthX - widthY).xz;
+                o.color = endCol;
+                tristream.Append(o);
+
+                o.position = UnityObjectToClipPos(endPos - widthX - widthY);
+                o.worldPos = mul(unity_ObjectToWorld, endPos - widthX - widthY).xz;
+                o.color = endCol;
+                tristream.Append(o);
+
+                tristream.RestartStrip();
             }
 
 
@@ -240,6 +270,10 @@ Shader "Graph/Line_Transparent"
                 fixed4 inputColor = input.color;
                 clip((1 - input.color.a) - 0.001);
                 clip(input.color.a - 0.001);
+
+                // dotted line for any NULL values (passed in from uv3)
+                clip(floor(frac(input.worldPos.y * 100) * 1.5) - 0.00001 * input.uv3.x);
+
 				// fade out color as transparency decreases - to prevent jumps when switching from 1.0 alpha to 0.99 alpha
 				inputColor *= (0.85 + 0.15 * input.color.a);
                 return inputColor;
@@ -250,4 +284,3 @@ Shader "Graph/Line_Transparent"
         }
     }
  }
-
