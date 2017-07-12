@@ -15,7 +15,7 @@ Shader "Core/TransparentWithZBuffer"
 		Blend SrcAlpha OneMinusSrcAlpha
 
 		Pass {
-		ColorMask RGB
+		ColorMask ARGB
 
 		CGPROGRAM
 #pragma vertex vert
