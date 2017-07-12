@@ -87,26 +87,29 @@ void UnityTextureOutput::RegisterResult(const std::shared_ptr<const FrameData> &
     }
     else if (deferred_ctx_ != NULL)
     {
-        D3D11_MAPPED_SUBRESOURCE mapped;
-        ZeroMemory(&mapped, sizeof(mapped));
-        HRESULT map_result = deferred_ctx_->Map(staging_tx_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-
-        if (map_result == S_OK)
+        if (!cmd_list_)
         {
-            memcpy(mapped.pData, buffer, frame->size.BufferSize());
-            deferred_ctx_->Unmap(staging_tx_, 0);
+            D3D11_MAPPED_SUBRESOURCE mapped;
+            ZeroMemory(&mapped, sizeof(mapped));
+            HRESULT map_result = deferred_ctx_->Map(staging_tx_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
 
-            EnterCriticalSection(&lock_);
+            if (map_result == S_OK)
             {
-                if (cmd_list_)
-                {
-                    cmd_list_->Release();
-                    cmd_list_ = NULL;
-                }
+                memcpy(mapped.pData, buffer, frame->size.BufferSize());
+                deferred_ctx_->Unmap(staging_tx_, 0);
 
-                deferred_ctx_->FinishCommandList(false, &cmd_list_);
+                EnterCriticalSection(&lock_);
+                {
+                    //if (!cmd_list_)
+                    //{
+                    //    cmd_list_->Release();
+                    //    cmd_list_ = NULL;
+                    //}
+
+                    deferred_ctx_->FinishCommandList(false, &cmd_list_);
+                }
+                LeaveCriticalSection(&lock_);
             }
-            LeaveCriticalSection(&lock_);
         }
     }
 
