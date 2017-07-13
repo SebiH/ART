@@ -5,7 +5,7 @@
 #include "cameras/ActiveCamera.h"
 #include "cameras/CameraSourceInterface.h"
 #include "cameras/EmptyCameraSource.h"
-#include "cameras/DummyCameraSource.h"
+#include "cameras/FileCameraSource.h"
 #include "cameras/OvrvisionCameraSource.h"
 #include "cameras/OpenCVCameraSource.h"
 #include "utils/Logger.h"
@@ -60,11 +60,11 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int /* OVR::Camprop */
 	}
 }
 
-extern "C" UNITY_INTERFACE_EXPORT void SetDummyCamera(const char *filepath)
+extern "C" UNITY_INTERFACE_EXPORT void SetFileCamera(const char *filepath)
 {
 	try
 	{
-		std::shared_ptr<ImageProcessing::CameraSourceInterface> dummy_source = std::make_shared<ImageProcessing::DummyCameraSource>(filepath);
+		std::shared_ptr<ImageProcessing::CameraSourceInterface> dummy_source = std::make_shared<ImageProcessing::FileCameraSource>(filepath);
 		SetCamera(dummy_source);
 	}
 	catch (const std::exception &e)

@@ -47,9 +47,9 @@ namespace GUI
                 {
                     ImageProcessing.SetOpenCVCamera();
                 }
-                else if (camera == "Dummy")
+                else if (camera == "File")
                 {
-                    ImageProcessing.SetDummyCamera("C:/code/img/4.png");
+                    ImageProcessing.SetFileCamera("C:/code/img/4.png");
                 }
                 else if (camera == "Null")
                 {
@@ -100,10 +100,10 @@ namespace GUI
                         {
                             case 0:
                                 //ImageProcessing.SetOvrCamera(2, 0);
-                                ImageProcessing.SetDummyCamera("C:/code/resources/dummy2.jpg");
+                                ImageProcessing.SetFileCamera("C:/code/resources/dummy2.jpg");
                                 break;
                             case 1:
-                                ImageProcessing.SetDummyCamera("C:/code/resources/dummy3.jpg");
+                                ImageProcessing.SetFileCamera("C:/code/resources/dummy3.jpg");
                                 break;
                         }
                     }

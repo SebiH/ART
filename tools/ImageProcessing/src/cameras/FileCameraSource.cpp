@@ -1,4 +1,4 @@
-#include "cameras/DummyCameraSource.h"
+#include "cameras/FileCameraSource.h"
 
 #include <chrono>
 #include <thread>
@@ -9,7 +9,7 @@
 
 using namespace ImageProcessing;
 
-DummyCameraSource::DummyCameraSource(std::string filename)
+FileCameraSource::FileCameraSource(std::string filename)
 	: img_(cv::imread(filename))
 {
 	if (img_.channels() == 3)
@@ -24,13 +24,13 @@ DummyCameraSource::DummyCameraSource(std::string filename)
 	}
 }
 
-DummyCameraSource::~DummyCameraSource()
+FileCameraSource::~FileCameraSource()
 {
 
 }
 
 
-void DummyCameraSource::PrepareNextFrame()
+void FileCameraSource::PrepareNextFrame()
 {
 	if (!is_first_image_)
 	{
@@ -43,52 +43,52 @@ void DummyCameraSource::PrepareNextFrame()
 }
 
 
-void DummyCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
+void FileCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
 {
 	auto buffer_size = img_.channels() * img_.size().width * img_.size().height;
 	memcpy(left_buffer, img_.data, buffer_size);
 	memcpy(right_buffer, img_.data, buffer_size);
 }
 
-void DummyCameraSource::Open()
+void FileCameraSource::Open()
 {
 }
 
-void DummyCameraSource::Close()
+void FileCameraSource::Close()
 {
 }
 
-bool DummyCameraSource::IsOpen() const
+bool FileCameraSource::IsOpen() const
 {
 	return true;
 }
 
-int DummyCameraSource::GetFrameWidth() const
+int FileCameraSource::GetFrameWidth() const
 {
 	return img_.size().width;
 }
 
-int DummyCameraSource::GetFrameHeight() const
+int FileCameraSource::GetFrameHeight() const
 {
 	return img_.size().height;
 }
 
-int DummyCameraSource::GetFrameChannels() const
+int FileCameraSource::GetFrameChannels() const
 {
 	// image is converted to 4 channels to match textures in unity
 	return 4;
 }
 
-float DummyCameraSource::GetFocalLength() const
+float FileCameraSource::GetFocalLength() const
 {
 	return 1.f;
 }
 
-void DummyCameraSource::SetProperties(const nlohmann::json &json_config)
+void FileCameraSource::SetProperties(const nlohmann::json &json_config)
 {
 }
 
-nlohmann::json DummyCameraSource::GetProperties() const
+nlohmann::json FileCameraSource::GetProperties() const
 {
 	return nlohmann::json();
 }

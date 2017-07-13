@@ -11,7 +11,7 @@
             <ComboBox x:Name="CameraSelectionBox">
                 <ComboBoxItem>OVRVision</ComboBoxItem>
                 <ComboBoxItem>OpenCV</ComboBoxItem>
-                <ComboBoxItem>Dummy</ComboBoxItem>
+                <ComboBoxItem>File</ComboBoxItem>
                 <ComboBoxItem>Null</ComboBoxItem>
             </ComboBox>
             <Button Click="Button_Click">Open Camera</Button>

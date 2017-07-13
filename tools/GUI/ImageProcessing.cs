@@ -17,7 +17,7 @@ namespace GUI
         public static extern void SetOvrCamera(int resolution, int processing_mode);
 
         [DllImport("ImageProcessing")]
-        public static extern void SetDummyCamera(string filepath);
+        public static extern void SetFileCamera(string filepath);
 
         [DllImport("ImageProcessing")]
         public static extern void SetOpenCVCamera();

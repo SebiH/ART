@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Modules.Vision.CameraSources
 {
-    public class DummyCameraSource : CameraSource
+    public class FileCameraSource : CameraSource
     {
         private string _prevSourcePath = "";
         public string SourcePath = "";
@@ -13,11 +13,11 @@ namespace Assets.Modules.Vision.CameraSources
         {
             if (File.Exists(SourcePath))
             {
-                ImageProcessing.SetDummyCamera(SourcePath);
+                ImageProcessing.SetFileCamera(SourcePath);
             }
             else
             {
-                throw new Exception("Cannot open DummyCamera, file " + SourcePath + " does not exist");
+                throw new Exception("Cannot open FileCamera, file " + SourcePath + " does not exist");
             }
         }
 

@@ -6,7 +6,7 @@
 
 namespace ImageProcessing
 {
-	class DummyCameraSource : public CameraSourceInterface
+	class FileCameraSource : public CameraSourceInterface
 	{
 	private:
 		cv::Mat img_;
@@ -14,8 +14,8 @@ namespace ImageProcessing
 
 
 	public:
-		DummyCameraSource(std::string filename);
-		~DummyCameraSource();
+		FileCameraSource(std::string filename);
+		~FileCameraSource();
 
 
 		virtual void PrepareNextFrame() override;
