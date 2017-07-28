@@ -14,7 +14,7 @@ namespace Assets.Modules.Calibration
         private readonly List<Vector3> _positions = new List<Vector3>();
         private readonly List<Quaternion> _rotations = new List<Quaternion>();
 
-        public int Samples = 100;
+        public int MaxSamples = 100;
         public float Sensitivity = 20f;
 
         public void Reset()
@@ -29,33 +29,33 @@ namespace Assets.Modules.Calibration
         public void UpdateStability(Vector3 nextPosition, Quaternion nextRotation)
         {
             _positions.Add(nextPosition);
-            while (_positions.Count > Samples)
+            while (_positions.Count > MaxSamples)
             {
                 _positions.RemoveAt(0);
             }
 
-            var avgPosition = MathUtility.Average(_positions);
-            var maxPosDiff = 0f;
+            var avgPos = MathUtility.Average(_positions);
+            var maxPosDifference = 0f;
             foreach (var pos in _positions)
             {
-                maxPosDiff = Mathf.Max(Mathf.Abs((pos - avgPosition).magnitude), maxPosDiff);
+                maxPosDifference = Mathf.Max((pos - avgPos).magnitude, maxPosDifference);
             }
-            PositionStability = Mathf.Clamp(1 - maxPosDiff * Sensitivity, 0f, 1f);
+            PositionStability = Mathf.Clamp(1 - maxPosDifference * Sensitivity, 0f, 1f);
 
 
             _rotations.Add(nextRotation);
-            while (_rotations.Count > Samples)
+            while (_rotations.Count > MaxSamples)
             {
                 _rotations.RemoveAt(0);
             }
 
-            var avgRotation = MathUtility.Average(_rotations);
-            var maxRotDiff = 0f;
+            var avgRot = MathUtility.Average(_rotations);
+            var maxRotDifference = 0f;
             foreach (var rot in _rotations)
             {
-                maxRotDiff = Mathf.Max(Quaternion.Angle(rot, avgRotation), maxRotDiff);
+                maxRotDifference = Mathf.Max(Quaternion.Angle(rot, avgRot), maxRotDifference);
             }
-            RotationStability = Mathf.Clamp(1 - maxRotDiff * (Sensitivity / 1000f), 0f, 1f);
+            RotationStability = Mathf.Clamp(1 - maxRotDifference * (Sensitivity / 1000f), 0f, 1f);
 
 
             Stability = RotationStability * PositionStability;

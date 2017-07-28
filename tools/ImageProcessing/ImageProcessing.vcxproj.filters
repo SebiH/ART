@@ -48,9 +48,6 @@
     <ClCompile Include="src\api\logging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\cameras\DummyCameraSource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\processors\_stereo_detection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -117,12 +114,12 @@
     <ClCompile Include="src\outputs\D3dOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\cameras\FileCameraSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\cameras\DummyCameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cameras\OvrvisionCameraSource.h">
@@ -222,6 +219,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\outputs\D3dOutput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\FileCameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

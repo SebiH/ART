@@ -102,7 +102,7 @@
     <ClCompile Include="src\api\tools.cpp" />
     <ClCompile Include="src\aruco_calibration\aruco_calibration.cpp" />
     <ClCompile Include="src\cameras\ActiveCamera.cpp" />
-    <ClCompile Include="src\cameras\DummyCameraSource.cpp" />
+    <ClCompile Include="src\cameras\FileCameraSource.cpp" />
     <ClCompile Include="src\cameras\EmptyCameraSource.cpp" />
     <ClCompile Include="src\cameras\OpenCVCameraSource.cpp" />
     <ClCompile Include="src\cameras\OvrvisionCameraSource.cpp" />
@@ -132,7 +132,7 @@
   <ItemGroup>
     <ClInclude Include="src\aruco_calibration\aruco_calibration_board_a4.h" />
     <ClInclude Include="src\cameras\ActiveCamera.h" />
-    <ClInclude Include="src\cameras\DummyCameraSource.h" />
+    <ClInclude Include="src\cameras\FileCameraSource.h" />
     <ClInclude Include="src\cameras\EmptyCameraSource.h" />
     <ClInclude Include="src\cameras\OpenCVCameraSource.h" />
     <ClInclude Include="src\debugging\MeasurePerformance.h" />

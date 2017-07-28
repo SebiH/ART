@@ -15,7 +15,7 @@ Shader "Filter/TransparentFilter"
         Blend SrcAlpha OneMinusSrcAlpha 
 
         Pass {
-            ColorMask RGB
+            ColorMask ARGB
 
             CGPROGRAM
             #pragma vertex vert

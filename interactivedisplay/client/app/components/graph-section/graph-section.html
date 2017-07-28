@@ -65,19 +65,6 @@
 
     <div class="row" style="align-items: flex-start; height: 135px;">
         <div class="button-container" style="margin-top: 30px;">
-            <div class="button"
-                [ngClass]="{ active: graph.isPickedUp }"
-                moveable
-                (moveStart)="handleMoveStart($event)"
-                (moveUpdate)="handleMoveUpdate($event)"
-                (moveEnd)="handleMoveEnd($event)">
-                <div class="icon">
-                    <span class="fa fa-arrows-h" aria-hidden="true"></span>
-                </div>
-                <div class="text">
-                    Move
-                </div>
-            </div>
             <div class="button" touch-button (touchclick)="selectGraph()" *ngIf="!graph.isSelected">
                 <div class="icon">
                     <span class="fa fa-sliders" aria-hidden="true"></span>
@@ -94,6 +81,19 @@
 
                 <div class="text">
                     Close
+                </div>
+            </div>
+            <div class="button"
+                [ngClass]="{ active: graph.isPickedUp }"
+                moveable
+                (moveStart)="handleMoveStart($event)"
+                (moveUpdate)="handleMoveUpdate($event)"
+                (moveEnd)="handleMoveEnd($event)">
+                <div class="icon">
+                    <span class="fa fa-arrows-h" aria-hidden="true"></span>
+                </div>
+                <div class="text">
+                    Move
                 </div>
             </div>
             <div class="button" [ngClass]="{ active: graph.sortAxis }" touch-button (touchclick)="toggleSort()">
