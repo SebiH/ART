@@ -26,7 +26,6 @@ let globalState: any = {};
 let saveGlobalState = _.throttle(() => {
     fs.writeFile(cachePath, JSON.stringify(globalState, null, '  '), (err) => {
         if (err) console.error('Could not save global state: ' + err.message);
-        else console.log('Successfully saved global state!');
     });
 }, 1000, { leading: false });
 

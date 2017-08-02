@@ -224,12 +224,57 @@ export class Graph {
         }
     }
 
+
+    /*
+     *    colorIncline
+     */
+    private _colorIncline : boolean = false;
+    public get colorIncline() : boolean {
+        return this._colorIncline;
+    }
+    public set colorIncline(v : boolean) {
+        if (this._colorIncline != v) {
+            this._colorIncline = v;
+            this.propagateUpdates(['colorIncline']);
+        }
+    }
+
+    /*
+     *    sortIncline
+     */
+    private _sortIncline : boolean = false;
+    public get sortIncline() : boolean {
+        return this._sortIncline;
+    }
+    public set sortIncline(v : boolean) {
+        if (this._sortIncline != v) {
+            this._sortIncline = v;
+            this.propagateUpdates(['sortIncline']);
+        }
+    }
+
+    /*
+     *    sortInclineNextHack
+     */
+    private _sortInclineNextHack : boolean = false;
+    public get sortInclineNextHack() : boolean {
+        return this._sortInclineNextHack;
+    }
+    public set sortInclineNextHack(v : boolean) {
+        if (this._sortInclineNextHack != v) {
+            this._sortInclineNextHack = v;
+            this.propagateUpdates(['dimX']);
+        }
+    }
+
+
     public constructor(id: number) {
         this._id = id;
     }
 
 
     private sortedAxisX: ChartDimension = null;
+    private sortedInclAxisX: ChartDimension = null;
 
     public getCurrentXAxis(): ChartDimension {
         if (this.isFlipped) {
@@ -247,6 +292,12 @@ export class Graph {
         }
     }
 
+    public sortInclinationHack(dim: ChartDimension, invert: boolean) {
+        this.sortedInclAxisX = this.dimY.clone();
+        this.sortedInclAxisX.sortByInclination(dim, invert);
+        this.propagateUpdates(['dimX']);
+    }
+
     public getActualXAxis(): ChartDimension {
         if (this.sortAxis && this.dimX) {
             if (!this.sortedAxisX) {
@@ -255,6 +306,8 @@ export class Graph {
             }
 
             return this.sortedAxisX;
+        } else if (this.sortIncline || this.sortInclineNextHack) {
+            return this.sortedInclAxisX;
         } else {
             return this.dimX;
         }
@@ -293,6 +346,10 @@ export class Graph {
             isSelected: this.isSelected,
             sortAxis: this.sortAxis,
 
+            colorIncline: this.colorIncline,
+            sortIncline: this.sortIncline,
+            sortInclineNextHack: this.sortInclineNextHack,
+
             pos: this.absolutePos,
             width: this.width
         }
@@ -329,6 +386,9 @@ export class Graph {
       // graph._width = jGraph.width;
         // overwrite width since scaling isn't implemented
         graph._width = DEFAULT_GRAPH_WIDTH;
+
+        graph._colorIncline = jGraph.colorIncline;
+        graph._sortIncline = jGraph.sortIncline;
 
         return graph;
     }

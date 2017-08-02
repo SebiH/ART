@@ -23,6 +23,7 @@ namespace Assets.Modules.Graphs
         private DataPoint[] _dataCache2 = null;
 
         private CategoricalDimension _sortedDimX;
+        private CategoricalDimension _sortedInclDimY = null;
         private Dimension _dimX;
         public Dimension DimX
         {
@@ -36,6 +37,10 @@ namespace Assets.Modules.Graphs
                     }
 
                     return _sortedDimX;
+                }
+                else if (_sortIncline)
+                {
+                    return _sortedInclDimY;
                 }
                 else
                 {
@@ -84,6 +89,83 @@ namespace Assets.Modules.Graphs
                 }
             }
         }
+
+        private bool _sortIncline = false;
+        public bool SortIncline
+        {
+            get
+            {
+                return _sortIncline;
+            }
+            set
+            {
+                if (_sortIncline != value)
+                {
+                    _sortIncline = value;
+                    TriggerDataChange();
+                }
+            }
+        }
+
+        public void SortInclineHack(Dimension other, bool invert)
+        {
+            if (other == null)
+            {
+                return;
+            }
+
+            var sortedDim = new CategoricalDimension();
+            sortedDim.Name = _dimX.Name;
+            sortedDim.DisplayName = _dimX.DisplayName;
+            sortedDim.HideTicks = true;
+            sortedDim.Ticks = new Dimension.Mapping[0];
+            sortedDim.DomainMin = 0;
+            sortedDim.DomainMax = other.Data.Length;
+
+
+            sortedDim.Data = DimY.Data.ToArray();
+            Array.Sort(sortedDim.Data, (d1, d2) => {
+                var d1v = _dimY.Data[d1.Id].Value - other.Data[d1.Id].Value;
+                var d2v = _dimY.Data[d2.Id].Value - other.Data[d2.Id].Value;
+
+                if (invert)
+                {
+                    if (d1v > d2v) { return 1; }
+                    if (d1v < d2v) { return -1; }
+                }
+                else
+                {
+                    if (d1v > d2v) { return -1; }
+                    if (d1v < d2v) { return 1; }
+                }
+                return 0;
+            });
+
+            sortedDim.Mappings = new List<Dimension.Mapping>();
+
+            for (var i = 0; i < other.Data.Length; i++)
+            {
+                sortedDim.Data[i].Value = i;
+                //sortedDim.Mappings.Add(new Dimension.Mapping
+                //{
+                //    Name = "",
+                //    Value = i
+                //});
+            }
+
+            Array.Sort(sortedDim.Data, (d1, d2) =>
+            {
+                if (d1.Id < d2.Id) { return -1; }
+                if (d1.Id > d2.Id) { return 1; }
+
+                return 0;
+            });
+
+            sortedDim.RebuildData();
+
+            _sortedInclDimY = sortedDim;
+        }
+
 
         public void SetDimensions(Dimension x, Dimension y)
         {

@@ -95,6 +95,41 @@ export class ChartDimension {
         this.hideTicks = true;
     }
 
+    public sortByInclination(dim: ChartDimension, invert: boolean) {
+        if (!dim) {
+            return;
+        }
+
+        let sortedData = _.sortBy(this.data, (d) => {
+            let val =  d.value - dim.data[+d.id].value;
+            if (invert) return val;
+            return -val
+        });
+
+        let oldMappings = this.mappings;
+        this.mappings = [];
+        for (let i = 0; i < this.data.length; i++) {
+
+            let color = '#FFFFFF';
+            if (this.isMetric) {
+                color = Utils.getGradientColor(this.gradient, sortedData[i].value);
+            } else {
+                color = _.find(oldMappings, (m) => m.value == sortedData[i].value).color;
+            }
+
+            sortedData[i].value = i;
+            this.mappings.push({
+                value: i,
+                name: '',
+                color: ''
+            });
+        }
+
+        this.domain = { min: 0, max: this.data.length };
+        this.isMetric = false;
+        this.hideTicks = true;
+    }
+
     public clone(): ChartDimension {
         let dim = new ChartDimension();
         dim.data = _.cloneDeep(this.data);
@@ -114,7 +149,7 @@ export class ChartDimension {
 
     public static fromJson(jDim: any): ChartDimension {
         let dim = new ChartDimension();
-        dim.data = jDim.data;
+        dim.data = <any[]>_.sortBy(jDim.data, (d: any) => +d.id);
         dim.domain = jDim.domain;
         dim.name = jDim.name;
         dim.displayName = jDim.displayName;

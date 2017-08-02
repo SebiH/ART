@@ -94,8 +94,91 @@ export class GraphProvider {
         return this.graphColorChangeObserver.asObservable();
     }
 
-    public setColor(graph: Graph) {
+    public isFirst(graph: Graph): boolean {
+        if (this.graphs.length > 1) {
+            return _.first(_.orderBy(this.graphs, (g) => g.absolutePos)).absolutePos >= graph.absolutePos;
+        }
+        return true;
+    }
+
+    public getPrevGraph(graph: Graph): Graph {
+        let prevGraph: Graph = null;
+
         for (let g of this.graphs) {
+            if (g.absolutePos < graph.absolutePos) {
+                if (prevGraph == null || prevGraph.absolutePos < g.absolutePos) {
+                    prevGraph = g;
+                }
+            }
+        }
+
+        return prevGraph;
+    }
+
+    public getNextGraph(graph: Graph): Graph {
+        let nextGraph: Graph = null;
+
+        for (let g of this.graphs) {
+            if (g.absolutePos > graph.absolutePos) {
+                if (nextGraph == null || nextGraph.absolutePos > g.absolutePos) {
+                    nextGraph = g;
+                }
+            }
+        }
+
+        return nextGraph;
+    }
+
+    public toggleColorIncline(graph: Graph): void {
+        if (!graph.colorIncline) {
+            for (let g of this.graphs) {
+                g.isColored = false;
+                g.colorIncline = false;
+            }
+        }
+
+        graph.colorIncline = !graph.colorIncline;
+
+        if (graph.colorIncline) {
+            this.graphColorChangeObserver.next(graph);
+        } else {
+            this.graphColorChangeObserver.next(null);
+        }
+    }
+
+    public toggleSortIncline(graph: Graph): void {
+        let prevGraph = this.getPrevGraph(graph);
+
+        for (let g of this.graphs) {
+            g.sortInclineNextHack = false;
+        }
+
+        if (!graph.sortIncline) {
+            if (prevGraph) {
+                prevGraph.sortAxis = false;
+                prevGraph.sortIncline = false;
+            }
+
+            let nextGraph = this.getNextGraph(graph);
+            if (nextGraph) {
+                nextGraph.sortIncline = false;
+            }
+
+            graph.sortAxis = false;
+        }
+
+        graph.sortIncline = !graph.sortIncline;
+
+        if (graph.sortIncline && graph.getActualYAxis() && prevGraph && prevGraph.getActualYAxis()) {
+            graph.sortInclinationHack(prevGraph.getActualYAxis(), false);
+            prevGraph.sortInclinationHack(graph.getActualYAxis(), true);
+            prevGraph.sortInclineNextHack = true;
+        }
+    }
+
+    public setColor(graph: Graph): void {
+        for (let g of this.graphs) {
+            g.colorIncline = false;
             if (g != graph) {
                 g.isColored = false;
             }
@@ -108,7 +191,21 @@ export class GraphProvider {
         this.graphColorChangeObserver.next(graph);
     }
 
-    public selectGraph(graph: Graph) {
+    public toggleSort(graph: Graph): void {
+
+        if (!graph.sortAxis) {
+            let nextGraph = this.getNextGraph(graph);
+            if (nextGraph) {
+                nextGraph.sortIncline = false;
+            }
+
+            graph.sortIncline = false;
+        }
+
+        graph.sortAxis = !graph.sortAxis;
+    }
+
+    public selectGraph(graph: Graph): void {
         for (let g of this.graphs) {
             if (g.isSelected && g !== graph) {
                 g.isSelected = false;

@@ -18,6 +18,9 @@ namespace Assets.Modules.SurfaceGraphs
         public bool isSelected = false;
         public bool sortAxis = false;
 
+        public bool sortIncline = false;
+        public bool sortInclineNextHack = false;
+
         public float pos = 0;
         public float width = 0;
     }

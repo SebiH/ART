@@ -59,3 +59,42 @@
     -ms-transition: top 0.1s linear, width 0.5s linear;
     transition: top 0.1s linear, width 0.5s linear;
 }
+
+.line-buttons {
+    position: absolute;
+    left: -75px;
+    top: 70%;
+}
+
+.button {
+    background: rgba(0, 0, 0, 0.8);
+    width: 150px;
+    height: 150px;
+
+    margin-top: 25px;
+    border-radius: 0;
+    border: 1px solid black;
+    background: white;
+    color: black;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.button .text,
+button .text {
+    font-size: 30px;
+    font-weight: 100;
+}
+
+.button .icon,
+button .icon {
+    font-size: 40px;
+    margin: 17px 0;
+}
+
+.button.active {
+    background: #8BC34A;
+}

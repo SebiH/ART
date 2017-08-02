@@ -1,4 +1,4 @@
-<div class="list-item" 
+<div class="list-item"
      [ngStyle]="getListItemStyle()"
      [ngClass]="{ moving: graph.isPickedUp }">
 
@@ -13,6 +13,18 @@
             [ngStyle]="getGraphStyle()"
             [ngClass]="{ moving: graph.isPickedUp }">
             <graph-section [graph]="graph"></graph-section>
+
+            <div *ngIf="!isFirst()" class="line-buttons">
+                <div class="button" touch-button (touchclick)="toggleColorIncline()" [ngClass]="{ active: graph.colorIncline }">
+                    <span class="icon"> <span class="fa fa-arrows-v"></span> <span class="fa fa-paint-brush"></span> </span>
+                    <span class="text"> Color </span>
+                </div>
+                <div class="button" touch-button (touchclick)="toggleSortIncline()" [ngClass]="{ active: graph.sortIncline }">
+                    <span class="icon"> <span class="fa fa-arrows-v"></span> <span class="fa fa-sort-amount-asc" aria-hidden="true"></span> </span>
+                    <span class="text"> Sort </span>
+                </div>
+            </div>
         </div>
+
     </div>
 </div>

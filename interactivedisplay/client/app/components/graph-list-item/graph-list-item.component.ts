@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { Graph } from '../../models/index';
+import { GraphProvider } from '../../services/index';
 import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { GraphSectionComponent } from '../graph-section/graph-section';
 
@@ -15,7 +16,7 @@ export class GraphListItemComponent implements OnChanges {
     @Input() graph: Graph;
     @Input() offset: number;
 
-    constructor(private changeDetector: ChangeDetectorRef) {
+    constructor(private graphProvider: GraphProvider, private changeDetector: ChangeDetectorRef) {
     }
 
     ngOnChanges() {
@@ -24,6 +25,18 @@ export class GraphListItemComponent implements OnChanges {
 
     public getPosition() {
         return this.graphSection.getSectionPosition();
+    }
+
+    private isFirst(): boolean {
+        return this.graphProvider.isFirst(this.graph);
+    }
+
+    private toggleColorIncline() {
+        this.graphProvider.toggleColorIncline(this.graph);
+    }
+
+    private toggleSortIncline() {
+        this.graphProvider.toggleSortIncline(this.graph);
     }
 
     private getGraphStyle() {

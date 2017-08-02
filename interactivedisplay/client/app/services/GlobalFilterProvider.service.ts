@@ -14,6 +14,12 @@ interface DataHighlight {
     isFiltered: boolean;
 }
 
+// const InclineGradientNegative = '#F44336';
+const InclineGradientNegative = '#FF0000';
+const InclineGradientNeutral = '#FFFFFF';
+const InclineGradientPositive = '#00FF00';
+// const InclineGradientPositive = '#4CAF50';
+
 @Injectable()
 export class GlobalFilterProvider {
     private globalFilter: DataHighlight[] = [];
@@ -200,6 +206,7 @@ export class GlobalFilterProvider {
                 }
             }
 
+
             let selectedXY: number[] = [];
 
             if (!(selectedX) || selectedX.length == 0) {
@@ -220,6 +227,67 @@ export class GlobalFilterProvider {
             this.globalFilter[index].isFiltered = false;
         }
 
+
+
+        for (let graph of this.graphs) {
+            if (graph.colorIncline) {
+                let prevGraph = this.graphProvider.getPrevGraph(graph);
+                if (prevGraph) {
+                    let leftY = prevGraph.getActualYAxis();
+                    let rightY = graph.getActualYAxis();
+
+                    if (leftY && rightY) {
+                        let maxIncline = Number.NEGATIVE_INFINITY;
+                        let minIncline = Number.POSITIVE_INFINITY;
+
+                        for (let f of this.globalFilter) {
+                            if (!f.isFiltered) {
+                                let incline = rightY.data[f.id].value - leftY.data[f.id].value;
+                                maxIncline = Math.max(maxIncline, incline);
+                                minIncline = Math.min(minIncline, incline);
+                            }
+                        }
+
+                        let range = maxIncline - minIncline;
+
+                        if (Math.abs(range) > 0) {
+                            // let mid = minIncline + range / 2;
+                            let mid = 0;
+
+                            for (let f of this.globalFilter) {
+                                let l = leftY.data[f.id].value;
+                                let r = rightY.data[f.id].value;
+                                let incline = r - l;
+
+                                if (incline < mid) {
+                                    let relativeIncline = (incline - minIncline) / (mid - minIncline);
+
+                                    f.color = Utils.getGradientColor([
+                                        { stop: 0, color: InclineGradientNegative },
+                                        { stop: 1, color: InclineGradientNeutral },
+                                    ], relativeIncline)
+
+                                } else {
+                                    let relativeIncline = (incline - mid) / (maxIncline - mid);
+
+                                    f.color = Utils.getGradientColor([
+                                        { stop: 0, color: InclineGradientNeutral },
+                                        { stop: 1, color: InclineGradientPositive },
+                                    ], relativeIncline)
+                                }
+                            }
+
+                        } else {
+                            // all neutral
+                            for (let f of this.globalFilter) {
+                                f.color = InclineGradientNeutral;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
 
 
 
