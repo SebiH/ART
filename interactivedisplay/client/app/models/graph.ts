@@ -292,9 +292,9 @@ export class Graph {
         }
     }
 
-    public sortInclinationHack(dim: ChartDimension) {
+    public sortInclinationHack(dim: ChartDimension, invert: boolean) {
         this.sortedInclAxisX = this.dimY.clone();
-        this.sortedInclAxisX.sortBy(dim);
+        this.sortedInclAxisX.sortByInclination(dim, invert);
         this.propagateUpdates(['dimX']);
     }
 

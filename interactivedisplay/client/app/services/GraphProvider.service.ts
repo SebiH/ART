@@ -170,8 +170,8 @@ export class GraphProvider {
         graph.sortIncline = !graph.sortIncline;
 
         if (graph.sortIncline && graph.getActualYAxis() && prevGraph && prevGraph.getActualYAxis()) {
-            graph.sortInclinationHack(prevGraph.getActualYAxis());
-            prevGraph.sortInclinationHack(graph.getActualYAxis());
+            graph.sortInclinationHack(prevGraph.getActualYAxis(), false);
+            prevGraph.sortInclinationHack(graph.getActualYAxis(), true);
             prevGraph.sortInclineNextHack = true;
         }
     }

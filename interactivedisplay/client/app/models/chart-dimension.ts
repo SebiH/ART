@@ -95,13 +95,15 @@ export class ChartDimension {
         this.hideTicks = true;
     }
 
-    public sortByInclination(dim: ChartDimension) {
+    public sortByInclination(dim: ChartDimension, invert: boolean) {
         if (!dim) {
             return;
         }
 
         let sortedData = _.sortBy(this.data, (d) => {
-            return -(d.value - _.find(dim.data, (o) => o.id == d.id).value);
+            let val =  d.value - dim.data[+d.id].value;
+            if (invert) return val;
+            return -val
         });
 
         let oldMappings = this.mappings;
