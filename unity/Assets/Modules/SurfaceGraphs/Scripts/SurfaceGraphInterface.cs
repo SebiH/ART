@@ -110,6 +110,52 @@ namespace Assets.Modules.SurfaceGraphs
             g.Graph.IsPickedUp = remoteGraph.isPickedUp;
             g.Graph.SortAxis = remoteGraph.sortAxis;
 
+            if (remoteGraph.sortIncline) {
+                GraphMetaData prevGraph = null;
+
+                foreach (var graph in _graphManager.GetAllGraphs())
+                {
+                    if (graph.Layout.Position < g.Layout.Position)
+                    {
+                        if (prevGraph == null || prevGraph.Layout.Position < graph.Layout.Position)
+                        {
+                            prevGraph = graph;
+                        }
+                    }
+                }
+
+                if (prevGraph)
+                {
+                    g.Graph.SortInclineHack(prevGraph.Graph.DimY, false);
+                    g.Graph.SortIncline = true;
+                }
+            }
+            else if (remoteGraph.sortInclineNextHack)
+            {
+                GraphMetaData nextGraph = null;
+
+                foreach (var graph in _graphManager.GetAllGraphs())
+                {
+                    if (graph.Layout.Position > g.Layout.Position)
+                    {
+                        if (nextGraph == null || nextGraph.Layout.Position > graph.Layout.Position)
+                        {
+                            nextGraph = graph;
+                        }
+                    }
+                }
+
+                if (nextGraph)
+                {
+                    g.Graph.SortInclineHack(nextGraph.Graph.DimY, true);
+                    g.Graph.SortIncline = true;
+                }
+            }
+            else
+            {
+                g.Graph.SortIncline = false;
+            }
+
             if (g.Graph.IsNewlyCreated && !remoteGraph.isNewlyCreated)
             {
                 _graphManager.RegisterGraph(g);

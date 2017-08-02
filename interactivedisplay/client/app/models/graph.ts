@@ -348,6 +348,7 @@ export class Graph {
 
             colorIncline: this.colorIncline,
             sortIncline: this.sortIncline,
+            sortInclineNextHack: this.sortInclineNextHack,
 
             pos: this.absolutePos,
             width: this.width
