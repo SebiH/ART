@@ -14,9 +14,11 @@ interface DataHighlight {
     isFiltered: boolean;
 }
 
-const InclineGradientNegative = '#F44336';
+// const InclineGradientNegative = '#F44336';
+const InclineGradientNegative = '#FF0000';
 const InclineGradientNeutral = '#FFFFFF';
-const InclineGradientPositive = '#4CAF50';
+const InclineGradientPositive = '#00FF00';
+// const InclineGradientPositive = '#4CAF50';
 
 @Injectable()
 export class GlobalFilterProvider {
