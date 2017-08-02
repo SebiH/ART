@@ -249,7 +249,8 @@ export class GlobalFilterProvider {
                         let range = maxIncline - minIncline;
 
                         if (Math.abs(range) > 0) {
-                            let mid = minIncline + range / 2;
+                            // let mid = minIncline + range / 2;
+                            let mid = 0;
 
                             for (let f of this.globalFilter) {
                                 let l = leftY.data[f.id].value;
