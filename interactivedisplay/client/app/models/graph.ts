@@ -226,30 +226,30 @@ export class Graph {
 
 
     /*
-     *    colorIncrementX
+     *    colorIncline
      */
-    private _colorIncrement : boolean = false;
-    public get colorIncrement() : boolean {
-        return this._colorIncrement;
+    private _colorIncline : boolean = false;
+    public get colorIncline() : boolean {
+        return this._colorIncline;
     }
-    public set colorIncrement(v : boolean) {
-        if (this._colorIncrement != v) {
-            this._colorIncrement = v;
-            this.propagateUpdates(['colorIncrement']);
+    public set colorIncline(v : boolean) {
+        if (this._colorIncline != v) {
+            this._colorIncline = v;
+            this.propagateUpdates(['colorIncline']);
         }
     }
 
     /*
-     *    sortIncrement
+     *    sortIncline
      */
-    private _sortIncrement : boolean = false;
-    public get sortIncrement() : boolean {
-        return this._sortIncrement;
+    private _sortIncline : boolean = false;
+    public get sortIncline() : boolean {
+        return this._sortIncline;
     }
-    public set sortIncrement(v : boolean) {
-        if (this._sortIncrement != v) {
-            this._sortIncrement = v;
-            this.propagateUpdates(['sortIncrement']);
+    public set sortIncline(v : boolean) {
+        if (this._sortIncline != v) {
+            this._sortIncline = v;
+            this.propagateUpdates(['sortIncline']);
         }
     }
 
@@ -323,8 +323,8 @@ export class Graph {
             isSelected: this.isSelected,
             sortAxis: this.sortAxis,
 
-            colorIncrementX: this.colorIncrement,
-            sortIncrementX: this.sortIncrement,
+            colorIncline: this.colorIncline,
+            sortIncline: this.sortIncline,
 
             pos: this.absolutePos,
             width: this.width
@@ -363,8 +363,8 @@ export class Graph {
         // overwrite width since scaling isn't implemented
         graph._width = DEFAULT_GRAPH_WIDTH;
 
-        graph._colorIncrement = jGraph.colorIncrement;
-        graph._sortIncrement = jGraph.sortIncrement;
+        graph._colorIncline = jGraph.colorIncline;
+        graph._sortIncline = jGraph.sortIncline;
 
         return graph;
     }

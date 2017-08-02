@@ -101,7 +101,7 @@ export class GraphProvider {
         return true;
     }
 
-    private getPrevGraph(graph: Graph): Graph {
+    public getPrevGraph(graph: Graph): Graph {
         let prevGraph: Graph = null;
 
         for (let g of this.graphs) {
@@ -115,7 +115,7 @@ export class GraphProvider {
         return prevGraph;
     }
 
-    private getNextGraph(graph: Graph): Graph {
+    public getNextGraph(graph: Graph): Graph {
         let nextGraph: Graph = null;
 
         for (let g of this.graphs) {
@@ -129,40 +129,45 @@ export class GraphProvider {
         return nextGraph;
     }
 
-    public toggleColorIncrement(graph: Graph): void {
-        if (!graph.colorIncrement) {
+    public toggleColorIncline(graph: Graph): void {
+        if (!graph.colorIncline) {
             for (let g of this.graphs) {
                 g.isColored = false;
-                g.colorIncrement = false;
+                g.colorIncline = false;
             }
         }
 
-        graph.colorIncrement = !graph.colorIncrement;
-        this.graphColorChangeObserver.next(graph);
+        graph.colorIncline = !graph.colorIncline;
+
+        if (graph.colorIncline) {
+            this.graphColorChangeObserver.next(graph);
+        } else {
+            this.graphColorChangeObserver.next(null);
+        }
     }
 
-    public toggleSortIncrement(graph: Graph): void {
-        if (!graph.sortIncrement) {
+    public toggleSortIncline(graph: Graph): void {
+        if (!graph.sortIncline) {
             let prevGraph = this.getPrevGraph(graph);
             if (prevGraph) {
                 prevGraph.sortAxis = false;
-                prevGraph.sortIncrement = false;
+                prevGraph.sortIncline = false;
             }
 
             let nextGraph = this.getNextGraph(graph);
             if (nextGraph) {
-                nextGraph.sortIncrement = false;
+                nextGraph.sortIncline = false;
             }
 
             graph.sortAxis = false;
         }
 
-        graph.sortIncrement = !graph.sortIncrement;
+        graph.sortIncline = !graph.sortIncline;
     }
 
     public setColor(graph: Graph): void {
         for (let g of this.graphs) {
-            g.colorIncrement = false;
+            g.colorIncline = false;
             if (g != graph) {
                 g.isColored = false;
             }
@@ -180,10 +185,10 @@ export class GraphProvider {
         if (!graph.sortAxis) {
             let nextGraph = this.getNextGraph(graph);
             if (nextGraph) {
-                nextGraph.sortIncrement = false;
+                nextGraph.sortIncline = false;
             }
 
-            graph.sortIncrement = false;
+            graph.sortIncline = false;
         }
 
         graph.sortAxis = !graph.sortAxis;

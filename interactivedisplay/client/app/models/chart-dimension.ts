@@ -114,7 +114,7 @@ export class ChartDimension {
 
     public static fromJson(jDim: any): ChartDimension {
         let dim = new ChartDimension();
-        dim.data = jDim.data;
+        dim.data = <any[]>_.sortBy(jDim.data, (d: any) => +d.id);
         dim.domain = jDim.domain;
         dim.name = jDim.name;
         dim.displayName = jDim.displayName;

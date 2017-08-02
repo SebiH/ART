@@ -31,12 +31,12 @@ export class GraphListItemComponent implements OnChanges {
         return this.graphProvider.isFirst(this.graph);
     }
 
-    private toggleColorIncrement() {
-        this.graphProvider.toggleColorIncrement(this.graph);
+    private toggleColorIncline() {
+        this.graphProvider.toggleColorIncline(this.graph);
     }
 
-    private toggleSortIncrement() {
-        this.graphProvider.toggleSortIncrement(this.graph);
+    private toggleSortIncline() {
+        this.graphProvider.toggleSortIncline(this.graph);
     }
 
     private getGraphStyle() {
