@@ -253,6 +253,20 @@ export class Graph {
         }
     }
 
+    /*
+     *    sortInclineNextHack
+     */
+    private _sortInclineNextHack : boolean = false;
+    public get sortInclineNextHack() : boolean {
+        return this._sortInclineNextHack;
+    }
+    public set sortInclineNextHack(v : boolean) {
+        if (this._sortInclineNextHack != v) {
+            this._sortInclineNextHack = v;
+            this.propagateUpdates(['dimX']);
+        }
+    }
+
 
     public constructor(id: number) {
         this._id = id;
@@ -260,6 +274,7 @@ export class Graph {
 
 
     private sortedAxisX: ChartDimension = null;
+    private sortedInclAxisX: ChartDimension = null;
 
     public getCurrentXAxis(): ChartDimension {
         if (this.isFlipped) {
@@ -277,6 +292,12 @@ export class Graph {
         }
     }
 
+    public sortInclinationHack(dim: ChartDimension) {
+        this.sortedInclAxisX = this.dimY.clone();
+        this.sortedInclAxisX.sortBy(dim);
+        this.propagateUpdates(['dimX']);
+    }
+
     public getActualXAxis(): ChartDimension {
         if (this.sortAxis && this.dimX) {
             if (!this.sortedAxisX) {
@@ -285,6 +306,8 @@ export class Graph {
             }
 
             return this.sortedAxisX;
+        } else if (this.sortIncline || this.sortInclineNextHack) {
+            return this.sortedInclAxisX;
         } else {
             return this.dimX;
         }

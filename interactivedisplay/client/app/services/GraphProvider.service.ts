@@ -147,8 +147,13 @@ export class GraphProvider {
     }
 
     public toggleSortIncline(graph: Graph): void {
+        let prevGraph = this.getPrevGraph(graph);
+
+        for (let g of this.graphs) {
+            g.sortInclineNextHack = false;
+        }
+
         if (!graph.sortIncline) {
-            let prevGraph = this.getPrevGraph(graph);
             if (prevGraph) {
                 prevGraph.sortAxis = false;
                 prevGraph.sortIncline = false;
@@ -163,6 +168,12 @@ export class GraphProvider {
         }
 
         graph.sortIncline = !graph.sortIncline;
+
+        if (graph.sortIncline && graph.getActualYAxis() && prevGraph && prevGraph.getActualYAxis()) {
+            graph.sortInclinationHack(prevGraph.getActualYAxis());
+            prevGraph.sortInclinationHack(graph.getActualYAxis());
+            prevGraph.sortInclineNextHack = true;
+        }
     }
 
     public setColor(graph: Graph): void {

@@ -95,6 +95,39 @@ export class ChartDimension {
         this.hideTicks = true;
     }
 
+    public sortByInclination(dim: ChartDimension) {
+        if (!dim) {
+            return;
+        }
+
+        let sortedData = _.sortBy(this.data, (d) => {
+            return -(d.value - _.find(dim.data, (o) => o.id == d.id).value);
+        });
+
+        let oldMappings = this.mappings;
+        this.mappings = [];
+        for (let i = 0; i < this.data.length; i++) {
+
+            let color = '#FFFFFF';
+            if (this.isMetric) {
+                color = Utils.getGradientColor(this.gradient, sortedData[i].value);
+            } else {
+                color = _.find(oldMappings, (m) => m.value == sortedData[i].value).color;
+            }
+
+            sortedData[i].value = i;
+            this.mappings.push({
+                value: i,
+                name: '',
+                color: ''
+            });
+        }
+
+        this.domain = { min: 0, max: this.data.length };
+        this.isMetric = false;
+        this.hideTicks = true;
+    }
+
     public clone(): ChartDimension {
         let dim = new ChartDimension();
         dim.data = _.cloneDeep(this.data);
