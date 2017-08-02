@@ -94,8 +94,75 @@ export class GraphProvider {
         return this.graphColorChangeObserver.asObservable();
     }
 
-    public setColor(graph: Graph) {
+    public isFirst(graph: Graph): boolean {
+        if (this.graphs.length > 1) {
+            return _.first(_.orderBy(this.graphs, (g) => g.absolutePos)).absolutePos >= graph.absolutePos;
+        }
+        return true;
+    }
+
+    private getPrevGraph(graph: Graph): Graph {
+        let prevGraph: Graph = null;
+
         for (let g of this.graphs) {
+            if (g.absolutePos < graph.absolutePos) {
+                if (prevGraph == null || prevGraph.absolutePos < g.absolutePos) {
+                    prevGraph = g;
+                }
+            }
+        }
+
+        return prevGraph;
+    }
+
+    private getNextGraph(graph: Graph): Graph {
+        let nextGraph: Graph = null;
+
+        for (let g of this.graphs) {
+            if (g.absolutePos > graph.absolutePos) {
+                if (nextGraph == null || nextGraph.absolutePos > g.absolutePos) {
+                    nextGraph = g;
+                }
+            }
+        }
+
+        return nextGraph;
+    }
+
+    public toggleColorIncrement(graph: Graph): void {
+        if (!graph.colorIncrement) {
+            for (let g of this.graphs) {
+                g.isColored = false;
+                g.colorIncrement = false;
+            }
+        }
+
+        graph.colorIncrement = !graph.colorIncrement;
+        this.graphColorChangeObserver.next(graph);
+    }
+
+    public toggleSortIncrement(graph: Graph): void {
+        if (!graph.sortIncrement) {
+            let prevGraph = this.getPrevGraph(graph);
+            if (prevGraph) {
+                prevGraph.sortAxis = false;
+                prevGraph.sortIncrement = false;
+            }
+
+            let nextGraph = this.getNextGraph(graph);
+            if (nextGraph) {
+                nextGraph.sortIncrement = false;
+            }
+
+            graph.sortAxis = false;
+        }
+
+        graph.sortIncrement = !graph.sortIncrement;
+    }
+
+    public setColor(graph: Graph): void {
+        for (let g of this.graphs) {
+            g.colorIncrement = false;
             if (g != graph) {
                 g.isColored = false;
             }
@@ -108,7 +175,21 @@ export class GraphProvider {
         this.graphColorChangeObserver.next(graph);
     }
 
-    public selectGraph(graph: Graph) {
+    public toggleSort(graph: Graph): void {
+
+        if (!graph.sortAxis) {
+            let nextGraph = this.getNextGraph(graph);
+            if (nextGraph) {
+                nextGraph.sortIncrement = false;
+            }
+
+            graph.sortIncrement = false;
+        }
+
+        graph.sortAxis = !graph.sortAxis;
+    }
+
+    public selectGraph(graph: Graph): void {
         for (let g of this.graphs) {
             if (g.isSelected && g !== graph) {
                 g.isSelected = false;

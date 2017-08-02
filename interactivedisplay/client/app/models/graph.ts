@@ -224,6 +224,36 @@ export class Graph {
         }
     }
 
+
+    /*
+     *    colorIncrementX
+     */
+    private _colorIncrement : boolean = false;
+    public get colorIncrement() : boolean {
+        return this._colorIncrement;
+    }
+    public set colorIncrement(v : boolean) {
+        if (this._colorIncrement != v) {
+            this._colorIncrement = v;
+            this.propagateUpdates(['colorIncrement']);
+        }
+    }
+
+    /*
+     *    sortIncrement
+     */
+    private _sortIncrement : boolean = false;
+    public get sortIncrement() : boolean {
+        return this._sortIncrement;
+    }
+    public set sortIncrement(v : boolean) {
+        if (this._sortIncrement != v) {
+            this._sortIncrement = v;
+            this.propagateUpdates(['sortIncrement']);
+        }
+    }
+
+
     public constructor(id: number) {
         this._id = id;
     }
@@ -293,6 +323,9 @@ export class Graph {
             isSelected: this.isSelected,
             sortAxis: this.sortAxis,
 
+            colorIncrementX: this.colorIncrement,
+            sortIncrementX: this.sortIncrement,
+
             pos: this.absolutePos,
             width: this.width
         }
@@ -329,6 +362,9 @@ export class Graph {
       // graph._width = jGraph.width;
         // overwrite width since scaling isn't implemented
         graph._width = DEFAULT_GRAPH_WIDTH;
+
+        graph._colorIncrement = jGraph.colorIncrement;
+        graph._sortIncrement = jGraph.sortIncrement;
 
         return graph;
     }
