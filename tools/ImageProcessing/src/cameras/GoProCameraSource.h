@@ -1,10 +1,10 @@
 #pragma once
+#pragma comment(lib, "ws2_32.lib")
 
 #include <memory>
 #include <string>
 #include <thread>
 
-#include <boost/system/error_code.hpp>
 #include <opencv2/videoio.hpp>
 #include "cameras/CameraSourceInterface.h"
 
@@ -16,9 +16,10 @@ namespace ImageProcessing
         std::unique_ptr<cv::VideoCapture> camera_;
         std::string src_;
         int port_;
-        std::thread thread_;
 
-        void SendToCB(const boost::system::error_code& ec);
+        std::thread thread_;
+        bool run_thread_ = false;
+
         void KeepAlive();
 
     public:
