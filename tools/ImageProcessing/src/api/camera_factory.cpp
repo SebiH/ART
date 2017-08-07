@@ -7,6 +7,7 @@
 #include "cameras/EmptyCameraSource.h"
 #include "cameras/FileCameraSource.h"
 #include "cameras/OvrvisionCameraSource.h"
+#include "cameras/GoProCameraSource.h"
 #include "cameras/OpenCVCameraSource.h"
 #include "utils/Logger.h"
 
@@ -83,6 +84,19 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOpenCVCamera()
 	catch (const std::exception &e)
 	{
 		DebugLog(std::string("Unable to set opencv source: ") + e.what());
+	}
+}
+
+extern "C" UNITY_INTERFACE_EXPORT void SetGoProCamera(const char *src, const int port)
+{
+	try
+	{
+		std::shared_ptr<ImageProcessing::CameraSourceInterface> gopro_source = std::make_shared<ImageProcessing::GoProCameraSource>(std::string(src), port);
+		SetCamera(gopro_source);
+	}
+	catch (const std::exception &e)
+	{
+		DebugLog(std::string("Unable to set GoPro source: ") + e.what());
 	}
 }
 

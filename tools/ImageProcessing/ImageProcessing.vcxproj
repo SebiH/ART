@@ -104,6 +104,7 @@
     <ClCompile Include="src\cameras\ActiveCamera.cpp" />
     <ClCompile Include="src\cameras\FileCameraSource.cpp" />
     <ClCompile Include="src\cameras\EmptyCameraSource.cpp" />
+    <ClCompile Include="src\cameras\GoProCameraSource.cpp" />
     <ClCompile Include="src\cameras\OpenCVCameraSource.cpp" />
     <ClCompile Include="src\cameras\OvrvisionCameraSource.cpp" />
     <ClCompile Include="src\api\logging.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="src\cameras\ActiveCamera.h" />
     <ClInclude Include="src\cameras\FileCameraSource.h" />
     <ClInclude Include="src\cameras\EmptyCameraSource.h" />
+    <ClInclude Include="src\cameras\GoProCameraSource.h" />
     <ClInclude Include="src\cameras\OpenCVCameraSource.h" />
     <ClInclude Include="src\debugging\MeasurePerformance.h" />
     <ClInclude Include="src\frames\FrameData.h" />
