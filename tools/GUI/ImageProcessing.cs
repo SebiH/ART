@@ -25,6 +25,9 @@ namespace GUI
         [DllImport("ImageProcessing")]
         public static extern void SetEmptyCamera();
 
+        [DllImport("ImageProcessing")]
+        public static extern void SetGoProCamera(string ip, int port);
+
         #endregion
 
         #region camera_properties

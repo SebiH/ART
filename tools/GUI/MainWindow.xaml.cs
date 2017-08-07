@@ -47,6 +47,10 @@ namespace GUI
                 {
                     ImageProcessing.SetOpenCVCamera();
                 }
+                else if (camera == "GoPro")
+                {
+                    ImageProcessing.SetGoProCamera("10.5.5.9", 8554);
+                }
                 else if (camera == "File")
                 {
                     ImageProcessing.SetFileCamera("C:/code/img/4.png");
