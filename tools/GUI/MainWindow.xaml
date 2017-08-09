@@ -13,6 +13,7 @@
                 <ComboBoxItem>OpenCV</ComboBoxItem>
                 <ComboBoxItem>GoPro</ComboBoxItem>
                 <ComboBoxItem>File</ComboBoxItem>
+                <ComboBoxItem>Video</ComboBoxItem>
                 <ComboBoxItem>Null</ComboBoxItem>
             </ComboBox>
             <Button Click="Button_Click">Open Camera</Button>

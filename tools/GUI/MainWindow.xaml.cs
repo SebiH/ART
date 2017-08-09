@@ -51,6 +51,10 @@ namespace GUI
                 {
                     ImageProcessing.SetGoProCamera("10.5.5.9", 8554);
                 }
+                else if (camera == "Video")
+                {
+                    ImageProcessing.SetVideoCamera("C:/code/test.mp4");
+                }
                 else if (camera == "File")
                 {
                     ImageProcessing.SetFileCamera("C:/code/img/4.png");
