@@ -9,6 +9,7 @@ namespace ImageProcessing
     class VideoCameraSource : public CameraSourceInterface
     {
     private:
+        int frame_counter_;
         std::string src_;
         std::unique_ptr<cv::VideoCapture> camera_;
 

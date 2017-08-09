@@ -8,9 +8,14 @@
 using namespace ImageProcessing;
 
 VideoCameraSource::VideoCameraSource(const std::string &src)
-    : src_(src)
+    : src_(src), frame_counter_(0)
 {
     camera_ = std::make_unique<cv::VideoCapture>(src);
+
+    if (GetFrameWidth() == 0)
+    {
+        throw std::exception("Could not open video file");
+    }
 }
 
 VideoCameraSource::~VideoCameraSource()
@@ -23,6 +28,15 @@ void VideoCameraSource::PrepareNextFrame()
     camera_->grab();
     int fps = static_cast<int>(camera_->get(cv::CAP_PROP_FPS));
     std::this_thread::sleep_for(std::chrono::milliseconds(1000/fps));
+
+    frame_counter_++;
+    if (frame_counter_ >= camera_->get(cv::CAP_PROP_FRAME_COUNT))
+    {
+        Close();
+        camera_ = std::make_unique<cv::VideoCapture>(src_);
+        camera_->grab();
+        frame_counter_ = 1;
+    }
 }
 
 void VideoCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
@@ -50,7 +64,7 @@ void VideoCameraSource::Open()
 {
     if (camera_ && !IsOpen())
     {
-        bool open_success = camera_->open(0);
+        bool open_success = camera_->open(src_);
 
         if (!open_success)
         {
