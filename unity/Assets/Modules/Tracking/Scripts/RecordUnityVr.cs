@@ -4,7 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.VR;
 
-namespace Assets.Modules.Tracking.Scripts
+namespace Assets.Modules.Tracking
 {
     public class RecordUnityVr : MonoBehaviour
     {
@@ -15,19 +15,19 @@ namespace Assets.Modules.Tracking.Scripts
         {
             _cache = File.AppendText(FileUtility.GetPath(Filename));
             _cache.AutoFlush = true;
-            _cache.WriteLine("[");
+            _cache.WriteLine("{ \"entries\": [");
         }
 
         private void OnDisable()
         {
-            _cache.WriteLine("]");
+            _cache.WriteLine("]}");
             _cache.Close();
         }
 
 
         private void FixedUpdate()
         {
-            var pose = new VRPose
+            var pose = new RecordedPose
             {
                 Time = Time.unscaledTime,
                 HeadRot = InputTracking.GetLocalRotation(VRNode.Head),
@@ -37,11 +37,11 @@ namespace Assets.Modules.Tracking.Scripts
                 RHRot = InputTracking.GetLocalRotation(VRNode.RightHand),
                 RHPos = InputTracking.GetLocalPosition(VRNode.RightHand),
             };
-            _cache.WriteLine(JsonUtility.ToJson(pose));
+            _cache.WriteLine(JsonUtility.ToJson(pose) + ";");
         }
 
         [Serializable]
-        private struct VRPose
+        public struct RecordedPose
         {
             public float Time;
             public Quaternion HeadRot;
