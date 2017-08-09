@@ -28,6 +28,9 @@ namespace Assets.Modules.Vision
         [DllImport("ImageProcessing")]
         public static extern void SetGoProCamera(string ip, int port);
 
+        [DllImport("ImageProcessing")]
+        public static extern void SetVideoCamera(string src);
+
         #endregion
 
         #region camera_properties
