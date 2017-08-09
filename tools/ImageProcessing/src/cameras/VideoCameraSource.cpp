@@ -25,7 +25,10 @@ VideoCameraSource::~VideoCameraSource()
 
 void VideoCameraSource::PrepareNextFrame()
 {
-    camera_->grab();
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        camera_->grab();
+    }
     int fps = static_cast<int>(camera_->get(cv::CAP_PROP_FPS));
     std::this_thread::sleep_for(std::chrono::milliseconds(1000/fps));
 
@@ -33,35 +36,44 @@ void VideoCameraSource::PrepareNextFrame()
     if (frame_counter_ >= camera_->get(cv::CAP_PROP_FRAME_COUNT))
     {
         Close();
-        camera_ = std::make_unique<cv::VideoCapture>(src_);
-        camera_->grab();
-        frame_counter_ = 1;
+
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            camera_ = std::make_unique<cv::VideoCapture>(src_);
+            camera_->grab();
+            frame_counter_ = 1;
+        }
     }
 }
 
 void VideoCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
 {
-    cv::Mat frame;
-    camera_->retrieve(frame);
-
-    if (frame.channels() == 3)
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (camera_ && IsOpen())
     {
-        // convert back to 4-channel BGRA for easier unity handling
-        cv::cvtColor(frame, frame, CV_BGR2BGRA);
-    }
-    else if (frame.channels() != GetFrameChannels())
-    {
-        DebugLog("Camera provided unknown amount of channels");
-        //throw std::exception("Camera provided unexpected amount of channels");
-    }
+        cv::Mat frame;
+        camera_->retrieve(frame);
 
-    auto buffer_size = GetFrameWidth() * GetFrameHeight() * GetFrameChannels();
-    memcpy(left_buffer, frame.data, buffer_size);
-    memcpy(right_buffer, frame.data, buffer_size);
+        if (frame.channels() == 3)
+        {
+            // convert back to 4-channel BGRA for easier unity handling
+            cv::cvtColor(frame, frame, CV_BGR2BGRA);
+        }
+        else if (frame.channels() != GetFrameChannels())
+        {
+            DebugLog("Camera provided unknown amount of channels");
+            //throw std::exception("Camera provided unexpected amount of channels");
+        }
+
+        auto buffer_size = GetFrameWidth() * GetFrameHeight() * GetFrameChannels();
+        memcpy(left_buffer, frame.data, buffer_size);
+        memcpy(right_buffer, frame.data, buffer_size);
+    }
 }
 
 void VideoCameraSource::Open()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (camera_ && !IsOpen())
     {
         bool open_success = camera_->open(src_);
@@ -75,6 +87,7 @@ void VideoCameraSource::Open()
 
 void VideoCameraSource::Close()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (camera_ && IsOpen())
     {
         camera_->release();
