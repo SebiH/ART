@@ -120,6 +120,9 @@
     <ClCompile Include="src\cameras\GoProCameraSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\cameras\VideoCameraSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\cameras\ActiveCamera.h">
@@ -228,6 +231,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\cameras\GoProCameraSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cameras\VideoCameraSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

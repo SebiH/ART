@@ -9,6 +9,7 @@
 #include "cameras/OvrvisionCameraSource.h"
 #include "cameras/GoProCameraSource.h"
 #include "cameras/OpenCVCameraSource.h"
+#include "cameras/VideoCameraSource.h"
 #include "utils/Logger.h"
 
 
@@ -61,6 +62,19 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int /* OVR::Camprop */
 	}
 }
 
+extern "C" UNITY_INTERFACE_EXPORT void SetVideoCamera(const char *src)
+{
+    try
+    {
+        std::shared_ptr<ImageProcessing::CameraSourceInterface> video_source = std::make_shared<ImageProcessing::VideoCameraSource>(std::string(src));
+        SetCamera(video_source);
+    }
+    catch (const std::exception &e)
+    {
+        DebugLog(std::string("Unable to set video source: ") + e.what());
+    }
+}
+
 extern "C" UNITY_INTERFACE_EXPORT void SetFileCamera(const char *filepath)
 {
 	try
@@ -105,4 +119,3 @@ extern "C" UNITY_INTERFACE_EXPORT void SetEmptyCamera()
 	std::shared_ptr<ImageProcessing::CameraSourceInterface> empty_source = std::make_shared<ImageProcessing::EmptyCameraSource>();
 	SetCamera(empty_source);
 }
-
