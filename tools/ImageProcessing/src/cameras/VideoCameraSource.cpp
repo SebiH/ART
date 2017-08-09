@@ -8,7 +8,7 @@
 using namespace ImageProcessing;
 
 VideoCameraSource::VideoCameraSource(const std::string &src)
-    : src_(src), frame_counter_(0)
+    : src_(src), frame_counter_(0), frame_()
 {
     camera_ = std::make_unique<cv::VideoCapture>(src);
 
@@ -25,10 +25,9 @@ VideoCameraSource::~VideoCameraSource()
 
 void VideoCameraSource::PrepareNextFrame()
 {
-    {
-        std::lock_guard<std::mutex> lock(mutex_);
-        camera_->grab();
-    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    camera_->grab();
+
     int fps = static_cast<int>(camera_->get(cv::CAP_PROP_FPS));
     std::this_thread::sleep_for(std::chrono::milliseconds(1000/fps));
 
@@ -44,6 +43,9 @@ void VideoCameraSource::PrepareNextFrame()
             frame_counter_ = 1;
         }
     }
+
+
+    camera_->retrieve(frame_);
 }
 
 void VideoCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
@@ -51,23 +53,9 @@ void VideoCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * r
     std::lock_guard<std::mutex> lock(mutex_);
     if (camera_ && IsOpen())
     {
-        cv::Mat frame;
-        camera_->retrieve(frame);
-
-        if (frame.channels() == 3)
-        {
-            // convert back to 4-channel BGRA for easier unity handling
-            cv::cvtColor(frame, frame, CV_BGR2BGRA);
-        }
-        else if (frame.channels() != GetFrameChannels())
-        {
-            DebugLog("Camera provided unknown amount of channels");
-            //throw std::exception("Camera provided unexpected amount of channels");
-        }
-
         auto buffer_size = GetFrameWidth() * GetFrameHeight() * GetFrameChannels();
-        memcpy(left_buffer, frame.data, buffer_size);
-        memcpy(right_buffer, frame.data, buffer_size);
+        memcpy(left_buffer, frame_.data, buffer_size);
+        memcpy(right_buffer, frame_.data, buffer_size);
     }
 }
 
@@ -112,7 +100,7 @@ int VideoCameraSource::GetFrameHeight() const
 int VideoCameraSource::GetFrameChannels() const
 {
     //return static_cast<int>(camera_->get(cv::CAP_PROP_ ? ));
-    return 4;
+    return 3;
 }
 
 float VideoCameraSource::GetFocalLength() const

@@ -11,6 +11,7 @@ namespace ImageProcessing
     {
     private:
         std::mutex mutex_;
+        cv::Mat frame_;
         int frame_counter_;
         std::string src_;
         std::unique_ptr<cv::VideoCapture> camera_;
