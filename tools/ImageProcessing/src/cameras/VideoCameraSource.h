@@ -5,6 +5,19 @@
 #include <opencv2/videoio.hpp>
 #include "cameras/CameraSourceInterface.h"
 
+
+extern "C"
+{
+    #include <libavformat/avformat.h>
+    #include <libavcodec/avcodec.h>
+    #include <libavutil/avutil.h>
+    #include <libavutil/pixdesc.h>
+    #include <libswscale/swscale.h>
+    #include <libavutil/frame.h>
+    #include <libavutil/imgutils.h>
+    #include <libavutil/mem.h>
+}
+
 namespace ImageProcessing
 {
     class VideoCameraSource : public CameraSourceInterface
@@ -14,7 +27,21 @@ namespace ImageProcessing
         cv::Mat frame_;
         int frame_counter_;
         std::string src_;
-        std::unique_ptr<cv::VideoCapture> camera_;
+
+
+        // Initalizing these to NULL prevents segfaults!
+        AVFormatContext   *pFormatCtx = NULL;
+        int               i, videoStream;
+        AVCodecContext    *pCodecCtxOrig = NULL;
+        AVCodecContext    *pCodecCtx = NULL;
+        AVCodec           *pCodec = NULL;
+        AVFrame           *pFrame = NULL;
+        AVFrame           *pFrameRGB = NULL;
+        AVPacket          packet;
+        int               frameFinished;
+        int               numBytes;
+        uint8_t           *buffer = NULL;
+        struct SwsContext *sws_ctx = NULL;
 
     public:
         VideoCameraSource(const std::string &src);
