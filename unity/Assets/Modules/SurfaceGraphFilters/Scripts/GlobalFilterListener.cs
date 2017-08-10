@@ -19,7 +19,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             _surface = UnityUtility.FindParent<Surface>(this);
             _surface.OnAction += HandleSurfaceAction;
 
-            StartCoroutine(InitWebData());
+            //StartCoroutine(InitWebData());
         }
 
         private void OnDisable()

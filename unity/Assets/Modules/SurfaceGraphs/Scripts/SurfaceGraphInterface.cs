@@ -25,7 +25,7 @@ namespace Assets.Modules.SurfaceGraphs
 
             _graphManager = GetComponent<GraphManager>();
 
-            StartCoroutine(InitWebData());
+            //StartCoroutine(InitWebData());
         }
 
         void OnDisable()
@@ -67,6 +67,7 @@ namespace Assets.Modules.SurfaceGraphs
                     {
                         var graph = _graphManager.GetGraph(remoteGraph.id);
                         if (graph) { UpdateGraph(graph, remoteGraph); }
+                        else { AddGraph(remoteGraph); }
                     }
                     break;
 
