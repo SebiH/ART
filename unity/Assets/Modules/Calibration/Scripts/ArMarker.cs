@@ -99,8 +99,16 @@ namespace Assets.Modules.Calibration
             var bl = transform.position + (transform.rotation * new Vector3(-Size / 2, -Size / 2, 0));
             var br = transform.position + (transform.rotation * new Vector3(Size / 2, -Size / 2, 0));
 
-            var minConfidence = ArMarkerTracker.Instance.GetMinConfidence();
-            Gizmos.color = Color.Lerp(Color.red, Color.green, Mathf.Max(0, (Confidence - minConfidence) / (1.0f - minConfidence)));
+            if (ArMarkerTracker.Instance)
+            {
+                var minConfidence = ArMarkerTracker.Instance.GetMinConfidence();
+                Gizmos.color = Color.Lerp(Color.red, Color.green, Mathf.Max(0, (Confidence - minConfidence) / (1.0f - minConfidence)));
+            }
+            else
+            {
+                Gizmos.color = Color.black;
+            }
+
             Gizmos.DrawLine(tl, bl);
             Gizmos.DrawLine(bl, br);
             Gizmos.DrawLine(br, tr);
