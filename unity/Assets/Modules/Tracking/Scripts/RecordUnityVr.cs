@@ -13,7 +13,7 @@ namespace Assets.Modules.Tracking
 
         private void OnEnable()
         {
-            _cache = File.AppendText(FileUtility.GetPath(Filename));
+            _cache = File.CreateText(FileUtility.GetPath(Filename));
             _cache.AutoFlush = true;
             _cache.WriteLine("{ \"entries\": [");
         }
@@ -37,7 +37,7 @@ namespace Assets.Modules.Tracking
                 RHRot = InputTracking.GetLocalRotation(VRNode.RightHand),
                 RHPos = InputTracking.GetLocalPosition(VRNode.RightHand),
             };
-            _cache.WriteLine(JsonUtility.ToJson(pose) + ";");
+            _cache.WriteLine(JsonUtility.ToJson(pose) + ",");
         }
 
         [Serializable]
