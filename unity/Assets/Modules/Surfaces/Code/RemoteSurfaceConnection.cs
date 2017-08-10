@@ -59,21 +59,26 @@ namespace Assets.Modules.Surfaces
 
         private static void Update()
         {
-            var surfaceManager = SurfaceManager.Instance;
 
             InPacket packet = new InPacket();
             while (_queuedCommands.Dequeue(out packet))
             {
-                if (surfaceManager && surfaceManager.Has(packet.origin))
-                {
-                    var surface = surfaceManager.Get(packet.origin);
-                    surface.TriggerAction(packet.command, packet.payload);
-                }
+                HandlePacketDebug(packet.origin, packet.command, packet.payload);
+            }
+        }
 
-                if (OnCommandReceived != null)
-                {
-                    OnCommandReceived(packet.command, packet.payload);
-                }
+        public static void HandlePacketDebug(string origin, string command, string payload)
+        {
+            var surfaceManager = SurfaceManager.Instance;
+            if (surfaceManager && surfaceManager.Has(origin))
+            {
+                var surface = surfaceManager.Get(origin);
+                surface.TriggerAction(command, payload);
+            }
+
+            if (OnCommandReceived != null)
+            {
+                OnCommandReceived(command, payload);
             }
         }
 
