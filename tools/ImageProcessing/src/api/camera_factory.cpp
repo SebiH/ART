@@ -62,11 +62,11 @@ extern "C" UNITY_INTERFACE_EXPORT void SetOvrCamera(const int /* OVR::Camprop */
 	}
 }
 
-extern "C" UNITY_INTERFACE_EXPORT void SetVideoCamera(const char *src)
+extern "C" UNITY_INTERFACE_EXPORT void SetVideoCamera(const char *src, ImageProcessing::TimeCallback callback)
 {
     try
     {
-        std::shared_ptr<ImageProcessing::CameraSourceInterface> video_source = std::make_shared<ImageProcessing::VideoCameraSource>(std::string(src));
+        std::shared_ptr<ImageProcessing::CameraSourceInterface> video_source = std::make_shared<ImageProcessing::VideoCameraSource>(std::string(src), callback);
         SetCamera(video_source);
     }
     catch (const std::exception &e)

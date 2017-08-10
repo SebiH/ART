@@ -8,12 +8,11 @@
 #pragma warning(push)
 #pragma warning(disable: 4996)
 
-#include <opencv2/highgui.hpp>
-
 using namespace ImageProcessing;
 
-VideoCameraSource::VideoCameraSource(const std::string &src)
-    : src_(src), frame_counter_(0), frame_()
+VideoCameraSource::VideoCameraSource(const std::string &src, TimeCallback time_hack)
+    : src_(src), frame_counter_(0), frame_(), time_hack_(time_hack),
+      last_frame_time_(std::chrono::high_resolution_clock::now())
 {
     // Register all formats and codecs
     av_register_all();
@@ -52,6 +51,7 @@ void VideoCameraSource::PrepareNextFrame()
                     //    SaveFrame(pFrameRGB, pCodecCtx->width, pCodecCtx->height, i);
 
                     frame_ = cv::Mat(pCodecCtx->height, pCodecCtx->width, CV_8UC3, pFrameRGB->data[0], pFrameRGB->linesize[0]);
+                    frame_counter_++;
                     hasFrame = true;
                 }
             }
@@ -61,12 +61,34 @@ void VideoCameraSource::PrepareNextFrame()
         }
     }
 
+    auto framerate = pCodecCtx->framerate.num / (double) pCodecCtx->framerate.den;
+
+    if (time_hack_)
+    {
+        double time = frame_counter_ / framerate;
+        time_hack_(time);
+    }
+
     if (!hasFrame)
     {
         Close();
         Open();
         PrepareNextFrame();
     }
+
+    auto time_for_frame = (int)(1000 / framerate);
+    auto now = std::chrono::high_resolution_clock::now();
+    auto actual_duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - last_frame_time_).count();
+
+    const int overhead = 1;
+
+    if (actual_duration < time_for_frame - overhead)
+    {
+        // -2 to account for overhead
+        std::this_thread::sleep_for(std::chrono::milliseconds(time_for_frame - actual_duration - overhead));
+    }
+
+    last_frame_time_ = std::chrono::high_resolution_clock::now();
 }
 
 void VideoCameraSource::GrabFrame(unsigned char * left_buffer, unsigned char * right_buffer)
@@ -85,6 +107,8 @@ void VideoCameraSource::Open()
     std::lock_guard<std::mutex> lock(mutex_);
     if (!IsOpen())
     {
+        frame_counter_ = 0;
+
         // Open video file
         if (avformat_open_input(&pFormatCtx, src_.c_str(), NULL, NULL) != 0)
         {
@@ -155,14 +179,13 @@ void VideoCameraSource::Open()
         }
 
         // Determine required buffer size and allocate buffer
-        numBytes = avpicture_get_size(AV_PIX_FMT_RGB24, pCodecCtx->width,
-            pCodecCtx->height);
+        numBytes = avpicture_get_size(AV_PIX_FMT_RGB32, pCodecCtx->width, pCodecCtx->height);
         buffer = (uint8_t *)av_malloc(numBytes * sizeof(uint8_t));
 
         // Assign appropriate parts of buffer to image planes in pFrameRGB
         // Note that pFrameRGB is an AVFrame, but AVFrame is a superset
         // of AVPicture
-        avpicture_fill((AVPicture *)pFrameRGB, buffer, AV_PIX_FMT_RGB24, pCodecCtx->width, pCodecCtx->height);
+        avpicture_fill((AVPicture *)pFrameRGB, buffer, AV_PIX_FMT_RGB32, pCodecCtx->width, pCodecCtx->height);
 
         // initialize SWS context for software scaling
         sws_ctx = sws_getContext(pCodecCtx->width,
@@ -170,7 +193,7 @@ void VideoCameraSource::Open()
             pCodecCtx->pix_fmt,
             pCodecCtx->width,
             pCodecCtx->height,
-            AV_PIX_FMT_RGB24,
+            AV_PIX_FMT_RGB32,
             SWS_BILINEAR,
             NULL,
             NULL,
@@ -220,7 +243,7 @@ int VideoCameraSource::GetFrameHeight() const
 int VideoCameraSource::GetFrameChannels() const
 {
     //return static_cast<int>(camera_->get(cv::CAP_PROP_ ? ));
-    return 3;
+    return 4;
 }
 
 float VideoCameraSource::GetFocalLength() const

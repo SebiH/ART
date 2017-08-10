@@ -28,8 +28,9 @@ namespace GUI
         [DllImport("ImageProcessing")]
         public static extern void SetGoProCamera(string ip, int port);
 
+        public delegate void TimeCallback(double time);
         [DllImport("ImageProcessing")]
-        public static extern void SetVideoCamera(string src);
+        public static extern void SetVideoCamera(string src, TimeCallback time);
 
         #endregion
 

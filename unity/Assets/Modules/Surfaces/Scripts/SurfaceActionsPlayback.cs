@@ -30,7 +30,7 @@ namespace Assets.Modules.Surfaces
 
         private void Update()
         {
-            while (_currentIndex < _cache.entries.Length && _cache.entries[_currentIndex].time <= Time.unscaledTime)
+            while (_currentIndex < _cache.entries.Length && _cache.entries[_currentIndex].time <= PlaybackTime.RealTime)
             {
                 var current = _cache.entries[_currentIndex];
                 RemoteSurfaceConnection.HandlePacketDebug(Globals.DefaultSurfaceName, current.cmd, current.payload);

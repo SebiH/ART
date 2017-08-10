@@ -31,7 +31,7 @@ namespace Assets.Modules.Tracking
 
         private void FixedUpdate()
         {
-            while (_currentIndex < _cache.entries.Length - 1 && _cache.entries[_currentIndex + 1].Time <= Time.unscaledTime)
+            while (_currentIndex < _cache.entries.Length - 1 && _cache.entries[_currentIndex + 1].Time <= PlaybackTime.RealTime)
             {
                 _currentIndex++;
             }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <memory>
 #include <mutex>
 #include <opencv2/videoio.hpp>
@@ -20,6 +21,8 @@ extern "C"
 
 namespace ImageProcessing
 {
+    typedef void(__stdcall * TimeCallback) (const double time);
+
     class VideoCameraSource : public CameraSourceInterface
     {
     private:
@@ -27,9 +30,11 @@ namespace ImageProcessing
         cv::Mat frame_;
         int frame_counter_;
         std::string src_;
+        std::chrono::time_point<std::chrono::high_resolution_clock> last_frame_time_;
+
+        TimeCallback time_hack_;
 
 
-        // Initalizing these to NULL prevents segfaults!
         AVFormatContext   *pFormatCtx = NULL;
         int               i, videoStream;
         AVCodecContext    *pCodecCtxOrig = NULL;
@@ -44,7 +49,8 @@ namespace ImageProcessing
         struct SwsContext *sws_ctx = NULL;
 
     public:
-        VideoCameraSource(const std::string &src);
+
+        VideoCameraSource(const std::string &src, TimeCallback time_hack_);
         ~VideoCameraSource();
 
         // Inherited via CameraSourceInterface
