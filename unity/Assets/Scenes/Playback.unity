@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.46169513, g: 0.5124164, b: 0.58993304, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 081f8df852d328549a320e6417ce0e7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: actions_testrun.json
+  Filename: actions_testrun2.json
 --- !u!114 &600577882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d00f70a25c3672408b0b49a5472c62e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: vr_testrun.json
+  Filename: vr_testrun2.json
   TrackedDevice: 1
 --- !u!4 &600577883
 Transform:
@@ -744,6 +744,11 @@ Prefab:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114000010844404042, guid: b6503e6ff284b8649886fa728a3a73ef,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114138148012295760, guid: b6503e6ff284b8649886fa728a3a73ef, type: 2}
     - {fileID: 114505645527581214, guid: b6503e6ff284b8649886fa728a3a73ef, type: 2}
@@ -775,4 +780,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8494644aabdf5c34da4a2e1f9058111c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Source: D:/testrun.mp4
+  Source: E:/videos/testrun2.mp4

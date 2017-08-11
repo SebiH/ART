@@ -1,15 +1,11 @@
 using Assets.Modules.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Assets.Modules.Vision.CameraSources
 {
     public class VideoCameraSource : CameraSource
     {
         public string Source = "";
-        private double Time;
+        private static LockFreeQueue<double> _messages = new LockFreeQueue<double>();
 
         public override void InitCamera()
         {
@@ -17,9 +13,18 @@ namespace Assets.Modules.Vision.CameraSources
             ImageProcessing.SetVideoCamera(Source, SetTime);
         }
 
-        private void SetTime(double time)
+        private void FixedUpdate()
         {
-            PlaybackTime.RealTime = (float)time;
+            double time = 0;
+            while (_messages.Dequeue(out time))
+            {
+                PlaybackTime.RealTime = (float)time;
+            }
+        }
+
+        private static void SetTime(double time)
+        {
+            _messages.Enqueue(time);
         }
     }
 }

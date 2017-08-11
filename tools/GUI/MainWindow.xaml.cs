@@ -53,7 +53,7 @@ namespace GUI
                 }
                 else if (camera == "Video")
                 {
-                    ImageProcessing.SetVideoCamera("C:/code/test.mp4", null);
+                    ImageProcessing.SetVideoCamera("E:/videos/calib2.mp4", null);
                 }
                 else if (camera == "File")
                 {
