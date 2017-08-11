@@ -10,12 +10,19 @@
 
 using namespace ImageProcessing;
 
+static bool initialised = false;
+
 VideoCameraSource::VideoCameraSource(const std::string &src, TimeCallback time_hack)
     : src_(src), frame_counter_(0), frame_(), time_hack_(time_hack),
       last_frame_time_(std::chrono::high_resolution_clock::now())
 {
-    // Register all formats and codecs
-    av_register_all();
+    if (!initialised)
+    {
+        // Register all formats and codecs
+        av_register_all();
+        initialised = true;
+    }
+
     Open();
 }
 
