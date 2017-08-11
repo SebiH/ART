@@ -22,8 +22,8 @@ namespace Assets.Modules.Vision.Processors
             var globalDataPath = Path.Combine(Application.dataPath, "../../data");
             var config = new ArToolkitInitialSettings
             {
-                calibration_left = Path.Combine(globalDataPath, "calib_ovrvision_left.dat"),
-                calibration_right = Path.Combine(globalDataPath, "calib_ovrvision_right.dat")
+                calibration_left = Path.Combine(globalDataPath, "calib_gopro_medium.dat"),
+                calibration_right = Path.Combine(globalDataPath, "calib_gopro_medium.dat")
             };
 
             _id = ImageProcessing.AddArToolkitProcessor(pipelineId, JsonUtility.ToJson(config));
