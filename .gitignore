@@ -93,6 +93,8 @@ sysinfo.txt
 # Output directory for imageprocessing tools
 /tools/build/
 
+tools/ArToolkitCalibration/img/
+
 # NuGet
 /tools/packages/
 
