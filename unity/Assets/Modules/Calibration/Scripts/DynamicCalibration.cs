@@ -49,8 +49,8 @@ namespace Assets.Modules.Calibration
             //if (!isOptitrackStable) { return false; }
 
 
-            var isHmdPoseRecent = IsRecent(VRListener.PoseUpdateTime, OvrCutoffTime);
-            if (!isHmdPoseRecent) { return false; }
+            //var isHmdPoseRecent = IsRecent(VRListener.PoseUpdateTime, OvrCutoffTime);
+            //if (!isHmdPoseRecent) { return false; }
 
             var isHmdPoseStable = OvrMonitor.Stability > OvrChangeTolerance;
             if (!isHmdPoseStable) { return false; }

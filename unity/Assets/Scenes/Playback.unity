@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 081f8df852d328549a320e6417ce0e7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: actions_calibration.json
+  Filename: actions_testrun.json
 --- !u!114 &600577882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d00f70a25c3672408b0b49a5472c62e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: vr_calibration.json
+  Filename: vr_testrun.json
   TrackedDevice: 1
 --- !u!4 &600577883
 Transform:
@@ -458,7 +458,7 @@ Prefab:
     - target: {fileID: 114556243224943646, guid: d05b26170eb707e40a761a820f3018d7,
         type: 2}
       propertyPath: SaveInterval
-      value: 30
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d05b26170eb707e40a761a820f3018d7, type: 2}
@@ -775,4 +775,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8494644aabdf5c34da4a2e1f9058111c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Source: D:/calibration_medium.mp4
+  Source: D:/testrun.mp4
