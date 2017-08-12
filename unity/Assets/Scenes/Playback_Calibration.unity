@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 081f8df852d328549a320e6417ce0e7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: actions_testrun2.json
+  Filename: actions_calib2.json
 --- !u!114 &600577882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,7 +131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d00f70a25c3672408b0b49a5472c62e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: vr_testrun2.json
+  Filename: vr_calib2.json
   TrackedDevice: 1
 --- !u!4 &600577883
 Transform:
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 678057057}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf587f8cf12985540b8d51fe8a48e062, type: 3}
   m_Name: 
@@ -433,7 +433,7 @@ Prefab:
     - target: {fileID: 114556243224943646, guid: d05b26170eb707e40a761a820f3018d7,
         type: 2}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114891017015505734, guid: d05b26170eb707e40a761a820f3018d7,
         type: 2}
@@ -459,11 +459,6 @@ Prefab:
         type: 2}
       propertyPath: SaveInterval
       value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 114900712686839064, guid: d05b26170eb707e40a761a820f3018d7,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d05b26170eb707e40a761a820f3018d7, type: 2}
@@ -785,5 +780,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8494644aabdf5c34da4a2e1f9058111c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Source: E:/videos/testrun2.mp4
+  Source: E:/videos/calib2.mp4
   TimeOffset: 1.2
