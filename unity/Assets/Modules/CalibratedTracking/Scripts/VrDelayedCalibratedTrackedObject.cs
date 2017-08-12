@@ -23,6 +23,7 @@ namespace Assets.Modules.CalibratedTracking.Scripts
         private void Update()
         {
             _camTracker.VrTracker.TrackingDelay = TrackingDelay;
+            TrackingDelay = _camTracker.VrTracker.TrackingDelay;
 
             if (TrackPosition)
                 transform.position = _camTracker.VrTracker.GetPosition();
