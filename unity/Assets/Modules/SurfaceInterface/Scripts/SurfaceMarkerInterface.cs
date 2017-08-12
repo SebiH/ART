@@ -34,9 +34,13 @@ namespace Assets.Modules.SurfaceInterface
             var request = new WWW(String.Format("{0}:{1}/api/marker/list", Globals.SurfaceServerIp, Globals.SurfaceWebPort));
             yield return request;
 
-            if (request.text != null && request.text.Length > 0)
+            WebRequestHelper.WebResult result;
+            WebRequestHelper.Instance.PerformWebRequest("markers", request, out result);
+
+
+            if (result.text != null && result.text.Length > 0)
             {
-                var markerInfos = JsonUtility.FromJson<MarkerInfoWrapper>(request.text);
+                var markerInfos = JsonUtility.FromJson<MarkerInfoWrapper>(result.text);
                 foreach (var markerInfo in markerInfos.markers)
                 {
                     UpdateMarker(markerInfo);

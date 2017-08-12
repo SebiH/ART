@@ -25,7 +25,7 @@ namespace Assets.Modules.SurfaceGraphs
 
             _graphManager = GetComponent<GraphManager>();
 
-            //StartCoroutine(InitWebData());
+            StartCoroutine(InitWebData());
         }
 
         void OnDisable()
@@ -38,9 +38,12 @@ namespace Assets.Modules.SurfaceGraphs
             var request = new WWW(String.Format("{0}:{1}/api/graph/list", Globals.SurfaceServerIp, Globals.SurfaceWebPort));
             yield return request;
 
-            if (request.text != null && request.text.Length > 0)
+            WebRequestHelper.WebResult result;
+            WebRequestHelper.Instance.PerformWebRequest("graphs", request, out result);
+
+            if (result.text != null && result.text.Length > 0)
             {
-                var graphInfo = JsonUtility.FromJson<RemoteGraphs>(request.text);
+                var graphInfo = JsonUtility.FromJson<RemoteGraphs>(result.text);
                 foreach (var graph in graphInfo.graphs)
                 {
                     AddGraph(graph);

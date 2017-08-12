@@ -19,7 +19,7 @@ namespace Assets.Modules.SurfaceGraphFilters
             _surface = UnityUtility.FindParent<Surface>(this);
             _surface.OnAction += HandleSurfaceAction;
 
-            //StartCoroutine(InitWebData());
+            StartCoroutine(InitWebData());
         }
 
         private void OnDisable()
@@ -32,11 +32,14 @@ namespace Assets.Modules.SurfaceGraphFilters
             var request = new WWW(String.Format("{0}:{1}/api/filter/global", Globals.SurfaceServerIp, Globals.SurfaceWebPort));
             yield return request;
 
-            if (request.text != null && request.text.Length > 0)
+            WebRequestHelper.WebResult result;
+            WebRequestHelper.Instance.PerformWebRequest("globalfilter", request, out result);
+
+            if (result.text != null && result.text.Length > 0)
             {
                 try
                 {
-                    var wrapper = JsonUtility.FromJson<RemoteValueMetadataWrapper>(request.text);
+                    var wrapper = JsonUtility.FromJson<RemoteValueMetadataWrapper>(result.text);
                     ApplyMetadata(wrapper.globalfilter);
                 }
                 catch (Exception)

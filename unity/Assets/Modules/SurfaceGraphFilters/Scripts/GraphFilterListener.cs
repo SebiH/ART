@@ -42,15 +42,18 @@ namespace Assets.Modules.SurfaceGraphFilters
             var request = new WWW(String.Format("{0}:{1}/api/filter/list", Globals.SurfaceServerIp, Globals.SurfaceWebPort));
             yield return request;
 
+            WebRequestHelper.WebResult result;
+            WebRequestHelper.Instance.PerformWebRequest("filter", request, out result);
+
             var graphInterface = GetComponent<SurfaceGraphInterface>();
             while (!graphInterface.IsInitialized)
             {
                 yield return new WaitForEndOfFrame();
             }
 
-            if (request.text != null && request.text.Length > 0)
+            if (result.text != null && result.text.Length > 0)
             {
-                var filterWrapper = JsonUtility.FromJson<RemoteFilterWrapper>(request.text);
+                var filterWrapper = JsonUtility.FromJson<RemoteFilterWrapper>(result.text);
                 foreach (var filter in filterWrapper.filters)
                 {
                     AddFilter(filter);

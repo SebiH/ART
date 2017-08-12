@@ -39,9 +39,12 @@ namespace Assets.Modules.Surfaces
             var request = new WWW(String.Format("{0}:{1}/api/surface", Globals.SurfaceServerIp, Globals.SurfaceWebPort), form);
             yield return request;
 
-            if (request.text != null && request.text.Length > 0)
+            WebRequestHelper.WebResult result;
+            WebRequestHelper.Instance.PerformWebRequest("surfaces", request, out result);
+
+            if (result.text != null && result.text.Length > 0)
             {
-                var surfaceData = JsonUtility.FromJson<SurfaceDataPayload>(request.text);
+                var surfaceData = JsonUtility.FromJson<SurfaceDataPayload>(result.text);
                 ApplyProperties(surfaceData);
             }
         }

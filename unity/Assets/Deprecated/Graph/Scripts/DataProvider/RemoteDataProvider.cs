@@ -1,3 +1,4 @@
+using Assets.Modules.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,7 +31,10 @@ namespace Assets.Deprecated.Graph
             var dimensionWebRequest = new WWW(ServerAddress + "api/graph/dimensions");
             yield return dimensionWebRequest;
 
-            foreach (var dim in JsonUtility.FromJson<DimensionResponse>(dimensionWebRequest.text).dimensions)
+            WebRequestHelper.WebResult dimensionResult;
+            WebRequestHelper.Instance.PerformWebRequest("dimensions", dimensionWebRequest, out dimensionResult);
+
+            foreach (var dim in JsonUtility.FromJson<DimensionResponse>(dimensionResult.text).dimensions)
             {
                 var dataRequestForm = new WWWForm();
                 dataRequestForm.AddField("dimension", dim);
@@ -38,7 +42,10 @@ namespace Assets.Deprecated.Graph
                 var dataWebRequest = new WWW(ServerAddress + "api/graph/data", dataRequestForm);
                 yield return dataWebRequest;
 
-                var dimData = JsonUtility.FromJson<DataResponse>(dataWebRequest.text).data;
+                WebRequestHelper.WebResult dataResult;
+                WebRequestHelper.Instance.PerformWebRequest("data:" + dim, dataWebRequest, out dataResult);
+
+                var dimData = JsonUtility.FromJson<DataResponse>(dataResult.text).data;
                 _graphData[dim] = dimData;
             }
 

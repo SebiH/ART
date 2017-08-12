@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 600577883}
   - component: {fileID: 600577882}
   - component: {fileID: 600577881}
+  - component: {fileID: 600577884}
   m_Layer: 0
   m_Name: '[Playback]'
   m_TagString: Untagged
@@ -147,6 +148,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &600577884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 600577880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 859f45e75e0b3144aa07d93a55a04f3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Filename: webrequests.json
 --- !u!1001 &676900436
 Prefab:
   m_ObjectHideFlags: 0
@@ -888,3 +901,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Source: E:/videos/testrun2.mp4
   TimeOffset: 1.4
+  IsPaused: 0

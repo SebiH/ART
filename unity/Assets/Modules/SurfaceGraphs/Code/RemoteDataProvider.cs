@@ -42,7 +42,10 @@ namespace Assets.Modules.SurfaceGraphs
             var dataWebRequest = new WWW(String.Format("{0}:{1}/api/graph/data", Globals.SurfaceServerIp, Globals.SurfaceWebPort), dataRequestForm);
             yield return dataWebRequest;
 
-            var response = JsonUtility.FromJson<DataResponse>(dataWebRequest.text);
+            WebRequestHelper.WebResult result;
+            WebRequestHelper.Instance.PerformWebRequest("data:" + dimensionName, dataWebRequest, out result);
+
+            var response = JsonUtility.FromJson<DataResponse>(result.text);
             Dimension dimension;
 
             if (response.isMetric)
