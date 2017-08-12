@@ -8,6 +8,8 @@ namespace Assets.Modules.Tracking
     public class PlaybackVrTracker : MonoBehaviour
     {
         public string Filename;
+        [Range(-1, 1)]
+        public float TimeOffset = 0;
 
         public enum PlaybackTrackedDevice
         {
@@ -29,9 +31,9 @@ namespace Assets.Modules.Tracking
             _cache = JsonUtility.FromJson<RecordedFile>(text);
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
-            while (_currentIndex < _cache.entries.Length - 1 && _cache.entries[_currentIndex + 1].Time <= PlaybackTime.RealTime)
+            while (_currentIndex < _cache.entries.Length - 1 && _cache.entries[_currentIndex + 1].Time <= PlaybackTime.RealTime + TimeOffset)
             {
                 _currentIndex++;
             }

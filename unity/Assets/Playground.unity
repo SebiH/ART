@@ -284,7 +284,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 405fff1f0d1c8054799b556d2d281042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SaveInterval: 5
+  SaveInterval: 1
 --- !u!1 &1105639430
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,6 +449,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Filename: vr_testrun2.json
+  TimeOffset: 0
   TrackedDevice: 1
 --- !u!1 &2097254182
 GameObject:
