@@ -5,6 +5,7 @@ namespace Assets.Modules.Vision.CameraSources
     public class VideoCameraSource : CameraSource
     {
         public string Source = "";
+        public float TimeOffset = 0f;
         private static LockFreeQueue<double> _messages = new LockFreeQueue<double>();
 
         public override void InitCamera()
@@ -18,7 +19,7 @@ namespace Assets.Modules.Vision.CameraSources
             double time = 0;
             while (_messages.Dequeue(out time))
             {
-                PlaybackTime.RealTime = (float)time;
+                PlaybackTime.RealTime = (float)time + TimeOffset;
             }
         }
 
