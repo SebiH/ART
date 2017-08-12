@@ -77,7 +77,7 @@ namespace Assets.Modules.Calibration
 
         public static Vector3 GetCalibratedPosition(Vector3 pos, Quaternion rot)
         {
-            return pos + rot * PositionOffset;
+            return pos + rot * _positionOffset;
         }
 
         public static bool HasStablePosition
