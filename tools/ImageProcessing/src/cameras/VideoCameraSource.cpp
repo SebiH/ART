@@ -33,6 +33,12 @@ VideoCameraSource::~VideoCameraSource()
 
 void VideoCameraSource::PrepareNextFrame()
 {
+    if (is_paused_)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        return;
+    }
+
     bool hasFrame = false;
 
     {
@@ -266,7 +272,10 @@ nlohmann::json VideoCameraSource::GetProperties() const
 
 void VideoCameraSource::SetProperties(const nlohmann::json & json_config)
 {
-    // NYI
+    if (json_config.count("Pause") != 0)
+    {
+        is_paused_ = !is_paused_;
+    }
 }
 
 #pragma warning(pop)

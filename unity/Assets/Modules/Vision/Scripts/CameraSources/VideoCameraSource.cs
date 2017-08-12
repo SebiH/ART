@@ -1,4 +1,6 @@
 using Assets.Modules.Core;
+using System;
+using UnityEngine;
 
 namespace Assets.Modules.Vision.CameraSources
 {
@@ -7,6 +9,9 @@ namespace Assets.Modules.Vision.CameraSources
         public string Source = "";
         public float TimeOffset = 0f;
         private static LockFreeQueue<double> _messages = new LockFreeQueue<double>();
+
+        public bool IsPaused = false;
+        private bool prevIsPaused = false;
 
         public override void InitCamera()
         {
@@ -21,11 +26,26 @@ namespace Assets.Modules.Vision.CameraSources
             {
                 PlaybackTime.RealTime = (float)time + TimeOffset;
             }
+
+            if (prevIsPaused != IsPaused)
+            {
+                prevIsPaused = IsPaused;
+                ImageProcessing.SetCamJsonProperties(JsonUtility.ToJson(new CamProperties
+                {
+                    Pause = IsPaused
+                }));
+            }
         }
 
         private static void SetTime(double time)
         {
             _messages.Enqueue(time);
+        }
+
+        [Serializable]
+        private struct CamProperties
+        {
+            public bool Pause;
         }
     }
 }

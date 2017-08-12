@@ -31,6 +31,7 @@ namespace ImageProcessing
         int frame_counter_;
         std::string src_;
         std::chrono::time_point<std::chrono::high_resolution_clock> last_frame_time_;
+        bool is_paused_ = false;
 
         TimeCallback time_hack_;
 
