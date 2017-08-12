@@ -22,7 +22,7 @@ namespace Assets.Modules.CalibratedTracking
 
         public override void PreparePose()
         {
-            StashPose();
+            //StashPose();
             ApplyNewPose();
         }
 
@@ -48,20 +48,23 @@ namespace Assets.Modules.CalibratedTracking
 
         private void ApplyNewPose()
         {
-            DelayedPose pose = null;
+            //DelayedPose pose = null;
 
-            var currentTime = Time.unscaledTime;
-            while (_trackedPoses.Count > 0 && _trackedPoses.Peek().TimeOfPose + TrackingDelay <= currentTime)
-            {
-                pose = _trackedPoses.Dequeue();
-            }
+            //var currentTime = Time.unscaledTime;
+            //while (_trackedPoses.Count > 0 && _trackedPoses.Peek().TimeOfPose + TrackingDelay <= currentTime)
+            //{
+            //pose = _trackedPoses.Dequeue();
+            //}
 
-            if (pose != null)
-            {
-                _position = CalibrationParams.GetCalibratedPosition(pose.Position, pose.Rotation);
-                _rotation = CalibrationParams.GetCalibratedRotation(pose.Rotation);
-                //_rotation = pose.Rotation; //CalibrationParams.GetCalibratedRotation(pose.Rotation);
-            }
+            //if (pose != null)
+            //{
+            //    _position = CalibrationParams.GetCalibratedPosition(pose.Position, pose.Rotation);
+            //    _rotation = CalibrationParams.GetCalibratedRotation(pose.Rotation);
+            //    //_rotation = pose.Rotation; //CalibrationParams.GetCalibratedRotation(pose.Rotation);
+            //}
+
+            _position = CalibrationParams.GetCalibratedPosition(VRListener.CurrentPosition, VRListener.CurrentRotation);
+            _rotation = CalibrationParams.GetCalibratedRotation(VRListener.CurrentRotation);
         }
     }
 }

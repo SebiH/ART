@@ -40,7 +40,7 @@ namespace Assets.Modules.CalibratedTracking
             _rotationAnimation.AnimationSpeed = SwitchTransitionSpeed;
         }
 
-        private void LateUpdate()
+        private void FixedUpdate()
         {
             MarkerTracker.PreparePose();
             VrTracker.PreparePose();
