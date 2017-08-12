@@ -27,7 +27,7 @@ namespace Assets.Modules.Calibration
 
         public static Quaternion GetCalibratedRotation(Quaternion rot)
         {
-            return RotationOffset * rot;
+            return rot * RotationOffset;
         }
 
         public static bool HasStableRotation
