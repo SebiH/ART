@@ -1,3 +1,4 @@
+using Assets.Modules.Tracking;
 using Assets.Modules.Vision.CameraSources;
 using Assets.Modules.Vision.Outputs;
 using UnityEngine;
@@ -8,6 +9,11 @@ namespace Assets.Modules.Vision
     {
         public Pipeline ProcessingPipeline;
         public DirectXOutput.Eye Eye = DirectXOutput.Eye.Left;
+
+        // https://gopro.com/help/articles/Question_Answer/HERO4-Field-of-View-FOV-Information
+        public float CameraFoVHorizontal = 94.4f;
+        public float CameraFoVVertical = 55f;
+        public float FocalPoint = 0.0219f;
 
         public bool AutoAlign = true;
 
@@ -53,21 +59,11 @@ namespace Assets.Modules.Vision
 
             if (AutoAlign)
             {
-                var ovrCam = cam as OvrvisionCameraSource;
+                var width = FocalPoint * Mathf.Tan(Mathf.Deg2Rad * CameraFoVHorizontal / 2f) * 2f;
+                var height = FocalPoint * Mathf.Tan(Mathf.Deg2Rad * CameraFoVVertical / 2f) * 2f;
 
-                if (ovrCam != null)
-                {
-                    var aspectW = (float)imageWidth / GetImageBaseHeight(ovrCam.CamQuality);
-                    var aspectH = (float)imageHeight / GetImageBaseHeight(ovrCam.CamQuality);
-                    transform.localScale = new Vector3(aspectW, -aspectH, 1.0f);
-                    transform.localPosition = new Vector3(0, 0, ovrCam.GetFocalPoint() + 0.02f);
-                }
-                else
-                {
-                    var aspectRatio = new Vector2((float)(imageWidth) / (float)(imageHeight), -1);
-                    transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
-                    transform.localPosition = new Vector3(0, 0, 1.335f);
-                }
+                transform.localScale = new Vector3(width, -height, 1.0f);
+                transform.localPosition = new Vector3(0, 0, FocalPoint);
             }
 
         }
