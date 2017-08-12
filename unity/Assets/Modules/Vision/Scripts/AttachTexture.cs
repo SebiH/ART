@@ -66,7 +66,7 @@ namespace Assets.Modules.Vision
                 {
                     var aspectRatio = new Vector2((float)(imageWidth) / (float)(imageHeight), -1);
                     transform.localScale = new Vector3(aspectRatio.x, aspectRatio.y, 1.0f);
-                    transform.localPosition = new Vector3(0, 0, 0.135f);
+                    transform.localPosition = new Vector3(0, 0, 1.335f);
                 }
             }
 
