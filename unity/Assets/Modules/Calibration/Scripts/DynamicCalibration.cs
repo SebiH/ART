@@ -139,9 +139,7 @@ namespace Assets.Modules.Calibration
                 var camRotations = validMarkers.Select(m => m.DetectedCameraRotation);
                 var avgCamRotation = MathUtility.Average(camRotations);
 
-                // MarkerRotation = Offset * Ovr
-                // => Offset = MarkerRotation * inv(Ovr)
-                CalibrationParams.RotationOffset = avgCamRotation * Quaternion.Inverse(hmdRotation);
+                CalibrationParams.RotationOffset = Quaternion.Inverse(hmdRotation) * avgCamRotation;
             }
         }
     }

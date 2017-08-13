@@ -58,7 +58,7 @@ namespace Assets.Modules.Tracking
         {
             if (VrUtility.CurrentMode == VrUtility.VrMode.Native)
             {
-                var node = VRNode.Head;
+                var node = VRNode.CenterEye;
                 CurrentPosition = InputTracking.GetLocalPosition(node);
                 CurrentRotation = InputTracking.GetLocalRotation(node);
                 PoseUpdateTime = Time.unscaledTime;
