@@ -15,14 +15,16 @@ StandardCalibrator::StandardCalibrator()
 
 void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>& camera, const std::string & filename)
 {
-	if (!camera->IsOpen())
-	{
-		camera->Open();
-	}
+	//if (!camera->IsOpen())
+	//{
+	//	camera->Open();
+	//}
 
 	auto window_name = "ArToolkitCalibration";
-	auto frame_size = FrameSize(camera->GetFrameWidth(), camera->GetFrameHeight(), camera->GetFrameChannels());
-	auto mat_size = cv::Size(frame_size.width, frame_size.height);
+
+    auto initial_frame = cv::imread("img/0.jpg");
+    auto mat_size = initial_frame.size();
+    auto frame_size = FrameSize(mat_size.width, mat_size.height, 3);
 	auto buffer_left = std::shared_ptr<unsigned char>(new unsigned char[frame_size.BufferSize()], std::default_delete<unsigned char[]>());
 	auto buffer_right = std::shared_ptr<unsigned char>(new unsigned char[frame_size.BufferSize()], std::default_delete<unsigned char[]>());
 	OpenCvOutput output(window_name);
@@ -35,14 +37,19 @@ void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>&
 	// capture corners for calibration
 	while (calibrated_corners_left.size() < calib_image_count)
 	{
-		camera->PrepareNextFrame();
-		camera->GrabFrame(buffer_left.get(), buffer_right.get());
+        auto frame = cv::imread("img/" + std::to_string(frame_counter) + ".jpg");
+        memcpy(buffer_left.get(), frame.data, frame_size.BufferSize());
+        memcpy(buffer_right.get(), frame.data, frame_size.BufferSize());
+		//camera->PrepareNextFrame();
+		//camera->GrabFrame(buffer_left.get(), buffer_right.get());
 
-		cv::Mat img_left(mat_size, frame_size.CvType(), buffer_left.get());
+        cv::Mat img_left = frame;
+		//cv::Mat img_left(mat_size, frame_size.CvType(), buffer_left.get());
 		cv::Mat img_left_gray(mat_size, CV_8UC1);
 		cv::cvtColor(img_left, img_left_gray, frame_size.CvToGray());
 
-		cv::Mat img_right(mat_size, frame_size.CvType(), buffer_right.get());
+		//cv::Mat img_right(mat_size, frame_size.CvType(), buffer_right.get());
+        cv::Mat img_right = frame;
 		cv::Mat img_right_gray(mat_size, CV_8UC1);
 		cv::cvtColor(img_right, img_right_gray, frame_size.CvToGray());
 
@@ -68,13 +75,18 @@ void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>&
 		output.WriteResult();
 
 		int pressedKey = cv::waitKey(10);
-		if (pressedKey == ' ' && found_corners_left && found_corners_right)
+		if (found_corners_left && found_corners_right)
 		{
 			cv::cornerSubPix(img_left_gray, corners_left, cv::Size(5, 5), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_ITER, 100, 0.1));
 			calibrated_corners_left.push_back(corners_left);
 			cv::cornerSubPix(img_right_gray, corners_right, cv::Size(5, 5), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_ITER, 100, 0.1));
 			calibrated_corners_right.push_back(corners_right);
 		}
+
+        if (frame_counter >= calib_image_count)
+        {
+            frame_counter = 0;
+        }
 	}
 
 	// perform calibration
@@ -114,7 +126,7 @@ void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>&
 	//}
 
 	// clean up
-	camera->Close();
+	//camera->Close();
 }
 
 void StandardCalibrator::SingleCameraCalibration(const std::string &filename, const std::vector<std::vector<cv::Point2f>> &image_points, const cv::Size &image_size)

@@ -30,11 +30,11 @@ namespace Assets.Modules.Vision.Processors
 
             var settings = new UndistortSettings
             {
-                intrinsic_left = Path.Combine(globalDataPath, "calib_ovrvision_standard_left_intrinsic.yaml"),
-                distcoeffs_left = Path.Combine(globalDataPath, "calib_ovrvision_standard_left_distcoeffs.yaml"),
+                intrinsic_left = Path.Combine(globalDataPath, "calib_gopro_standard_left_intrinsic.yaml"),
+                distcoeffs_left = Path.Combine(globalDataPath, "calib_gopro_standard_left_distcoeffs.yaml"),
 
-                intrinsic_right = Path.Combine(globalDataPath, "calib_ovrvision_standard_right_intrinsic.yaml"),
-                distcoeffs_right = Path.Combine(globalDataPath, "calib_ovrvision_standard_right_distcoeffs.yaml")
+                intrinsic_right = Path.Combine(globalDataPath, "calib_gopro_standard_right_intrinsic.yaml"),
+                distcoeffs_right = Path.Combine(globalDataPath, "calib_gopro_standard_right_distcoeffs.yaml")
             };
             return JsonUtility.ToJson(settings);
         }

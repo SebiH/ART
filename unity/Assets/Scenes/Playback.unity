@@ -134,6 +134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Filename: vr_testrun2.json
   TimeOffset: 0
+  SmoothAverage: 3
   TrackedDevice: 1
 --- !u!4 &600577883
 Transform:
@@ -197,6 +198,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4000010334330674, guid: 128df63b1f274bc46a00bc2514b98cfa, type: 2}
       propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114449628897266822, guid: 128df63b1f274bc46a00bc2514b98cfa,
+        type: 2}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
