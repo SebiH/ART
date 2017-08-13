@@ -203,7 +203,17 @@ Prefab:
     - target: {fileID: 114449628897266822, guid: 128df63b1f274bc46a00bc2514b98cfa,
         type: 2}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 20000013749726864, guid: 128df63b1f274bc46a00bc2514b98cfa,
+        type: 2}
+      propertyPath: field of view
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 20000011520879158, guid: 128df63b1f274bc46a00bc2514b98cfa,
+        type: 2}
+      propertyPath: field of view
+      value: 55
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 128df63b1f274bc46a00bc2514b98cfa, type: 2}
@@ -739,6 +749,31 @@ Prefab:
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 20000013833944052, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
+        type: 2}
+      propertyPath: field of view
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 114902797645705474, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000011127310338, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114824922895740064, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114283032772391274, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae, type: 2}
   m_IsPrefabParent: 0
@@ -908,3 +943,17 @@ MonoBehaviour:
   Source: E:/videos/testrun2.mp4
   TimeOffset: 1.4
   IsPaused: 0
+--- !u!114 &2109524697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2109524695}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a7d900e604ea8545844a4d266d76045, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LoadParametersOnStartup: 1
+  PositionOffset: {x: 0, y: 0, z: 0}
+  RotationOffset: {x: 0, y: 0, z: 0}

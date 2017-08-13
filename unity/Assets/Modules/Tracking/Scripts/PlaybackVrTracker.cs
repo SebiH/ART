@@ -31,6 +31,8 @@ namespace Assets.Modules.Tracking
         {
             var text = File.ReadAllText(FileUtility.GetPath(Filename));
             _cache = JsonUtility.FromJson<RecordedFile>(text);
+
+            VRListener.UpdateRequested += Update;
         }
 
         private void Update()
@@ -101,6 +103,7 @@ namespace Assets.Modules.Tracking
         private void OnDisable()
         {
             _cache = new RecordedFile();
+            VRListener.UpdateRequested -= Update;
         }
     }
 }

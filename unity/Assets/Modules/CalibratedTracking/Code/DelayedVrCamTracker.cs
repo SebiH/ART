@@ -63,6 +63,7 @@ namespace Assets.Modules.CalibratedTracking
             //    //_rotation = pose.Rotation; //CalibrationParams.GetCalibratedRotation(pose.Rotation);
             //}
 
+            VRListener.TriggerUpdate();
             _position = CalibrationParams.GetCalibratedPosition(VRListener.CurrentPosition, VRListener.CurrentRotation);
             _rotation = CalibrationParams.GetCalibratedRotation(VRListener.CurrentRotation);
         }
