@@ -28,8 +28,8 @@ std::shared_ptr<const FrameData> UndistortProcessor::Process(const std::shared_p
 	cv::Mat img_left(mat_size, frame->size.CvType(), frame->buffer_left.get());
 	cv::remap(img_left, img_left, map1_l_, map2_l_, cv::INTER_LINEAR);
 
-	cv::Mat img_right(mat_size, frame->size.CvType(), frame->buffer_right.get());
-	cv::remap(img_right, img_right, map1_r_, map2_r_, cv::INTER_LINEAR);
+	//cv::Mat img_right(mat_size, frame->size.CvType(), frame->buffer_right.get());
+	//cv::remap(img_right, img_right, map1_r_, map2_r_, cv::INTER_LINEAR);
 
 	return frame;
 }
