@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.46169513, g: 0.5124164, b: 0.58993304, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -134,7 +134,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Filename: vr_testrun2.json
   TimeOffset: 0
-  SmoothAverage: 3
+  SmoothAverage: 10
   TrackedDevice: 1
 --- !u!4 &600577883
 Transform:
@@ -940,8 +940,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8494644aabdf5c34da4a2e1f9058111c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Source: E:/videos/testrun2.mp4
-  TimeOffset: 1.4
+  Source: D:/testrun2.mp4
+  TimeOffset: 1.3
   IsPaused: 0
 --- !u!114 &2109524697
 MonoBehaviour:
