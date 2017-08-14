@@ -22,7 +22,7 @@ void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>&
 
 	auto window_name = "ArToolkitCalibration";
 
-    auto initial_frame = cv::imread("img/0.jpg");
+    auto initial_frame = cv::imread("img/0.PNG");
     auto mat_size = initial_frame.size();
     auto frame_size = FrameSize(mat_size.width, mat_size.height, 3);
 	auto buffer_left = std::shared_ptr<unsigned char>(new unsigned char[frame_size.BufferSize()], std::default_delete<unsigned char[]>());
@@ -37,7 +37,7 @@ void StandardCalibrator::Calibrate(const std::shared_ptr<CameraSourceInterface>&
 	// capture corners for calibration
 	while (calibrated_corners_left.size() < calib_image_count)
 	{
-        auto frame = cv::imread("img/" + std::to_string(frame_counter) + ".jpg");
+        auto frame = cv::imread("img/" + std::to_string(frame_counter) + ".PNG");
         memcpy(buffer_left.get(), frame.data, frame_size.BufferSize());
         memcpy(buffer_right.get(), frame.data, frame_size.BufferSize());
 		//camera->PrepareNextFrame();

@@ -141,7 +141,7 @@ static void mainLoop(void)
 	//ovrCamera->PreStoreCamData(OVR::Camqt::OV_CAMQT_DMSRMP);
 	//buff = ovrCamera->GetCamImageBGRA(camEye);
     char path[255];
-    sprintf(path, "img/%d.jpg", imgCounter);
+    sprintf(path, "img/%d.PNG", imgCounter);
     img = cvLoadImage(path);
     //img = cvimread(std::string("img/") + std::to_string(imgCounter) + std::string(".jpg"));
     buff = (unsigned char*)(img->imageData);
@@ -278,7 +278,7 @@ static void init(int argc, char *argv[])
 
     //xsize = img.size().width;
     //ysize = img.size().height;
-    img = cvLoadImage("img/0.jpg");
+    img = cvLoadImage("img/0.PNG");
     xsize = img->width;
     ysize = img->height;
     pixFormat = AR_PIXEL_FORMAT_RGB;
