@@ -753,7 +753,7 @@ Prefab:
     - target: {fileID: 20000013833944052, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
         type: 2}
       propertyPath: field of view
-      value: 55
+      value: 73
       objectReference: {fileID: 0}
     - target: {fileID: 114902797645705474, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
         type: 2}
@@ -1077,7 +1077,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Source: E:/videos/testrun2.mp4
-  TimeOffset: 1.89
+  TimeOffset: 1.27
   IsPaused: 0
 --- !u!114 &2109524697
 MonoBehaviour:
