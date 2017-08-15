@@ -240,9 +240,17 @@ export class GlobalFilterProvider {
                         let maxIncline = Number.NEGATIVE_INFINITY;
                         let minIncline = Number.POSITIVE_INFINITY;
 
+                        let minRight = rightY.domain.min;
+                        let maxRight = rightY.domain.max;
+
+                        let minLeft = leftY.domain.min;
+                        let maxLeft = leftY.domain.max;
+
                         for (let f of this.globalFilter) {
                             if (!f.isFiltered && !rightY.data[f.id].isNull && !leftY.data[f.id].isNull) {
-                                let incline = rightY.data[f.id].value - leftY.data[f.id].value;
+                                let rd = (rightY.data[f.id].value - minRight) / (maxRight - minRight);
+                                let ld = (leftY.data[f.id].value - minLeft) / (maxLeft - minLeft);
+                                let incline = rd - ld;
                                 maxIncline = Math.max(maxIncline, incline);
                                 minIncline = Math.min(minIncline, incline);
                             }
@@ -255,11 +263,11 @@ export class GlobalFilterProvider {
                             let mid = 0;
 
                             for (let f of this.globalFilter) {
-                                let l = leftY.data[f.id].value;
-                                let r = rightY.data[f.id].value;
+                                let r = (rightY.data[f.id].value - minRight) / (maxRight - minRight);
+                                let l = (leftY.data[f.id].value - minLeft) / (maxLeft - minLeft);
                                 let incline = r - l;
 
-                                if (rightY.data[f.id].isNull && leftY.data[f.id].isNull) {
+                                if (rightY.data[f.id].isNull || leftY.data[f.id].isNull) {
                                     f.color = InclineGradientNeutral;
                                 }
                                 else if (incline < mid) {
