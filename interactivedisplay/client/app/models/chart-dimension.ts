@@ -7,7 +7,7 @@ export interface GradientStop {
 }
 
 export class ChartDimension {
-    public data: { id: string, value: number }[];
+    public data: { id: string, value: number, isNull: boolean }[];
     public domain: { min: number, max: number };
 
     public name: string;
