@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.46169513, g: 0.5124164, b: 0.58993304, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -99,6 +99,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 600577883}
+  - component: {fileID: 600577885}
   - component: {fileID: 600577882}
   - component: {fileID: 600577881}
   - component: {fileID: 600577884}
@@ -120,7 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 081f8df852d328549a320e6417ce0e7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: video4.actions.json
+  file: {fileID: 600577885}
 --- !u!114 &600577882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,7 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d00f70a25c3672408b0b49a5472c62e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: video4.vr.json
+  file: {fileID: 600577885}
   TimeOffset: 0
   SmoothAverage: 5
   TrackedDevice: 1
@@ -160,7 +161,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 859f45e75e0b3144aa07d93a55a04f3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Filename: video4.webrequests.json
+  file: {fileID: 600577885}
+--- !u!114 &600577885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 600577880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55a0323ba2e45ce4f81a4d193959a773, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Filename: medium1
 --- !u!1001 &676900436
 Prefab:
   m_ObjectHideFlags: 0
@@ -779,7 +792,7 @@ Prefab:
         type: 2}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 8400000, guid: 82c096ff1294d034eb3f2f573f9cafd9, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 20000013833944052, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
         type: 2}
       propertyPath: m_ClearFlags
@@ -1078,8 +1091,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8494644aabdf5c34da4a2e1f9058111c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Source: D:/videos/video4.mp4
-  TimeOffset: -2.8
+  file: {fileID: 600577885}
+  SourceDir: D:/videos/
+  TimeOffset: -0.94
   IsPaused: 0
 --- !u!114 &2109524697
 MonoBehaviour:

@@ -8,12 +8,12 @@ namespace Assets.Modules.Tracking
 {
     public class RecordUnityVr : MonoBehaviour
     {
-        public string Filename;
+        public CurrentFilename file;
         private StreamWriter _cache;
 
         private void OnEnable()
         {
-            _cache = File.CreateText(FileUtility.GetPath(Filename));
+            _cache = File.CreateText(FileUtility.GetPath(file.Filename + ".vr.json"));
             _cache.AutoFlush = true;
             _cache.WriteLine("{ \"entries\": [");
         }

@@ -7,7 +7,7 @@ namespace Assets.Modules.Core
 {
     public class WebRequestsPlayback : WebRequestHelper
     {
-        public string Filename = "webrequests.json";
+        public CurrentFilename file;
 
         [Serializable]
         private struct RecordedFile
@@ -20,7 +20,7 @@ namespace Assets.Modules.Core
         {
             WebRequestHelper.Instance = this;
 
-            var text = File.ReadAllText(FileUtility.GetPath(Filename));
+            var text = File.ReadAllText(FileUtility.GetPath(file.Filename + ".webrequests.json"));
             _cache = JsonUtility.FromJson<RecordedFile>(text);
         }
 

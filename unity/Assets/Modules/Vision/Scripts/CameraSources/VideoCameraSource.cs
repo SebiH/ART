@@ -6,7 +6,8 @@ namespace Assets.Modules.Vision.CameraSources
 {
     public class VideoCameraSource : CameraSource
     {
-        public string Source = "";
+        public CurrentFilename file;
+        public string SourceDir = "D:/videos/";
         public float TimeOffset = 0f;
         private static LockFreeQueue<double> _messages = new LockFreeQueue<double>();
 
@@ -16,7 +17,7 @@ namespace Assets.Modules.Vision.CameraSources
         public override void InitCamera()
         {
             PlaybackTime.UseUnityTime = false;
-            ImageProcessing.SetVideoCamera(Source, SetTime);
+            ImageProcessing.SetVideoCamera(SourceDir + file.Filename + ".mp4", SetTime);
         }
 
         private void FixedUpdate()

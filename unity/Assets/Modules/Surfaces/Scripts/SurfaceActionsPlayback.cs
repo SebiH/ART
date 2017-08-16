@@ -7,7 +7,7 @@ namespace Assets.Modules.Surfaces
 {
     public class SurfaceActionsPlayback : MonoBehaviour
     {
-        public string Filename = "actions.json";
+        public CurrentFilename file;
 
         [Serializable]
         private struct RecordedFile
@@ -19,7 +19,7 @@ namespace Assets.Modules.Surfaces
 
         private void OnEnable()
         {
-            var text = File.ReadAllText(FileUtility.GetPath(Filename));
+            var text = File.ReadAllText(FileUtility.GetPath(file.Filename + ".actions.json"));
             _cache = JsonUtility.FromJson<RecordedFile>(text);
         }
 

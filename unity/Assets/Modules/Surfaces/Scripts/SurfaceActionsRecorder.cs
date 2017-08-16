@@ -7,7 +7,7 @@ namespace Assets.Modules.Surfaces
 {
     public class SurfaceActionsRecorder : MonoBehaviour
     {
-        public string Filename = "actions.json";
+        public CurrentFilename file;
         private StreamWriter _cache;
 
         [Serializable]
@@ -20,7 +20,7 @@ namespace Assets.Modules.Surfaces
 
         private void OnEnable()
         {
-            _cache = File.CreateText(FileUtility.GetPath(Filename));
+            _cache = File.CreateText(FileUtility.GetPath(file.Filename + ".actions.json"));
             _cache.AutoFlush = true;
             _cache.WriteLine("{ \"entries\": [");
 

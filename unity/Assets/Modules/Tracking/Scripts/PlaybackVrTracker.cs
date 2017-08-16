@@ -8,7 +8,7 @@ namespace Assets.Modules.Tracking
 {
     public class PlaybackVrTracker : MonoBehaviour
     {
-        public string Filename;
+        public CurrentFilename file;
         [Range(-1, 1)]
         public float TimeOffset = 0;
         public int SmoothAverage = 3;
@@ -29,7 +29,7 @@ namespace Assets.Modules.Tracking
 
         private void OnEnable()
         {
-            var text = File.ReadAllText(FileUtility.GetPath(Filename));
+            var text = File.ReadAllText(FileUtility.GetPath(file.Filename + ".vr.json"));
             _cache = JsonUtility.FromJson<RecordedFile>(text);
 
             VRListener.UpdateRequested += Update;

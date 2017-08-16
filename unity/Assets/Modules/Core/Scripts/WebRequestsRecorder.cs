@@ -7,14 +7,14 @@ namespace Assets.Modules.Core
 {
     public class WebRequestsRecorder : WebRequestHelper
     {
-        public string Filename = "webrequests.json";
+        public CurrentFilename file;
         private StreamWriter _cache;
 
         private void OnEnable()
         {
             Instance = this;
 
-            _cache = File.CreateText(FileUtility.GetPath(Filename));
+            _cache = File.CreateText(FileUtility.GetPath(file.Filename + ".webrequests.json"));
             _cache.AutoFlush = true;
             _cache.WriteLine("{ \"entries\": [");
         }
