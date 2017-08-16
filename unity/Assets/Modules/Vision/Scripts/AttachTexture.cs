@@ -57,6 +57,10 @@ namespace Assets.Modules.Vision
             _output = new DirectXOutput(texturePtr, Eye);
             ProcessingPipeline.AddOutput(_output);
 
+        }
+
+        private void Update()
+        {
             if (AutoAlign)
             {
                 var width = FocalPoint * Mathf.Tan(Mathf.Deg2Rad * CameraFoVHorizontal / 2f) * 2f;
@@ -65,7 +69,6 @@ namespace Assets.Modules.Vision
                 transform.localScale = new Vector3(width, -height, 1.0f);
                 transform.localPosition = new Vector3(0, 0, FocalPoint);
             }
-
         }
 
         // taken from OvrVision Pro
