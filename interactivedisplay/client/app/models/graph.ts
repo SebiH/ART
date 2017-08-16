@@ -63,8 +63,6 @@ export class Graph {
     }
     public set phase(v : string) {
         if (this._phase != v) {
-            this.dimY = null;
-            this.dimX = null;
             this._phase = v;
             this.propagateUpdates(['phase']);
         }
