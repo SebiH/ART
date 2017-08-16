@@ -18,14 +18,14 @@ namespace Assets.Modules.Calibration
         //private const float OptitrackChangeTolerance = 0.85f;
 
         private const float OvrCutoffTime = 0.3f;
-        private const float OvrChangeTolerance = 0.9f;
+        private const float OvrChangeTolerance = 0.7f;
 
         // angle between calibrated scene camera and surface
         private const float MinSurfaceAngle = 35f;
 
         private const float MarkerDetectionCutoffTime = 0.3f;
         private const float MarkerChangeCutoffTime = 0.6f;
-        private const float MaxMarkerHmdDistance = 0.9f;
+        private const float MaxMarkerHmdDistance = 5.9f;
 
         void LateUpdate()
         {
@@ -125,7 +125,6 @@ namespace Assets.Modules.Calibration
         private void PerformCalibration()
         {
             var validMarkers = ArMarkers.GetAll().Where(m => IsArMarkerValid(m));
-
             if (validMarkers.Count() > 0)
             {
                 var camPositions = validMarkers.Select(m => m.DetectedCameraPosition);
