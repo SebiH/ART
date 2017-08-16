@@ -53,6 +53,49 @@ export class GraphDetailComponent implements OnInit, OnDestroy {
     }
 
     private setPhase(phase: string) {
-        this.graph.phase = phase;
+        this.dataProvider.getDimensions()
+            .first()
+            .subscribe(dims => {
+                if (this.graph.getActualXAxis()) {
+                    let foundMatch = false;
+                    let prevDim = this.graph.getActualXAxis();
+                    for (let dim of dims) {
+                        if (dim.phases.indexOf(phase) >= 0 && dim.displayName == prevDim.displayName) {
+                            foundMatch = true;
+                            this.dataProvider.getData(dim.name)
+                                .first()
+                                .subscribe(data => this.graph.setDimX(data));
+                            break;
+                        }
+                    }
+
+                    if (!foundMatch) {
+                        this.graph.setDimX(null);
+                    }
+                }
+
+                if (this.graph.getActualYAxis()) {
+                    let foundMatch = false;
+                    let prevDim = this.graph.getActualYAxis();
+                    for (let dim of dims) {
+                        if (dim.phases.indexOf(phase) >= 0 && dim.displayName == prevDim.displayName) {
+                            foundMatch = true;
+                            this.dataProvider.getData(dim.name)
+                                .first()
+                                .subscribe(data => this.graph.setDimY(data));
+                            break;
+                        }
+                    }
+
+                    if (!foundMatch) {
+                        this.graph.setDimY(null);
+                    }
+                }
+
+                this.graph.phase = phase;
+            });
+
+
+
     }
 }
