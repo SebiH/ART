@@ -792,7 +792,7 @@ Prefab:
         type: 2}
       propertyPath: m_TargetTexture
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 8400000, guid: 82c096ff1294d034eb3f2f573f9cafd9, type: 2}
     - target: {fileID: 20000013833944052, guid: 1b21f578cc98fcf41aea5dbfe5e9c5ae,
         type: 2}
       propertyPath: m_ClearFlags
@@ -842,8 +842,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4739c22ef73ad62488fe344c8fe9addd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strengthX: 0.05
-  strengthY: 0.05
+  strengthX: 0.27
+  strengthY: 0.46
   fishEyeShader: {fileID: 4800000, guid: 874ceab4425f64bccb1d14032f4452b1, type: 3}
 --- !u!20 &1840713939 stripped
 Camera:
