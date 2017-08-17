@@ -21,7 +21,7 @@ namespace Assets.Modules.Tracking
 
         [Range(0f, 10f)]
         public float MaxMatchError = 2f;
-        [Range(0f, 10f)]
+        [Range(0f, 50f)]
         public float MaxTransformationError = 2f;
 
         private ArToolkitStereoProcessor _artkProcessor;
