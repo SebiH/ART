@@ -54,6 +54,14 @@ export class GraphDimensionSelectorComponent implements AfterViewInit, OnDestroy
 
         this.graph.onUpdate
             .takeWhile(() => this.isActive)
+            .filter(changes => changes.indexOf('phase') >= 0)
+            .subscribe(() => {
+                this.init();
+                this.changeDetector.markForCheck();
+            });
+
+        this.graph.onUpdate
+            .takeWhile(() => this.isActive)
             .filter(changes => changes.indexOf('isFlipped') >= 0)
             .subscribe(() => this.scrollToCurrent());
 
