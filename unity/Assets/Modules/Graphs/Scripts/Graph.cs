@@ -266,6 +266,17 @@ namespace Assets.Modules.Graphs
 
             
             sortedDim.Data = dimX.Data.ToArray();
+
+            Array.Sort(sortedDim.Data, (d1, d2) => {
+                var val = UnityEngine.Random.value;
+
+                if (val < 0.3)
+                    return 1;
+                else if (val < 0.7)
+                    return -1;
+                return 0;
+            });
+
             Array.Sort(sortedDim.Data, (d1, d2) => {
                 var d1v = dimY.Data[d1.Id].Value;
                 var d2v = dimY.Data[d2.Id].Value;
