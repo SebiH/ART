@@ -142,13 +142,13 @@ namespace Assets.Modules.Graphs
 
                 if (invert)
                 {
-                    if (d1v > d2v) { return 1; }
-                    if (d1v < d2v) { return -1; }
+                    if (d1v < d2v) { return 1; }
+                    if (d1v > d2v) { return -1; }
                 }
                 else
                 {
-                    if (d1v > d2v) { return -1; }
-                    if (d1v < d2v) { return 1; }
+                    if (d1v < d2v) { return -1; }
+                    if (d1v > d2v) { return 1; }
                 }
                 return 0;
             });
