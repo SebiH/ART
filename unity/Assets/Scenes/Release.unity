@@ -557,6 +557,23 @@ MonoBehaviour:
   VerticalFoV: 98
   HeightAdjustment: 1
   WidthAdjustment: 1
+--- !u!1 &1077484451 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000012712548756, guid: 128df63b1f274bc46a00bc2514b98cfa,
+    type: 2}
+  m_PrefabInternal: {fileID: 894289388}
+--- !u!114 &1077484452
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1077484451}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f27121fddc4199349b1760c5d404f6a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Prefix: cam_
 --- !u!1001 &1930638882
 Prefab:
   m_ObjectHideFlags: 0
