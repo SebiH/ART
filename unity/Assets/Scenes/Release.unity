@@ -467,6 +467,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114000011008901470, guid: 128df63b1f274bc46a00bc2514b98cfa,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000012758390594, guid: 128df63b1f274bc46a00bc2514b98cfa,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 128df63b1f274bc46a00bc2514b98cfa, type: 2}
   m_IsPrefabParent: 0
@@ -495,6 +505,58 @@ Transform:
   m_PrefabParentObject: {fileID: 4000010334330674, guid: 128df63b1f274bc46a00bc2514b98cfa,
     type: 2}
   m_PrefabInternal: {fileID: 894289388}
+--- !u!1 &894289394 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000013253811812, guid: 128df63b1f274bc46a00bc2514b98cfa,
+    type: 2}
+  m_PrefabInternal: {fileID: 894289388}
+--- !u!114 &894289395
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 894289394}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e54f7a8183242d47aeb96e5a29ebc5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ProcessingPipeline: {fileID: 894289396}
+  Eye: 0
+  AutoAlign: 1
+  HorizontalFoV: 100
+  VerticalFoV: 98
+  HeightAdjustment: 1
+  WidthAdjustment: 1
+--- !u!114 &894289396 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114000011116528578, guid: 128df63b1f274bc46a00bc2514b98cfa,
+    type: 2}
+  m_PrefabInternal: {fileID: 894289388}
+  m_Script: {fileID: 11500000, guid: beb0a54178282814f89d179069885b9e, type: 3}
+--- !u!1 &894289397 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1000011680895272, guid: 128df63b1f274bc46a00bc2514b98cfa,
+    type: 2}
+  m_PrefabInternal: {fileID: 894289388}
+--- !u!114 &894289398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 894289397}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e54f7a8183242d47aeb96e5a29ebc5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ProcessingPipeline: {fileID: 894289396}
+  Eye: 1
+  AutoAlign: 1
+  HorizontalFoV: 100
+  VerticalFoV: 98
+  HeightAdjustment: 1
+  WidthAdjustment: 1
 --- !u!1001 &1930638882
 Prefab:
   m_ObjectHideFlags: 0
