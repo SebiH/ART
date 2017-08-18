@@ -6,6 +6,7 @@ import { DataRepresentation } from './sql-mapping';
 import { SmartactMapping } from './smartact-mappings';
 import { SmartactTemporalMapping } from './smartact-temporal-mappings';
 import { SmartactTimelineMapping } from './smartact-timeline-mappings';
+import { SmartactVideoMapping } from './smartact-video-mappings';
 import { SmartactArtTimelineMapping } from './smartact-art-timeline-mapping';
 import { TitanicMapping } from './titanic-mappings';
 import { SqlColumnMapping } from './sql-mapping';
@@ -32,6 +33,10 @@ export class GraphDataProvider {
             case 'smartact-temporal':
                 console.log('Using smartact temporal mapping');
                 this.mapping = SmartactTemporalMapping;
+                break;
+            case 'smartact-video':
+                console.log('Using smartact video mapping');
+                this.mapping = SmartactVideoMapping;
                 break;
             case 'smartact-timeline':
                 console.log('Using smartact timeline mapping');
