@@ -1862,8 +1862,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OffsetSelected: -0.4
   OffsetNormal: 0
-  HeightNormal: 0.3
-  HeightPickedUp: 0.5
+  HeightNormal: 0.27
+  HeightPickedUp: 0.47
   Scale: 0.43
 --- !u!114 &114780497072334440
 MonoBehaviour:
