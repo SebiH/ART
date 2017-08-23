@@ -155,6 +155,11 @@ Prefab:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114000010875108520, guid: b6503e6ff284b8649886fa728a3a73ef,
+        type: 2}
+      propertyPath: CamQuality
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b6503e6ff284b8649886fa728a3a73ef, type: 2}
   m_IsPrefabParent: 0
@@ -235,7 +240,7 @@ Prefab:
     - target: {fileID: 114556243224943646, guid: d05b26170eb707e40a761a820f3018d7,
         type: 2}
       propertyPath: SaveInterval
-      value: 30
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d05b26170eb707e40a761a820f3018d7, type: 2}
