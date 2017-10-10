@@ -253,6 +253,8 @@ export class SqlConnection implements DataSource {
                                 color: Colors.random()
                             });
                         }
+                    } else if (map.type == DataRepresentation.Metric) {
+                        numericValue = Math.max(Math.min(map.maxValue, numericValue), map.minValue);
                     }
 
                     values[map.dbColumn] = {
